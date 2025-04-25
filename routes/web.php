@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+
+
+Route::get('/app', function () {
+    return view('app'); // 'app' refere-se ao arquivo app.blade.php em resources/views
+})->name('app');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
