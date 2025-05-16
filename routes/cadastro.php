@@ -2,10 +2,11 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 use App\Models\Usuario;
 
 Route::get('/cadastro', function () {
-    return view('cadastro');
+    return Inertia::render('cadastro');
 })->name('cadastro');
 
 Route::post('/cadastro', function (Request $request) {
