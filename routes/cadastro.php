@@ -5,10 +5,6 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use App\Models\Usuario;
 
-Route::get('/cadastro', function () {
-    return Inertia::render('cadastro');
-})->name('cadastro');
-
 Route::post('/cadastro', function (Request $request) {
     $request->validate([
         'NOME' => 'required|string|max:100',
@@ -25,5 +21,5 @@ Route::post('/cadastro', function (Request $request) {
         // 'DATA_CRIACAO' será preenchido automaticamente pelo banco
     ]);
 
-    return redirect('/')->with('success', 'Usuário cadastrado com sucesso!');
+    
 });
