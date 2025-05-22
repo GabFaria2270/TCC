@@ -1,12 +1,11 @@
-
-@-webkit-keyframes slide-fwd-center {
+@-webkit-keyframes botões-do-navbar {
   0% {
     -webkit-transform: scale(1);
             transform: scale(1);
   }
   100% {
-    -webkit-transform: scale(1.12);
-            transform: scale(1.12);
+    -webkit-transform: scale(1.26);
+            transform: scale(1.26);
   }
 }
 @keyframes slide-fwd-center {
@@ -15,8 +14,8 @@
             transform: scale(1);
   }
   100% {
-    -webkit-transform: scale(1.12);
-            transform: scale(1.12);
+    -webkit-transform: scale(1.26);
+            transform: scale(1.26);
   }
 }
 
@@ -59,8 +58,8 @@ button:hover {
 
 .nav-pills {
     display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center;     /* Centraliza verticalmente (opcional) */
+    justify-content: center; 
+    align-items: center;     
     background: #000000;
     padding: 14px 28px;
     border-radius: 10px;
@@ -79,10 +78,58 @@ button:hover {
     overflow: visible;
 }
 .nav-pills .nav-link:hover {
-    animation: slide-fwd-center 0.5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both ;
+    animation: botões-do-navbar 0.5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both ;
     background: #3b0352 ;
     color: #fff ;
-    box-shadow: 0 2px 8px rgba(37,99,235,0.15) !important;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.15) ;
     z-index: 2;
+}
+
+/* Controles do carrossel */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 15%;
+  opacity: 0.5;
+  transition: opacity .15s ease;
+}
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 0.9;
+}
+
+/* Ícones dos controles */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  width: 2rem;
+  height: 2rem;
+  background-color: #fff; /* cor branca */
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+/* Indicadores do carrossel */
+.carousel-indicators [data-bs-target] {
+  width: 30px;
+  height: 3px;
+  margin-right: 3px;
+  margin-left: 3px;
+  opacity: 0.5;
+  background-color: #fff;
+  transition: opacity .6s ease;
+  border-radius: 4px;
+}
+.carousel-indicators .active {
+  opacity: 1;
+  background-color: #fff;
+}
+
+/* Legenda do carrossel */
+.carousel-caption {
+  width: 70%;
+  color: #fff;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 

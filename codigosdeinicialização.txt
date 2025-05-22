@@ -13,3 +13,4 @@ php artisan migrate
 npm run build
 npm install 
 npm start
+lembrar que as animções tem que ser em escala en certos casos
