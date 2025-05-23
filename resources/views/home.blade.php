@@ -30,24 +30,27 @@
         </nav>
     </section>
 
-    <!-- Seção do banner -->
-    <section class="banner-section">
-        <div class="banner-container">
-            <div class="banner-content">
-                <div class="banner-text">
-                    <h1 class="banner-title">Bem-vindo ao Sistema</h1>
-                    <p class="banner-description">
-                        Este é um banner de destaque para apresentar informações importantes ou chamar atenção para alguma ação.
-                    </p>
-                    <a href="#" class="banner-btn btn btn-primary">Saiba Mais</a>
-                </div>
-                <div class="banner-img-wrapper">
-                    <img src="{{ asset('img/teste.png') }}" class="banner-img animate-baner-inicial" alt="Imagem do banner">
+    <!-- Conteúdo principal -->
+    <section class="main-content">
+        <!-- Seção do banner -->
+        <section class="banner-section">
+            <div class="banner-container">
+                <div class="banner-content">
+                    <div class="banner-text">
+                        <h1 class="banner-title">Bem-vindo ao Sistema</h1>
+                        <p class="banner-description">
+                            Este é um banner de destaque para apresentar informações importantes ou chamar atenção para alguma ação.
+                        </p>
+                        <a href="#" class="banner-btn btn btn-primary">Saiba Mais</a>
+                    </div>
+                    <div class="banner-img-wrapper">
+                        <img src="{{ asset('img/teste.png') }}" class="banner-img animate-baner-inicial" alt="Imagem do banner">
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+        <!-- Seção do banner -->
     </section>
-<!-- Seção do banner -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

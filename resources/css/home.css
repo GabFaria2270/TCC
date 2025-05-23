@@ -68,6 +68,22 @@
     transform-origin: 50% 50%;
   }
 }
+/* Responsivo */
+@media (max-width: 900px) {
+  .banner-content {
+    flex-direction: column-reverse;
+    gap: 24px;
+    text-align: center;
+  }
+  .banner-text {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.baner-titulo-animado {
+  animation: baner-titulo 1.2s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
 
 /* Adicione ao home.css */
 .animate-baner-inicial {
@@ -83,7 +99,7 @@
    ========================= */
 body {
   font-family: Arial, sans-serif;
-  background-color: #f9fafb;
+  background-color: #0984e3;
   color: #333;
 }
 
@@ -231,10 +247,36 @@ button:hover {
     font-size: 1.5rem;
   }
 }
+@-webkit-keyframes baner-titulo {
+  0% {
+    letter-spacing: -0.5em;
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes baner-titulo {
+  0% {
+    letter-spacing: -0.5em;
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 
 /* Banner Section */
 .banner-section {
-  background: linear-gradient(90deg, #0984e3 0%, #74b9ff 100%);
+  color: #0984e3;
+  background: linear-gradient(90deg, #0984e3 0%, #0984e3 100%);
   padding: 48px 0 32px 0;
 }
 
@@ -317,15 +359,3 @@ button:hover {
   /* Opcional: fundo branco caso a imagem não preencha tudo */
 }
 
-/* Responsivo */
-@media (max-width: 900px) {
-  .banner-content {
-    flex-direction: column-reverse;
-    gap: 24px;
-    text-align: center;
-  }
-  .banner-text {
-    align-items: center;
-    text-align: center;
-  }
-}
