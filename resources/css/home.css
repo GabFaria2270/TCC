@@ -137,6 +137,11 @@ button:hover {
 /* =========================
    NAVBAR
    ========================= */
+
+#nav {
+  background: #EDE7D7;
+}
+
 .nav-pills {
   display: flex;
   justify-content: center;
@@ -170,22 +175,18 @@ button:hover {
 
 /* NAVBAR MODERNA ESCURA */
 .main-navbar {
-  background: linear-gradient(90deg, #232526 0%, #414345 100%);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-  border-bottom: 2px solid #18181b;
-  border-radius: 0 0 18px 18px;
-  padding: 18px 0 12px 0;
-  margin-bottom: 0;
-  backdrop-filter: blur(4px);
+  background: #EDE7D7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 0.5rem 0;
 }
 
 .navbar-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 24px;
 }
 
 .navbar-logo {
