@@ -36,33 +36,33 @@
   0% {
     -webkit-transform: scale(1);
             transform: scale(1);
-    -webkit-transform-origin: 50% 16%;
-            transform-origin: 50% 16%;
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
   }
   100% {
     -webkit-transform: scale(1.25);
             transform: scale(1.25);
-    -webkit-transform-origin: top;
-            transform-origin: top;
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
   }
 }
 @keyframes baner-inicial {
   0% {
     -webkit-transform: scale(1);
             transform: scale(1);
-    -webkit-transform-origin: 50% 16%;
-            transform-origin: 50% 16%;
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
   }
   100% {
     -webkit-transform: scale(1.25);
             transform: scale(1.25);
-    -webkit-transform-origin: top;
-            transform-origin: top;
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
   }
 }
 /* Adicione ao home.css */
-.animate-kenburns {
-    animation: kenburns-top 6s ease-in-out both;
+.animate-baner-inicial {
+    animation: baner-inicial 6s ease-in-out infinite alternate;
 }
 
 /* =========================
@@ -118,7 +118,6 @@ button:hover {
     align-items: center;
     background: #000;
     padding: 14px 28px;
-    border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     perspective: 600px;
 }
@@ -222,170 +221,91 @@ button:hover {
     }
 }
 
-/* =========================
-   Baner do inicio 
-   ========================= */
-
-.card {
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  /* height: var(--bs-card-height); */
-  color: #212529;
-  word-wrap: break-word;
-  background-color: #fff;
-  background-clip: border-box;
-  border: 1px solid rgba(0,0,0,.125);
-  border-radius: 0.375rem;
-  /* box-shadow: var(--bs-card-box-shadow); */
-
+/* Banner Section */
+.banner-section {
+    background: linear-gradient(90deg, #0984e3 0%, #74b9ff 100%);
+    padding: 48px 0 32px 0;
 }
 
-.card > hr {
-  margin-right: 0;
-  margin-left: 0;
-}
-
-.card > .list-group {
-  border-top: inherit;
-  border-bottom: inherit;
-}
-.card > .list-group:first-child {
-  border-top-width: 0;
-  border-top-left-radius: 0.375rem;
-  border-top-right-radius: 0.375rem;
-}
-.card > .list-group:last-child {
-  border-bottom-width: 0;
-  border-bottom-left-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
-}
-.card > .card-header + .list-group,
-.card > .list-group + .card-footer {
-  border-top: 0;
-}
-
-.card-body {
-  flex: 1 1 auto;
-  padding: 1rem;
-  color: #212529;
-}
-
-.card-title {
-  margin-bottom: 0.5rem;
-  color: #212529;
-}
-
-.card-subtitle {
-  margin-top: -0.25rem;
-  margin-bottom: 0;
-  color: #6c757d;
-}
-
-.card-text:last-child {
-  margin-bottom: 0;
-}
-
-.card-link:hover {
-  text-decoration: none;
-}
-.card-link + .card-link {
-  margin-left: 1rem;
-}
-
-/* Optional textual caps */
-.card-header {
-  padding: 0.5rem 1rem;
-  margin-bottom: 0;
-  color: #212529;
-  background-color: rgba(0,0,0,.03);
-  border-bottom: 1px solid rgba(0,0,0,.125);
-  border-top-left-radius: 0.375rem;
-  border-top-right-radius: 0.375rem;
-}
-
-.card-footer {
-  padding: 0.5rem 1rem;
-  color: #212529;
-  background-color: rgba(0,0,0,.03);
-  border-top: 1px solid rgba(0,0,0,.125);
-  border-bottom-left-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
-}
-
-/* Header navs */
-.card-header-tabs {
-  margin-right: -0.5rem;
-  margin-bottom: -0.5rem;
-  margin-left: -0.5rem;
-  border-bottom: 0;
-}
-.card-header-tabs .nav-link.active {
-  background-color: #fff;
-  border-bottom-color: #fff;
-}
-.card-header-pills {
-  margin-right: -0.5rem;
-  margin-left: -0.5rem;
-}
-
-/* Card image */
-.card-img-overlay {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 1rem;
-  border-radius: 0.375rem;
-}
-
-.card-img,
-.card-img-top,
-.card-img-bottom {
-  width: 100%;
-}
-
-.card-img,
-.card-img-top {
-  border-top-left-radius: 0.375rem;
-  border-top-right-radius: 0.375rem;
-}
-
-.card-img,
-.card-img-bottom {
-  border-bottom-left-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
-}
-
-/* Card groups */
-.card-group > .card {
-  margin-bottom: 0.75rem;
-}
-@media (min-width: 576px) {
-  .card-group {
+.banner-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
     display: flex;
-    flex-flow: row wrap;
-  }
-  .card-group > .card {
-    flex: 1 0 0;
-    margin-bottom: 0;
-  }
-  /* Remover bordas arredondadas entre cards agrupados */
-  .card-group > .card:not(:last-child) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  .card-group > .card:not(:first-child) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
+    align-items: center;
+    justify-content: center;
 }
-/* =========================
-   Baner do inicio 
-   ========================= */
 
+.banner-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 40px;
+    flex-wrap: wrap;
+}
 
+.banner-text {
+    flex: 1 1 320px;
+    color: #fff;
+}
 
+.banner-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.banner-description {
+    font-size: 1.2rem;
+    margin-bottom: 24px;
+}
+
+.banner-btn {
+    padding: 12px 32px;
+    font-size: 1rem;
+    border-radius: 4px;
+    background: #fff;
+    color: #0984e3;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.banner-btn:hover {
+    background: #dfe6e9;
+    color: #0984e3;
+}
+
+.banner-img-wrapper {
+    flex: 1 1 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 380px;
+    width: 100%;
+}
+
+.banner-img {
+    max-width: 100%;
+    max-height: 320px;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    display: block;
+    object-fit: contain; /* Garante que a imagem não seja cortada */
+    background: #fff;    /* Opcional: fundo branco caso a imagem não preencha tudo */
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .banner-content {
+        flex-direction: column-reverse;
+        gap: 24px;
+        text-align: center;
+    }
+    .banner-img-wrapper {
+        justify-content: center;
+    }
+}
