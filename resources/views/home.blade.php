@@ -14,7 +14,7 @@
     <section id="nav">
         <nav class="main-navbar">
             <div class="navbar-container">
-                <span class="navbar-logo">MeuSistema</span>
+                <span class="navbar-logo"></span>
                 <ul class="nav nav-pills">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Início</a>
