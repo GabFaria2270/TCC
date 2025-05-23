@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     @vite(['resources/css/home.css', 'resources/js/app.js'])
 </head>
 
@@ -37,20 +36,48 @@
             <div class="banner-container">
                 <div class="banner-content">
                     <div class="banner-text">
-                        <h1 class="banner-title">Bem-vindo ao Sistema</h1>
-                        <p class="banner-description">
+                        <h1 class=" banner-title baner-titulo-animado">Bem-vindo ao Sistema</h1>
+                        <p class="banner-description ">
                             Este é um banner de destaque para apresentar informações importantes ou chamar atenção para alguma ação.
                         </p>
                         <a href="#" class="banner-btn btn btn-primary">Saiba Mais</a>
                     </div>
                     <div class="banner-img-wrapper">
-                        <img src="{{ asset('img/teste.png') }}" class="banner-img animate-baner-inicial" alt="Imagem do banner">
+                        <img src="{{ asset('img/imagem_do_vein-removebg-preview.png') }}" class="banner-img animate-baner-inicial" alt="Imagem do banner">
                     </div>
                 </div>
             </div>
         </section>
         <!-- Seção do banner -->
     </section>
+    <!-- Seção dos Cards -->
+    <div class="card-group">
+        <div class="card">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+        <div class="card">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+    </div>
+    <!-- Seção de Cards -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
