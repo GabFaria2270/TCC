@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
-    @vite(['resources/css/colors.css', 'resources/css/home/animacoes.css', 'resources/css/home/base.css', 'resources/css/home/navbar.css', 'resources/css/home/banner.css', 'resources/css/home/cards.css', 'resources/css/home/responsivo.css', 'resources/js/app.js'])
+    @vite(['resources/css/colors.css', 'resources/css/home/animacoes.css', 'resources/css/home/base.css', 'resources/css/home/navbar.css', 
+    'resources/css/home/banner.css', 'resources/css/home/cards.css', 'resources/css/home/responsivo.css','resources/js/home.js/home.js'])
 </head>
 
 <body>
     <!-- Seção de Navegação -->
-    <section id="nav">
+    <section  id="nav">
         <nav class="main-navbar">
             <div class="navbar-container">
                 <span class="navbar-logo">60+conectado</span>
@@ -30,7 +31,7 @@
     </section>
 
     <!-- Conteúdo principal -->
-    <section class="main-content">
+    <section class="section-home main-content">
         <!-- Seção do banner -->
         <section class="banner-section">
             <div class="banner-container">
@@ -53,7 +54,8 @@
         <!-- Seção do banner -->
     </section>
     <!-- Seção dos Cards -->
-    <div class="card-group">
+     <section class="section-home">
+        <div class="card-group">
         <div class="card">
             <img src="..." class="card-img-top" alt="...">
             <div class="card-body">
@@ -81,6 +83,9 @@
             </div>
         </div>
     </div>
+     </section>
+     
+    
     <!-- Seção de Cards -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

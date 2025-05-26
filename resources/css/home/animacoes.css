@@ -73,6 +73,34 @@
     }
 }
 
+/* =========================
+   ANIMAÇÕES DE entrada de cards
+   ========================= */
+   @-webkit-keyframes cards-right {
+  0% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+  100% {
+    -webkit-transform: translateX(100px);
+            transform: translateX(100px);
+  }
+}
+@keyframes cards-right {
+  0% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+  100% {
+    -webkit-transform: translateX(100px);
+            transform: translateX(100px);
+  }
+}
+
+/* =========================
+   ANIMAÇÕES DE entrada de cards
+   ========================= */
+
 
 /* =========================
    UTILITÁRIOS DE ANIMAÇÃO
@@ -82,4 +110,7 @@
 }
 .animate-baner-inicial {
     animation: baner-inicial 5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.animate-cards-right{
+    animation: cards-right 1s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
