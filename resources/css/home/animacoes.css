@@ -1,0 +1,85 @@
+/* =========================
+   ANIMAÇÕES
+   ========================= */
+
+@-webkit-keyframes botoes-navbar {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(1.26);
+        transform: scale(1.26);
+    }
+}
+@keyframes botoes-navbar {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(1.26);
+        transform: scale(1.26);
+    }
+}
+
+@-webkit-keyframes baner-inicial {
+    0% {
+        -webkit-transform: translateX(120vw);
+        transform: translateX(120vw);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+@keyframes baner-inicial {
+    0% {
+        -webkit-transform: translateX(120vw);
+        transform: translateX(120vw);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes baner-titulo {
+    0% {
+        -webkit-transform: translateZ(-80px);
+        transform: translateZ(-80px);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 50;
+    }
+}
+@keyframes baner-titulo {
+    0% {
+        -webkit-transform: translateZ(-80px);
+        transform: translateZ(-80px);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 50;
+    }
+}
+
+
+/* =========================
+   UTILITÁRIOS DE ANIMAÇÃO
+   ========================= */
+.baner-titulo-animado {
+    animation: baner-titulo 11s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.animate-baner-inicial {
+    animation: baner-inicial 5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
