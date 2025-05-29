@@ -78,8 +78,8 @@
    ========================= */
    @-webkit-keyframes cards-right {
   0% {
-    -webkit-transform: translateX(-120%);
-            transform: translateX(-120%);
+    -webkit-transform: translateX(-220%);
+            transform: translateX(-220%);
   }
   100% {
     -webkit-transform: translateX(0);
@@ -88,7 +88,7 @@
 }
 @keyframes cards-right {
     0% {
-        transform: translateX(-120%); /* Começa fora da tela à esquerda */
+        transform: translateX(-220%); /* Começa fora da tela à esquerda */
         opacity: 0; /* Invisível no início */
     }
     100% {

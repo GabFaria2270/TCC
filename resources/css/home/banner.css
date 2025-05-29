@@ -80,5 +80,4 @@
     border-radius: 12px;
     display: block;
     object-fit: contain;
-    margin-bottom: -10px; /* Parte de baixo da imagem fica para fora */
 }
