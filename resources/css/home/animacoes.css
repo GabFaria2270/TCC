@@ -78,23 +78,23 @@
    ========================= */
    @-webkit-keyframes cards-right {
   0% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    -webkit-transform: translateX(-120%);
+            transform: translateX(-120%);
   }
   100% {
-    -webkit-transform: translateX(100px);
-            transform: translateX(100px);
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
   }
 }
 @keyframes cards-right {
-  0% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
-  }
-  100% {
-    -webkit-transform: translateX(100px);
-            transform: translateX(100px);
-  }
+    0% {
+        transform: translateX(-120%); /* Começa fora da tela à esquerda */
+        opacity: 0; /* Invisível no início */
+    }
+    100% {
+        transform: translateX(0); /* Volta para a posição normal */
+        opacity: 1; /* Visível no final */
+    }
 }
 
 /* =========================
@@ -111,6 +111,6 @@
 .animate-baner-inicial {
     animation: baner-inicial 5s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
-.animate-cards-right{
-    animation: cards-right 1s cubic-bezier(0.23, 1, 0.32, 1) both;
+.animate-cards-right {
+    animation: cards-right 2s ease-out forwards; /* Duração de 1s, suavização e mantém o estado final */
 }

@@ -5,22 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
-    @vite(['resources/css/colors.css', 'resources/css/home/animacoes.css', 'resources/css/home/base.css', 'resources/css/home/navbar.css', 
+    @vite(['resources/css/colors.css', 'resources/css/home/animacoes.css', 'resources/css/home/base.css', 'resources/css/home/navbar.css',
     'resources/css/home/banner.css', 'resources/css/home/cards.css', 'resources/css/home/responsivo.css','resources/js/home.js/home.js'])
 </head>
 
 <body>
     <!-- Seção de Navegação -->
-    <section  id="nav">
+    <section id="nav">
         <nav class="main-navbar">
             <div class="navbar-container">
                 <span class="navbar-logo">60+conectado</span>
-                <ul class="nav nav-pills">
+                <ul class=" nav-pills">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Início</a>
+                        <a class="nav-link " aria-current="page" href="/">Início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Sobre</a>
+                        <a class="nav-link" href="">Sobre</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Contato</a>
@@ -54,39 +54,55 @@
         <!-- Seção do banner -->
     </section>
     <!-- Seção dos Cards -->
-     <section class="section-home">
-        <div class="card-group">
-        <div class="card">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This content is a little bit longer.</p>
-                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-            </div>
-        </div>
-        <div class="card">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-            </div>
-        </div>
-        <div class="card">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional
-                    content. This card has even longer content than the first to show that equal height action.</p>
-                <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-            </div>
-        </div>
+    <section class="section-card">
+    <div class="card-group">
+    <div class="card  " >
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content.</p>
+        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+      </div>
     </div>
-     </section>
-     
-    
+    <div class="card ">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="..." class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+  </div>
+    </section>
+
+
     <!-- Seção de Cards -->
+    <!-- Seção de Cards com escrita -->
+    <section class="section-home">
+        <div class="custom-card mb-3" >
+            <div class="custom-row g-0">
+                <div class="col-md-4">
+                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="custom-img-fluid rounded-start" alt="...">
+                </div>
+                <div class="custom-col-md-8">
+                    <div class="custom-card-body">
+                        <h5 class="custom-card-title">Card title</h5>
+                        <p class="custom-card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <p class="custom-card-text"><small class="custom-text-body-secondary">Last updated 3 mins ago</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+      <!-- Seção de Cards com escrita -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
