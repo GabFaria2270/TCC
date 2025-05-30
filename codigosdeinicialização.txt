@@ -13,5 +13,5 @@ php artisan migrate
 npm run build
 npm install 
 npm run dev
-lembrar que as animções tem que ser em escala en certos casos
+lembrar que as animações têm que ser em escala adequada em certos casos
 tema para vs code = Synthesis
