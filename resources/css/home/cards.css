@@ -1,205 +1,236 @@
-/* =========================
-   Layout de Linhas e Colunas
-   ========================= */
-   
-   .row {
-    display: flex;
-    flex-wrap: wrap; /* Permite que os itens se ajustem em várias linhas */
-    justify-content: center; /* Centraliza os itens horizontalmente */
-    align-items: center; /* Centraliza os itens verticalmente */
-    margin-right: calc(-1 * var(--bs-gutter-x, 0.75rem)); /* Remove o espaçamento horizontal */
-    margin-left: calc(-1 * var(--bs-gutter-x, 0.75rem)); /* Remove o espaçamento horizontal */
-    padding: 1rem; /* Adiciona espaçamento interno (esquerda e direita) */
-}
-  
-  .section-card {
-    margin-top: 2rem; /* Espaçamento acima da seção */
-    margin-bottom: 2rem; /* Espaçamento abaixo da seção */
-    padding-left: 1rem; /* Espaçamento interno à esquerda */
-    padding-right: 1rem; /* Espaçamento interno à direita */
-  }
-  
-  .g-4 {
-    --bs-gutter-x: 8rem; /* Espaçamento horizontal entre os itens */
-    --bs-gutter-y: 8rem; /* Espaçamento vertical entre os itens */
-    row-gap: var(--bs-gutter-y); /* Aplica o espaçamento vertical */
-    column-gap: var(--bs-gutter-x); /* Aplica o espaçamento horizontal */
-}
-/*=========================
-Fim do Layout de Linhas e Colunas
-========================= */
-/*=========================
-Estilo Geral do Card
-========================= */
-  .card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: var(--bs-card-bg, #fff); /* Cor de fundo */
-    background-clip: border-box;
-    border: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0, 0, 0, 0.125)); /* Borda padrão */
-    border-radius: var(--bs-card-border-radius, 0.25rem); /* Bordas arredondadas */
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important; /* Suaviza o movimento e a sombra */
-    transform: translateY(0) scale(1) !important; /* Estado inicial sem movimento ou escala */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra inicial mais leve */
-}
-
-.card:hover {
-    transform: translateY(-6px) scale(1.09) !important; /* Move o card para cima e aumenta ligeiramente */
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14) !important; /* Adiciona uma sombra mais intensa */
-}
-  
-  .h-100 {
-    height: 100% !important; /* Faz o elemento ocupar 100% da altura do contêiner pai */
-  }
-/*=========================
- Fim Estilo Geral do Card
-========================= */
-  
-/* =========================
-Estilo da Imagem no Card
-========================= */
-  .card-img-top {
-    width: 100%; /* Faz a imagem ocupar toda a largura */
-    height: auto; /* Ajusta a altura automaticamente */
-    object-fit: cover; /* Ajusta a imagem para cobrir o espaço sem distorção */
-    border-top-left-radius: var(--bs-card-inner-border-radius, 0.25rem); /* Bordas arredondadas no topo esquerdo */
-    border-top-right-radius: var(--bs-card-inner-border-radius, 0.25rem); /* Bordas arredondadas no topo direito */
-  }
-/* =========================
-   Fim Estilo da Imagem no Card
-   ========================= */
-  
-/*=========================
- Estilo do Corpo do Card
-========================= */
-     .col {
-        flex: 0 0 20%; /* Cada card ocupará 20% da largura */
-        max-width: 20%; /* Limita a largura máxima a 20% */
+    /* =========================
+    Layout de Linhas e Colunas
+    ========================= */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch; /* <-- importante para igualar a altura */
+        margin-right: calc(-1 * var(--bs-gutter-x, 0.75rem));
+        margin-left: calc(-1 * var(--bs-gutter-x, 0.75rem));
+        padding: 1rem;
     }
-  .card-body {
-    flex: 1 1 auto; /* Permite que o corpo do card cresça conforme necessário */
-    padding: var(--bs-card-spacer-y, 1.5rem) var(--bs-card-spacer-x, 1.5rem); /* Espaçamento interno */
-    color: var(--bs-card-color, #212529); /* Cor do texto */
-    height: auto;
-  }
-  
-  .card-title {
-    margin-bottom: var(--bs-card-title-spacer-y, 0.65rem); /* Espaçamento inferior */
-    color: var(--bs-card-title-color, #212529); /* Cor do título */
-  }
-  
-  .card-text:last-child {
-    margin-bottom: 0; /* Remove o espaçamento inferior do último texto */
-  }
-/* =========================
- Fim Estilo do Corpo do Card
-========================= */
 
-  
-/*=========================
- Estilo do Rodapé do Card
-========================= */
-  .card-footer {
-    padding: var(--bs-card-cap-padding-y, 0.75rem) var(--bs-card-cap-padding-x, 1rem); /* Espaçamento interno */
-    color: var(--bs-card-cap-color, #6c757d); /* Cor do texto */
-    background-color: var(--bs-card-cap-bg, rgba(0, 0, 0, 0.03)); /* Cor de fundo */
-    border-top: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0, 0, 0, 0.125)); /* Borda superior */
-  }
-/*=========================
- Fim Estilo do Rodapé do Card
-========================= */
+    .section-card {
+        margin: 2rem 0;
+        padding: 0 1rem;
+    }
 
 
 
-  
-/* =========================
-   CARDS com escrita do lado
-   ========================= */
- 
-   .custom-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 97%;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.125);
-    border-radius: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    margin-left: auto;
-    margin-right: auto;
-  
-}
+    .col {
+        display: flex;
+        flex-direction: column;
+    }
 
-.custom-card-body {
-    flex: 1 1 auto;
-    padding: 1rem;
-    align-items: center;
+    /*=========================
+    Fim do Layout de Linhas e Colunas
+    ========================= */
 
-}
+    /*=========================
+    Estilo Geral do Card
+    ========================= */
+    .card {
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        border: 2px solid #007bff;
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
+        transition:
+            transform 0.3s,
+            box-shadow 0.3s;
+        overflow: hidden;
+    }
 
-.custom-card-title {
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
-    text-align: center;
-    margin-left: 120px;
-}
+    .card:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
+        animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+    }
 
-.custom-card-text {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    text-align: center;
-    max-width: 500px; 
-    word-wrap: break-word; 
-    overflow-wrap: break-word; 
-    white-space: normal; 
-    margin-left: 120px;
+    .h-100 {
+        height: 100% !important;
+    }
 
-}
+    .card.h-100,
+    .card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    /*=========================
+    Fim Estilo Geral do Card
+    ========================= */
 
+    /* =========================
+    Estilo da Imagem no Card
+    ========================= */
+    .card-img-top {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-top-left-radius: 1.5rem;
+        border-top-right-radius: 1.5rem;
+        transition: filter 0.3s;
+    }
 
-.custom-text-body-secondary {
-    color: #6c757d !important;
-}
+    .card:hover .card-img-top {
+        filter: brightness(0.92) contrast(1.08);
+    }
+    /* =========================
+    Fim Estilo da Imagem no Card
+    ========================= */
 
-.custom-img-fluid {
-    width: 100%;
-    max-width: 100%;
-    padding: 7px;
-    border-radius: 40px;
-}
+    /*=========================
+    Estilo do Corpo do Card
+    ========================= */
+    .card-body {
+        flex: 1 1 auto;
+        padding: 1.5rem;
+        color: #212529;
+        background: #f8faff;
+        transition: background 0.3s;
+    }
 
-.custom-rounded-start {
-    border-top-left-radius: 0.375rem !important;
-    border-bottom-left-radius: 0.375rem !important;
-}
+    .card-title {
+        margin-bottom: 0.65rem;
+        color: #007bff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        letter-spacing: 1px;
+    }
 
-.custom-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-right: 0;
-    margin-left: 0;
-}
+    .card-text:last-child {
+        margin-bottom: 0;
+    }
+    /* =========================
+    Fim Estilo do Corpo do Card
+    ========================= */
 
-.custom-col-4 {
-    flex: 0 0 33.3333%;
-    max-width: 33.3333%;
-}
+    /*=========================
+    Estilo do Rodapé do Card
+    ========================= */
+    .card-footer {
+        padding: 0.75rem 1rem;
+        color: #6c757d;
+        background-color: #e9f2fb;
+        border-top: 1px solid #b6d4fe;
+        font-size: 0.95rem;
+        border-bottom-left-radius: 1.5rem;
+        border-bottom-right-radius: 1.5rem;
+    }
+    /*=========================
+    Fim Estilo do Rodapé do Card
+    ========================= */
 
-.custom-col-8 {
-    flex: 0 0 66.6667%;
-    max-width: 66.6667%;
-}
+    /* =========================
+    Animação customizada para hover do card
+    ========================= */
+    @keyframes card-hover {
+        0% {
+            box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
+        }
+        100% {
+            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
+        }
+    }
+    /* =========================
+    Fim da animação customizada
+    ========================= */
 
-.g-0 {
-    margin-right: 0;
-    margin-left: 0;
-}
-/* =========================
-CARDS com escrita do lado
-========================= */
+    /* filepath: c:\projeto\TCC\resources\css\home\cards.css */
+    /* Card com escrita estilo moderno, sobrescrevendo Bootstrap */
+    .card.mb-3 {
+        border: 2px solid #007bff;
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 24px rgba(0, 123, 255, 0.10);
+        overflow: hidden;
+        transition: box-shadow 0.3s, transform 0.3s;
+        background: #fff;
+    }
+
+    .card.mb-3:hover {
+        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
+        transform: translateY(-6px) scale(1.02);
+        animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+    }
+
+    .card .row.g-0 {
+        flex-wrap: nowrap;
+    }
+
+    .card .col-md-4 {
+        display: flex;
+        align-items: stretch;
+        padding: 0;
+        max-width: 320px;
+        min-width: 180px;
+    }
+
+    .card .img-fluid {
+        width: 100%;
+        height: 100%;
+        max-height: 260px;
+        object-fit: cover;
+        border-top-left-radius: 1.5rem;
+        border-bottom-left-radius: 1.5rem;
+        transition: filter 0.3s;
+        display: block;
+    }
+
+    .card:hover .img-fluid {
+        filter: brightness(0.92) contrast(1.08);
+    }
+
+    .card .col-md-8 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 1.5rem 2rem;
+        background: #f8faff;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .card-title {
+        color: #007bff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-bottom: 0.65rem;
+        letter-spacing: 1px;
+    }
+
+    .card-text:last-child {
+        margin-bottom: 0;
+    }
+
+    .text-body-secondary {
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 900px) {
+        .card .row.g-0 {
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
+        .card .col-md-4,
+        .card .col-md-8 {
+            max-width: 100%;
+            flex: 1 1 100%;
+        }
+        .card .img-fluid {
+            border-radius: 1.5rem 1.5rem 0 0;
+            max-height: 180px;
+        }
+        .card .col-md-8 {
+            padding: 1rem;
+        }
+    }

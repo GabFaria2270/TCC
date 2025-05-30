@@ -12,7 +12,6 @@ export default defineConfig({
             refresh: true,
         }),
         react(),
-        tailwindcss(),
     ],
     esbuild: {
         jsx: 'automatic',
