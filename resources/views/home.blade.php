@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
+    
     @vite(['resources/css/colors.css', 'resources/css/home/animacoes.css', 'resources/css/home/base.css', 'resources/css/home/navbar.css',
     'resources/css/home/banner.css', 'resources/css/home/cards.css', 'resources/css/home/responsivo.css','resources/js/home.js/home.js'])
 </head>
@@ -30,64 +31,83 @@
         </nav>
     </section>
 
-    <!-- Conteúdo principal -->
+    <!-- Conteúdo do carousel  -->
     <section class="section-home main-content">
-        <!-- Seção do banner -->
-        <section class="banner-section">
-            <div class="banner-container">
-                <div class="banner-content">
-                    <div class="banner-text">
-                        <h1 class="banner-title baner-titulo-animado">Bem-vindo ao Sistema</h1>
-                        <p class="banner-description ">
-                            Este é um banner de destaque para apresentar informações importantes ou chamar atenção para
-                            alguma ação.
-                        </p>
-                        <a href="#" class="banner-btn btn btn-primary">Saiba Mais</a>
+        <div id="carouselExampleDark" class="carousel carousel-dark slide">
+            
+            <div class="carousel-inner">
+                <div class="carousel-item active" data-bs-interval="3000">
+                    <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>First slide label</h5>
+                        <p>Some representative placeholder content for the first slide.</p>
                     </div>
-                    <div class="banner-img-wrapper">
-                        <img src="{{ asset('img/imagem_do_vein-removebg-preview.png') }}"
-                            class="banner-img animate-baner-inicial" alt="Imagem do banner">
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Second slide label</h5>
+                        <p>Some representative placeholder content for the second slide.</p>
+                    </div>
+                </div>
+                <div class="carousel-item" data-bs-interval="2000">
+                    <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Third slide label</h5>
+                        <p>Some representative placeholder content for the third slide.</p>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- Seção do banner -->
+            
+        </div>
     </section>
+
     <!-- Seção dos Cards -->
     <section class="section-card">
-    <div class="card-group">
-    <div class="card  " >
-      <img src="..." class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content.</p>
-        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-      </div>
-    </div>
-    <div class="card ">
-      <img src="..." class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-      </div>
-    </div>
-    <div class="card">
-      <img src="..." class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-      </div>
-    </div>
-  </div>
+        <div class="row g-4">
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-
-
     <!-- Seção de Cards -->
+
     <!-- Seção de Cards com escrita -->
     <section class="section-home">
-        <div class="custom-card mb-3" >
+        <div class="custom-card mb-3">
             <div class="custom-row g-0">
                 <div class="col-md-4">
                     <img src="{{ asset('img/testedeimg.jpeg') }}" class="custom-img-fluid rounded-start" alt="...">
@@ -102,9 +122,10 @@
             </div>
         </div>
     </section>
-      <!-- Seção de Cards com escrita -->
+    <!-- Seção de Cards com escrita -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 
 </html>

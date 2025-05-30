@@ -24,7 +24,7 @@ const sectionsdocard = document.querySelectorAll('.section-card');
 
 const observercard = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
-    const cards = entry.target.querySelectorAll('.card');
+    const cards = entry.target.querySelectorAll('.row');
 
     if (entry.isIntersecting) {
       console.log('Seção visível:', entry.target); // Log para depuração
@@ -50,5 +50,7 @@ sectionsdocard.forEach(section => {
   section.classList.add('section-card-false'); // Começa invisível
   observercard.observe(section);
 });
+
+
 
 

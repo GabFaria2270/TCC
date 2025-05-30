@@ -1,60 +1,120 @@
 /* =========================
-   CARDS
+   Layout de Linhas e Colunas
    ========================= */
-.card-group {
+   
+   .row {
     display: flex;
-    gap: 150px;
-    justify-content: center;
-    align-items: stretch;
-    margin: 40px auto;
-    max-width: 1100px;
-    padding: 0 24px;
-    width: 100%;
+    flex-wrap: wrap; /* Permite que os itens se ajustem em várias linhas */
+    justify-content: center; /* Centraliza os itens horizontalmente */
+    align-items: center; /* Centraliza os itens verticalmente */
+    margin-right: calc(-1 * var(--bs-gutter-x, 0.75rem)); /* Remove o espaçamento horizontal */
+    margin-left: calc(-1 * var(--bs-gutter-x, 0.75rem)); /* Remove o espaçamento horizontal */
+    padding: 1rem; /* Adiciona espaçamento interno (esquerda e direita) */
 }
-.card {
-    flex: 1 1 400px;
-    min-width: 280px;
+  
+  .section-card {
+    margin-top: 2rem; /* Espaçamento acima da seção */
+    margin-bottom: 2rem; /* Espaçamento abaixo da seção */
+    padding-left: 1rem; /* Espaçamento interno à esquerda */
+    padding-right: 1rem; /* Espaçamento interno à direita */
+  }
+  
+  .g-4 {
+    --bs-gutter-x: 8rem; /* Espaçamento horizontal entre os itens */
+    --bs-gutter-y: 8rem; /* Espaçamento vertical entre os itens */
+    row-gap: var(--bs-gutter-y); /* Aplica o espaçamento vertical */
+    column-gap: var(--bs-gutter-x); /* Aplica o espaçamento horizontal */
+}
+/*=========================
+Fim do Layout de Linhas e Colunas
+========================= */
+/*=========================
+Estilo Geral do Card
+========================= */
+  .card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    transition:
-        transform 0.18s,
-        box-shadow 0.18s;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: var(--bs-card-bg, #fff); /* Cor de fundo */
+    background-clip: border-box;
+    border: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0, 0, 0, 0.125)); /* Borda padrão */
+    border-radius: var(--bs-card-border-radius, 0.25rem); /* Bordas arredondadas */
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important; /* Suaviza o movimento e a sombra */
+    transform: translateY(0) scale(1) !important; /* Estado inicial sem movimento ou escala */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra inicial mais leve */
 }
+
 .card:hover {
-    transform: translateY(-6px) scale(1.09) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14) !important;
+    transform: translateY(-6px) scale(1.09) !important; /* Move o card para cima e aumenta ligeiramente */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14) !important; /* Adiciona uma sombra mais intensa */
 }
-.card-img-top {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    background: #ede7d7;
-}
-.card-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-}
-.card-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #0984e3;
-}
-.card-text {
-    font-size: 1rem;
-    color: #333;
-    margin-bottom: 8px;
-}
-.text-body-secondary {
-    color: #888 !important;
-    font-size: 0.95rem;
-}
+  
+  .h-100 {
+    height: 100% !important; /* Faz o elemento ocupar 100% da altura do contêiner pai */
+  }
+/*=========================
+ Fim Estilo Geral do Card
+========================= */
+  
+/* =========================
+Estilo da Imagem no Card
+========================= */
+  .card-img-top {
+    width: 100%; /* Faz a imagem ocupar toda a largura */
+    height: auto; /* Ajusta a altura automaticamente */
+    object-fit: cover; /* Ajusta a imagem para cobrir o espaço sem distorção */
+    border-top-left-radius: var(--bs-card-inner-border-radius, 0.25rem); /* Bordas arredondadas no topo esquerdo */
+    border-top-right-radius: var(--bs-card-inner-border-radius, 0.25rem); /* Bordas arredondadas no topo direito */
+  }
+/* =========================
+   Fim Estilo da Imagem no Card
+   ========================= */
+  
+/*=========================
+ Estilo do Corpo do Card
+========================= */
+     .col {
+        flex: 0 0 20%; /* Cada card ocupará 20% da largura */
+        max-width: 20%; /* Limita a largura máxima a 20% */
+    }
+  .card-body {
+    flex: 1 1 auto; /* Permite que o corpo do card cresça conforme necessário */
+    padding: var(--bs-card-spacer-y, 1.5rem) var(--bs-card-spacer-x, 1.5rem); /* Espaçamento interno */
+    color: var(--bs-card-color, #212529); /* Cor do texto */
+    height: auto;
+  }
+  
+  .card-title {
+    margin-bottom: var(--bs-card-title-spacer-y, 0.65rem); /* Espaçamento inferior */
+    color: var(--bs-card-title-color, #212529); /* Cor do título */
+  }
+  
+  .card-text:last-child {
+    margin-bottom: 0; /* Remove o espaçamento inferior do último texto */
+  }
+/* =========================
+ Fim Estilo do Corpo do Card
+========================= */
+
+  
+/*=========================
+ Estilo do Rodapé do Card
+========================= */
+  .card-footer {
+    padding: var(--bs-card-cap-padding-y, 0.75rem) var(--bs-card-cap-padding-x, 1rem); /* Espaçamento interno */
+    color: var(--bs-card-cap-color, #6c757d); /* Cor do texto */
+    background-color: var(--bs-card-cap-bg, rgba(0, 0, 0, 0.03)); /* Cor de fundo */
+    border-top: var(--bs-card-border-width, 1px) solid var(--bs-card-border-color, rgba(0, 0, 0, 0.125)); /* Borda superior */
+  }
+/*=========================
+ Fim Estilo do Rodapé do Card
+========================= */
+
+
+
+  
 /* =========================
    CARDS com escrita do lado
    ========================= */
