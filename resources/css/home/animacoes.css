@@ -1,0 +1,147 @@
+/* =========================
+   ANIMAÇÕES
+   ========================= */
+
+@-webkit-keyframes botoes-navbar {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(1.26);
+        transform: scale(1.26);
+    }
+}
+@keyframes botoes-navbar {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(1.26);
+        transform: scale(1.26);
+    }
+}
+
+@-webkit-keyframes baner-inicial {
+    0% {
+        -webkit-transform: translateX(120vw);
+        transform: translateX(120vw);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+@keyframes baner-inicial {
+    0% {
+        transform: translateX(120vw);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes baner-titulo {
+    0% {
+        -webkit-transform: translateZ(-80px);
+        transform: translateZ(-80px);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        opacity: 50;
+    }
+}
+@keyframes baner-titulo {
+    0% {
+        transform: translateZ(-80px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateZ(0);
+        opacity: 1;
+    }
+}
+
+/* =========================
+   ANIMAÇÕES DE entrada de cards
+   ========================= */
+   @-webkit-keyframes cards-right {
+  0% {
+    -webkit-transform: translateX(-220%);
+            transform: translateX(-220%);
+  }
+  100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+}
+@keyframes cards-right {
+    0% {
+        transform: translateX(-120%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* =========================
+   ANIMAÇÕES DE entrada de cards
+   ========================= */
+
+
+/* =========================
+   UTILITÁRIOS DE ANIMAÇÃO
+   ========================= */
+.baner-titulo-animado {
+    animation: baner-titulo 11s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.animate-baner-inicial {
+    animation: baner-inicial 5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.animate-cards-right  {
+    animation: cards-right 3s ease-out forwards ;
+}
+
+.banner-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os elementos se ajustem em telas menores */
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.banner-text {
+    text-align: center; /* Centraliza o texto em telas menores */
+    margin-bottom: 1rem;
+}
+
+.banner-img-wrapper {
+    max-width: 100%; /* Garante que a imagem não ultrapasse o tamanho da tela */
+    text-align: center;
+}
+
+.banner-img {
+    width: 100%; /* Ajusta a largura da imagem */
+    max-width: 400px; /* Define um tamanho máximo */
+    height: auto; /* Mantém a proporção da imagem */
+}
+
+/* Media query para telas menores */
+@media (max-width: 768px) {
+    .banner-container {
+        flex-direction: column; /* Empilha os elementos verticalmente */
+    }
+
+    .banner-text {
+        margin-bottom: 1rem;
+    }
+}

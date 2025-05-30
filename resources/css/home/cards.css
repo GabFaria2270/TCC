@@ -1,0 +1,236 @@
+    /* =========================
+    Layout de Linhas e Colunas
+    ========================= */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: stretch; /* <-- importante para igualar a altura */
+        margin-right: calc(-1 * var(--bs-gutter-x, 0.75rem));
+        margin-left: calc(-1 * var(--bs-gutter-x, 0.75rem));
+        padding: 1rem;
+    }
+
+    .section-card {
+        margin: 2rem 0;
+        padding: 0 1rem;
+    }
+
+
+
+    .col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /*=========================
+    Fim do Layout de Linhas e Colunas
+    ========================= */
+
+    /*=========================
+    Estilo Geral do Card
+    ========================= */
+    .card {
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        border: 2px solid #007bff;
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
+        transition:
+            transform 0.3s,
+            box-shadow 0.3s;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
+        animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+    }
+
+    .h-100 {
+        height: 100% !important;
+    }
+
+    .card.h-100,
+    .card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    /*=========================
+    Fim Estilo Geral do Card
+    ========================= */
+
+    /* =========================
+    Estilo da Imagem no Card
+    ========================= */
+    .card-img-top {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-top-left-radius: 1.5rem;
+        border-top-right-radius: 1.5rem;
+        transition: filter 0.3s;
+    }
+
+    .card:hover .card-img-top {
+        filter: brightness(0.92) contrast(1.08);
+    }
+    /* =========================
+    Fim Estilo da Imagem no Card
+    ========================= */
+
+    /*=========================
+    Estilo do Corpo do Card
+    ========================= */
+    .card-body {
+        flex: 1 1 auto;
+        padding: 1.5rem;
+        color: #212529;
+        background: #f8faff;
+        transition: background 0.3s;
+    }
+
+    .card-title {
+        margin-bottom: 0.65rem;
+        color: #007bff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        letter-spacing: 1px;
+    }
+
+    .card-text:last-child {
+        margin-bottom: 0;
+    }
+    /* =========================
+    Fim Estilo do Corpo do Card
+    ========================= */
+
+    /*=========================
+    Estilo do Rodapé do Card
+    ========================= */
+    .card-footer {
+        padding: 0.75rem 1rem;
+        color: #6c757d;
+        background-color: #e9f2fb;
+        border-top: 1px solid #b6d4fe;
+        font-size: 0.95rem;
+        border-bottom-left-radius: 1.5rem;
+        border-bottom-right-radius: 1.5rem;
+    }
+    /*=========================
+    Fim Estilo do Rodapé do Card
+    ========================= */
+
+    /* =========================
+    Animação customizada para hover do card
+    ========================= */
+    @keyframes card-hover {
+        0% {
+            box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
+        }
+        100% {
+            box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
+        }
+    }
+    /* =========================
+    Fim da animação customizada
+    ========================= */
+
+    /* filepath: c:\projeto\TCC\resources\css\home\cards.css */
+    /* Card com escrita estilo moderno, sobrescrevendo Bootstrap */
+    .card.mb-3 {
+        border: 2px solid #007bff;
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 24px rgba(0, 123, 255, 0.10);
+        overflow: hidden;
+        transition: box-shadow 0.3s, transform 0.3s;
+        background: #fff;
+    }
+
+    .card.mb-3:hover {
+        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
+        transform: translateY(-6px) scale(1.02);
+        animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+    }
+
+    .card .row.g-0 {
+        flex-wrap: nowrap;
+    }
+
+    .card .col-md-4 {
+        display: flex;
+        align-items: stretch;
+        padding: 0;
+        max-width: 320px;
+        min-width: 180px;
+    }
+
+    .card .img-fluid {
+        width: 100%;
+        height: 100%;
+        max-height: 260px;
+        object-fit: cover;
+        border-top-left-radius: 1.5rem;
+        border-bottom-left-radius: 1.5rem;
+        transition: filter 0.3s;
+        display: block;
+    }
+
+    .card:hover .img-fluid {
+        filter: brightness(0.92) contrast(1.08);
+    }
+
+    .card .col-md-8 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 1.5rem 2rem;
+        background: #f8faff;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .card-title {
+        color: #007bff;
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-bottom: 0.65rem;
+        letter-spacing: 1px;
+    }
+
+    .card-text:last-child {
+        margin-bottom: 0;
+    }
+
+    .text-body-secondary {
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 900px) {
+        .card .row.g-0 {
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
+        .card .col-md-4,
+        .card .col-md-8 {
+            max-width: 100%;
+            flex: 1 1 100%;
+        }
+        .card .img-fluid {
+            border-radius: 1.5rem 1.5rem 0 0;
+            max-height: 180px;
+        }
+        .card .col-md-8 {
+            padding: 1rem;
+        }
+    }

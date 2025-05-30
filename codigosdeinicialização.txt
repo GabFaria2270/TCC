@@ -1,0 +1,17 @@
+# 1. Instalar dependências do projeto (se necessário)
+composer install
+
+# 2. Gerar a chave da aplicação
+php artisan key:generate
+
+# 3. Rodar o servidor embutido do Laravel
+php artisan serve
+
+# 4. Rodar as migrações do banco de dados
+php artisan migrate
+
+npm run build
+npm install 
+npm run dev
+lembrar que as animações têm que ser em escala adequada em certos casos
+tema para vs code = Synthesis

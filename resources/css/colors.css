@@ -1,0 +1,11 @@
+:root {
+    /* Cores principais */
+    --color-black: #000;
+    --color-white: #fff;
+    --color-offwhite: #ede7d7;
+    --color-gray: #4b4b4b;
+
+    /* Exemplos de variações, adicione se precisar */
+    --color-offwhite-dark: #e0d6c3;
+    --color-offwhite-light: #f5e9d7;
+}

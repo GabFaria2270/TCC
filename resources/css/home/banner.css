@@ -1,0 +1,90 @@
+/* Carrossel Bootstrap customizado - Banner Full Width Moderno */
+.carousel {
+    width: 100vw;
+    height: 80vh;
+    max-width: 100vw;
+    min-height: 300px;
+    margin: 0 auto 2.5rem auto;
+    border-radius: 0 0 2.5rem 2.5rem;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(120deg, #232526 0%, #414345 100%);
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    border-top: 6px solid #007bff;
+}
+.carousel-item img {
+    width: 100vw;
+    height: 80vh;
+    object-fit: cover;
+    filter: brightness(0.92) contrast(1.08);
+    display: block;
+    border-bottom: 4px solid #007bff;
+}
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 0 0 2.5rem 2.5rem;
+    padding: 2.5rem 3rem 2rem 3rem;
+    color: #fff;
+    font-weight: 600;
+    text-shadow: 2px 2px 12px #000;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    letter-spacing: 1px;
+    font-size: 1.25rem;
+}
+.carousel-indicators [data-bs-target] {
+    background-color: #fff;
+    border: 2px solid #007bff;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    opacity: 0.8;
+    margin: 0 6px;
+    transition:
+        transform 0.2s,
+        background 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.carousel-indicators .active {
+    background: #007bff;
+    border: 2px solid #fff;
+    transform: scale(1.3);
+    opacity: 1;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #007bff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    width: 3.2rem;
+    height: 3.2rem;
+}
+.carousel-control-prev,
+.carousel-control-next {
+    background: none;
+    box-shadow: none;
+}
+.carousel-control-prev:focus,
+.carousel-control-next:focus,
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background: none;
+    box-shadow: none;
+}
+@media (max-width: 900px) {
+    .carousel-img-custom {
+        height: 180px;
+    }
+    .carousel-caption {
+        padding: 1rem 1.2rem;
+        font-size: 1rem;
+    }
+    .carousel {
+        border-radius: 0 0 1.2rem 1.2rem;
+    }
+}
