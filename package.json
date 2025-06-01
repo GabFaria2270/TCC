@@ -43,6 +43,7 @@
         "@types/react-dom": "^19.0.2",
         "@vitejs/plugin-react": "^4.3.4",
         "bootstrap": "^5.3.6",
+        "bootstrap-icons": "^1.13.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "concurrently": "^9.0.1",
