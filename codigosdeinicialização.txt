@@ -10,6 +10,9 @@ php artisan serve
 # 4. Rodar as migrações do banco de dados
 php artisan migrate
 
+caminho relativo das classes do boodstrap 
+'node_modules/bootstrap/dist/css/bootstrap.css'
+
 npm run build
 npm install 
 npm run dev

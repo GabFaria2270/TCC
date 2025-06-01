@@ -32,6 +32,7 @@
                 </div>
             </div>
         </nav>
+
     </section>
 
     <!-- Conteúdo do carousel  -->
@@ -147,7 +148,14 @@
             </div>
         </div>
     </section>
+
     <!-- Seção de Cards com escrita -->
+    <!-- Seção de Botão de Navegação -->
+    <button class="btndenavegação" id="scrollToBtn">
+        <i class="bi bi-arrow-up"></i> <!-- Ícone inicial -->
+    </button>
+    <!-- Seção de Botão de Navegação -->
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

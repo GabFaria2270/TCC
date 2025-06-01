@@ -14,7 +14,7 @@
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    border-top: 6px solid #007bff;
+
 }
 .carousel-item img {
     width: 100vw;
@@ -22,7 +22,7 @@
     object-fit: cover;
     filter: brightness(0.92) contrast(1.08);
     display: block;
-    border-bottom: 4px solid #007bff;
+ 
 }
 .carousel-caption {
     background: rgba(0, 0, 0, 0.55);
@@ -39,7 +39,7 @@
 }
 .carousel-indicators [data-bs-target] {
     background-color: #fff;
-    border: 2px solid #007bff;
+
     width: 18px;
     height: 18px;
     border-radius: 50%;
@@ -58,7 +58,7 @@
 }
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-    background-color: #007bff;
+
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
     width: 3.2rem;

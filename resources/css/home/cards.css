@@ -34,7 +34,6 @@
         display: flex;
         flex-direction: column;
         background-color: #fff;
-        border: 2px solid #007bff;
         border-radius: 1.5rem;
         box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
         transition:
@@ -95,7 +94,6 @@
 
     .card-title {
         margin-bottom: 0.65rem;
-        color: #007bff;
         font-weight: bold;
         font-size: 1.25rem;
         letter-spacing: 1px;
@@ -142,7 +140,7 @@
     /* filepath: c:\projeto\TCC\resources\css\home\cards.css */
     /* Card com escrita estilo moderno, sobrescrevendo Bootstrap */
     .card.mb-3 {
-        border: 2px solid #007bff;
+    
         border-radius: 1.5rem;
         box-shadow: 0 6px 24px rgba(0, 123, 255, 0.10);
         overflow: hidden;
@@ -199,7 +197,7 @@
     }
 
     .card-title {
-        color: #007bff;
+
         font-weight: bold;
         font-size: 1.25rem;
         margin-bottom: 0.65rem;

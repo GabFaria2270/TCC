@@ -50,7 +50,51 @@ sectionsdocard.forEach(section => {
   section.classList.add('section-card-false'); // Começa invisível
   observercard.observe(section);
 });
+const scrollToBtn = document.getElementById('scrollToBtn');
+let lastScrollY = window.scrollY;
+let debounceTimeout;
 
+// Função debounce para limitar a frequência de execução
+function debounce(func, delay) {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(func, delay);
+}
 
+// Detecta o scroll
+window.addEventListener('scroll', () => {
+    debounce(() => {
+        const currentScrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        if (currentScrollY > 50 && currentScrollY + windowHeight < documentHeight - 10) {
+            scrollToBtn.style.display = 'flex';
+            scrollToBtn.style.opacity = '1'; 
+        } else {
+            scrollToBtn.style.opacity = '0'; 
+            setTimeout(() => {
+                scrollToBtn.style.display = 'none';
+            }, 300); 
+        }
+        if (currentScrollY > lastScrollY) {
+            // Scroll para baixo
+            scrollToBtn.innerHTML = '<i class="bi bi-arrow-down"></i>'; 
+            scrollToBtn.onclick = () => {
+                window.scrollTo({
+                    top: document.body.scrollHeight, 
+                    behavior: 'smooth',
+                });
+            };
+        } else {
+            // Scroll para cima
+            scrollToBtn.innerHTML = '<i class="bi bi-arrow-up"></i>'; 
+            scrollToBtn.onclick = () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                });
+            };
+        }
 
-
+        lastScrollY = currentScrollY; 
+    }, 200); 
+});
