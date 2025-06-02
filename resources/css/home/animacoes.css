@@ -74,8 +74,8 @@
    ========================= */
    @-webkit-keyframes cards-right {
   0% {
-    -webkit-transform: translateX(-220%);
-            transform: translateX(-220%);
+    -webkit-transform: translateX(-120%);
+            transform: translateX(-120%);
   }
   100% {
     -webkit-transform: translateX(0);
@@ -92,6 +92,7 @@
         opacity: 1;
     }
 }
+
 
 
 /* =========================

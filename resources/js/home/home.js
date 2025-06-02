@@ -50,6 +50,42 @@ sectionsdocard.forEach(section => {
   section.classList.add('section-card-false'); // Começa invisível
   observercard.observe(section);
 });
+// função para os cards do valores 
+const sectionsdocardV = document.querySelectorAll('.section-cardv');
+
+const observercardV = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const cards = entry.target.querySelectorAll('.valor1');
+
+    if (entry.isIntersecting) {
+      console.log('Seção visível (cardV):', entry.target); // Log para depuração
+      cards.forEach(card => {
+        card.classList.add('animate-cards-right'); // Adiciona a animação de entrada
+      });
+      entry.target.classList.add('section-cardV-true');
+      entry.target.classList.remove('section-cardV-false');
+    } else {
+      console.log('Seção não visível (cardV):', entry.target); // Log para depuração
+      cards.forEach(card => {
+        card.classList.remove('animate-cards-right'); // Remove a animação
+      });
+      entry.target.classList.remove('section-cardV-true');
+      entry.target.classList.add('section-cardV-false');
+    }
+  });
+}, {
+  threshold: 0.1
+});
+
+sectionsdocardV.forEach(section => {
+  section.classList.add('section-cardV-false'); // Começa invisível
+  observercardV.observe(section);
+});
+// Fim função para os cards do valores
+
+
+
+// Função do botão de navegação
 const scrollToBtn = document.getElementById('scrollToBtn');
 let lastScrollY = window.scrollY;
 let debounceTimeout;
@@ -98,3 +134,4 @@ window.addEventListener('scroll', () => {
         lastScrollY = currentScrollY; 
     }, 200); 
 });
+// Fim da Função do botão de navegação

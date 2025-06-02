@@ -148,8 +148,38 @@
             </div>
         </div>
     </section>
-
     <!-- Seção de Cards com escrita -->
+
+    <section class="">
+        <div class="containervalor">
+            <div class="valor1">
+                <i class="bi bi-cart icon-medium icon-color"></i>
+                <div class="cardv">
+                    <h2 class="titulov">Vendas</h2>
+                    <p class="subtituloV">R$ 1.000,00 hfkhdfhskdhfdshkfhsdkjhfksdhfkhsdkfhkdshf</p>
+
+                </div>
+            </div>
+            <div class="valor1">
+                <i class="bi bi-people icon-medium icon-color"></i>
+                <div class="cardv">
+                    <h2 class="titulov">Vendas</h2>
+                    <p class="subtituloV">R$ 1.000,00 fdfsdhfksdhfkhdskfhksdhfkdshfkshkdfhsdf</p>
+
+                </div>
+            </div>
+            <div class="valor1">
+                <i class="bi bi-graph-up icon-medium icon-color"></i>
+                <div class="cardv">
+                    <h2 class="titulov">Vendas</h2>
+                    <p class="subtituloV">R$ 1.000,00 sdkfkjsdhfjkdskfjsdkfkjdsfhksdsdfsdfsdfdsf</p>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <!-- Seção de Botão de Navegação -->
     <button class="btndenavegação" id="scrollToBtn">
         <i class="bi bi-arrow-up"></i> <!-- Ícone inicial -->
