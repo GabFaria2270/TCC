@@ -1,89 +1,98 @@
+import '../app.js';
+
 const sections = document.querySelectorAll('.section-home');
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('section-home-true');
-      entry.target.classList.remove('section-home-false');
-    } else {
-      entry.target.classList.remove('section-home-true');
-      entry.target.classList.add('section-home-false');
-    }
-  });
-}, {
-  threshold: 0.2
-});
+const observer = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('section-home-true');
+                entry.target.classList.remove('section-home-false');
+            } else {
+                entry.target.classList.remove('section-home-true');
+                entry.target.classList.add('section-home-false');
+            }
+        });
+    },
+    {
+        threshold: 0.2,
+    },
+);
 
-sections.forEach(section => {
-  section.classList.add('section-home-false'); // Começa invisível
-  observer.observe(section);
+sections.forEach((section) => {
+    section.classList.add('section-home-false'); // Começa invisível
+    observer.observe(section);
 });
-
 
 const sectionsdocard = document.querySelectorAll('.section-card');
 
-const observercard = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    const cards = entry.target.querySelectorAll('.row');
+const observercard = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            const cards = entry.target.querySelectorAll('.row');
 
-    if (entry.isIntersecting) {
-      console.log('Seção visível:', entry.target); // Log para depuração
-      cards.forEach(card => {
-        card.classList.add('animate-cards-right'); // Animação de entrada
-      });
-      entry.target.classList.add('section-card-true');
-      entry.target.classList.remove('section-card-false');
-    } else {
-      console.log('Seção não visível:', entry.target); // Log para depuração
-      cards.forEach(card => {
-        card.classList.remove('animate-cards-right'); // Remove a animação
-      });
-      entry.target.classList.remove('section-card-true');
-      entry.target.classList.add('section-card-false');
-    }
-  });
-}, {
-  threshold: 0.2
-});
+            if (entry.isIntersecting) {
+                console.log('Seção visível:', entry.target); // Log para depuração
+                cards.forEach((card) => {
+                    card.classList.add('animate-cards-right'); // Animação de entrada
+                });
+                entry.target.classList.add('section-card-true');
+                entry.target.classList.remove('section-card-false');
+            } else {
+                console.log('Seção não visível:', entry.target); // Log para depuração
+                cards.forEach((card) => {
+                    card.classList.remove('animate-cards-right'); // Remove a animação
+                });
+                entry.target.classList.remove('section-card-true');
+                entry.target.classList.add('section-card-false');
+            }
+        });
+    },
+    {
+        threshold: 0.2,
+    },
+);
 
-sectionsdocard.forEach(section => {
-  section.classList.add('section-card-false'); // Começa invisível
-  observercard.observe(section);
+sectionsdocard.forEach((section) => {
+    section.classList.add('section-card-false'); // Começa invisível
+    observercard.observe(section);
 });
-// função para os cards do valores 
+// função para os cards do valores
 const sectionsdocardV = document.querySelectorAll('.section-cardv');
 
-const observercardV = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    const cards = entry.target.querySelectorAll('.valor1');
+const observercardV = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            const cards = entry.target.querySelectorAll('.valor1');
 
-    if (entry.isIntersecting) {
-      console.log('Seção visível (cardV):', entry.target); // Log para depuração
-      cards.forEach(card => {
-        card.classList.add('animate-cards-right'); // Adiciona a animação de entrada
-      });
-      entry.target.classList.add('section-cardV-true');
-      entry.target.classList.remove('section-cardV-false');
-    } else {
-      console.log('Seção não visível (cardV):', entry.target); // Log para depuração
-      cards.forEach(card => {
-        card.classList.remove('animate-cards-right'); // Remove a animação
-      });
-      entry.target.classList.remove('section-cardV-true');
-      entry.target.classList.add('section-cardV-false');
-    }
-  });
-}, {
-  threshold: 0.1
-});
+            if (entry.isIntersecting) {
+                cards.forEach((card) => {
+                    if (!card.classList.contains('animate-cards-right')) {
+                        card.classList.add('animate-cards-right', 'animating');
+                        card.addEventListener('animationend', function handler() {
+                            card.classList.remove('animate-cards-right', 'animating');
+                            card.removeEventListener('animationend', handler);
+                        });
+                    }
+                });
+                entry.target.classList.add('section-cardV-true');
+                entry.target.classList.remove('section-cardV-false');
+            } else {
+                entry.target.classList.remove('section-cardV-true');
+                entry.target.classList.add('section-cardV-false');
+            }
+        });
+    },
+    {
+        threshold: 0.1,
+    },
+);
 
-sectionsdocardV.forEach(section => {
-  section.classList.add('section-cardV-false'); // Começa invisível
-  observercardV.observe(section);
+sectionsdocardV.forEach((section) => {
+    section.classList.add('section-cardV-false'); // Começa invisível
+    observercardV.observe(section);
 });
 // Fim função para os cards do valores
-
-
 
 // Função do botão de navegação
 const scrollToBtn = document.getElementById('scrollToBtn');
@@ -104,25 +113,25 @@ window.addEventListener('scroll', () => {
         const documentHeight = document.documentElement.scrollHeight;
         if (currentScrollY > 50 && currentScrollY + windowHeight < documentHeight - 10) {
             scrollToBtn.style.display = 'flex';
-            scrollToBtn.style.opacity = '1'; 
+            scrollToBtn.style.opacity = '1';
         } else {
-            scrollToBtn.style.opacity = '0'; 
+            scrollToBtn.style.opacity = '0';
             setTimeout(() => {
                 scrollToBtn.style.display = 'none';
-            }, 300); 
+            }, 300);
         }
         if (currentScrollY > lastScrollY) {
             // Scroll para baixo
-            scrollToBtn.innerHTML = '<i class="bi bi-arrow-down"></i>'; 
+            scrollToBtn.innerHTML = '<i class="bi bi-arrow-down"></i>';
             scrollToBtn.onclick = () => {
                 window.scrollTo({
-                    top: document.body.scrollHeight, 
+                    top: document.body.scrollHeight,
                     behavior: 'smooth',
                 });
             };
         } else {
             // Scroll para cima
-            scrollToBtn.innerHTML = '<i class="bi bi-arrow-up"></i>'; 
+            scrollToBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
             scrollToBtn.onclick = () => {
                 window.scrollTo({
                     top: 0,
@@ -131,7 +140,7 @@ window.addEventListener('scroll', () => {
             };
         }
 
-        lastScrollY = currentScrollY; 
-    }, 200); 
+        lastScrollY = currentScrollY;
+    }, 200);
 });
 // Fim da Função do botão de navegação

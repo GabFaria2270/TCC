@@ -5,7 +5,7 @@
     justify-content: center;
     gap: 120px;
     padding: 1rem;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
 }
 
 .valor1 {
@@ -15,21 +15,23 @@
     flex-direction: column;
     padding: 1rem;
     width: 300px;
-    max-width: 100%; 
-    min-height: 140px; 
-    border-radius: 1.5rem; 
-    box-shadow:  rgba(0, 123, 255, 0.1); 
-    transition: transform 0.3s, box-shadow 0.3s;
+    max-width: 100%;
+    min-height: 140px;
+    border-radius: 1.5rem;
     text-align: center;
-    overflow: hidden; 
-    word-wrap: break-word; 
-   
+    overflow: hidden;
+    word-wrap: break-word;
 }
 
-.valor1:hover {
-    transform: translateY(-9px) scale(1.09); 
-    box-shadow: 6px 24px rgba(0, 123, 255, 0.18);
-    animation: valor1-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both; 
+.valor1:not(.animating) {
+    transition:
+        transform 0.35s cubic-bezier(0.39, 0.575, 0.565, 1),
+        box-shadow 0.35s cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.valor1:not(.animating):hover {
+    transform: translateY(-9px) scale(1.09);
+    box-shadow: 0 16px 32px rgba(0, 123, 255, 0.18);
 }
 
 /* Animação personalizada para o hover */
@@ -43,12 +45,12 @@
 }
 
 .icon-medium {
-    font-size: 2rem; 
-    margin-bottom: 0.5rem; 
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 
 .icon-color {
-    color: #fafafa; 
+    color: #fafafa;
 }
 
 .titulov {
@@ -63,10 +65,8 @@
     color: #666;
     margin-top: 0.5rem;
     line-height: 1.5;
-    text-align: center; 
-    overflow-wrap: break-word; 
+    text-align: center;
+    overflow-wrap: break-word;
     word-break: break-word;
-    white-space: normal; 
+    white-space: normal;
 }
-
-

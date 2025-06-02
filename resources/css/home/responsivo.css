@@ -132,13 +132,11 @@
     transition: opacity 2s ease-in-out;
 }
 .section-cardV-false  {
-    transform: translateX(-120%); 
     opacity: 0; 
-    transition: transform 0.3s ease, opacity 0.3s ease!important; 
+    transition: opacity 2s ease-in-out; 
 }
 
 .section-cardV-true  {
-    transform: translateX(0); 
     opacity: 1; 
-    transition: transform 0.3s ease, opacity 0.3s ease !important; 
+    transition: opacity 2s ease-in-out ; 
 }
