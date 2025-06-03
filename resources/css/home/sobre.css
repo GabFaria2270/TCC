@@ -1,0 +1,42 @@
+.section-sobre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 80px; 
+    padding: 60px;
+    flex-wrap: wrap; 
+    margin-bottom: 30px;
+}
+
+.containescrita {
+    flex: 1; 
+    text-align: left; 
+    color: aliceblue;
+}
+
+.containerimg {
+    flex: 1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.containerimg img {
+    max-width: 100%; 
+    height: auto; 
+    border-radius: 8px; 
+}
+@media (max-width: 768px) {
+    .section-home {
+        flex-direction: column; 
+        text-align: center; 
+    }
+
+    .containescrita {
+        text-align: center; 
+    }
+
+    .containerimg {
+        margin-top: 20px;
+    }
+}

@@ -15,7 +15,7 @@ const observer = new IntersectionObserver(
         });
     },
     {
-        threshold: 0.2,
+        threshold: 0.5,
     },
 );
 
@@ -144,3 +144,31 @@ window.addEventListener('scroll', () => {
     }, 200);
 });
 // Fim da Função do botão de navegação
+
+//  Função do sobre 
+const sectionsobre = document.querySelectorAll('.section-sobre');
+
+const observersobre = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('focus-in-expand-fwd'); // Aplica a animação
+                entry.target.classList.add('section-home-true');
+                entry.target.classList.remove('section-home-false');
+            } else {
+                entry.target.classList.remove('focus-in-expand-fwd'); // Remove a animação
+                entry.target.classList.remove('section-home-true');
+                entry.target.classList.add('section-home-false');
+            }
+        });
+    },
+    {
+        threshold: 0.5, // Define quando a animação deve ser ativada (50% visível)
+    },
+);
+
+sectionsobre.forEach((section) => {
+    section.classList.add('section-home-false'); // Começa invisível
+    observersobre.observe(section);
+});
+// Fim da Função sobre
