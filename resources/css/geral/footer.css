@@ -1,0 +1,113 @@
+.footer-site {
+    background: linear-gradient(90deg, #232526 0%, #414345 100%);
+    color: #fff;
+    padding: 2.5rem 0 1.2rem 0;
+    font-size: 1.08rem;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+    border-top: 3px solid #007bff;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 10;
+    margin-top: 2rem;
+}
+.footer-site .container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    text-align: left;
+}
+.footer-logo,
+.footer-links,
+.footer-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.footer-logo {
+    margin-bottom: 0;
+    margin-right: 2.5rem;
+}
+.footer-logo i {
+    color: #0d6efd;
+    font-size: 2.2rem;
+}
+.footer-links {
+    margin-bottom: 0;
+    text-decoration: none;
+}
+.footer-links a {
+    color: #fff;
+    opacity: 0.85;
+    transition:
+        opacity 0.2s,
+        color 0.2s;
+    font-weight: 500;
+    margin: 0 0.3rem;
+    text-decoration: none;
+    font-size: 1.05rem;
+}
+.footer-links a:hover {
+    opacity: 1;
+    color: #0d6efd;
+    text-decoration: underline;
+}
+.footer-social {
+    margin-top: 0;
+}
+.footer-social a {
+    color: #fff;
+    opacity: 0.7;
+    font-size: 1.35rem;
+    margin: 0 0.25rem;
+    transition:
+        color 0.2s,
+        opacity 0.2s;
+}
+.footer-social a:hover {
+    color: #0d6efd;
+    opacity: 1;
+}
+.footer-site p,
+.footer-site small {
+    margin-bottom: 0;
+    display: inline;
+}
+.footer-site small {
+    font-size: 0.98rem;
+    opacity: 0.85;
+    margin-left: 0.5rem;
+}
+@media (max-width: 900px) {
+    .footer-site .container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.2rem;
+    }
+    .footer-site p,
+    .footer-site small {
+        display: block;
+        margin-bottom: 0.2rem;
+        margin-left: 0;
+    }
+    .footer-links {
+        margin-bottom: 0.5rem;
+    }
+    .footer-social {
+        margin-top: 0.5rem;
+    }
+}
+@media (max-width: 600px) {
+    .footer-site {
+        font-size: 0.98rem;
+        padding: 1.2rem 0 0.7rem 0;
+    }
+    .footer-site .container {
+        padding: 0 10px;
+    }
+}

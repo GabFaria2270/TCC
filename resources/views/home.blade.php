@@ -151,31 +151,37 @@
     <!-- Seção de Cards com escrita -->
 
     <!-- Seção de Cards com img a direita -->
-     <section class="section-sobre">
+    <section class="section-sobre">
         <div class="containerd"></div>
-     <div class="containescrita">
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-            anim id est laborum.
+        <div class="containescrita">
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea
+                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                mollit
+                anim id est laborum.
 
-        </p>
-        <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-            anim id est laborum.
-        </p>
-     </div>
-     <div class="containerimg">
-        <img src="{{ asset('img/testedeimg.jpeg') }}" class="img-fluid rounded-start" alt="...">
+            </p>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea
+                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                mollit
+                anim id est laborum.
+            </p>
+        </div>
+        <div class="containerimg">
+            <img src="{{ asset('img/testedeimg.jpeg') }}" class="img-fluid rounded-start" alt="...">
 
-     </div>
-     </section>
-    
+        </div>
+    </section>
+
     <!-- Seção de Cards com img a direita -->
 
     <section class="section-cardv">
@@ -213,6 +219,7 @@
         <i class="bi bi-arrow-up"></i> <!-- Ícone inicial -->
     </button>
     <!-- Seção de Botão de Navegação -->
+    @include('components.footer')
 </body>
 
 </html>
