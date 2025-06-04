@@ -159,9 +159,7 @@
     <!-- Seção de Cards com escrita -->
     <section class="">
         <div class="container-escrita">
-            <div class="escrita">
-                sobre
-            </div>
+            <span class="escrita">Sobre</span>
         </div>
     </section>
 
