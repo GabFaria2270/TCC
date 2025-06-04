@@ -37,25 +37,6 @@
     letter-spacing: 1px;
     font-size: 1.25rem;
 }
-.carousel-indicators [data-bs-target] {
-    background-color: #fff;
-
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    opacity: 0.8;
-    margin: 0 6px;
-    transition:
-        transform 0.2s,
-        background 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-.carousel-indicators .active {
-    background: #007bff;
-    border: 2px solid #fff;
-    transform: scale(1.3);
-    opacity: 1;
-}
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
 
@@ -63,7 +44,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
     width: 3.2rem;
     height: 3.2rem;
-}
+}   
 .carousel-control-prev,
 .carousel-control-next {
     background: none;
