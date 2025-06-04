@@ -166,7 +166,12 @@ const observersobre = new IntersectionObserver(
         threshold: 0.5, // Define quando a animação deve ser ativada (50% visível)
     },
 );
-
+//Função sobre para o texto animado 
+sectionsobre.forEach((section) => {
+    section.classList.add('section-home-false'); // Começa invisível
+    observersobre.observe(section);
+});
+// fim Função sobre para o texto animado 
 
 // Fim da Função sobre
 
