@@ -172,3 +172,36 @@ sectionsobre.forEach((section) => {
     observersobre.observe(section);
 });
 // Fim da Função sobre
+
+
+// Seleciona todas as seções com a classe 'section-separação'
+const sectionseparação = document.querySelectorAll('.section-separação');
+
+// Cria o IntersectionObserver para monitorar a visibilidade da seção
+const observerseparação = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            const titulo = entry.target.querySelector('.titulodassection'); // Seleciona o título da seção
+            if (entry.isIntersecting) {
+                // Adiciona a classe de animação ao título quando a seção estiver visível
+                titulo.classList.add('typing-effect');
+                entry.target.classList.add('section-home-true');
+                entry.target.classList.remove('section-home-false');
+            } else {
+                // Remove a classe de animação quando a seção sair da viewport (opcional)
+                titulo.classList.remove('typing-effect');
+                entry.target.classList.remove('section-home-true');
+                entry.target.classList.add('section-home-false');
+            }
+        });
+    },
+    {
+        threshold: 0.5, // Define que a animação será ativada quando 50% da seção estiver visível
+    },
+);
+
+// Adiciona a classe inicial 'section-home-false' e observa cada seção
+sectionseparação.forEach((section) => {
+    section.classList.add('section-home-false'); // Começa invisível
+    observerseparação.observe(section);
+});

@@ -1,113 +1,74 @@
-.footer-site {
-    background: linear-gradient(90deg, #232526 0%, #414345 100%);
+.footer-simple {
     color: #fff;
-    padding: 2.5rem 0 1.2rem 0;
-    font-size: 1.08rem;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
-    border-top: 3px solid #007bff;
-    letter-spacing: 0.5px;
-    position: relative;
-    z-index: 10;
-    margin-top: 2rem;
+    padding: 1rem 0; 
+    font-size: 0.9rem;
+    border-top: 1px solid #ccc; 
+    
 }
-.footer-site .container {
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 2.5rem;
-    text-align: left;
-}
-.footer-logo,
-.footer-links,
-.footer-social {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+
 .footer-logo {
-    margin-bottom: 0;
-    margin-right: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 0.5rem; 
 }
+
 .footer-logo i {
-    color: #0d6efd;
-    font-size: 2.2rem;
+    font-size: 1.8rem; 
+    margin-right: 1.5rem;
 }
+
 .footer-links {
-    margin-bottom: 0;
-    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    gap: 0.9rem; 
+    margin-bottom: 0.5rem; 
 }
+
 .footer-links a {
     color: #fff;
-    opacity: 0.85;
-    transition:
-        opacity 0.2s,
-        color 0.2s;
-    font-weight: 500;
-    margin: 0 0.3rem;
     text-decoration: none;
-    font-size: 1.05rem;
+    font-size: 0.85rem; 
+    transition: color 0.2s;
 }
+
 .footer-links a:hover {
-    opacity: 1;
-    color: #0d6efd;
-    text-decoration: underline;
+    color: #0d6efd; 
 }
+
 .footer-social {
-    margin-top: 0;
+    display: flex;
+    justify-content: flex-end; /* Alinha os ícones à direita em telas maiores */
+    align-items: center; /* Alinha os ícones verticalmente */
+    gap: 0.5rem; /* Espaçamento entre os ícones */
+    margin-bottom: 0.5rem; /* Espaçamento inferior */
 }
+
 .footer-social a {
     color: #fff;
-    opacity: 0.7;
-    font-size: 1.35rem;
-    margin: 0 0.25rem;
-    transition:
-        color 0.2s,
-        opacity 0.2s;
+    font-size: 1.5rem; /* Tamanho inicial dos ícones */
+    transition: transform 0.3s ease, color 0.3s ease; /* Transição suave para hover */
 }
+
 .footer-social a:hover {
-    color: #0d6efd;
-    opacity: 1;
+    color: #0d6efd; /* Cor ao passar o mouse */
+    transform: scale(1.8); /* Aumenta o tamanho dos ícones */
 }
-.footer-site p,
-.footer-site small {
-    margin-bottom: 0;
-    display: inline;
+
+.footer-simple small {
+    font-size: 0.75rem;
+    margin-top: 0.5rem; 
 }
-.footer-site small {
-    font-size: 0.98rem;
-    opacity: 0.85;
-    margin-left: 0.5rem;
+.container{
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 1rem;
+    max-height: 200px;
 }
-@media (max-width: 900px) {
-    .footer-site .container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 0.2rem;
-    }
-    .footer-site p,
-    .footer-site small {
-        display: block;
-        margin-bottom: 0.2rem;
-        margin-left: 0;
-    }
-    .footer-links {
-        margin-bottom: 0.5rem;
-    }
-    .footer-social {
-        margin-top: 0.5rem;
-    }
-}
-@media (max-width: 600px) {
-    .footer-site {
-        font-size: 0.98rem;
-        padding: 1.2rem 0 0.7rem 0;
-    }
-    .footer-site .container {
-        padding: 0 10px;
-    }
+.bi-instagram,
+.bi-facebook,
+.bi-twitter {
+    font-size: 1.5rem; /* Tamanho inicial dos ícones */
 }

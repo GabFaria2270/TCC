@@ -23,7 +23,7 @@
                             <a class="nav-link active" aria-current="page" href="/">Início</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Sobre</a>
+                            <a class="nav-link" href="#sobre">Sobre</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Contato</a>
@@ -82,7 +82,11 @@
             </button>
         </div>
     </section>
-
+    <div class="titulosdassection">
+        <h1 class="titulodassection">
+            Bem-vindo ao Sistema 60+ Conectado
+        </h1>
+    </div>
     <!-- Seção dos Cards -->
     <section class="section-card">
         <div class="row g-4">
@@ -129,9 +133,13 @@
         </div>
     </section>
     <!-- Seção de Cards -->
-
+    <div class="titulosdassection">
+        <h1 class="titulodassection">
+            Bem-vindo ao Sistema 60+ Conectado
+        </h1>
+    </div>
     <!-- Seção de Cards com escrita -->
-    <section class="section-home">
+    <section id="vantagens" class="section-home">
         <div class="card mb-3">
             <div class="row g-0">
                 <div class="col-md-4">
@@ -149,9 +157,16 @@
         </div>
     </section>
     <!-- Seção de Cards com escrita -->
+    <section class="">
+        <div class="container-escrita">
+            <div class="escrita">
+                sobre
+            </div>
+        </div>
+    </section>
 
     <!-- Seção de Cards com img a direita -->
-    <section class="section-sobre">
+    <section id="sobre" class="section-sobre">
         <div class="containerd"></div>
         <div class="containescrita">
             <p>
@@ -181,9 +196,10 @@
 
         </div>
     </section>
-
     <!-- Seção de Cards com img a direita -->
 
+
+    <!-- Seção dos valores -->
     <section class="section-cardv">
         <div class="containervalor">
             <div class="valor1">
@@ -213,6 +229,7 @@
             </div>
         </div>
     </section>
+    <!-- Seção dos valores -->
 
     <!-- Seção de Botão de Navegação -->
     <button class="btndenavegação" id="scrollToBtn">

@@ -34,3 +34,24 @@ input {
 button:hover {
     background-color: #480e7e;
 }
+
+.escrita {
+    display: inline-block; /* Ajusta o tamanho do contêiner ao texto */
+    font-size: 2rem; /* Tamanho do texto */
+    margin-top: 80px; /* Espaçamento superior */
+    margin-bottom: 15px; /* Espaçamento inferior */
+    color: #d8d8d8; /* Cor do texto */
+    border-right: 6px solid red; /* Marcador vermelho */
+    white-space: nowrap; /* Impede quebra de linha */
+    animation: mark 0.5s step-end infinite, escrever 3s steps(22,end) infinite; 
+   
+    
+}
+.container-escrita {
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    animation: escrever 3s steps(22,end) infinite;
+    width: 20ch; /* Largura total do contêiner */
+  
+}

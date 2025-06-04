@@ -160,6 +160,19 @@
    UTILITÁRIOS DE ANIMAÇÃO
    ========================= */
 
+@keyframes mark {
+   50%{
+     border-right-color: transparent;
+   }
+   
+}
+@keyframes escrever {
+    0%{
+      width: 0;
+    }
+ }
+
+
 .banner-container {
     display: flex;
     flex-wrap: wrap; /* Permite que os elementos se ajustem em telas menores */

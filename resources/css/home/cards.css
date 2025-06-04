@@ -12,8 +12,9 @@
 }
 
 .section-card {
-    margin: 2rem 0;
+    margin: 7rem 0;
     padding: 0 1rem;
+
 }
 
 .col {
@@ -116,6 +117,8 @@
         box-shadow 0.3s,
         transform 0.3s;
     background: #fff;
+    width: 97.8%;
+    margin-left: 15.5px;
 }
 
 .card.mb-3:hover {
@@ -131,7 +134,6 @@
 .card .col-md-4 {
     display: flex;
     align-items: stretch;
-    padding: 0;
     max-width: 320px;
     min-width: 180px;
 }
