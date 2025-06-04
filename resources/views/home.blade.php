@@ -128,7 +128,7 @@
         </div>
     </section>
     <!-- Seção de Cards com escrita -->
-    <section class="">
+    <section class="section-separação">
         <div class="container-escrita">
             <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
         </div>
