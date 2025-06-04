@@ -70,17 +70,17 @@
 }
 
 /* =========================
-   ANIMAÇÕES DE entrada de cards
+   ANIMAÇÕES DE ENTRADA DE CARDS
    ========================= */
-   @-webkit-keyframes cards-right {
-  0% {
-    -webkit-transform: translateX(-120%);
-            transform: translateX(-120%);
-  }
-  100% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
-  }
+@-webkit-keyframes cards-right {
+    0% {
+        -webkit-transform: translateX(-120%);
+        transform: translateX(-120%);
+    }
+    100% {
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
 }
 @keyframes cards-right {
     0% {
@@ -93,53 +93,41 @@
     }
 }
 
-
-
 /* =========================
-   ANIMAÇÕES DE entrada de cards
+   ANIMAÇÕES DE ENTRADA DO SOBRE
    ========================= */
-
-/* =========================
-   ANIMAÇÕES DE entrada do sobre
-   ========================= */
-   @-webkit-keyframes focus-in-expand-fwd {
+@-webkit-keyframes focus-in-expand-fwd {
     0% {
-      -webkit-transform: translateZ(-800px);
-              transform: translateZ(-800px);
-      -webkit-filter: blur(12px);
-              filter: blur(12px);
-      opacity: 0;
+        -webkit-transform: translateZ(-800px);
+        transform: translateZ(-800px);
+        -webkit-filter: blur(12px);
+        filter: blur(12px);
+        opacity: 0;
     }
     100% {
-      -webkit-transform: translateZ(0);
-              transform: translateZ(0);
-      -webkit-filter: blur(0);
-              filter: blur(0);
-      opacity: 1;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-filter: blur(0);
+        filter: blur(0);
+        opacity: 1;
     }
-  }
-  @keyframes focus-in-expand-fwd {
+}
+@keyframes focus-in-expand-fwd {
     0% {
-      -webkit-transform: translateZ(-800px);
-              transform: translateZ(-800px);
-      -webkit-filter: blur(12px);
-              filter: blur(12px);
-      opacity: 0;
+        -webkit-transform: translateZ(-800px);
+        transform: translateZ(-800px);
+        -webkit-filter: blur(12px);
+        filter: blur(12px);
+        opacity: 0;
     }
     100% {
-      -webkit-transform: translateZ(0);
-              transform: translateZ(0);
-      -webkit-filter: blur(0);
-              filter: blur(0);
-      opacity: 1;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-filter: blur(0);
+        filter: blur(0);
+        opacity: 1;
     }
-  }
-  
-
-/* =========================
-   ANIMAÇÕES DE entrada do sobre
-   ========================= */
-
+}
 
 /* =========================
    UTILITÁRIOS DE ANIMAÇÃO
@@ -150,20 +138,19 @@
 .animate-baner-inicial {
     animation: baner-inicial 5s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
-.animate-cards-right  {
-    animation: cards-right 3s ease-out forwards ;
+.animate-cards-right {
+    animation: cards-right 3s ease-out forwards;
 }
 .focus-in-expand-fwd {
-    animation: focus-in-expand-fwd 3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: focus-in-expand-fwd 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
-.texto-animado{
-    animation: escrever 0.9s steps(22, end) forwards, mark 0.5s step-end infinite; /* Animações */
+.texto-animado {
+    animation:
+        escrever 0.9s steps(22, end) forwards,
+        mark 0.5s step-end infinite;
 }
-/* =========================
-   UTILITÁRIOS DE ANIMAÇÃO
-   ========================= */
 
-   @keyframes escrever {
+@keyframes escrever {
     from {
         width: 0;
     }
@@ -173,43 +160,42 @@
 }
 
 @keyframes mark {
-   
     50% {
         border-right-color: transparent;
     }
 }
 
-
+/* =========================
+   BANNER RESPONSIVO
+   ========================= */
 .banner-container {
     display: flex;
-    flex-wrap: wrap; /* Permite que os elementos se ajustem em telas menores */
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     padding: 1rem;
 }
 
 .banner-text {
-    text-align: center; /* Centraliza o texto em telas menores */
+    text-align: center;
     margin-bottom: 1rem;
 }
 
 .banner-img-wrapper {
-    max-width: 100%; /* Garante que a imagem não ultrapasse o tamanho da tela */
+    max-width: 100%;
     text-align: center;
 }
 
 .banner-img {
-    width: 100%; /* Ajusta a largura da imagem */
-    max-width: 400px; /* Define um tamanho máximo */
-    height: auto; /* Mantém a proporção da imagem */
+    width: 100%;
+    max-width: 400px;
+    height: auto;
 }
 
-/* Media query para telas menores */
 @media (max-width: 768px) {
     .banner-container {
-        flex-direction: column; /* Empilha os elementos verticalmente */
+        flex-direction: column;
     }
-
     .banner-text {
         margin-bottom: 1rem;
     }

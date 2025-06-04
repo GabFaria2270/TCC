@@ -54,16 +54,11 @@
         </div>
     </section>
 
-    <!-- Seção do texto animado -->
-    <section class="section-separação">
+    <!-- Seção dos Cards -->
+    <section class="section-card">
         <div class="container-escrita">
             <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
         </div>
-    </section>
-    <!-- Seção do texto animado -->
-
-    <!-- Seção dos Cards -->
-    <section class="section-card">
         <div class="row g-4">
             <div class="col">
                 <div class="card h-100">
@@ -109,16 +104,11 @@
     </section>
     <!-- Seção de Cards -->
 
-    <!-- Seção do texto animado -->
-    <section class="section-separação">
+    <!-- Seção de Cards com escrita -->
+    <section id="vantagens" class="section-home">
         <div class="container-escrita">
             <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
         </div>
-    </section>
-    <!-- Seção do texto animado -->
-
-    <!-- Seção de Cards com escrita -->
-    <section id="vantagens" class="section-home">
         <div class="card mb-3">
             <div class="row g-0">
                 <div class="col-md-4">
@@ -136,57 +126,53 @@
         </div>
     </section>
     <!-- Seção de Cards com escrita -->
-    <!-- Seção do texto animado -->
-    <section class="section-separação">
-        <div class="container-escrita">
-            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
-        </div>
-    </section>
-    <!-- Seção do texto animado -->
 
     <!-- Seção de Cards com img a direita -->
     <section id="sobre" class="section-sobre">
-        <div class="containerd"></div>
-        <div class="containescrita">
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                mollit
-                anim id est laborum.
-
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                mollit
-                anim id est laborum.
-            </p>
+        <div class="container-escrita">
+            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
         </div>
-        <div class="containerimg">
-            <img src="{{ asset('img/testedeimg.jpeg') }}" class="img-fluid rounded-start" alt="...">
+        <div class="container-sobre">
+            <div class="containescrita">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                    et
+                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip
+                    ex ea
+                    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                    fugiat
+                    nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                    mollit
+                    anim id est laborum.
 
+                </p>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                    et
+                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip
+                    ex ea
+                    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                    fugiat
+                    nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                    mollit
+                    anim id est laborum.
+                </p>
+            </div>
+            <div class="containerimg">
+                <img src="{{ asset('img/testedeimg.jpeg') }}" class="img-fluid rounded-start" alt="...">
+
+            </div>
         </div>
     </section>
     <!-- Seção de Cards com img a direita -->
 
-    <!-- Seção do texto animado -->
-    <section class="section-separação">
+    <!-- Seção dos valores -->
+    <section class="section-cardv" id="valores">
         <div class="container-escrita">
             <span class="escrita" id="textoAnimado">Nossas Conquistas</span>
         </div>
-    </section>
-    <!-- Seção do texto animado -->
-
-    <!-- Seção dos valores -->
-    <section class="section-cardv" id="valores">
         <div class="containervalor">
             <div class="valor1">
                 <i class="bi bi-cart icon-medium icon-color"></i>
@@ -222,7 +208,10 @@
         <i class="bi bi-arrow-up"></i> <!-- Ícone inicial -->
     </button>
     <!-- Seção de Botão de Navegação -->
-    @include('components.footer')
+
+    <section id="footer">
+        @include('components.footer')
+    </section>
 </body>
 
 </html>

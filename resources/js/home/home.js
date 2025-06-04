@@ -1,7 +1,9 @@
 import '../app.js';
 
+// =========================
+// Animação das sections principais
+// =========================
 const sections = document.querySelectorAll('.section-home');
-
 const observer = new IntersectionObserver(
     (entries) => {
         entries.forEach((entry) => {
@@ -14,57 +16,51 @@ const observer = new IntersectionObserver(
             }
         });
     },
-    {
-        threshold: 0.5,
-    },
+    { threshold: 0.5 },
 );
-
 sections.forEach((section) => {
-    section.classList.add('section-home-false'); // Começa invisível
+    section.classList.add('section-home-false');
     observer.observe(section);
 });
 
+// =========================
+// Animação dos cards
+// =========================
 const sectionsdocard = document.querySelectorAll('.section-card');
-
 const observercard = new IntersectionObserver(
     (entries) => {
         entries.forEach((entry) => {
             const cards = entry.target.querySelectorAll('.row');
-
             if (entry.isIntersecting) {
-                console.log('Seção visível:', entry.target); // Log para depuração
                 cards.forEach((card) => {
-                    card.classList.add('animate-cards-right'); // Animação de entrada
+                    card.classList.add('animate-cards-right');
                 });
                 entry.target.classList.add('section-card-true');
                 entry.target.classList.remove('section-card-false');
             } else {
-                console.log('Seção não visível:', entry.target); // Log para depuração
                 cards.forEach((card) => {
-                    card.classList.remove('animate-cards-right'); // Remove a animação
+                    card.classList.remove('animate-cards-right');
                 });
                 entry.target.classList.remove('section-card-true');
                 entry.target.classList.add('section-card-false');
             }
         });
     },
-    {
-        threshold: 0.2,
-    },
+    { threshold: 0.2 },
 );
-
 sectionsdocard.forEach((section) => {
-    section.classList.add('section-card-false'); // Começa invisível
+    section.classList.add('section-card-false');
     observercard.observe(section);
 });
-// função para os cards do valores
-const sectionsdocardV = document.querySelectorAll('.section-cardv');
 
+// =========================
+// Animação dos cards de valores
+// =========================
+const sectionsdocardV = document.querySelectorAll('.section-cardv');
 const observercardV = new IntersectionObserver(
     (entries) => {
         entries.forEach((entry) => {
             const cards = entry.target.querySelectorAll('.valor1');
-
             if (entry.isIntersecting) {
                 cards.forEach((card) => {
                     if (!card.classList.contains('animate-cards-right')) {
@@ -83,29 +79,23 @@ const observercardV = new IntersectionObserver(
             }
         });
     },
-    {
-        threshold: 0.1,
-    },
+    { threshold: 0.1 },
 );
-
 sectionsdocardV.forEach((section) => {
-    section.classList.add('section-cardV-false'); // Começa invisível
+    section.classList.add('section-cardV-false');
     observercardV.observe(section);
 });
-// Fim função para os cards do valores
 
-// Função do botão de navegação
+// =========================
+// Botão de navegação (scroll)
+// =========================
 const scrollToBtn = document.getElementById('scrollToBtn');
 let lastScrollY = window.scrollY;
 let debounceTimeout;
-
-// Função debounce para limitar a frequência de execução
 function debounce(func, delay) {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(func, delay);
 }
-
-// Detecta o scroll
 window.addEventListener('scroll', () => {
     debounce(() => {
         const currentScrollY = window.scrollY;
@@ -121,82 +111,65 @@ window.addEventListener('scroll', () => {
             }, 300);
         }
         if (currentScrollY > lastScrollY) {
-            // Scroll para baixo
             scrollToBtn.innerHTML = '<i class="bi bi-arrow-down"></i>';
             scrollToBtn.onclick = () => {
-                window.scrollTo({
-                    top: document.body.scrollHeight,
-                    behavior: 'smooth',
-                });
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             };
         } else {
-            // Scroll para cima
             scrollToBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
             scrollToBtn.onclick = () => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth',
-                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             };
         }
-
         lastScrollY = currentScrollY;
     }, 200);
 });
-// Fim da Função do botão de navegação
 
-//  Função do sobre 
-const sectionsobre = document.querySelectorAll('.section-sobre');
-
+// =========================
+// Animação do sobre
+// =========================
+const sectionsobre = document.querySelectorAll('.container-sobre');
 const observersobre = new IntersectionObserver(
     (entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('focus-in-expand-fwd'); // Aplica a animação
-                entry.target.classList.add('section-home-true');
+                entry.target.classList.add('focus-in-expand-fwd', 'section-home-true');
                 entry.target.classList.remove('section-home-false');
             } else {
-                entry.target.classList.remove('focus-in-expand-fwd'); // Remove a animação
-                entry.target.classList.remove('section-home-true');
+                entry.target.classList.remove('focus-in-expand-fwd', 'section-home-true');
                 entry.target.classList.add('section-home-false');
             }
         });
     },
-    {
-        threshold: 0.5, // Define quando a animação deve ser ativada (50% visível)
-    },
+    { threshold: 0.5 },
 );
-//Função sobre para o texto animado 
 sectionsobre.forEach((section) => {
-    section.classList.add('section-home-false'); // Começa invisível
+    section.classList.add('section-home-false');
     observersobre.observe(section);
 });
-// fim Função sobre para o texto animado 
 
-// Fim da Função sobre
-
+// =========================
+// Scroll suave para a seção "sobre"
+// =========================
 document.querySelector('a[href="#sobre"]').addEventListener('click', (event) => {
-    event.preventDefault(); // Impede o comportamento padrão do link
-
+    event.preventDefault();
     const targetSection = document.querySelector('#sobre');
-    const offset = -100; // Ajuste o deslocamento (100px para cima)
-
+    const offset = -100;
     window.scrollTo({
-        top: targetSection.offsetTop + offset, // Adiciona o deslocamento
-        behavior: 'smooth', // Scroll suave
+        top: targetSection.offsetTop + offset,
+        behavior: 'smooth',
     });
 });
 
-const sectionseparação = document.querySelectorAll('.section-separação');
-
-// Cria o IntersectionObserver para monitorar a visibilidade da seção
+// =========================
+// Animação do texto animado nas separações
+// =========================
+const sectionseparação = document.querySelectorAll('.container-escrita');
 const observerseparação = new IntersectionObserver(
     (entries) => {
         entries.forEach((entry) => {
             const cards = entry.target.querySelectorAll('.escrita');
-
             if (entry.isIntersecting) {
-                console.log(`Seção visível: ${entry.target.className}`); // Log para depuração
                 cards.forEach((card) => {
                     if (!card.classList.contains('texto-animado')) {
                         card.classList.add('texto-animado', 'animating');
@@ -209,19 +182,14 @@ const observerseparação = new IntersectionObserver(
                 entry.target.classList.add('section-home-true');
                 entry.target.classList.remove('section-home-false');
             } else {
-                console.log(`Seção fora da viewport: ${entry.target.className}`); // Log para depuração
                 entry.target.classList.remove('section-home-true');
                 entry.target.classList.add('section-home-false');
             }
         });
     },
-    {
-        threshold: 0.1, // Define que a animação será ativada quando 10% da seção estiver visível
-    },
+    { threshold: 0.1 },
 );
-
-// Adiciona a classe inicial 'section-home-false' e observa cada seção
 sectionseparação.forEach((section) => {
-    section.classList.add('section-home-false'); // Começa invisível
+    section.classList.add('section-home-false');
     observerseparação.observe(section);
 });
