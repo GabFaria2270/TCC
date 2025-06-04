@@ -167,12 +167,20 @@ const observersobre = new IntersectionObserver(
     },
 );
 
-sectionsobre.forEach((section) => {
-    section.classList.add('section-home-false'); // Começa invisível
-    observersobre.observe(section);
-});
+
 // Fim da Função sobre
 
+document.querySelector('a[href="#sobre"]').addEventListener('click', (event) => {
+    event.preventDefault(); // Impede o comportamento padrão do link
+
+    const targetSection = document.querySelector('#sobre');
+    const offset = -100; // Ajuste o deslocamento (100px para cima)
+
+    window.scrollTo({
+        top: targetSection.offsetTop + offset, // Adiciona o deslocamento
+        behavior: 'smooth', // Scroll suave
+    });
+});
 
 const sectionseparação = document.querySelectorAll('.section-separação');
 
@@ -203,7 +211,7 @@ const observerseparação = new IntersectionObserver(
         });
     },
     {
-        threshold: 0.2, // Define que a animação será ativada quando 10% da seção estiver visível
+        threshold: 0.1, // Define que a animação será ativada quando 10% da seção estiver visível
     },
 );
 
