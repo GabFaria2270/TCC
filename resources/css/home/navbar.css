@@ -3,12 +3,11 @@
    ========================= */
 .navbar {
     background: linear-gradient(90deg, #232526 0%, #414345 100%);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     border-bottom: 4px solid #007bff;
     padding: 0.5rem 0;
     top: 0;
     z-index: 100;
-  
 }
 
 .container-fluid {
@@ -40,8 +39,7 @@
     gap: 12px;
     margin-left: auto;
     list-style: none;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-    
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .nav-item {
@@ -64,8 +62,11 @@
     z-index: 1;
     display: inline-block;
     /* Mantém animação do animacoes.css */
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 1px 4px rgba(0,123,255,0.04);
+    transition:
+        background 0.2s,
+        color 0.2s,
+        box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(0, 123, 255, 0.04);
 }
 
 .nav-link:focus {
@@ -80,15 +81,16 @@
     color: #fff;
     z-index: 2;
     animation: botoes-navbar 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-    box-shadow: 0 2px 12px rgba(0,123,255,0.15);
+    box-shadow: 0 2px 12px rgba(0, 123, 255, 0.15);
 }
 
-.nav-link.active, .nav-link[aria-current="page"] {
+.nav-link.active,
+.nav-link[aria-current='page'] {
     color: #fff;
     font-weight: bold;
     background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
     border: 2px solid #fff;
-    box-shadow: 0 2px 16px rgba(0,123,255,0.18);
+    box-shadow: 0 2px 16px rgba(0, 123, 255, 0.18);
 }
 
 .navbar-toggler {
@@ -116,15 +118,40 @@
         margin-left: 0;
         padding: 10px 0;
         border-radius: 12px;
+        background: rgba(35, 37, 38, 0.98);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     }
     .navbar-brand {
         text-align: center;
         margin-bottom: 1rem;
         width: 100%;
+        font-size: 1.5rem;
     }
     .container-fluid {
         flex-direction: column;
         align-items: flex-start;
         padding: 0 1rem;
+    }
+    .navbar {
+        padding: 0.5rem 0.2rem;
+    }
+    .navbar-toggler {
+        margin-left: 0;
+        margin-right: 0.5rem;
+        font-size: 2rem;
+    }
+}
+@media (max-width: 600px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    .navbar-nav {
+        padding: 6px 0;
+        gap: 2px;
+    }
+    .nav-link {
+        font-size: 0.98rem;
+        padding: 8px 10px;
     }
 }

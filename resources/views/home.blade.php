@@ -11,41 +11,12 @@
 <body>
     <!-- Seção de Navegação -->
     <section id="nav">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">60+conectado</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#sobre">Sobre</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Contato</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
+        @include('components.navbar')
     </section>
 
     <!-- Conteúdo do carousel  -->
     <section class="section-home main-content">
         <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"
-                    aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"
-                    aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"
-                    aria-label="Slide 3"></button>
-            </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
