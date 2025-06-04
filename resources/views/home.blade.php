@@ -53,11 +53,15 @@
             </button>
         </div>
     </section>
-    <div class="titulosdassection">
-        <h1 class="titulodassection">
-            Bem-vindo ao Sistema 60+ Conectado
-        </h1>
-    </div>
+
+    <!-- Seção do texto animado -->
+    <section class="section-separação">
+        <div class="container-escrita">
+            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
+        </div>
+    </section>
+    <!-- Seção do texto animado -->
+
     <!-- Seção dos Cards -->
     <section class="section-card">
         <div class="row g-4">
@@ -104,11 +108,15 @@
         </div>
     </section>
     <!-- Seção de Cards -->
-    <div class="titulosdassection">
-        <h1 class="titulodassection">
-            Bem-vindo ao Sistema 60+ Conectado
-        </h1>
-    </div>
+
+    <!-- Seção do texto animado -->
+    <section class="section-separação">
+        <div class="container-escrita">
+            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
+        </div>
+    </section>
+    <!-- Seção do texto animado -->
+
     <!-- Seção de Cards com escrita -->
     <section id="vantagens" class="section-home">
         <div class="card mb-3">
@@ -128,11 +136,13 @@
         </div>
     </section>
     <!-- Seção de Cards com escrita -->
+    <!-- Seção do texto animado -->
     <section class="section-separação">
         <div class="container-escrita">
             <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
         </div>
     </section>
+    <!-- Seção do texto animado -->
 
     <!-- Seção de Cards com img a direita -->
     <section id="sobre" class="section-sobre">
@@ -167,9 +177,16 @@
     </section>
     <!-- Seção de Cards com img a direita -->
 
+    <!-- Seção do texto animado -->
+    <section class="section-separação">
+        <div class="container-escrita">
+            <span class="escrita" id="textoAnimado">Nossas Conquistas</span>
+        </div>
+    </section>
+    <!-- Seção do texto animado -->
 
     <!-- Seção dos valores -->
-    <section class="section-cardv">
+    <section class="section-cardv" id="valores">
         <div class="containervalor">
             <div class="valor1">
                 <i class="bi bi-cart icon-medium icon-color"></i>

@@ -14,7 +14,7 @@
                     <a class="nav-link" href="#sobre">Sobre</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Contato</a>
+                    <a class="nav-link" href="#valores">Contato</a>
                 </li>
             </ul>
         </div>
