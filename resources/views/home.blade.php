@@ -159,7 +159,7 @@
     <!-- Seção de Cards com escrita -->
     <section class="">
         <div class="container-escrita">
-            <span class="escrita">Sobre</span>
+            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
         </div>
     </section>
 

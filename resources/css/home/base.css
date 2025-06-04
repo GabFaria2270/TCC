@@ -37,40 +37,21 @@ button:hover {
 .escrita {
     display: inline-block; /* Ajusta o tamanho do contêiner ao texto */
     font-size: 2rem; /* Tamanho do texto */
-    margin-top: 80px; /* Espaçamento superior */
-    margin-bottom: 15px; /* Espaçamento inferior */
     color: #d8d8d8; /* Cor do texto */
     border-right: 6px solid red; /* Marcador vermelho */
     white-space: nowrap; /* Impede quebra de linha */
-    overflow: hidden;
-    width: 0;
-    animation:
-        escrever 1s steps(6, end) 1 both,
-        mark 0.9s step-end 1 both;
+    overflow: hidden; /* Esconde o texto fora do contêiner */
+    animation: escrever 0.9s steps(22, end) forwards, mark 0.5s step-end infinite; /* Animações */
+    text-align: center; /* Centraliza o texto */
 }
 .container-escrita {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: fit-content;
-    max-width: 100vw;
-    overflow: hidden; /* Esconde o texto que ainda não foi "escrito" */
+    margin-top: 90px;
+    margin-bottom: 20px;
+    display: flex; /* Define o layout como flexbox */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    width: 100%; /* Garante que o contêiner ocupe toda a largura */
+    height: 90px;
 }
 
-@keyframes escrever {
-    from {
-        width: 0;
-    }
-    to {
-        width: 6ch;
-    }
-}
 
-@keyframes mark {
-    0% {
-        border-right-color: rgb(11, 46, 245);
-    }
-    100% {
-        border-right-color: transparent;
-    }
-}

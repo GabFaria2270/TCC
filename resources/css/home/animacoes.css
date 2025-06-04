@@ -160,17 +160,21 @@
    UTILITÁRIOS DE ANIMAÇÃO
    ========================= */
 
-@keyframes mark {
-   50%{
-     border-right-color: transparent;
-   }
-   
-}
-@keyframes escrever {
-    0%{
-      width: 0;
+   @keyframes escrever {
+    from {
+        width: 0;
     }
- }
+    to {
+        width: 18ch;
+    }
+}
+
+@keyframes mark {
+   
+    50% {
+        border-right-color: transparent;
+    }
+}
 
 
 .banner-container {
