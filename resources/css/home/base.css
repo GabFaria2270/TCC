@@ -41,12 +41,11 @@ button:hover {
     border-right: 6px solid red; /* Marcador vermelho */
     white-space: nowrap; /* Impede quebra de linha */
     overflow: hidden; /* Esconde o texto fora do contêiner */
-    animation: escrever 0.9s steps(22, end) forwards, mark 0.5s step-end infinite; /* Animações */
     text-align: center; /* Centraliza o texto */
 }
 .container-escrita {
     margin-top: 90px;
-    margin-bottom: 20px;
+ ;
     display: flex; /* Define o layout como flexbox */
     justify-content: center; /* Centraliza horizontalmente */
     align-items: center; /* Centraliza verticalmente */
