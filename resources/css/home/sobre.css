@@ -26,17 +26,3 @@
     height: auto; 
     border-radius: 8px; 
 }
-@media (max-width: 768px) {
-    .section-home {
-        flex-direction: column; 
-        text-align: center; 
-    }
-
-    .containescrita {
-        text-align: center; 
-    }
-
-    .containerimg {
-        margin-top: 20px;
-    }
-}

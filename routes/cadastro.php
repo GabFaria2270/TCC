@@ -18,8 +18,7 @@ Route::post('/cadastro', function (Request $request) {
         'EMAIL' => $request->EMAIL,
         'SENHA_HASH' => Hash::make($request->SENHA_HASH),
         'PERFIL' => $request->PERFIL,
-        // 'DATA_CRIACAO' será preenchido automaticamente pelo banco
     ]);
 
-    
+    return redirect()->back()->with('success', 'Cadastro realizado com sucesso!');
 });

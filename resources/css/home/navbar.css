@@ -109,49 +109,6 @@
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,123,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
 }
 
-@media (max-width: 900px) {
-    .navbar-nav {
-        flex-direction: column;
-        gap: 6px;
-        width: 100%;
-        text-align: center;
-        margin-left: 0;
-        padding: 10px 0;
-        border-radius: 12px;
-        background: rgba(35, 37, 38, 0.98);
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    }
-    .navbar-brand {
-        text-align: center;
-        margin-bottom: 1rem;
-        width: 100%;
-        font-size: 1.5rem;
-    }
-    .container-fluid {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0 1rem;
-    }
-    .navbar {
-        padding: 0.5rem 0.2rem;
-    }
-    .navbar-toggler {
-        margin-left: 0;
-        margin-right: 0.5rem;
-        font-size: 2rem;
-    }
-}
-@media (max-width: 600px) {
-    .navbar-brand {
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
-    }
-    .navbar-nav {
-        padding: 6px 0;
-        gap: 2px;
-    }
-    .nav-link {
-        font-size: 0.98rem;
-        padding: 8px 10px;
-    }
-}
+
+
+

@@ -83,9 +83,55 @@
     .card-body {
         padding: 16px 8px;
     }
+
+    /* Navbar */
+    .navbar-nav {
+        flex-direction: column; /* Empilha os itens verticalmente */
+        gap: 6px; /* Reduz o espaçamento entre os itens */
+        width: 100%; /* Ocupa toda a largura */
+        text-align: center; /* Centraliza o texto */
+        margin-left: 0;
+        padding: 10px 0;
+        border-radius: 12px;
+        background: rgba(35, 37, 38, 0.98); /* Fundo mais opaco */
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+        text-align: center; /* Centraliza o logotipo */
+        margin-bottom: 1rem;
+        width: 100%;
+        font-size: 1.5rem; /* Reduz o tamanho do logotipo */
+    }
+    .navbar-toggler {
+        margin-left: 0;
+        margin-right: 0.5rem;
+        font-size: 2rem; /* Aumenta o tamanho do botão de menu */
+    }
+
+    /* Carousel */
+    .carousel-caption {
+        font-size: 1rem; /* Ajusta o tamanho do texto no carousel */
+        text-align: center;
+    }
+    .carousel-item img {
+        height: auto;
+        max-height: 400px;
+        object-fit: cover;
+    }
+
+    /* Seções */
+    .section-sobre .container-sobre {
+        flex-direction: column; /* Empilha os elementos verticalmente */
+        gap: 20px;
+    }
+    .section-sobre .containerimg {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    .section-sobre .containescrita {
+        text-align: center;
+    }
 }
-
-
 
 /* Extra: para telas bem pequenas */
 @media (max-width: 600px) {
@@ -107,6 +153,44 @@
     }
     .card-body {
         padding: 10px 4px;
+    }
+
+    /* Navbar */
+    .navbar-brand {
+        font-size: 1.2rem; /* Reduz ainda mais o tamanho do logotipo */
+        margin-bottom: 0.5rem;
+    }
+    .navbar-nav {
+        padding: 6px 0;
+        gap: 2px; /* Reduz o espaçamento entre os itens */
+    }
+    .nav-link {
+        font-size: 0.98rem; /* Reduz o tamanho do texto */
+        padding: 8px 10px; /* Ajusta o padding dos links */
+    }
+
+    /* Seções */
+    .section-sobre .containerimg img {
+        max-width: 100%;
+        height: auto;
+    }
+    .section-sobre .container-sobre {
+        gap: 15px; /* Reduz o espaçamento entre os elementos */
+    }
+}
+
+/* =========================
+   RESPONSIVIDADE GLOBAL
+   ========================= */
+
+/* Ajustes para telas grandes (até 1200px) */
+@media (max-width: 1200px) {
+    .container-fluid {
+        padding: 0 1.5rem; /* Reduz o padding lateral */
+    }
+
+    .carousel-caption {
+        font-size: 1.2rem; /* Ajusta o tamanho do texto no carousel */
     }
 }
 
@@ -139,4 +223,84 @@
 .section-cardV-true  {
     opacity: 1; 
     transition: opacity 2s ease-in-out ; 
+}
+
+/* =========================
+   ANIMAÇÕES RESPONSIVAS
+   ========================= */
+
+/* Ajuste para telas menores (máximo de 768px) */
+@media (max-width: 768px) {
+    @keyframes botoes-navbar {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.1); /* Reduz a escala */
+        }
+    }
+
+    @keyframes baner-inicial {
+        0% {
+            transform: translateX(100vw); /* Reduz a distância inicial */
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes baner-titulo {
+        0% {
+            transform: translateZ(-40px); /* Reduz a profundidade */
+            opacity: 0;
+        }
+        100% {
+            transform: translateZ(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes cards-right {
+        0% {
+            transform: translateX(-60%); /* Reduz a distância inicial */
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes focus-in-expand-fwd {
+        0% {
+            transform: translateZ(-400px); /* Reduz a profundidade */
+            filter: blur(6px); /* Reduz o desfoque */
+            opacity: 0;
+        }
+        100% {
+            transform: translateZ(0);
+            filter: blur(0);
+            opacity: 1;
+        }
+    }
+
+    .animate-baner-inicial {
+        animation: baner-inicial 3s cubic-bezier(0.23, 1, 0.32, 1) both; /* Reduz a duração */
+    }
+
+    .animate-cards-right {
+        animation: cards-right 2s ease-out forwards; /* Reduz a duração */
+    }
+
+    .focus-in-expand-fwd {
+        animation: focus-in-expand-fwd 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; /* Reduz a duração */
+    }
+
+    .texto-animado {
+        animation:
+            escrever 0.7s steps(18, end) forwards, /* Reduz a duração */
+            mark 0.4s step-end infinite; /* Reduz a duração do marcador */
+    }
 }

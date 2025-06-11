@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
-    @vite(['resources/css/home/home.css', 'resources/js/home/home.js'])
+    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js','routes/web.php'])
 </head>
 
 <body>
@@ -18,31 +18,50 @@
     <section class="section-home main-content">
         <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
+                <!-- Primeiro Slide -->
                 <div class="carousel-item active">
                     <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
                         class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
+                    <div class="carousel-caption  d-md-block">
                         <h5>Primeiro Slide</h5>
                         <p>Conteúdo de exemplo para o primeiro slide.</p>
+                        <div class="cadastrar">
+                            <a class="Bcadstrar" href="{{ route('cadastro') }}">Cadastrar</a>
+                            <a class="Bcadstrar" href="{{ route('login') }}">Login</a>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Segundo Slide -->
                 <div class="carousel-item">
                     <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
                         class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>Segundo Slide</h5>
-                        <p>Conteúdo de exemplo para o segundo slide.</p>
+                    <div class="carousel-caption  d-md-block">
+                        <h5>Primeiro Slide</h5>
+                        <p>Conteúdo de exemplo para o primeiro slide.</p>
+                        <div class="cadastrar">
+                            <a class="Bcadstrar" href="{{ route('cadastro') }}">Cadastrar</a>
+                            <a class="Bcadstrar" href="{{ route('login') }}">Login</a>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Terceiro Slide -->
                 <div class="carousel-item">
                     <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
                         class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>Terceiro Slide</h5>
-                        <p>Conteúdo de exemplo para o terceiro slide.</p>
+                    <div class="carousel-caption  d-md-block">
+                        <h5>Primeiro Slide</h5>
+                        <p>Conteúdo de exemplo para o primeiro slide.</p>
+                        <div class="cadastrar">
+                            <a class="Bcadstrar" href="{{ route('cadastro') }}">Cadastrar</a>
+                            <a class="Bcadstrar" href="{{ route('login') }}">Login</a>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Controles do Carrossel -->
             <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Anterior</span>

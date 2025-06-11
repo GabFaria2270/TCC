@@ -41,7 +41,8 @@ button:hover {
     border-right: 6px solid red; 
     white-space: nowrap; 
     overflow: hidden; 
-    text-align: center; 
+    text-align: center;
+    
 }
 .container-escrita {
     margin-top: 90px;

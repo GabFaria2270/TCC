@@ -36,6 +36,7 @@
     bottom: 0;
     letter-spacing: 1px;
     font-size: 1.25rem;
+
 }
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
@@ -57,15 +58,37 @@
     background: none;
     box-shadow: none;
 }
-@media (max-width: 900px) {
-    .carousel-img-custom {
-        height: 180px;
-    }
-    .carousel-caption {
-        padding: 1rem 1.2rem;
-        font-size: 1rem;
-    }
-    .carousel {
-        border-radius: 0 0 1.2rem 1.2rem;
-    }
+
+.Bcadstrar {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.Bcadstrar:hover {
+    background: linear-gradient(90deg, #0056b3 0%, #003f7f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
+}
+
+.Bcadstrar:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+.cadastrar {
+    display: flex; /* Define o layout como flexbox */
+    justify-content: center; /* Centraliza os botões horizontalmente */
+    align-items: center; /* Alinha os botões verticalmente */
+    gap: 1.5rem; /* Define o espaçamento uniforme entre os botões */
+    margin-top: 1.5rem; /* Adiciona um espaçamento superior */
 }

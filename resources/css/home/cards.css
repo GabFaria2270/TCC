@@ -184,23 +184,3 @@
     color: #6c757d;
     font-size: 0.95rem;
 }
-
-/* Responsividade para card com escrita lateral */
-@media (max-width: 900px) {
-    .card .row.g-0 {
-        flex-direction: column;
-        flex-wrap: wrap;
-    }
-    .card .col-md-4,
-    .card .col-md-8 {
-        max-width: 100%;
-        flex: 1 1 100%;
-    }
-    .card .img-fluid {
-        border-radius: 1.5rem 1.5rem 0 0;
-        max-height: 180px;
-    }
-    .card .col-md-8 {
-        padding: 1rem;
-    }
-}

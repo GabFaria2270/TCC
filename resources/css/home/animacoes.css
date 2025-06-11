@@ -146,8 +146,8 @@
 }
 .texto-animado {
     animation:
-        escrever 0.9s steps(22, end) forwards,
-        mark 0.5s step-end infinite;
+        escrever 2s steps(22, end) forwards,
+        mark 0.2s step-end infinite;
 }
 
 @keyframes escrever {
@@ -155,48 +155,16 @@
         width: 0;
     }
     to {
-        width: 18ch;
+        width: 18ch; /* Define o comprimento do texto */
     }
 }
 
 @keyframes mark {
     50% {
-        border-right-color: transparent;
+        border-right-color: transparent ; /* Faz o marcador piscar */
     }
+   
 }
 
-/* =========================
-   BANNER RESPONSIVO
-   ========================= */
-.banner-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-}
 
-.banner-text {
-    text-align: center;
-    margin-bottom: 1rem;
-}
 
-.banner-img-wrapper {
-    max-width: 100%;
-    text-align: center;
-}
-
-.banner-img {
-    width: 100%;
-    max-width: 400px;
-    height: auto;
-}
-
-@media (max-width: 768px) {
-    .banner-container {
-        flex-direction: column;
-    }
-    .banner-text {
-        margin-bottom: 1rem;
-    }
-}

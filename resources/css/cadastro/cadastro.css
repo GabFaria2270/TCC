@@ -1,56 +1,63 @@
-/* Estilos gerais */
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f5f6fa;
-    margin: 0;
-    padding: 0;
+/* Container do formulário */
+.form-cadastro {
+    display: flex;
+    flex-direction: column; /* Organiza os elementos verticalmente */
+    justify-content: space-between; /* Distribui os elementos verticalmente */
+    align-items: center;
+    width: 100%; /* Garante que o formulário ocupe toda a largura disponível */
+    height: 100%; /* Estica o formulário para ocupar toda a altura */
+
 }
 
-/* Container do formulário */
-.cadastro-container {
-    background: #fff;
-    max-width: 400px;
-    margin: 40px auto;
+.form-cadastro-card {
+    background: transparent; /* Remove o fundo do formulário */
+    width: 100%;
     padding: 32px 24px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: none; /* Remove a sombra do formulário */
 }
 
-/* Título do formulário */
-.cadastro-container h2 {
+/* Cabeçalho do formulário */
+.form-cadastro-header {
     text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
     margin-bottom: 24px;
-    color: #2d3436;
+    color: #fff; /* Texto branco */
 }
 
 /* Campos do formulário */
-.cadastro-container label {
+.form-cadastro-group {
+    margin-bottom: 18px;
+}
+
+.form-cadastro-label {
     display: block;
     margin-bottom: 6px;
     color: #636e72;
     font-size: 15px;
 }
 
-.cadastro-container input[type="text"],
-.cadastro-container input[type="email"],
-.cadastro-container input[type="password"] {
+.form-cadastro-input {
     width: 100%;
-    padding: 10px 8px;
-    margin-bottom: 18px;
-    border: 1px solid #dfe6e9;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 15px;
-    background: #f9f9f9;
-    transition: border 0.2s;
+    background: transparent; /* Fundo transparente */
+    color: #fff; /* Texto branco */
+    transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
-.cadastro-container input:focus {
-    border: 1.5px solid #0984e3;
+.form-cadastro-input:focus {
+    border-color: #007bff; /* Cor da borda ao focar */
+    background: rgba(255, 255, 255, 0.1); /* Fundo levemente destacado ao focar */
     outline: none;
+    color: #fff; /* Mantém o texto branco */
 }
 
 /* Botão de cadastro */
-.cadastro-container button[type="submit"] {
+.form-cadastro-button {
     width: 100%;
     padding: 12px 0;
     background: #0984e3;
@@ -63,14 +70,73 @@ body {
     transition: background 0.2s;
 }
 
-.cadastro-container button[type="submit"]:hover {
+.form-cadastro-button:hover {
     background: #74b9ff;
 }
 
-/* Mensagem de erro ou sucesso */
-.cadastro-container .mensagem {
-    text-align: center;
-    margin-bottom: 16px;
-    font-size: 14px;
+/* Mensagem de erro */
+.form-cadastro-error {
     color: #d63031;
+    font-size: 14px;
+
+}
+
+/* Página principal */
+.form-cadastro-page {
+    display: flex;
+    width: 100%;
+    min-height: 100vh; /* Garante que ocupe 100% da altura da tela */
+}
+
+/* Lado Esquerdo: Formulário */
+.form-cadastro-container {
+    flex: 1; /* Ocupa 50% da tela */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent; /* Remove o fundo do formulário */
+    padding: 2rem;
+    min-height: 100vh; /* Garante que ocupe 100% da altura da tela */
+}
+
+/* Linha Divisória */
+.form-cadastro-divider {
+    width: 3px;
+    background: #ac0303;
+    height: 100%; /* Garante que a linha ocupe toda a altura */
+}
+
+/* Lado Direito: Vídeo */
+.form-cadastro-icon {
+    flex: 1; /* Ocupa 50% da tela */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent; /* Remove o fundo do lado do vídeo */
+    padding: 2rem;
+    min-height: 100vh; /* Garante que ocupe 100% da altura da tela */
+}
+
+.form-cadastro-icon video {
+    max-width: 80%; /* Garante que o vídeo não ultrapasse o espaço */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+}
+
+/* Loader */
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.d-none {
+    display: none !important;
 }
