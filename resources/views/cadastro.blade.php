@@ -9,7 +9,7 @@
     @vite(['resources/css/home/home.css', 'resources/js/geralJS.js','routes/web.php'])
 </head>
 
-<body>
+<body class="cadastrof">
     <div class="containerS">
         <div class="Cbutton">
             <a href="{{ route('home') }}" class="botãoS">Sair</a>
@@ -25,6 +25,18 @@
                     <div class="form-cadastro-card">
                         <div class="form-cadastro-header">Cadastro</div>
                         <div class="form-cadastro-body">
+                            <div class="form-cadastro-messages">
+                                @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                                @endif
+                                @if(session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                                @endif
+                            </div>
                             <form id="cadastroForm" method="POST" action="{{ route('cadastro') }}">
                                 @csrf
                                 <div class="form-cadastro-group">
@@ -65,6 +77,10 @@
                                 </div>
                                 <button type="submit" class="form-cadastro-button">Cadastrar</button>
                             </form>
+                            <div class="login-link">
+                                <span>Já tem uma conta?</span>
+                                <a href="{{ route('login') }}" class="form-cadastro-link">Entrar</a>
+                            </div>
                         </div>
                     </div>
                 </div>

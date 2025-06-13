@@ -22,7 +22,6 @@
     object-fit: cover;
     filter: brightness(0.92) contrast(1.08);
     display: block;
- 
 }
 .carousel-caption {
     background: rgba(0, 0, 0, 0.55);
@@ -91,4 +90,10 @@
     align-items: center; /* Alinha os botões verticalmente */
     gap: 1.5rem; /* Define o espaçamento uniforme entre os botões */
     margin-top: 1.5rem; /* Adiciona um espaçamento superior */
+}
+.imgC{
+    display: block;
+    width: 100%;
+    height: auto;
+    padding: auto;
 }

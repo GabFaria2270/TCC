@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
     protected $table = 'usuario'; // Nome da tabela no banco
     protected $primaryKey = 'ID'; // Nome da chave primária
@@ -17,4 +18,6 @@ class Usuario extends Model
         'PERFIL',
         'DATA_CRIACAO'
     ];
+
+
 }

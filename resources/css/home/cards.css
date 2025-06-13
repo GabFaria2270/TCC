@@ -54,7 +54,7 @@
 /* Imagem do card normal */
 .card-img-top {
     width: 100%;
-    height: 220px;
+    height: 220px; /* Altura mais elegante */
     object-fit: cover;
     border-top-left-radius: 1.5rem;
     border-top-right-radius: 1.5rem;
@@ -63,6 +63,7 @@
 
 .card:hover .card-img-top {
     filter: brightness(0.92) contrast(1.08);
+ 
 }
 
 /* Corpo do card normal */
@@ -72,6 +73,7 @@
     color: #212529;
     background: #f8faff;
     transition: background 0.3s;
+    display: flex;
 }
 
 .card-title {

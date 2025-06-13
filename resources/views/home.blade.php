@@ -20,8 +20,8 @@
             <div class="carousel-inner">
                 <!-- Primeiro Slide -->
                 <div class="carousel-item active">
-                    <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
-                        class="d-block w-100" alt="...">
+                    <img src="{{ asset('img/C1.jpg') }}"
+                        class="imgC" alt="...">
                     <div class="carousel-caption  d-md-block">
                         <h5>Primeiro Slide</h5>
                         <p>Conteúdo de exemplo para o primeiro slide.</p>
@@ -34,8 +34,8 @@
 
                 <!-- Segundo Slide -->
                 <div class="carousel-item">
-                    <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
-                        class="d-block w-100" alt="...">
+                    <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}"
+                        class="imgC" alt="...">
                     <div class="carousel-caption  d-md-block">
                         <h5>Primeiro Slide</h5>
                         <p>Conteúdo de exemplo para o primeiro slide.</p>
@@ -49,7 +49,7 @@
                 <!-- Terceiro Slide -->
                 <div class="carousel-item">
                     <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
-                        class="d-block w-100" alt="...">
+                        class="imgC" alt="...">
                     <div class="carousel-caption  d-md-block">
                         <h5>Primeiro Slide</h5>
                         <p>Conteúdo de exemplo para o primeiro slide.</p>
@@ -81,11 +81,19 @@
         <div class="row g-4">
             <div class="col">
                 <div class="card h-100">
-                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="card-img-top" alt="...">
+                    <img src="{{ asset('img/cadr1.jpg') }}" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
-                            additional content. This content is a little bit longer.</p>
+                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                            et
+                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                            aliquip
+                            ex ea
+                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                            fugiat
+                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                            mollit
+                            anim id est laborum.</p>
                     </div>
                     <div class="card-footer">
                         <small class="text-body-secondary">Last updated 3 mins ago</small>
@@ -94,11 +102,19 @@
             </div>
             <div class="col">
                 <div class="card h-100">
-                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="card-img-top" alt="...">
+                    <img src="{{ asset('img/mulher da tela inicial.png') }}" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This card has supporting text below as a natural lead-in to additional
-                            content.</p>
+                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                            et
+                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                            aliquip
+                            ex ea
+                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                            fugiat
+                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                            mollit
+                            anim id est laborum.</p>
                     </div>
                     <div class="card-footer">
                         <small class="text-body-secondary">Last updated 3 mins ago</small>
