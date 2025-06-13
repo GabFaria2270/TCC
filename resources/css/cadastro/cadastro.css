@@ -23,7 +23,7 @@
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 24px;
-    color: #fff; /* Texto branco */
+    color: #0a0a0a; /* Texto branco */
 }
 
 /* Campos do formulário */
@@ -34,7 +34,7 @@
 .form-cadastro-label {
     display: block;
     margin-bottom: 6px;
-    color: #636e72;
+    color: #000000;
     font-size: 15px;
 }
 
@@ -42,25 +42,25 @@
     width: 100%;
     padding: 0.75rem;
     font-size: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid #000000;
     border-radius: 4px;
     background: transparent; /* Fundo transparente */
-    color: #fff; /* Texto branco */
+    color: #000000; /* Texto branco */
     transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
 .form-cadastro-input:focus {
-    border-color: #007bff; /* Cor da borda ao focar */
+    border-color: #4692b6; /* Cor da borda ao focar */
     background: rgba(255, 255, 255, 0.1); /* Fundo levemente destacado ao focar */
     outline: none;
-    color: #fff; /* Mantém o texto branco */
+    color: #000000; /* Mantém o texto branco */
 }
 
 /* Botão de cadastro */
 .form-cadastro-button {
     width: 100%;
     padding: 12px 0;
-    background: #0984e3;
+    background: #000000;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -123,20 +123,63 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
 }
 
-/* Loader */
-.loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
+
 
 .d-none {
     display: none !important;
 }
+
+/* ...existing code... */
+
+/* Container do botão */
+.containerS {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    margin-top: 20px;
+    margin-bottom: 0;
+    position: relative;
+}
+
+/* Botão sair */
+.Cbutton {
+display: flex;
+    justify-content: left;
+    align-items: left;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    margin-left: 10px;
+
+}
+
+.botãoS {
+    background-color: #1d1d1d;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+      text-decoration: none;
+}
+
+.botãoS:hover {
+    background-color: #b52a37;
+}
+
+.object{
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem cubra todo o espaço */
+    border-radius: 8px; /* Bordas arredondadas */
+
+    margin-bottom: 40%;
+
+}
+
+/* ...existing code... */

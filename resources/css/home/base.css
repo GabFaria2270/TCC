@@ -9,7 +9,7 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
     overflow-x: hidden;
-    background-image: url('/public/img/fundo.jpeg');
+    background-color:  #ede7d7;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -37,7 +37,7 @@ button:hover {
 .escrita {
     display: inline-block; 
     font-size: 2rem; 
-    color: #d8d8d8; 
+    color: #000000; 
     border-right: 6px solid red; 
     white-space: nowrap; 
     overflow: hidden; 
