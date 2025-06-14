@@ -6,20 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js','routes/web.php'])
+
+    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js'])
+
 </head>
 
 <body class="cadastrof">
+    <!--botão de sair-->
     <div class="containerS">
         <div class="Cbutton">
             <a href="{{ route('home') }}" class="botãoS">Sair</a>
         </div>
     </div>
+    <!--botão de sair-->
+
+    <!-- Lado Esquerdo: Formulário de Cadastro -->
     <div class="row justify-content-center">
-
         <div class="form-cadastro-page">
-
-            <!-- Lado Esquerdo: Formulário -->
             <div class="form-cadastro-container">
                 <div class="form-cadastro">
                     <div class="form-cadastro-card">
@@ -41,7 +44,7 @@
                                 @csrf
                                 <div class="form-cadastro-group">
                                     <label for="NOME" class="form-cadastro-label">Nome</label>
-                                    <input type="text" class="form-cadastro-input" id="NOME" name="NOME" required
+                                    <input type="text" class="form-cadastro-input" id="NOME" name="NOME" 
                                         value="{{ old('NOME') }}">
                                     @error('NOME')
                                     <div class="form-cadastro-error">{{ $message }}</div>
@@ -85,19 +88,24 @@
                     </div>
                 </div>
             </div>
+            <!-- Lado Esquerdo: Formulário de Cadastro -->
 
- 
+
 
             <!-- Lado Direito: Vídeo -->
             <div class="form-cadastro-icon">
-
                 <object class="object" type="image/svg+xml" data="{{ asset('img/imgc.svg') }}"></object>
-               
-
             </div>
-        </div>
 
-    </div>
+            <div id="loader-cadastro" class="loder-cadastro">
+                <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+                </div>
+            </div>
+            <!-- Lado Direito: Vídeo -->
+
+
+
+
 </body>
 
 </html>
