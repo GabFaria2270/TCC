@@ -31,7 +31,7 @@ Route::post('/cadastro', function (Request $request) {
 
     Auth::login($usuario);
 
-    sleep(3); // Simula delay
+    sleep(10); // Simula delay
 
     if ($request->ajax()) {
         return response()->json([

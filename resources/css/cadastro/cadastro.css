@@ -244,3 +244,12 @@ display: flex;
   width: 20px;
   /* ajuste conforme o tamanho do seu SVG */
 }
+
+.loader-icon {
+    display: flex !important;
+    animation: girar 0.8s linear infinite;
+}
+.imgloader {
+    width: 80px; /* Ajuste o tamanho conforme necessário */
+    height: 80px; /* Ajuste o tamanho conforme necessário */
+}

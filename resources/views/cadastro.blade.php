@@ -44,7 +44,7 @@
                                 @csrf
                                 <div class="form-cadastro-group">
                                     <label for="NOME" class="form-cadastro-label">Nome</label>
-                                    <input type="text" class="form-cadastro-input" id="NOME" name="NOME" 
+                                    <input type="text" class="form-cadastro-input" id="NOME" name="NOME"
                                         value="{{ old('NOME') }}">
                                     @error('NOME')
                                     <div class="form-cadastro-error">{{ $message }}</div>
@@ -60,13 +60,15 @@
                                 </div>
                                 <div class="form-cadastro-group">
                                     <label for="SENHA_HASH" class="form-cadastro-label">Senha</label>
-                                    <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH" required>
+                                    <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
+                                        required>
                                     @error('SENHA_HASH')
                                     <div class="form-cadastro-error">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="form-cadastro-group">
-                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirme a Senha</label>
+                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirme a
+                                        Senha</label>
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
                                         name="SENHA_HASH_confirmation" required>
                                 </div>
@@ -98,12 +100,14 @@
             </div>
 
             <div id="loader-cadastro" class="loder-cadastro">
-                <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
-                </div>
+                <span id="loader-icon" class="loader-icon girar-animado"
+                    data-img1="{{ asset('img/iconeloader.png') }}"
+                    data-img2="{{ asset('img/loginloader.jpeg') }}">
+                    <img id="imgloader" src="{{ asset('img/iconeloader.png') }}" alt="Moeda" class="imgloader">
+                </span>
             </div>
-            <!-- Lado Direito: Vídeo -->
-
-
+        </div>
+        <!-- Lado Direito: Vídeo -->
 
 
 </body>

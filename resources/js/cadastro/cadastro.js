@@ -1,8 +1,7 @@
 // Função para mostrar o loader e desabilitar o botão de submit
 function mostrarLoader(form, loader) {
     loader.style.display = 'flex';
-    const btn = form.querySelector('button[type="submit"]');
-    if (btn) btn.disabled = true;
+    iniciarAnimacaoLoader();
 }
 
 // Função para esconder o loader e habilitar o botão de submit
@@ -10,6 +9,7 @@ function esconderLoader(form, loader) {
     loader.style.display = 'none';
     const btn = form.querySelector('button[type="submit"]');
     if (btn) btn.disabled = false;
+    pararAnimacaoLoader();
 }
 
 // Função para exibir mensagem de sucesso ou erro
@@ -68,6 +68,37 @@ function inicializarCadastroAJAX() {
             loader.style.display = 'none';
         });
     });
+}
+
+let currentLoaderImg = 0;
+let loaderInterval = null;
+let loaderImages = [];
+
+function alternarLoaderImg() {
+    const img = document.getElementById('imgloader');
+    if (img && loaderImages.length > 0) {
+        currentLoaderImg = (currentLoaderImg + 1) % loaderImages.length;
+        img.setAttribute('src', loaderImages[currentLoaderImg]);
+    }
+}
+
+function iniciarAnimacaoLoader() {
+    const loaderIcon = document.getElementById('loader-icon');
+    loaderImages = [
+        loaderIcon.getAttribute('data-img1'),
+        loaderIcon.getAttribute('data-img2')
+    ];
+    currentLoaderImg = 0;
+    const img = document.getElementById('imgloader');
+    if (img) img.setAttribute('src', loaderImages[0]);
+    if (loaderInterval) clearInterval(loaderInterval);
+    loaderInterval = setInterval(alternarLoaderImg, 800);
+}
+
+function pararAnimacaoLoader() {
+    if (loaderInterval) {
+        clearInterval(loaderInterval);
+    }
 }
 
 // Inicializa o AJAX do cadastro quando o DOM estiver pronto
