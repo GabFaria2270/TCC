@@ -16,7 +16,7 @@ Route::post('/cadastro', function (Request $request) {
         'NOME' => 'required|string|max:100',
         'EMAIL' => 'required|email|unique:usuario,EMAIL',
         'SENHA_HASH' => 'required|string|min:6|confirmed',
-        'PERFIL' => 'required|string|max:50'
+        'PERFIL' => 'required|string|max:50|unique:usuario,PERFIL',
     ], [
         'NOME.required' => 'O nome é obrigatório.',
         'EMAIL.required' => 'O e-mail é obrigatório.',
@@ -26,6 +26,7 @@ Route::post('/cadastro', function (Request $request) {
         'SENHA_HASH.min' => 'A senha deve ter pelo menos 6 caracteres.',
         'SENHA_HASH.confirmed' => 'A confirmação da senha não confere.',
         'PERFIL.required' => 'O perfil é obrigatório.',
+        'PERFIL.unique' => 'O nome de perfil ja existe.',
     ]);
 
     $usuario = Usuario::create([
@@ -39,12 +40,6 @@ Route::post('/cadastro', function (Request $request) {
 
     sleep(10); // Simula delay
 
-    if ($request->ajax()) {
-        return response()->json([
-            'success' => Auth::check(),
-            'message' => Auth::check()
-                ? 'Cadastro realizado e login efetuado com sucesso!'
-                : 'Cadastro realizado, mas não foi possível autenticar.'
-        ]);
-    }
+    // Redireciona para a home após cadastro em requisição normal
+    return redirect()->route('cadastro')->with('success', 'Cadastro realizado e login efetuado com sucesso!');
 });

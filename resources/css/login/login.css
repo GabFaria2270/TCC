@@ -1,0 +1,239 @@
+/* CSS de login (cópia do cadastro) */
+.loginf {
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    min-height: 100vh;
+    height: auto;
+    background-color: #ede7d7;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.form-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.form-login-card {
+    background: transparent;
+    width: 100%;
+    padding: 32px 24px;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.form-login-header {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #0a0a0a;
+}
+
+.form-login-group {
+    margin-bottom: 18px;
+}
+
+.form-login-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #000000;
+    font-size: 15px;
+}
+
+.form-login-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    background: transparent;
+    color: #000000;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-login-input:focus {
+    border-color: #4692b6;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    color: #000000;
+}
+
+.form-login-button {
+    width: 100%;
+    padding: 12px 0;
+    background: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.form-login-button:hover {
+    background: #74b9ff;
+}
+
+.form-login-error {
+    color: #842029;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.form-login-page {
+    display: flex;
+    width: 100%;
+    height: 100vh; /* Centraliza verticalmente sem espaço extra */
+    min-height: unset;
+}
+
+.form-login-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    padding: 0; /* Remove o padding extra */
+    min-height: unset;
+    margin-top: -8%; /* Sobe o formulário */
+}
+
+.form-login-icon {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    min-height: unset;
+}
+
+.containerS {
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 0;
+    margin-bottom: 0;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: unset;
+    z-index: 10;
+}
+
+.Cbutton {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: auto;
+    height: auto;
+    margin-left: 0;
+}
+
+.botãoS {
+    background-color: #1d1d1d;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+
+.botãoS:hover {
+    background-color: #b52a37;
+}
+
+.objectL {
+    width: 70%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+   margin-top: -20%;
+}
+
+.cadastrof {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.login-link {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-login-link {
+    display: inline-block;
+    color: #000000;
+    text-decoration: none;
+    font-weight: 500;
+    transition: transform 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.form-login-link:hover {
+    transform: translateY(-5px);
+    color: #f86019;
+    text-decoration: none;
+}
+
+
+#loader-cadastro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255,255,255,0.7); /* fundo branco semi-transparente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  display:none;
+}
+
+#loader-cadastro .spinner-border {
+    width: 4rem;
+    height: 4rem;
+}
+
+#loaderimg {
+  width: 20px;
+  /* ajuste conforme o tamanho do seu SVG */
+}
+
+.loader-icon {
+    display: flex !important;
+    animation: girar 0.8s linear infinite;
+}
+
+.imgloader {
+    width: 80px; /* Ajuste o tamanho conforme necessário */
+    height: 80px; /* Ajuste o tamanho conforme necessário */
+}

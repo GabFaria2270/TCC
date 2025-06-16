@@ -12,31 +12,20 @@ Route::get('/login', function () {
 Route::post('/login', function (Request $request) {
     $request->validate([
         'EMAIL' => 'required|email',
-        'SENHA_HASH' => 'required|string',
+        'SENHA_HASH' => 'required|string|confirmed',
     ], [
         'EMAIL.required' => 'O e-mail é obrigatório.',
         'EMAIL.email' => 'Digite um e-mail válido.',
         'SENHA_HASH.required' => 'A senha é obrigatória.',
+        'SENHA_HASH.confirmed' => 'A confirmação da senha não confere.',
     ]);
 
     $usuario = Usuario::where('EMAIL', $request->EMAIL)->first();
 
     if ($usuario && Hash::check($request->SENHA_HASH, $usuario->SENHA_HASH)) {
         Auth::login($usuario);
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Login efetuado com sucesso!'
-            ]);
-        }
-      return redirect()->route('home');
+        return redirect()->route('login')->with('success', 'Login efetuado com sucesso!');
     } else {
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'E-mail ou senha inválidos.'
-            ], 401);
-        }
         return back()->with('error', 'E-mail ou senha inválidos.')->withInput();
     }
 });

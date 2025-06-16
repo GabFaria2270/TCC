@@ -63,14 +63,20 @@
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
                                         required>
                                     @error('SENHA_HASH')
-                                    <div class="form-cadastro-error">{{ $message }}</div>
+                                        @if(!str_contains($message, 'confere'))
+                                            <div class="form-cadastro-error">{{ $message }}</div>
+                                        @endif
                                     @enderror
                                 </div>
                                 <div class="form-cadastro-group">
-                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirme a
-                                        Senha</label>
+                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirme a Senha</label>
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
                                         name="SENHA_HASH_confirmation" required>
+                                    @error('SENHA_HASH')
+                                        @if(str_contains($message, 'confere'))
+                                            <div class="form-cadastro-error">{{ $message }}</div>
+                                        @endif
+                                    @enderror
                                 </div>
                                 <div class="form-cadastro-group">
                                     <label for="PERFIL" class="form-cadastro-label">Perfil</label>
@@ -101,8 +107,7 @@
 
             <div id="loader-cadastro" class="loder-cadastro">
                 <span id="loader-icon" class="loader-icon girar-animado"
-                    data-img1="{{ asset('img/iconeloader.png') }}"
-                    data-img2="{{ asset('img/loginloader.jpeg') }}">
+                    data-img1="{{ asset('img/iconeloader.png') }}">
                     <img id="imgloader" src="{{ asset('img/iconeloader.png') }}" alt="Moeda" class="imgloader">
                 </span>
             </div>
