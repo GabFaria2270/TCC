@@ -1,9 +1,15 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
+
+
+Route::get('/cadastro', function () {
+    return view('cadastro');
+})->name('cadastro');
 
 Route::post('/cadastro', function (Request $request) {
     $request->validate([

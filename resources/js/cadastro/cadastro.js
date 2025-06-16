@@ -20,84 +20,31 @@ function exibirMensagem(data) {
     }
 }
 
-// Função principal para lidar com o envio do formulário via AJAX
+// Função principal para lidar com o envio do formulário via AJAX ou normal
 function inicializarCadastroAJAX() {
     const form = document.getElementById('cadastroForm');
     const loader = document.getElementById('loader-cadastro');
     if (!form || !loader) return;
 
     form.addEventListener('submit', function (e) {
-        e.preventDefault();
+        // Mostra o loader, mas NÃO impede o submit normal
         mostrarLoader(form, loader);
-
-        const formData = new FormData(form);
-
-        fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value
-            },
-            body: formData
-        })
-        .then(async response => {
-            loader.style.display = 'none';
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                return;
-            }
-            const mensagens = document.querySelector('.form-cadastro-messages');
-            if (mensagens) {
-                // Exibe múltiplos erros se existirem
-                if (data.errors) {
-                    let mensagensHtml = '';
-                    Object.values(data.errors).forEach(arr => {
-                        arr.forEach(msg => {
-                            mensagensHtml += `<div class="form-cadastro-error">${msg}</div>`;
-                        });
-                    });
-                    mensagens.innerHTML = mensagensHtml;
-                } else if (data.message) {
-                    mensagens.innerHTML = `<div class="alert alert-${data.success ? 'success' : 'danger'}">${data.message}</div>`;
-                }
-            }
-        })
-        .catch(() => {
-            loader.style.display = 'none';
-        });
+        // Não faz fetch, deixa o submit tradicional acontecer
     });
 }
 
-let currentLoaderImg = 0;
-let loaderInterval = null;
-let loaderImages = [];
-
-function alternarLoaderImg() {
+function iniciarAnimacaoLoader() {
     const img = document.getElementById('imgloader');
-    if (img && loaderImages.length > 0) {
-        currentLoaderImg = (currentLoaderImg + 1) % loaderImages.length;
-        img.setAttribute('src', loaderImages[currentLoaderImg]);
+    if (img) {
+        // Apenas garante que a imagem está visível, sem alternância
+        img.style.display = 'block';
     }
 }
 
-function iniciarAnimacaoLoader() {
-    const loaderIcon = document.getElementById('loader-icon');
-    loaderImages = [
-        loaderIcon.getAttribute('data-img1'),
-        loaderIcon.getAttribute('data-img2')
-    ];
-    currentLoaderImg = 0;
-    const img = document.getElementById('imgloader');
-    if (img) img.setAttribute('src', loaderImages[0]);
-    if (loaderInterval) clearInterval(loaderInterval);
-    loaderInterval = setInterval(alternarLoaderImg, 800);
-}
-
 function pararAnimacaoLoader() {
-    if (loaderInterval) {
-        clearInterval(loaderInterval);
+    const img = document.getElementById('imgloader');
+    if (img) {
+        img.style.display = 'none';
     }
 }
 
