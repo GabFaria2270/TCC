@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
-    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js','routes/web.php'])
+    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js', 'routes/web.php'])
 </head>
 
 <body>
@@ -20,42 +20,40 @@
             <div class="carousel-inner">
                 <!-- Primeiro Slide -->
                 <div class="carousel-item active">
-                    <img src="{{ asset('img/C1.jpg') }}"
-                        class="imgC" alt="...">
+                    <img src="{{ asset('img/C1.jpg') }}" class="img_Carrossel_1" alt="...">
                     <div class="carousel-caption  d-md-block">
                         <h5>Primeiro Slide</h5>
                         <p>Conteúdo de exemplo para o primeiro slide.</p>
-                        <div class="cadastrar">
-                            <a class="Bcadstrar" href="{{ route('cadastro') }}">Cadastrar</a>
-                            <a class="Bcadstrar" href="{{ route('login') }}">Login</a>
+                        <div class="botoes-carrossel">
+                            <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                            <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Segundo Slide -->
                 <div class="carousel-item">
-                    <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}"
-                        class="imgC" alt="...">
+                    <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}" class="img_Carrossel_2"
+                        alt="...">
                     <div class="carousel-caption  d-md-block">
                         <h5>Primeiro Slide</h5>
                         <p>Conteúdo de exemplo para o primeiro slide.</p>
-                        <div class="cadastrar">
-                            <a class="Bcadstrar" href="{{ route('cadastro') }}">Cadastrar</a>
-                            <a class="Bcadstrar" href="{{ route('login') }}">Login</a>
+                        <div class="botoes-carrossel">
+                            <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                            <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Terceiro Slide -->
                 <div class="carousel-item">
-                    <img src="{{ asset('img/Mitsubishi-Outlander-Sport-2021-Foto-Leo-Sposito-7.jpg') }}"
-                        class="imgC" alt="...">
+                    <img src="{{ asset('img/carrossel_IMG3.jpg') }}" class="img_Carrossel_3" alt="...">
                     <div class="carousel-caption  d-md-block">
                         <h5>Primeiro Slide</h5>
                         <p>Conteúdo de exemplo para o primeiro slide.</p>
-                        <div class="cadastrar">
-                            <a class="Bcadstrar" href="{{ route('cadastro') }}">Cadastrar</a>
-                            <a class="Bcadstrar" href="{{ route('login') }}">Login</a>
+                        <div class="botoes-carrossel">
+                            <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                            <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
                         </div>
                     </div>
                 </div>
@@ -84,14 +82,18 @@
                     <img src="{{ asset('img/cadr1.jpg') }}" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                            tempor incididunt ut labore
                             et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                            ut
                             aliquip
                             ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                            dolore eu
                             fugiat
-                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                            deserunt
                             mollit
                             anim id est laborum.</p>
                     </div>
@@ -105,14 +107,18 @@
                     <img src="{{ asset('img/mulher da tela inicial.png') }}" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                            tempor incididunt ut labore
                             et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                            ut
                             aliquip
                             ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                            dolore eu
                             fugiat
-                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                            deserunt
                             mollit
                             anim id est laborum.</p>
                     </div>
@@ -152,14 +158,18 @@
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                            tempor incididunt ut labore
                             et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                            ut
                             aliquip
                             ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                            dolore eu
                             fugiat
-                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                            deserunt
                             mollit
                             anim id est laborum ..</p>
                         <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>

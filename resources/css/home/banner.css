@@ -14,7 +14,6 @@
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-
 }
 .carousel-item img {
     width: 100vw;
@@ -35,16 +34,14 @@
     bottom: 0;
     letter-spacing: 1px;
     font-size: 1.25rem;
-
 }
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
     width: 3.2rem;
     height: 3.2rem;
-}   
+}
 .carousel-control-prev,
 .carousel-control-next {
     background: none;
@@ -58,8 +55,11 @@
     box-shadow: none;
 }
 
-.Bcadstrar {
+.btn-cadastro-carrossel,
+.btn-login-carrossel {
     display: inline-block;
+    min-width: 200px; /* largura mínima igual para ambos */
+    min-height: 48px; /* altura mínima igual para ambos */
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: bold;
@@ -70,28 +70,46 @@
     border: none;
     border-radius: 0.5rem;
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    transition:
+        background 0.3s ease,
+        transform 0.2s ease,
+        box-shadow 0.3s ease;
     cursor: pointer;
 }
 
-.Bcadstrar:hover {
+.btn-cadastro-carrossel:hover,
+.btn-login-carrossel:hover {
     background: linear-gradient(90deg, #0056b3 0%, #003f7f 100%);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
 }
 
-.Bcadstrar:active {
+.btn-cadastro-carrossel:active,
+.btn-login-carrossel:active {
     transform: translateY(0);
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
 }
-.cadastrar {
+
+.botoes-carrossel {
     display: flex; /* Define o layout como flexbox */
     justify-content: center; /* Centraliza os botões horizontalmente */
     align-items: center; /* Alinha os botões verticalmente */
     gap: 1.5rem; /* Define o espaçamento uniforme entre os botões */
     margin-top: 1.5rem; /* Adiciona um espaçamento superior */
 }
-.imgC{
+.img_Carrossel_1 {
+    display: block;
+    width: 100%;
+    height: auto;
+    padding: auto;
+}
+.img_Carrossel_2 {
+    display: block;
+    width: 100%;
+    height: auto;
+    padding: auto;
+}
+.img_Carrossel_3 {
     display: block;
     width: 100%;
     height: auto;
