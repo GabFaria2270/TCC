@@ -1,0 +1,37 @@
+# Guia Rápido do Projeto
+
+## 1. Instalar dependências do projeto
+composer install
+npm install
+npm run build
+
+## 2. Gerar a chave da aplicação
+php artisan key:generate
+
+## 3. Rodar o servidor embutido do Laravel
+php artisan serve
+
+## 4. Rodar as migrações do banco de dados
+php artisan migrate
+
+---
+
+### Observações
+- Caminho relativo das classes do Bootstrap:
+  'node_modules/bootstrap/dist/css/bootstrap.css'
+
+- Comandos úteis para o frontend:
+  npm run dev
+
+- Lembrete: As animações devem ser em escala adequada em certos casos.
+- Tema para VS Code: Synthesis
+
+---
+
+## Dica: Composer install mais rápido
+
+1. Vá até o arquivo:
+   C:\laragon\bin\php\php-8.3.4-Win32-vs16-x64\php.ini
+   
+2. Remova o ponto e vírgula (;) do início da linha para ativar:
+   ;extension=zip => extension=zip
