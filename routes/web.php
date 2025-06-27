@@ -7,14 +7,7 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/cadastro', function () {
-    return view('cadastro');
-})->name('cadastro');
-
-
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+// ROTAS DE CADASTRO E LOGIN REMOVIDAS - Já existem em seus próprios arquivos
 
 // ROTA DE LOGOUT REMOVIDA - Já existe em routes/auth.php
 

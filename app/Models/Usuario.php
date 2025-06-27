@@ -22,6 +22,7 @@ class Usuario extends Authenticatable
         'EMAIL', 
         'SENHA_HASH',
         'PERFIL',
+        'DATA_CRIACAO'
     ];
 
     // CAMPOS SENSÍVEIS QUE NUNCA DEVEM APARECER EM JSON
@@ -53,17 +54,6 @@ class Usuario extends Authenticatable
     public function getAuthIdentifier()
     {
         return $this->EMAIL; // Campo personalizado
-    }
-
-    // MAPEAR CAMPOS PADRÃO PARA CAMPOS PERSONALIZADOS
-    public function getEmailAttribute()
-    {
-        return $this->EMAIL; // Para compatibilidade
-    }
-
-    public function getPasswordAttribute()
-    {
-        return $this->SENHA_HASH; // Para compatibilidade
     }
 
     // SETTER PARA HASH AUTOMÁTICO DA SENHA
