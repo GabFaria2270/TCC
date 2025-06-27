@@ -2,7 +2,7 @@
    NAVBAR SOBRESCREVENDO BOOTSTRAP
    ========================= */
 .navbar {
-    background: linear-gradient(90deg, #232526 0%, #414345 100%);
+    background: #000000;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     border-bottom: 4px solid #007bff;
     padding: 0.5rem 0;
@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    background: rgba(35, 37, 38, 0.95);
+   background-color: #57534a;
     padding: 10px 28px;
     border-radius: 16px;
     gap: 12px;

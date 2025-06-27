@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js'])
+    @vite(['resources/css/app.css', 'resources/css/home/home.css', 'resources/js/geralJS.js'])
 
 </head>
 
@@ -61,17 +59,20 @@
                                 <div class="form-cadastro-group">
                                     <label for="SENHA_HASH" class="form-cadastro-label">Senha</label>
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required>
+                                        required minlength="12" placeholder="Mínimo 12 caracteres">
+                                  
                                     @error('SENHA_HASH')
                                         @if(!str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>
                                         @endif
                                     @enderror
                                 </div>
+                                <!-- Confirme se existe este campo no formulário -->
                                 <div class="form-cadastro-group">
-                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirme a Senha</label>
+                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirmar Senha</label>
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
-                                        name="SENHA_HASH_confirmation" required>
+                                        name="SENHA_HASH_confirmation" required minlength="12"
+                                        placeholder="Digite a senha novamente">
                                     @error('SENHA_HASH')
                                         @if(str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>

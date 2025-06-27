@@ -1,45 +1,122 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Auth\UsuarioRequest; // CORRIGE O IMPORT
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash; // ADICIONA IMPORT DO HASH
 
 Route::get('/cadastro', function () {
     return view('cadastro');
 })->name('cadastro');
 
-Route::post('/cadastro', function (Request $request) {
-    $request->validate([
-        'NOME' => 'required|string|max:100',
-        'EMAIL' => 'required|email|unique:usuario,EMAIL',
-        'SENHA_HASH' => 'required|string|min:6|confirmed',
-        'PERFIL' => 'required|string|max:50|unique:usuario,PERFIL',
-    ], [
-        'NOME.required' => 'O nome é obrigatório.',
-        'EMAIL.required' => 'O e-mail é obrigatório.',
-        'EMAIL.email' => 'Digite um e-mail válido.',
-        'EMAIL.unique' => 'Este e-mail já está cadastrado.',
-        'SENHA_HASH.required' => 'A senha é obrigatória.',
-        'SENHA_HASH.min' => 'A senha deve ter pelo menos 6 caracteres.',
-        'SENHA_HASH.confirmed' => 'A confirmação da senha não confere.',
-        'PERFIL.required' => 'O perfil é obrigatório.',
-        'PERFIL.unique' => 'O nome de perfil ja existe.',
-    ]);
+Route::post('/cadastro', function (UsuarioRequest $request) {
+    try {
+        // DEBUG: Log dados recebidos
+        Log::info('=== DEBUG CADASTRO INÍCIO ===', [
+            'dados_validados' => $request->validated(),
+            'ip' => $request->ip(),
+        ]);
 
-    $usuario = Usuario::create([
-        'NOME' => $request->NOME,
-        'EMAIL' => $request->EMAIL,
-        'SENHA_HASH' => Hash::make($request->SENHA_HASH),
-        'PERFIL' => $request->PERFIL,
-    ]);
+        // INICIA TRANSAÇÃO PARA SEGURANÇA
+        DB::beginTransaction();
+        
+        // USA O REQUEST VALIDADO (já sanitizado)
+        $validatedData = $request->validated();
+        
+        // LOG DE TENTATIVA DE CADASTRO
+        Log::channel('security')->info('Tentativa de cadastro', [
+            'email' => $validatedData['EMAIL'],
+            'nome' => $validatedData['NOME'],
+            'perfil' => $validatedData['PERFIL'],
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'timestamp' => now(),
+        ]);
+        
+        // VERIFICA DUPLICATAS EXTRAS (double-check)
+        $emailExists = Usuario::where('EMAIL', $validatedData['EMAIL'])->exists();
+        $perfilExists = Usuario::where('PERFIL', $validatedData['PERFIL'])->exists();
+        
+        Log::info('=== DEBUG VERIFICAÇÃO DUPLICATAS ===', [
+            'email_exists' => $emailExists,
+            'perfil_exists' => $perfilExists,
+        ]);
+        
+        if ($emailExists) {
+            Log::info('=== EMAIL JÁ EXISTE ===');
+            return back()->with('error', 'Este email já está cadastrado.')
+                        ->withInput($request->except('SENHA_HASH'));
+        }
+        
+        if ($perfilExists) {
+            Log::info('=== PERFIL JÁ EXISTE ===');
+            return back()->with('error', 'Este perfil já está em uso.')
+                        ->withInput($request->except('SENHA_HASH'));
+        }
+        
+        Log::info('=== DEBUG ANTES DE CRIAR USUÁRIO ===', [
+            'dados_para_criar' => [
+                'NOME' => $validatedData['NOME'],
+                'EMAIL' => $validatedData['EMAIL'],
+                'SENHA_HASH' => 'HASH_SERÁ_GERADO',
+                'PERFIL' => $validatedData['PERFIL'],
+            ]
+        ]);
+        
+        // CRIA USUÁRIO (senha é hasheada automaticamente no modelo)
+        $usuario = Usuario::create([
+            'NOME' => $validatedData['NOME'],
+            'EMAIL' => $validatedData['EMAIL'],
+            'SENHA_HASH' => $validatedData['SENHA_HASH'], // HASH AUTOMÁTICO via setSenhaHashAttribute
+            'PERFIL' => $validatedData['PERFIL'],
+        ]);
 
-    Auth::login($usuario);
+        Log::info('=== DEBUG USUÁRIO CRIADO ===', [
+            'user_id' => $usuario->ID,
+            'email' => $usuario->EMAIL,
+        ]);
 
-    sleep(10); // Simula delay
+        // REGENERA SESSÃO PARA PREVENIR FIXAÇÃO
+        $request->session()->regenerate();
+        
+        // FAZER LOGIN SEGURO
+        Auth::login($usuario, false); // false = não lembrar
+        
+        // CONFIRMA TRANSAÇÃO
+        DB::commit();
+        
+        // LOG DE SUCESSO
+        Log::channel('security')->info('Cadastro realizado com sucesso', [
+            'user_id' => $usuario->ID,
+            'email' => $usuario->EMAIL,
+            'nome' => $usuario->NOME,
+            'perfil' => $usuario->PERFIL,
+            'ip' => $request->ip(),
+            'timestamp' => now(),
+        ]);
 
-    // Redireciona para a home após cadastro em requisição normal
-    return redirect()->route('cadastro')->with('success', 'Cadastro realizado e login efetuado com sucesso!');
-});
+        Log::info('=== DEBUG CADASTRO SUCESSO ===');
+        return redirect()->route('home')->with('success', 'Cadastro realizado com sucesso!');
+        
+    } catch (\Exception $e) {
+        // DESFAZ TRANSAÇÃO EM CASO DE ERRO
+        DB::rollback();
+        
+        // LOG DE ERRO DETALHADO
+        Log::error('=== ERRO NO CADASTRO ===', [
+            'error_message' => $e->getMessage(),
+            'error_file' => $e->getFile(),
+            'error_line' => $e->getLine(),
+            'error_trace' => $e->getTraceAsString(),
+            'email' => $request->EMAIL ?? 'N/A',
+            'ip' => $request->ip(),
+            'timestamp' => now(),
+        ]);
+        
+        return back()->with('error', 'Erro interno. Tente novamente. Detalhes: ' . $e->getMessage())
+                    ->withInput($request->except('SENHA_HASH'));
+    }
+})->middleware(['throttle:3,1', 'guest']); // Adiciona middleware guest
