@@ -10,12 +10,9 @@
 
 <body class="loginf">
     <!--botão de sair-->
-    <div class="containerS">
+  <div class="containerS">
         <div class="Cbutton">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn btn-danger">Sair</button>
-            </form>
+            <a href="{{ route('home') }}" class="botãoS">Sair</a>
         </div>
     </div>
     <!--botão de sair-->
