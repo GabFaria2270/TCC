@@ -1,52 +1,158 @@
-// Função para mostrar o loader e desabilitar o botão de submit
-function mostrarLoader(form, loader) {
-    loader.style.display = 'flex';
-    iniciarAnimacaoLoader();
-}
+/**
+ * Sistema de Cadastro
+ * Gerencia funcionalidades do formulário de cadastro
+ */
 
-// Função para esconder o loader e habilitar o botão de submit
-function esconderLoader(form, loader) {
-    loader.style.display = 'none';
-    const btn = form.querySelector('button[type="submit"]');
-    if (btn) btn.disabled = false;
-    pararAnimacaoLoader();
-}
+class RegisterSystem {
+    constructor() {
+        this.form = null;
+        this.loader = null;
+        this.init();
+    }
 
-// Função para exibir mensagem de sucesso ou erro
-function exibirMensagem(data) {
-    const mensagens = document.querySelector('.form-cadastro-messages');
-    if (mensagens && data && data.message) {
-        mensagens.innerHTML = `<div class="alert alert-${data.success ? 'success' : 'danger'}">${data.message}</div>`;
+    init() {
+        document.addEventListener('DOMContentLoaded', () => {
+            this.setupElements();
+            this.bindEvents();
+        });
+    }
+
+    setupElements() {
+        this.form = document.getElementById('cadastroForm');
+        this.loader = document.getElementById('loader-cadastro');
+    }
+
+    bindEvents() {
+        if (this.form) {
+            this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        }
+
+        // Adiciona validação em tempo real
+        this.addRealTimeValidation();
+    }
+
+    handleSubmit(event) {
+        // Mostra o loader se disponível
+        if (this.loader) {
+            this.mostrarLoader();
+        }
+
+        console.log('📤 Enviando formulário de cadastro...');
+    }
+
+    mostrarLoader() {
+        if (this.loader) {
+            this.loader.style.display = 'flex';
+            this.iniciarAnimacaoLoader();
+        }
+    }
+
+    esconderLoader() {
+        if (this.loader) {
+            this.loader.style.display = 'none';
+            this.pararAnimacaoLoader();
+        }
+    }
+
+    iniciarAnimacaoLoader() {
+        const img = document.getElementById('imgloader');
+        if (img) {
+            img.style.display = 'block';
+        }
+    }
+
+    pararAnimacaoLoader() {
+        const img = document.getElementById('imgloader');
+        if (img) {
+            img.style.display = 'none';
+        }
+    }
+
+    addRealTimeValidation() {
+        const nomeInput = document.getElementById('NOME');
+        const emailInput = document.getElementById('EMAIL');
+        const senhaInput = document.getElementById('SENHA_HASH');
+        const senhaConfirmInput = document.getElementById('SENHA_HASH_confirmation');
+        const perfilInput = document.getElementById('PERFIL');
+
+        if (nomeInput) {
+            nomeInput.addEventListener('blur', this.validateNome);
+        }
+
+        if (emailInput) {
+            emailInput.addEventListener('blur', this.validateEmail);
+        }
+
+        if (senhaInput) {
+            senhaInput.addEventListener('blur', this.validatePassword);
+        }
+
+        if (senhaConfirmInput) {
+            senhaConfirmInput.addEventListener('blur', this.validatePasswordConfirmation);
+        }
+
+        if (perfilInput) {
+            perfilInput.addEventListener('blur', this.validatePerfil);
+        }
+    }
+
+    validateNome(event) {
+        const nome = event.target.value;
+        const nomeRegex = /^[a-zA-ZÀ-ÿ\s]+$/;
+        
+        if (nome && (nome.length < 2 || !nomeRegex.test(nome))) {
+            event.target.style.borderColor = '#e74c3c';
+        } else {
+            event.target.style.borderColor = '';
+        }
+    }
+
+    validateEmail(event) {
+        const email = event.target.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (email && !emailRegex.test(email)) {
+            event.target.style.borderColor = '#e74c3c';
+        } else {
+            event.target.style.borderColor = '';
+        }
+    }
+
+    validatePassword(event) {
+        const password = event.target.value;
+        
+        if (password && password.length < 8) {
+            event.target.style.borderColor = '#e74c3c';
+        } else {
+            event.target.style.borderColor = '';
+        }
+    }
+
+    validatePasswordConfirmation(event) {
+        const password = document.getElementById('SENHA_HASH')?.value;
+        const passwordConfirm = event.target.value;
+        
+        if (passwordConfirm && password !== passwordConfirm) {
+            event.target.style.borderColor = '#e74c3c';
+        } else {
+            event.target.style.borderColor = '';
+        }
+    }
+
+    validatePerfil(event) {
+        const perfil = event.target.value;
+        const perfilRegex = /^[a-z0-9_-]+$/;
+        
+        if (perfil && (perfil.length < 3 || !perfilRegex.test(perfil))) {
+            event.target.style.borderColor = '#e74c3c';
+        } else {
+            event.target.style.borderColor = '';
+        }
     }
 }
 
-// Função principal para lidar com o envio do formulário via AJAX ou normal
-function inicializarCadastroAJAX() {
-    const form = document.getElementById('cadastroForm');
-    const loader = document.getElementById('loader-cadastro');
-    if (!form || !loader) return;
+// Inicializa o sistema de cadastro
+const registerSystem = new RegisterSystem();
 
-    form.addEventListener('submit', function (e) {
-        // Mostra o loader, mas NÃO impede o submit normal
-        mostrarLoader(form, loader);
-        // Não faz fetch, deixa o submit tradicional acontecer
-    });
-}
-
-function iniciarAnimacaoLoader() {
-    const img = document.getElementById('imgloader');
-    if (img) {
-        // Apenas garante que a imagem está visível, sem alternância
-        img.style.display = 'block';
-    }
-}
-
-function pararAnimacaoLoader() {
-    const img = document.getElementById('imgloader');
-    if (img) {
-        img.style.display = 'none';
-    }
-}
-
-// Inicializa o AJAX do cadastro quando o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', inicializarCadastroAJAX);
+// Exporta para uso global se necessário
+window.RegisterSystem = RegisterSystem;

@@ -10,22 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
-/**
- * Controller customizado para login
- * Responsabilidades:
- * - Exibir formulário de login
- * - Coordenar processo de autenticação via Service
- * - Registrar logs de auditoria
- * - Tratar exceções e erros
- */
 class LoginController extends Controller
 {
     protected $loginService;
 
-    /**
-     * Injeção de dependência do LoginService
-     * Segue padrão de inversão de controle
-     */
     public function __construct(LoginService $loginService)
     {
         $this->loginService = $loginService;
@@ -33,7 +21,6 @@ class LoginController extends Controller
 
     /**
      * Exibe o formulário de login
-     * Retorna view customizada (não Inertia)
      */
     public function show()
     {
@@ -41,21 +28,19 @@ class LoginController extends Controller
     }
 
     /**
-     * Processa tentativa de login
-     * Fluxo: Validação → Service → Logs → Resposta
+     * Processa o login
      */
     public function login(LoginRequest $request): RedirectResponse
     {
         try {
-            // LOG DA TENTATIVA - Auditoria de segurança
+            // LOG DA TENTATIVA
             $this->logLoginAttempt($request);
 
-            // PROCESSA LOGIN VIA SERVICE - Separação de responsabilidades
+            // PROCESSA LOGIN VIA SERVICE
             $result = $this->loginService->attempt($request->validated(), $request);
 
             if ($result['success']) {
-                // LOGIN SUCESSO
-                // Regenera sessão para prevenir session fixation
+                // REGENERA SESSÃO
                 $request->session()->regenerate();
                 
                 // LOG DE SUCESSO
@@ -65,13 +50,13 @@ class LoginController extends Controller
                     ->with('success', 'Login realizado com sucesso!');
             }
 
-            // LOGIN FALHOU - Retorna com erros específicos
+            // LOGIN FALHOU
             return back()
                 ->withErrors($result['errors'])
-                ->withInput($request->except('SENHA_HASH')); // Não retorna senha
+                ->withInput($request->except('SENHA_HASH'));
 
         } catch (ValidationException $e) {
-            // RATE LIMITING OU VALIDAÇÃO - Captura middleware de rate limiting
+            // RATE LIMITING OU VALIDAÇÃO
             $this->logValidationError($e, $request);
             
             return back()
@@ -79,7 +64,7 @@ class LoginController extends Controller
                 ->withInput($request->except('SENHA_HASH'));
 
         } catch (\Exception $e) {
-            // ERRO INTERNO - Tratamento de erros inesperados
+            // ERRO INTERNO
             $this->logSystemError($e, $request);
             
             return back()
@@ -89,8 +74,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Logs de auditoria para compliance e segurança
-     * Canal 'security' separado para análise
+     * Logs de auditoria
      */
     private function logLoginAttempt(Request $request): void
     {

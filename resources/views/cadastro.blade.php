@@ -38,7 +38,7 @@
                                 </div>
                                 @endif
                             </div>
-                            <form id="cadastroForm" method="POST" action="{{ route('cadastro') }}">
+                            <form id="cadastroForm" method="POST" action="{{ route('cadastro.store') }}">
                                 @csrf
                                 <div class="form-cadastro-group">
                                     <label for="NOME" class="form-cadastro-label">Nome</label>

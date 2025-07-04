@@ -23,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        $middleware->alias([
+            'login.rate.limiting' => \App\Http\Middleware\LoginRateLimiting::class,
+        ]);
+
         $middleware->web(append: [
             SecurityHeaders::class, // ADICIONE SEU MIDDLEWARE DE SEGURANÇA
             HandleAppearance::class,

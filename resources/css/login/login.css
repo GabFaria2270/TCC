@@ -1,4 +1,5 @@
 /* CSS de login (cópia do cadastro) */
+@import 'rate-limiting.css';
 .loginf {
     justify-content: center;
     align-items: center;

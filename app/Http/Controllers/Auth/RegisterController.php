@@ -10,28 +10,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
-/**
- * Controller customizado para cadastro de usuários
- * Responsabilidades:
- * - Exibir formulário de cadastro
- * - Coordenar criação de usuários via Service
- * - Logs de auditoria de cadastros
- * - Tratamento de duplicatas e erros
- */
 class RegisterController extends Controller
 {
     protected $registrationService;
 
-    /**
-     * Injeção de dependência do RegistrationService
-     */
     public function __construct(RegistrationService $registrationService)
     {
         $this->registrationService = $registrationService;
     }
 
     /**
-     * Exibe formulário de cadastro customizado
+     * Exibe formulário de cadastro
      */
     public function show()
     {
@@ -39,8 +28,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Processa cadastro de novo usuário
-     * Fluxo: Validação → Service → Transação → Logs
+     * Processa cadastro
      */
     public function register(UsuarioRequest $request): RedirectResponse
     {
@@ -52,16 +40,17 @@ class RegisterController extends Controller
             $result = $this->registrationService->create($request->validated(), $request);
 
             if ($result['success']) {
-                // CADASTRO SUCESSO
+                // REGENERA SESSÃO
                 $request->session()->regenerate();
                 
+                // LOG DE SUCESSO
                 $this->logRegistrationSuccess($result['user'], $request);
                 
                 return redirect()->route('home')
                     ->with('success', 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $result['user']->NOME . '!');
             }
 
-            // CADASTRO FALHOU - Duplicatas ou validação
+            // CADASTRO FALHOU
             return back()
                 ->withErrors($result['errors'])
                 ->withInput($request->except('SENHA_HASH', 'SENHA_HASH_confirmation'));
@@ -85,8 +74,7 @@ class RegisterController extends Controller
     }
 
     /**
-     * Logs de auditoria para cadastros
-     * Registra tentativas, sucessos e falhas
+     * Logs de auditoria para cadastro
      */
     private function logRegistrationAttempt(Request $request): void
     {

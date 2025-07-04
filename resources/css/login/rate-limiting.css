@@ -1,0 +1,190 @@
+/* =========================
+   ESTILOS PARA RATE LIMITING
+   ========================= */
+
+/* Alerta principal do rate limiting */
+.rate-limit-alert {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #f39c12;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    animation: pulseWarning 2s infinite;
+    box-shadow: 0 4px 16px rgba(243, 156, 18, 0.3);
+}
+
+/* Conteúdo interno do alerta */
+.rate-limit-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Ícone de aviso */
+.rate-limit-content i {
+    font-size: 2rem;
+    color: #f39c12;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Container do texto */
+.rate-limit-content div {
+    flex: 1;
+}
+
+/* Título do alerta */
+.rate-limit-content strong {
+    color: #d35400;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Texto descritivo */
+.rate-limit-content p {
+    margin: 5px 0;
+    color: #8b6914;
+    font-weight: 500;
+}
+
+/* Contador de segundos */
+#countdown {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 2px 8px;
+    border-radius: 5px;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    display: inline-block;
+    min-width: 35px;
+    text-align: center;
+}
+
+/* =========================
+   BARRA DE PROGRESSO
+   ========================= */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e74c3c 0%, #f39c12 100%);
+    width: 0%;
+    transition: width 1s ease;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+}
+
+/* =========================
+   ANIMAÇÕES
+   ========================= */
+@keyframes pulseWarning {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 4px 16px rgba(243, 156, 18, 0.3);
+    }
+    50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 8px 24px rgba(243, 156, 18, 0.5);
+    }
+}
+
+/* Animação de fade in para o alerta */
+@keyframes fadeInAlert {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rate-limit-alert {
+    animation: fadeInAlert 0.5s ease-out, pulseWarning 2s infinite 0.5s;
+}
+
+/* =========================
+   ESTADOS DESABILITADOS
+   ========================= */
+
+/* Campos desabilitados durante o bloqueio */
+.form-login-input:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+    border-color: #dee2e6;
+}
+
+.form-login-input:disabled::placeholder {
+    color: #adb5bd;
+}
+
+/* Botão desabilitado durante o bloqueio */
+.form-login-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+.form-login-button:disabled:hover {
+    background-color: #6c757d;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Checkbox desabilitado */
+input[type="checkbox"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================
+   RESPONSIVIDADE
+   ========================= */
+@media (max-width: 768px) {
+    .rate-limit-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .rate-limit-content i {
+        font-size: 1.5rem;
+    }
+    
+    .rate-limit-alert {
+        padding: 15px;
+    }
+    
+    #countdown {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .rate-limit-alert {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .rate-limit-content strong {
+        font-size: 1rem;
+    }
+    
+    .progress-bar {
+        height: 6px;
+    }
+}
