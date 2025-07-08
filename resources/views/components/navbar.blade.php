@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg ">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">60+conectado</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -16,7 +16,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#valores">Contato</a>
                 </li>
-                
             </ul>
         </div>
     </div>
