@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    @vite(['resources/css/app.css', 'resources/css/home/home.css', 'resources/js/geralJS.js'])
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js'])
 </head>
 
 <body class="loginf">
     <!--botão de sair-->
-  <div class="containerS">
+    <div class="containerS">
         <div class="Cbutton">
             <a href="{{ route('home') }}" class="botãoS">Sair</a>
         </div>
@@ -37,40 +38,33 @@
                                 </div>
                                 @endif
                             </div>
-                            <form id="loginForm" method="POST" action="{{ route('login') }}">
+                            <form id="cadastroForm" method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <div class="form-login-group">
                                     <label for="EMAIL" class="form-login-label">E-mail</label>
                                     <input type="email" class="form-login-input" id="EMAIL" name="EMAIL" required
-                                        autocomplete="email" value="{{ old('EMAIL') }}">
+                                        value="{{ old('EMAIL') }}">
                                     @error('EMAIL')
                                     <div class="form-login-error">{{ $message }}</div>
                                     @enderror
                                 </div>
-
                                 <div class="form-login-group">
                                     <label for="SENHA_HASH" class="form-login-label">Senha</label>
                                     <input type="password" class="form-login-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required autocomplete="current-password" minlength="6"
-                                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$"
-                                        title="Senha deve conter pelo menos 6 caracteres com maiúscula, minúscula, número e símbolo">
+                                        required>
                                     @error('SENHA_HASH')
                                     <div class="form-login-error">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <!-- CHECKBOX LEMBRAR-ME (OPCIONAL) -->
                                 <div class="form-login-group">
-                                    <label class="form-check-label">
-                                        <input type="checkbox" name="remember" value="1"
-                                            {{ old('remember') ? 'checked' : '' }}>
-                                        Lembrar-me
-                                    </label>
+                                    <label for="SENHA_HASH_confirmation" class="form-login-label">Confirme a
+                                        Senha</label>
+                                    <input type="password" class="form-login-input" id="SENHA_HASH_confirmation"
+                                        name="SENHA_HASH_confirmation" required>
                                 </div>
-
-                                <button type="submit" class="form-login-button">Entrar</button>
+                                <button type="submit" class="form-login-button">Login</button>
                             </form>
-
                             <div class="login-link">
                                 <span>Não tem uma conta?</span>
                                 <a href="{{ route('cadastro') }}" class="form-login-link">Cadastrar</a>
@@ -86,7 +80,7 @@
                 <object class="objectL" type="image/svg+xml" data="{{ asset('img/login.svg') }}"></object>
             </div>
 
-            <div id="loader-cadastro" class="loder-cadastro">
+              <div id="loader-cadastro" class="loder-cadastro">
                 <span id="loader-icon" class="loader-icon girar-animado"
                     data-img1="{{ asset('img/iconeloader.png') }}">
                     <img id="imgloader" src="{{ asset('img/iconeloader.png') }}" alt="Moeda" class="imgloader">

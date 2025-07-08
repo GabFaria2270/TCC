@@ -12,10 +12,18 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller padrão do Laravel (Breeze/Jetstream)
+ * USADO APENAS PARA LOGOUT no seu sistema
+ * 
+ * Métodos create() e store() são ignorados
+ * Você usa LoginController customizado
+ */
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Show the login page.
+     * Show the login page - NÃO USADO
+     * Você usa LoginController->show()
      */
     public function create(Request $request): Response
     {
@@ -26,16 +34,14 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Handle authentication request - NÃO USADO
+     * Você usa LoginController->login()
      */
     public function store(LoginRequest $request): RedirectResponse
     {
         try {
             // LOG DE TENTATIVA
             Log::channel('security')->info('Tentativa de login (Controller)', [
-                'email' => $request->email ?? $request->EMAIL,
-                'ip' => $request->ip(),
-                'user_agent' => substr($request->userAgent(), 0, 200),
                 'timestamp' => now(),
             ]);
 
@@ -46,9 +52,6 @@ class AuthenticatedSessionController extends Controller
 
             // LOG DE SUCESSO
             Log::channel('security')->info('Login realizado com sucesso (Controller)', [
-                'user_id' => $usuario->id ?? $usuario->ID,
-                'email' => $usuario->email ?? $usuario->EMAIL,
-                'ip' => $request->ip(),
                 'timestamp' => now(),
             ]);
 
@@ -57,8 +60,6 @@ class AuthenticatedSessionController extends Controller
         } catch (\Exception $e) {
             // LOG DE ERRO
             Log::channel('security')->error('Erro no login (Controller)', [
-                'error' => $e->getMessage(),
-                'ip' => $request->ip(),
                 'timestamp' => now(),
             ]);
 
@@ -67,24 +68,25 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Destroy an authenticated session.
+     * Destroy session - USADO PARA LOGOUT
+     * Único método que você utiliza deste controller
      */
     public function destroy(Request $request): RedirectResponse
     {
         $usuario = Auth::user();
 
-        // LOG DE LOGOUT
+        // LOG DE LOGOUT - Auditoria de sessões
         Log::channel('security')->info('Logout realizado (Controller)', [
-            'user_id' => $usuario->id ?? $usuario->ID ?? 'N/A',
-            'email' => $usuario->email ?? $usuario->EMAIL ?? 'N/A',
+            'user_id' => $usuario->ID ?? 'N/A',
+            'email' => $usuario->EMAIL ?? 'N/A',
             'ip' => $request->ip(),
             'timestamp' => now(),
         ]);
 
+        // LOGOUT SEGURO
         Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->session()->invalidate(); // Invalida sessão atual
+        $request->session()->regenerateToken(); // Regenera CSRF token
 
         return redirect()->route('home')->with('success', 'Logout realizado com sucesso!');
     }
