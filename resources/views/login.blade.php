@@ -71,7 +71,7 @@
                                 <div class="form-login-group">
                                     <label for="SENHA_HASH" class="form-login-label">Senha</label>
                                     <input type="password" class="form-login-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required autocomplete="current-password" minlength="6"
+                                        required autocomplete="current-password" minlength="12"
                                         {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     @foreach($errors->get('SENHA_HASH') as $message)
                                         <div class="form-login-error">{{ $message }}</div>
