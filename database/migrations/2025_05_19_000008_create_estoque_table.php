@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('estoque', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('produto_id');
+            $table->integer('quantidade')->default(0);
             $table->timestamps();
+            $table->unsignedBigInteger('mercearia_id');
+            
+            $table->foreign('mercearia_id')->references('id')->on('mercearia')->onDelete('cascade');
+            $table->foreign('produto_id')->references('id')->on('produto')->onDelete('cascade');
         });
     }
 

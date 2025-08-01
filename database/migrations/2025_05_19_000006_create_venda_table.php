@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('venda', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('cliente_id')->nullable();
+            $table->decimal('total', 10, 2);
             $table->timestamps();
+
+            $table->foreign('cliente_id')->references('id')->on('cliente')->onDelete('set null');
         });
     }
 
