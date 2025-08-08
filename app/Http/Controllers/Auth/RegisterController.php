@@ -91,7 +91,7 @@ class RegisterController extends Controller
     private function logRegistrationSuccess($user, Request $request): void
     {
         Log::channel('security')->info('Cadastro realizado com sucesso', [
-            'user_id' => $user->ID,
+            'user_id' => $user->id,
             'email' => $user->EMAIL,
             'nome' => $user->NOME,
             'perfil' => $user->PERFIL,

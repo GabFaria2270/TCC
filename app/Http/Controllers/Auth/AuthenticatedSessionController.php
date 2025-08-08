@@ -77,7 +77,7 @@ class AuthenticatedSessionController extends Controller
 
         // LOG DE LOGOUT - Auditoria de sessões
         Log::channel('security')->info('Logout realizado (Controller)', [
-            'user_id' => $usuario->ID ?? 'N/A',
+            'user_id' => $usuario->id ?? 'N/A',
             'email' => $usuario->EMAIL ?? 'N/A',
             'ip' => $request->ip(),
             'timestamp' => now(),

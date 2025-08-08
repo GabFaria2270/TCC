@@ -8,5 +8,5 @@ Route::middleware(['guest'])->group(function () {
     
     Route::post('/cadastro', [RegisterController::class, 'register'])
         ->middleware(['throttle:3,1']) // 3 cadastros por minuto
-        ->name('cadastro.store');
+        ->name('cadastro');
 });

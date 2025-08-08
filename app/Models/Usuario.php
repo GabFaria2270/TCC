@@ -13,7 +13,7 @@ class Usuario extends Authenticatable
     use HasFactory, Notifiable; // REMOVIDO SoftDeletes temporariamente
 
     protected $table = 'usuario'; // Nome da tabela no banco
-    protected $primaryKey = 'ID'; // Nome da chave primária
+    protected $primaryKey = 'id'; // Nome da chave primária
     public $timestamps = false; // DESABILITADO até verificar se a tabela tem created_at/updated_at
 
     // PROTEÇÃO CONTRA MASS ASSIGNMENT
@@ -22,23 +22,18 @@ class Usuario extends Authenticatable
         'EMAIL', 
         'SENHA_HASH',
         'PERFIL',
-        'DATA_CRIACAO'
+
+        
+
     ];
 
     // CAMPOS SENSÍVEIS QUE NUNCA DEVEM APARECER EM JSON
     protected $hidden = [
         'SENHA_HASH',
         'remember_token',
-        // 'deleted_at', // Removido pois não usamos SoftDeletes agora
+   
     ];
 
-    // CONVERSÕES AUTOMÁTICAS (simplificado)
-    protected $casts = [
-        // 'created_at' => 'datetime', // Removido pois timestamps = false
-        // 'updated_at' => 'datetime', // Removido pois timestamps = false
-        // 'deleted_at' => 'datetime', // Removido pois não usamos SoftDeletes
-        // 'email_verified_at' => 'datetime', // Removido se não existe na tabela
-    ];
 
     // MÉTODOS DE AUTENTICAÇÃO SEGUROS (CAMPOS PERSONALIZADOS)
     public function getAuthPassword()
@@ -71,5 +66,10 @@ class Usuario extends Authenticatable
     public function scopeByPerfil($query, $perfil)
     {
         return $query->where('PERFIL', strtolower($perfil));
+    }
+
+    public function comercio()
+    {
+        return $this->hasOne(Comercio::class, 'usuario_id', 'id');
     }
 }

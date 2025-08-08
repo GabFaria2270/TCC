@@ -16,9 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('produto_id');
             $table->integer('quantidade')->default(0);
             $table->timestamps();
-            $table->unsignedBigInteger('mercearia_id');
-            
-            $table->foreign('mercearia_id')->references('id')->on('mercearia')->onDelete('cascade');
+            $table->unsignedBigInteger('comercio_id');
+
+            $table->foreign('comercio_id')->references('id')->on('comercio')->onDelete('cascade');
             $table->foreign('produto_id')->references('id')->on('produto')->onDelete('cascade');
         });
     }

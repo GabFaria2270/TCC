@@ -17,8 +17,8 @@ return new class extends Migration
             $table->decimal('valor_pago', 10, 2);
             $table->timestamp('data_pagamento')->useCurrent();
             $table->timestamps();
-            $table->unsignedBigInteger('mercearia_id');
-            $table->foreign('mercearia_id')->references('id')->on('mercearia')->onDelete('cascade');
+            $table->unsignedBigInteger('comercio_id');
+            $table->foreign('comercio_id')->references('id')->on('comercio')->onDelete('cascade');
             $table->foreign('conta_fiada_id')->references('id')->on('conta_fiada')->onDelete('cascade');
         });
     }
