@@ -32,7 +32,7 @@ class UsuarioRequest extends FormRequest
             'SENHA_HASH' => [
                 'required',
                 'confirmed',
-                Password::min(12) // Reduzindo de 12 para 8 para facilitar testes
+                Password::min(12)
                     ->letters()
                     ->mixedCase()
                     ->numbers()
@@ -48,6 +48,8 @@ class UsuarioRequest extends FormRequest
                 'alpha_dash',
                 'lowercase',
             ],
+            'COMERCIO_NOME' => ['required', 'string', 'min:2', 'max:255'],
+            'COMERCIO_CNPJ' => ['required', 'string', 'size:14', 'unique:comercio,cnpj'],
         ];
     }
 
@@ -72,6 +74,11 @@ class UsuarioRequest extends FormRequest
             'PERFIL.unique' => 'Este perfil já está em uso.',
             'PERFIL.alpha_dash' => 'O perfil deve conter apenas letras, números, _ e -.',
             'PERFIL.lowercase' => 'O perfil deve estar em minúsculas.',
+
+            'COMERCIO_NOME.required' => 'O nome do comércio é obrigatório.',
+            'COMERCIO_CNPJ.required' => 'O CNPJ do comércio é obrigatório.',
+            'COMERCIO_CNPJ.size' => 'O CNPJ deve ter 14 dígitos.',
+            'COMERCIO_CNPJ.unique' => 'Este CNPJ já está cadastrado.',
         ];
     }
 

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Comercio;
+
 
 class RegistrationService
 {
@@ -48,9 +50,9 @@ class RegistrationService
             $usuario = Usuario::create([
                 'NOME' => $data['NOME'],
                 'EMAIL' => $data['EMAIL'],
-                'SENHA_HASH' => $data['SENHA_HASH'], // Hash automático via model
+                'SENHA_HASH' => $data['SENHA_HASH'],
                 'PERFIL' => $data['PERFIL'],
-                'DATA_CRIACAO' => now(),
+     
             ]);
 
             // VERIFICA SE USUÁRIO FOI CRIADO
@@ -59,6 +61,23 @@ class RegistrationService
                 return [
                     'success' => false,
                     'errors' => ['system' => 'Falha ao criar usuário.'],
+                    'reason' => 'creation_failed'
+                ];
+            }
+
+            // CRIA MERCEARIA E VINCULA AO USUÁRIO
+            $comercio = Comercio::create([
+                'nome' => $data['COMERCIO_NOME'],
+                'cnpj' => $data['COMERCIO_CNPJ'],
+                'usuario_id' => $usuario->id,
+            ]);
+
+            // VERIFICA SE MERCEARIA FOI CRIADA
+            if (!$comercio) {
+                DB::rollback();
+                return [
+                    'success' => false,
+                    'errors' => ['system' => 'Falha ao criar comércio.'],
                     'reason' => 'creation_failed'
                 ];
             }

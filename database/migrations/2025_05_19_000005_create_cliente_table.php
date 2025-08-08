@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('telefone', 20)->nullable();
             $table->unsignedBigInteger('cliente_id')->nullable();
             $table->timestamps();
-            $table->unsignedBigInteger('mercearia_id');
-            $table->foreign('mercearia_id')->references('id')->on('mercearia')->onDelete('cascade');
+            $table->unsignedBigInteger('comercio_id');
+            $table->foreign('comercio_id')->references('id')->on('comercio')->onDelete('cascade');
         });
     }
 

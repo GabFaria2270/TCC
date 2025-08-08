@@ -38,7 +38,7 @@
                                 </div>
                                 @endif
                             </div>
-                            <form id="cadastroForm" method="POST" action="{{ route('cadastro.store') }}">
+                            <form id="cadastroForm" method="POST" action="{{ route('cadastro') }}">
                                 @csrf
                                 <div class="form-cadastro-group">
                                     <label for="NOME" class="form-cadastro-label">Nome</label>
@@ -87,6 +87,21 @@
                                     <div class="form-cadastro-error">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="form-cadastro-group">
+                                    <label for="COMERCIO_NOME" class="form-cadastro-label">Nome do Comércio</label>
+                                    <input type="text" class="form-cadastro-input" id="COMERCIO_NOME" name="COMERCIO_NOME" required value="{{ old('COMERCIO_NOME') }}">
+                                    @error('COMERCIO_NOME')
+                                    <div class="form-cadastro-error">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-cadastro-group">
+                                    <label for="COMERCIO_CNPJ" class="form-cadastro-label">CNPJ do Comércio</label>
+                                    <input type="text" class="form-cadastro-input" id="COMERCIO_CNPJ" name="COMERCIO_CNPJ" required value="{{ old('COMERCIO_CNPJ') }}">
+                                    @error('COMERCIO_CNPJ')
+                                    <div class="form-cadastro-error">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                
                                 <button type="submit" class="form-cadastro-button">Cadastrar</button>
                             </form>
                             <div class="login-link">
