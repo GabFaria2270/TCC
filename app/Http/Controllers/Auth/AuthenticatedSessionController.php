@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -40,29 +41,41 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         try {
-            // LOG DE TENTATIVA
-            Log::channel('security')->info('Tentativa de login (Controller)', [
-                'timestamp' => now(),
-            ]);
+            Log::channel('security')->info('Tentativa de login (Controller)', ['timestamp' => now()]);
 
             $request->authenticate();
             $request->session()->regenerate();
 
-            $usuario = Auth::user();
+            // garante que a sessão seja gravada no storage (cria a linha quando usa driver database)
+            $request->session()->save();
 
-            // LOG DE SUCESSO
+            $usuario = Auth::user();
+            $sessionId = $request->session()->getId();
+
+            // pega a chave primária do model independentemente do nome do campo
+            $usuarioKey = $usuario ? $usuario->getKey() : null;
+
+            // cria ou atualiza a linha da sessão garantindo associação ao usuário
+            DB::table('sessions')->updateOrInsert(
+                ['id' => $sessionId],
+                [
+                    'usuario_id'    => $usuarioKey,
+                    'ip_address'    => $request->ip(),
+                    'user_agent'    => $request->userAgent(),
+                    'last_activity' => time(),
+                ]
+            );
+
             Log::channel('security')->info('Login realizado com sucesso (Controller)', [
+                'user_key' => $usuarioKey ?? 'N/A',
+                'session_id' => $sessionId,
+                'ip' => $request->ip(),
                 'timestamp' => now(),
             ]);
 
-            // REDIRECIONA PARA HOME (NÃO DASHBOARD)
             return redirect()->intended(route('home', absolute: false));
         } catch (\Exception $e) {
-            // LOG DE ERRO
-            Log::channel('security')->error('Erro no login (Controller)', [
-                'timestamp' => now(),
-            ]);
-
+            Log::channel('security')->error('Erro no login (Controller)', ['timestamp' => now(), 'error' => $e->getMessage()]);
             throw $e;
         }
     }
