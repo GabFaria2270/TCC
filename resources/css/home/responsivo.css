@@ -1,116 +1,103 @@
 /* =========================
    RESPONSIVO
    ========================= */
+/* =========================
+   RESPONSIVIDADE GLOBAL
+   ========================= */
+
+.main-content {
+    padding: 0 16px;
+    margin-top: 16px;
+}
+.section-home-false, .section-card-false, .section-cardV-false {
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+.section-home-true, .section-card-true, .section-cardV-true {
+    opacity: 1;
+    transition: opacity 2s ease-in-out;
+}
+
+/* =========================
+   RESPONSIVIDADE HOME E COMPONENTES
+   ========================= */
+
+@media (max-width: 1200px) {
+    .container-fluid {
+        padding: 0 1.5rem;
+    }
+    .carousel-caption {
+        font-size: 1.2rem;
+    }
+}
+
 @media (max-width: 900px) {
-    .banner-content {
-        display: flex;
-        flex-direction: column-reverse;
-        gap: 24px;
-        text-align: center;
-        align-items: center;
+    /* Estrutura principal */
+    /* Banner/Carrossel: garantir que o background não ultrapasse a imagem também em telas menores */
+    .carousel {
+        height: auto !important;
+        background: linear-gradient(120deg, #232526 0%, #414345 100%);
+        overflow: hidden;
     }
-    .banner-text {
-        align-items: center;
-        text-align: center;
-        width: 100%;
-    }
-    .navbar-container {
-        flex-direction: column;
-        gap: 12px;
-        padding: 0 10px;
-        align-items: center;
-    }
-    .main-navbar .nav {
-        gap: 16px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .navbar-logo {
-        font-size: 1.5rem;
-        text-align: center;
-    }
-    .nav-pills {
-        flex-wrap: wrap;
-        padding: 8px 6px;
-        gap: 4px;
-        justify-content: center;
-    }
-    .nav-pills .nav-link {
-        padding: 8px 12px;
-        font-size: 1rem;
-    }
-    .banner-section {
-        margin-top: 16px;
-        border-radius: 24px;
-        padding: 16px 0;
-    }
-    .banner-title {
-        font-size: 1.5rem;
-    }
-    .banner-description {
-        font-size: 1rem;
-    }
-    .banner-img-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-    }
-    .banner-img {
-        width: 90%;
-        max-width: 260px;
-        height: auto;
+    .carousel-item img {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: cover;
         display: block;
         margin: 0 auto;
     }
-    .card-group {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding: 0 8px;
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.55) !important;
+        border-radius: 0 0 2.5rem 2.5rem;
+        padding: 0.5rem 1rem;
         width: 100%;
+        box-sizing: border-box;
+    }
+    .section-home, .section-card, .section-sobre, .section-cardv {
+        padding: 1rem 0.5rem;
+        margin: 0;
+    }
+    .main-content {
+        padding: 0.5rem;
+    }
+    .container-escrita {
+        font-size: 1.1rem;
+        text-align: center;
+        padding: 0.5rem 0;
+    }
+    /* Cards e containers */
+    .row.g-4, .containervalor, .card-group {
+        flex-direction: column !important;
+        gap: 1rem;
+        align-items: center;
     }
     .card {
+        width: 100%;
+        margin-bottom: 1rem;
         min-width: 0;
-        width: 100%;
-        margin: 0 auto;
+        box-sizing: border-box;
     }
-    .card-img-top {
-        width: 100%;
-        height: 140px;
+    .card-img-top, .img_Carrossel_1, .img_Carrossel_2, .img_Carrossel_3, .containerimg img, .banner-img {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100%;
+        max-height: 220px;
         object-fit: cover;
+        display: block;
+        margin: 0 auto;
     }
     .card-body {
         padding: 16px 8px;
     }
-
-    /* Navbar */
-    .navbar-nav {
-        flex-direction: column; /* Empilha os itens verticalmente */
-        gap: 6px; /* Reduz o espaçamento entre os itens */
-        width: 100%; /* Ocupa toda a largura */
-        text-align: center; /* Centraliza o texto */
-        margin-left: 0;
-        padding: 10px 0;
-        border-radius: 12px;
-        background: rgba(35, 37, 38, 0.98); /* Fundo mais opaco */
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    .card-footer {
+        font-size: 0.85rem;
+        padding: 4px 8px;
+        text-align: center;
     }
-    .navbar-brand {
-        text-align: center; /* Centraliza o logotipo */
-        margin-bottom: 1rem;
-        width: 100%;
-        font-size: 1.5rem; /* Reduz o tamanho do logotipo */
-    }
-    .navbar-toggler {
-        margin-left: 0;
-        margin-right: 0.5rem;
-        font-size: 2rem; /* Aumenta o tamanho do botão de menu */
-    }
-
     /* Carousel */
     .carousel-caption {
-        font-size: 1rem; /* Ajusta o tamanho do texto no carousel */
+        font-size: 1rem;
+        padding: 0.5rem;
         text-align: center;
     }
     .carousel-item img {
@@ -118,10 +105,52 @@
         max-height: 400px;
         object-fit: cover;
     }
-
-    /* Seções */
+    .carousel-control-prev, .carousel-control-next {
+        width: 32px;
+        height: 32px;
+    }
+    /* Navbar */
+    .navbar-container {
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 10px;
+        align-items: center;
+    }
+    .main-navbar .nav, .nav-pills {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 8px 6px;
+    }
+    .nav-pills .nav-link {
+        padding: 8px 12px;
+        font-size: 1rem;
+    }
+    .navbar-logo, .navbar-brand {
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+    .navbar-nav {
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+        text-align: center;
+        margin-left: 0;
+        padding: 10px 0;
+        border-radius: 12px;
+        background: rgba(35, 37, 38, 0.98);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-toggler {
+        margin-left: 0;
+        margin-right: 0.5rem;
+        font-size: 2rem;
+    }
+    /* Seções específicas */
     .section-sobre .container-sobre {
-        flex-direction: column; /* Empilha os elementos verticalmente */
+        flex-direction: column;
         gap: 20px;
     }
     .section-sobre .containerimg {
@@ -131,176 +160,142 @@
     .section-sobre .containescrita {
         text-align: center;
     }
+    /* Botão navegação */
+    .btndenavegação {
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        padding: 6px 10px;
+    }
+    /* Títulos e subtítulos */
+    .titulov {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    .subtituloV {
+        font-size: 1rem;
+        text-align: center;
+    }
 }
 
-/* Extra: para telas bem pequenas */
 @media (max-width: 600px) {
-    .navbar-logo {
-        font-size: 1.1rem;
+    .section-home, .section-card, .section-sobre, .section-cardv {
+    .carousel {
+        height: auto !important;
+        background: linear-gradient(120deg, #232526 0%, #414345 100%);
+        overflow: hidden;
     }
-    .banner-title {
-        font-size: 1.1rem;
+    .carousel-item img {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto;
     }
-    .banner-description {
-        font-size: 0.95rem;
+    .carousel-caption {
+        background: rgba(0,0,0,0.35) !important;
+        border-radius: 0 0 2.5rem 2.5rem;
+        padding: 0.5rem 1rem;
+        width: 100%;
+        box-sizing: border-box;
     }
-    .banner-img {
-        max-width: 140px;
+        padding: 0.5rem 0.2rem;
     }
-    .card-group {
-        gap: 12px;
-        padding: 0 2px;
+    .main-content {
+        padding: 0.2rem;
+    }
+    .container-escrita {
+        font-size: 1rem;
+        padding: 0.2rem 0;
+    }
+    .card {
+        margin-bottom: 0.5rem;
+    }
+    .card-img-top, .img_Carrossel_1, .img_Carrossel_2, .img_Carrossel_3, .containerimg img, .banner-img {
+        max-height: 140px;
     }
     .card-body {
         padding: 10px 4px;
     }
-
-    /* Navbar */
-    .navbar-brand {
-        font-size: 1.2rem; /* Reduz ainda mais o tamanho do logotipo */
+    .card-footer {
+        font-size: 0.75rem;
+        padding: 2px 4px;
+    }
+    .navbar-logo, .navbar-brand {
+        font-size: 1.2rem;
         margin-bottom: 0.5rem;
     }
     .navbar-nav {
         padding: 6px 0;
-        gap: 2px; /* Reduz o espaçamento entre os itens */
+        gap: 2px;
     }
     .nav-link {
-        font-size: 0.98rem; /* Reduz o tamanho do texto */
-        padding: 8px 10px; /* Ajusta o padding dos links */
+        font-size: 0.98rem;
+        padding: 8px 10px;
     }
-
-    /* Seções */
+    .btndenavegação {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+        padding: 4px 6px;
+    }
+    .titulov {
+        font-size: 1rem;
+    }
+    .subtituloV {
+        font-size: 0.9rem;
+    }
     .section-sobre .containerimg img {
         max-width: 100%;
         height: auto;
     }
     .section-sobre .container-sobre {
-        gap: 15px; /* Reduz o espaçamento entre os elementos */
+        gap: 15px;
     }
-}
-
-/* =========================
-   RESPONSIVIDADE GLOBAL
-   ========================= */
-
-/* Ajustes para telas grandes (até 1200px) */
-@media (max-width: 1200px) {
-    .container-fluid {
-        padding: 0 1.5rem; /* Reduz o padding lateral */
+    .card-group {
+        gap: 12px;
+        padding: 0 2px;
     }
-
-    .carousel-caption {
-        font-size: 1.2rem; /* Ajusta o tamanho do texto no carousel */
-    }
-}
-
-.main-content{
-    padding: 0 16px;
-    margin-top: 16px;
-}
-.section-home-false{
-    opacity: 0;
-    transition: opacity 2s ease-in-out
-}
-.section-home-true{
-    opacity: 1;
-    transition: opacity 2s ease-in-out;
-}
-
-.section-card-false{
-    opacity: 0;
-    transition: opacity 2s ease-in-out;
-}
-.section-card-true{
-    opacity: 1;
-    transition: opacity 2s ease-in-out;
-}
-.section-cardV-false  {
-    opacity: 0; 
-    transition: opacity 2s ease-in-out; 
-}
-
-.section-cardV-true  {
-    opacity: 1; 
-    transition: opacity 2s ease-in-out ; 
 }
 
 /* =========================
    ANIMAÇÕES RESPONSIVAS
    ========================= */
 
-/* Ajuste para telas menores (máximo de 768px) */
 @media (max-width: 768px) {
     @keyframes botoes-navbar {
-        0% {
-            transform: scale(1);
-        }
-        100% {
-            transform: scale(1.1); /* Reduz a escala */
-        }
+        0% { transform: scale(1); }
+        100% { transform: scale(1.1); }
     }
-
     @keyframes baner-inicial {
-        0% {
-            transform: translateX(100vw); /* Reduz a distância inicial */
-            opacity: 0;
-        }
-        100% {
-            transform: translateX(0);
-            opacity: 1;
-        }
+        0% { transform: translateX(100vw); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
     }
-
     @keyframes baner-titulo {
-        0% {
-            transform: translateZ(-40px); /* Reduz a profundidade */
-            opacity: 0;
-        }
-        100% {
-            transform: translateZ(0);
-            opacity: 1;
-        }
+        0% { transform: translateZ(-40px); opacity: 0; }
+        100% { transform: translateZ(0); opacity: 1; }
     }
-
     @keyframes cards-right {
-        0% {
-            transform: translateX(-60%); /* Reduz a distância inicial */
-            opacity: 0;
-        }
-        100% {
-            transform: translateX(0);
-            opacity: 1;
-        }
+        0% { transform: translateX(-60%); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
     }
-
     @keyframes focus-in-expand-fwd {
-        0% {
-            transform: translateZ(-400px); /* Reduz a profundidade */
-            filter: blur(6px); /* Reduz o desfoque */
-            opacity: 0;
-        }
-        100% {
-            transform: translateZ(0);
-            filter: blur(0);
-            opacity: 1;
-        }
+        0% { transform: translateZ(-400px); filter: blur(6px); opacity: 0; }
+        100% { transform: translateZ(0); filter: blur(0); opacity: 1; }
     }
-
     .animate-baner-inicial {
-        animation: baner-inicial 3s cubic-bezier(0.23, 1, 0.32, 1) both; /* Reduz a duração */
+        animation: baner-inicial 3s cubic-bezier(0.23, 1, 0.32, 1) both;
     }
-
     .animate-cards-right {
-        animation: cards-right 2s ease-out forwards; /* Reduz a duração */
+        animation: cards-right 2s ease-out forwards;
     }
-
     .focus-in-expand-fwd {
-        animation: focus-in-expand-fwd 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; /* Reduz a duração */
+        animation: focus-in-expand-fwd 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
     }
-
     .texto-animado {
         animation:
-            escrever 0.7s steps(18, end) forwards, /* Reduz a duração */
-            mark 0.4s step-end infinite; /* Reduz a duração do marcador */
+            escrever 0.7s steps(18, end) forwards,
+            mark 0.4s step-end infinite;
     }
 }
