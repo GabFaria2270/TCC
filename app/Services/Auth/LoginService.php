@@ -61,7 +61,7 @@ class LoginService
         Log::channel('security')->info('DEBUG Login Service', [
             'email_enviado' => $email,
             'usuario_encontrado' => $usuario ? 'SIM' : 'NÃO',
-            'usuario_id' => $usuario->ID ?? 'N/A',
+            'usuario_id' => $usuario->id ?? 'N/A',
         ]);
     }
 }

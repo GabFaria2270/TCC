@@ -8,6 +8,7 @@ use App\Services\Auth\LoginService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
@@ -39,13 +40,33 @@ class LoginController extends Controller
             // PROCESSA LOGIN VIA SERVICE
             $result = $this->loginService->attempt($request->validated(), $request);
 
+            Log::debug('Resultado do login:', $result);
+
             if ($result['success']) {
                 // REGENERA SESSÃO
                 $request->session()->regenerate();
-                
+
+                // Associa usuário à sessão
+                $usuario = $result['user'];
+                $sessionId = $request->session()->getId();
+
+                $userId = is_object($usuario) ? $usuario->id : $usuario['id'];
+                DB::table('sessions')->where('id', $sessionId)->update([
+                    'user_id' => $userId,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'last_activity' => time(),
+                ]);
+
+                Log::debug('ID do usuário autenticado:', ['id' => $userId]);
+                Log::debug('Usuário autenticado:', ['usuario' => $usuario]);
+
+                // LIMPA RATE LIMIT
+                \App\Http\Middleware\LoginRateLimiting::clearRateLimit($request);
+
                 // LOG DE SUCESSO
-                $this->logLoginSuccess($result['user'], $request);
-                
+                $this->logLoginSuccess($usuario, $request);
+
                 return redirect()->route('home')
                     ->with('success', 'Login realizado com sucesso!');
             }
@@ -89,7 +110,7 @@ class LoginController extends Controller
     private function logLoginSuccess($user, Request $request): void
     {
         Log::channel('security')->info('Login realizado com sucesso', [
-            'user_id' => $user->ID,
+            'user_id' => $user->id,
             'email' => $user->EMAIL,
             'ip' => $request->ip(),
             'timestamp' => now(),

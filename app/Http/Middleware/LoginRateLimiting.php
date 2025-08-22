@@ -91,7 +91,6 @@ class LoginRateLimiting
      */
     protected static function getRateLimitKey(Request $request): string
     {
-        $email = $request->EMAIL ?? 'unknown';
-        return Str::transliterate(Str::lower($email) . '|' . $request->ip());
+        return $request->ip();
     }
 }

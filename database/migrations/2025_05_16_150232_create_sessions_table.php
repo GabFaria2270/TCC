@@ -18,6 +18,9 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+
+            // Adiciona a foreign key para a tabela usuario
+            $table->foreign('user_id')->references('id')->on('usuario')->onDelete('set null');
         });
     }
 

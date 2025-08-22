@@ -49,6 +49,7 @@ class Usuario extends Authenticatable
     public function getAuthIdentifier()
     {
         return $this->EMAIL; // Campo personalizado
+        return $this->id;
     }
 
     // SETTER PARA HASH AUTOMÁTICO DA SENHA
