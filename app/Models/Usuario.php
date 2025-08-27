@@ -6,59 +6,58 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\SoftDeletes; // Para exclusão segura
 
+/**
+ * MODEL USUARIO - CORRIGIDO PARA SESSIONS
+ */
 class Usuario extends Authenticatable
 {
-    use HasFactory, Notifiable; // REMOVIDO SoftDeletes temporariamente
+    use HasFactory, Notifiable;
 
-    protected $table = 'usuario'; // Nome da tabela no banco
-    protected $primaryKey = 'id'; // Nome da chave primária
-    public $timestamps = false; // DESABILITADO até verificar se a tabela tem created_at/updated_at
+    protected $table = 'usuario';
+    protected $primaryKey = 'id'; // ✅ CORRIGIDO: usa 'id' das migrations
+    public $timestamps = true; // ✅ ATIVADO: migrations têm timestamps
 
-    // PROTEÇÃO CONTRA MASS ASSIGNMENT
-    protected $fillable = [
-        'NOME',
-        'EMAIL', 
-        'SENHA_HASH',
-        'PERFIL',
+    protected $fillable = ['NOME', 'EMAIL', 'SENHA_HASH', 'PERFIL'];
+    protected $hidden = ['SENHA_HASH', 'remember_token'];
 
-        
-
-    ];
-
-    // CAMPOS SENSÍVEIS QUE NUNCA DEVEM APARECER EM JSON
-    protected $hidden = [
-        'SENHA_HASH',
-        'remember_token',
-   
-    ];
-
-
-    // MÉTODOS DE AUTENTICAÇÃO SEGUROS (CAMPOS PERSONALIZADOS)
+    /**
+     * ✅ CONFIGURAÇÃO CORRIGIDA PARA SESSÕES
+     */
     public function getAuthPassword()
     {
-        return $this->SENHA_HASH; // Campo personalizado
+        return $this->SENHA_HASH;
     }
 
     public function getAuthIdentifierName()
     {
-        return 'EMAIL'; // Campo personalizado
+        return 'EMAIL'; // Campo para login
     }
 
     public function getAuthIdentifier()
     {
-        return $this->EMAIL; // Campo personalizado
-        return $this->id;
+        return $this->id; // ✅ CORRIGIDO: RETORNA ID NUMÉRICO
     }
 
-    // SETTER PARA HASH AUTOMÁTICO DA SENHA
+    /**
+     * CAST AUTOMÁTICO
+     */
+    protected $casts = [
+        'EMAIL' => 'string',
+        'PERFIL' => 'string',
+    ];
+
+    /**
+     * MUTATOR AUTOMÁTICO
+     */
     public function setSenhaHashAttribute($value)
     {
         $this->attributes['SENHA_HASH'] = Hash::make($value);
     }
 
-    // SCOPES PARA CONSULTAS SEGURAS
+    /**
+     * SCOPES
+     */
     public function scopeByEmail($query, $email)
     {
         return $query->where('EMAIL', strtolower($email));
@@ -69,8 +68,16 @@ class Usuario extends Authenticatable
         return $query->where('PERFIL', strtolower($perfil));
     }
 
+    /**
+     * RELACIONAMENTOS
+     */
     public function comercio()
     {
-        return $this->hasOne(Comercio::class, 'usuario_id', 'id');
+        return $this->hasOne(Comercio::class, 'usuario_id');
+    }
+
+    public function scopeWithComercio($query)
+    {
+        return $query->with('comercio');
     }
 }

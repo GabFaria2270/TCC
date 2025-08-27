@@ -8,8 +8,12 @@ use App\Services\Auth\RegistrationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * CONTROLADOR DE CADASTRO - CORRIGIDO PARA VINCULAÇÃO
+ */
 class RegisterController extends Controller
 {
     protected $registrationService;
@@ -40,14 +44,22 @@ class RegisterController extends Controller
             $result = $this->registrationService->create($request->validated(), $request);
 
             if ($result['success']) {
-                // REGENERA SESSÃO
+                $usuario = $result['user'];
+
+                // ✅ CORRIGIDO: ORDEM E VINCULAÇÃO DE SESSÃO
+                
+                // PASSO 1: Regenera sessão
                 $request->session()->regenerate();
+                $request->session()->save();
+
+                // PASSO 2: Vincula sessão ao usuário
+                $this->vincularSessaoAoUsuario($request, $usuario);
                 
                 // LOG DE SUCESSO
-                $this->logRegistrationSuccess($result['user'], $request);
+                $this->logRegistrationSuccess($usuario, $request);
                 
                 return redirect()->route('home')
-                    ->with('success', 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $result['user']->NOME . '!');
+                    ->with('success', 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!');
             }
 
             // CADASTRO FALHOU
@@ -74,7 +86,67 @@ class RegisterController extends Controller
     }
 
     /**
-     * Logs de auditoria para cadastro
+     * ✅ MÉTODO PARA VINCULAR SESSÃO AO USUÁRIO (MESMO DO LOGIN)
+     */
+    private function vincularSessaoAoUsuario($request, $usuario): void
+    {
+        try {
+            $sessionId = $request->session()->getId();
+            $userId = $usuario->id;
+
+            // Valida se temos os dados necessários
+            if (!$sessionId || !$userId) {
+                Log::channel('security')->error('Dados insuficientes para vinculação', [
+                    'session_id' => $sessionId ?? 'NULL',
+                    'user_id' => $userId ?? 'NULL',
+                ]);
+                return;
+            }
+
+            // ✅ ATUALIZA/INSERE NA TABELA SESSIONS
+            $affected = DB::table('sessions')->updateOrInsert(
+                ['id' => $sessionId],
+                [
+                    'user_id' => $userId, // ✅ CAMPO CORRETO DAS MIGRATIONS
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'last_activity' => time(),
+                    'payload' => $request->session()->serialize(),
+                ]
+            );
+
+            // ✅ VERIFICA SE FUNCIONOU
+            $vinculacao = DB::table('sessions')
+                ->where('id', $sessionId)
+                ->where('user_id', $userId)
+                ->first();
+
+            if ($vinculacao) {
+                Log::channel('security')->info('✅ Sessão vinculada com sucesso no CADASTRO', [
+                    'session_id' => $sessionId,
+                    'user_id' => $userId,
+                    'user_email' => $usuario->EMAIL,
+                    'affected_rows' => $affected,
+                ]);
+            } else {
+                Log::channel('security')->error('❌ Falha na vinculação no CADASTRO', [
+                    'session_id' => $sessionId,
+                    'user_id' => $userId,
+                    'affected_rows' => $affected,
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            Log::channel('security')->error('Erro ao vincular sessão no CADASTRO', [
+                'error' => $e->getMessage(),
+                'user_id' => $usuario->id ?? 'N/A',
+                'session_id' => $request->session()->getId() ?? 'N/A',
+            ]);
+        }
+    }
+
+    /**
+     * LOGS DE AUDITORIA
      */
     private function logRegistrationAttempt(Request $request): void
     {
@@ -96,6 +168,7 @@ class RegisterController extends Controller
             'nome' => $user->NOME,
             'perfil' => $user->PERFIL,
             'ip' => $request->ip(),
+            'session_id' => $request->session()->getId(),
             'timestamp' => now(),
         ]);
     }

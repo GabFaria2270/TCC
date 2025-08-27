@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * CONTROLADOR DE LOGIN - CORRIGIDO PARA VINCULAÇÃO
+ */
 class LoginController extends Controller
 {
     protected $loginService;
@@ -43,25 +46,18 @@ class LoginController extends Controller
             Log::debug('Resultado do login:', $result);
 
             if ($result['success']) {
-                // REGENERA SESSÃO
-                $request->session()->regenerate();
-
-                // Associa usuário à sessão
                 $usuario = $result['user'];
-                $sessionId = $request->session()->getId();
 
-                $userId = is_object($usuario) ? $usuario->id : $usuario['id'];
-                DB::table('sessions')->where('id', $sessionId)->update([
-                    'user_id' => $userId,
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                    'last_activity' => time(),
-                ]);
+                // ✅ CORRIGIDO: ORDEM E VINCULAÇÃO DE SESSÃO
+                
+                // PASSO 1: Regenera sessão
+                $request->session()->regenerate();
+                $request->session()->save();
 
-                Log::debug('ID do usuário autenticado:', ['id' => $userId]);
-                Log::debug('Usuário autenticado:', ['usuario' => $usuario]);
+                // PASSO 2: Vincula sessão ao usuário
+                $this->vincularSessaoAoUsuario($request, $usuario);
 
-                // LIMPA RATE LIMIT
+                // PASSO 3: Limpa rate limiting
                 \App\Http\Middleware\LoginRateLimiting::clearRateLimit($request);
 
                 // LOG DE SUCESSO
@@ -95,7 +91,67 @@ class LoginController extends Controller
     }
 
     /**
-     * Logs de auditoria
+     * ✅ MÉTODO PARA VINCULAR SESSÃO AO USUÁRIO
+     */
+    private function vincularSessaoAoUsuario($request, $usuario): void
+    {
+        try {
+            $sessionId = $request->session()->getId();
+            $userId = $usuario->id;
+
+            // Valida se temos os dados necessários
+            if (!$sessionId || !$userId) {
+                Log::channel('security')->error('Dados insuficientes para vinculação', [
+                    'session_id' => $sessionId ?? 'NULL',
+                    'user_id' => $userId ?? 'NULL',
+                ]);
+                return;
+            }
+
+            // ✅ ATUALIZA/INSERE NA TABELA SESSIONS
+            $affected = DB::table('sessions')->updateOrInsert(
+                ['id' => $sessionId],
+                [
+                    'user_id' => $userId, // ✅ CAMPO CORRETO DAS MIGRATIONS
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'last_activity' => time(),
+                    'payload' => $request->session()->serialize(),
+                ]
+            );
+
+            // ✅ VERIFICA SE FUNCIONOU
+            $vinculacao = DB::table('sessions')
+                ->where('id', $sessionId)
+                ->where('user_id', $userId)
+                ->first();
+
+            if ($vinculacao) {
+                Log::channel('security')->info('✅ Sessão vinculada com sucesso no LOGIN', [
+                    'session_id' => $sessionId,
+                    'user_id' => $userId,
+                    'user_email' => $usuario->EMAIL,
+                    'affected_rows' => $affected,
+                ]);
+            } else {
+                Log::channel('security')->error('❌ Falha na vinculação no LOGIN', [
+                    'session_id' => $sessionId,
+                    'user_id' => $userId,
+                    'affected_rows' => $affected,
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            Log::channel('security')->error('Erro ao vincular sessão no LOGIN', [
+                'error' => $e->getMessage(),
+                'user_id' => $usuario->id ?? 'N/A',
+                'session_id' => $request->session()->getId() ?? 'N/A',
+            ]);
+        }
+    }
+
+    /**
+     * LOGS DE AUDITORIA
      */
     private function logLoginAttempt(Request $request): void
     {
@@ -113,6 +169,7 @@ class LoginController extends Controller
             'user_id' => $user->id,
             'email' => $user->EMAIL,
             'ip' => $request->ip(),
+            'session_id' => $request->session()->getId(),
             'timestamp' => now(),
         ]);
     }
