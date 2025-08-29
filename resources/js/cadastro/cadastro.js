@@ -37,7 +37,7 @@ class RegisterSystem {
             this.mostrarLoader();
         }
 
-        console.log('📤 Enviando formulário de cadastro...');
+
     }
 
     mostrarLoader() {
@@ -150,9 +150,46 @@ class RegisterSystem {
         }
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    function setEyeIcon(icon, open) {
+        icon.innerHTML = open
+            ? `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <ellipse cx="12" cy="12" rx="8" ry="5"/>
+                    <circle cx="12" cy="12" r="2"/>
+               </svg>`
+            : `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <ellipse cx="12" cy="12" rx="8" ry="5"/>
+                    <circle cx="12" cy="12" r="2"/>
+                    <line x1="4" y1="20" x2="20" y2="4"/>
+               </svg>`;
+    }
+
+    function passwordToggle(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        input.addEventListener('input', () => {
+            icon.style.display = input.value ? 'block' : 'none';
+            setEyeIcon(icon, input.type === 'text');
+        });
+
+        icon.addEventListener('click', () => {
+            input.type = input.type === 'password' ? 'text' : 'password';
+            setEyeIcon(icon, input.type === 'text');
+        });
+
+        // Estado inicial
+        icon.style.display = input.value ? 'block' : 'none';
+        setEyeIcon(icon, false);
+    }
+
+    passwordToggle('SENHA_HASH', 'toggleSenha');
+    passwordToggle('SENHA_HASH_confirmation', 'toggleSenhaConfirm');
+});
 
 // Inicializa o sistema de cadastro
 const registerSystem = new RegisterSystem();
 
 // Exporta para uso global se necessário
 window.RegisterSystem = RegisterSystem;
+
