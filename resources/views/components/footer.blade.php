@@ -31,8 +31,7 @@
         </div>
         <div class="row mt-3">
             <div class="col text-center">
-                <small class="text-light-50">&copy; {{ date('Y') }} 60+conectado. Todos os direitos
-                    reservados.</small>
+                <small class="text-light-50">&copy; {{ date('Y') }} 60+conectado. Todos os direitos reservados.</small>
             </div>
         </div>
     </div>
