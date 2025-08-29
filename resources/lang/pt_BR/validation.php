@@ -17,7 +17,10 @@ return [
     'regex' => 'O campo :attribute possui formato inválido.',
     'lowercase' => 'O campo :attribute deve estar em minúsculas.',
     'alpha_dash' => 'O campo :attribute deve conter apenas letras, números, "_" e "-".',
-    'size' => 'O campo :attribute deve ter :size caracteres.',
+    'size' => [
+        'string' => 'O campo :attribute deve ter exatamente :size caracteres.',
+        'numeric' => 'O campo :attribute deve ser exatamente :size.',
+    ],
     'letters' => 'O campo :attribute deve conter pelo menos uma letra.',
     'mixed' => 'O campo :attribute deve conter pelo menos uma letra maiúscula e uma minúscula.',
     'numbers' => 'O campo :attribute deve conter pelo menos um número.',

@@ -68,14 +68,16 @@
                                     @endforeach
                                 </div>
 
-                                <div class="form-login-group">
-                                    <label for="SENHA_HASH" class="form-login-label">Senha</label>
-                                    <input type="password" class="form-login-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required autocomplete="current-password" minlength="12"
-                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
-                                    @foreach($errors->get('SENHA_HASH') as $message)
-                                        <div class="form-login-error">{{ $message }}</div>
-                                    @endforeach
+                               <div class="form-cadastro-group" style="position: relative;">
+                                    <label for="SENHA_HASH" class="form-cadastro-label">Senha</label>
+                                    <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
+                                        required minlength="12" placeholder="Mínimo 12 caracteres">
+                                    <span id="toggleSenha" class="eye-icon" style="display: none;"></span>
+                                    @error('SENHA_HASH')
+                                        @if(!str_contains($message, 'confere'))
+                                            <div class="form-cadastro-error">{{ $message }}</div>
+                                        @endif
+                                    @enderror
                                 </div>
 
                                 <!-- CHECKBOX LEMBRAR-ME -->
