@@ -18,12 +18,15 @@
     <section class="section-home main-content">
         <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
+
                 <!-- Primeiro Slide -->
                 <div class="carousel-item active">
                     <img src="{{ asset('img/C1.jpg') }}" class="img_Carrossel_1" alt="...">
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Primeiro Slide</h5>
-                        <p>Conteúdo de exemplo para o primeiro slide.</p>
+                    <div class="carousel-caption d-md-block">
+                        <div class="caption-text mb-2">
+                            <h5>Primeiro Slide</h5>
+                            <p>Conteúdo de exemplo para o primeiro slide.</p>
+                        </div>
                         <div class="botoes-carrossel">
                             <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
                             <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
@@ -35,9 +38,11 @@
                 <div class="carousel-item">
                     <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}" class="img_Carrossel_2"
                         alt="...">
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Primeiro Slide</h5>
-                        <p>Conteúdo de exemplo para o primeiro slide.</p>
+                    <div class="carousel-caption d-md-block">
+                        <div class="caption-text mb-2">
+                            <h5>Segundo Slide</h5>
+                            <p>Conteúdo de exemplo para o segundo slide.</p>
+                        </div>
                         <div class="botoes-carrossel">
                             <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
                             <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
@@ -48,9 +53,11 @@
                 <!-- Terceiro Slide -->
                 <div class="carousel-item">
                     <img src="{{ asset('img/carrossel_IMG3.jpg') }}" class="img_Carrossel_3" alt="...">
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Primeiro Slide</h5>
-                        <p>Conteúdo de exemplo para o primeiro slide.</p>
+                    <div class="carousel-caption d-md-block">
+                        <div class="caption-text mb-2">
+                            <h5>Terceiro Slide</h5>
+                            <p>Conteúdo de exemplo para o terceiro slide.</p>
+                        </div>
                         <div class="botoes-carrossel">
                             <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
                             <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
@@ -70,6 +77,7 @@
             </button>
         </div>
     </section>
+
 
     <!-- Seção dos Cards -->
     <section class="section-card">
@@ -97,9 +105,6 @@
                             mollit
                             anim id est laborum.</p>
                     </div>
-                    <div class="card-footer">
-                        <small class="text-body-secondary">Last updated 3 mins ago</small>
-                    </div>
                 </div>
             </div>
             <div class="col">
@@ -122,9 +127,6 @@
                             mollit
                             anim id est laborum.</p>
                     </div>
-                    <div class="card-footer">
-                        <small class="text-body-secondary">Last updated 3 mins ago</small>
-                    </div>
                 </div>
             </div>
             <div class="col">
@@ -135,9 +137,6 @@
                         <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
                             additional content. This card has even longer content than the first to show that equal
                             height action.</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-body-secondary">Last updated 3 mins ago</small>
                     </div>
                 </div>
             </div>

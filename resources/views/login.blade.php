@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    @vite(['resources/css/app.css', 'resources/css/home/home.css', 'resources/js/geralJS.js'])
+    @vite(['resources/css/app.css', 'resources/css/login/login.css', 'resources/js/geralJS.js'])
 </head>
 
 <body class="loginf">
@@ -26,43 +26,44 @@
                         <div class="form-login-header">Login</div>
                         <div class="form-login-body">
                             <div class="form-login-messages">
-                                @if(session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
+                                @if (session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
                                 @endif
-                                @if(session('error'))
-                                <div class="alert alert-danger">
-                                    {{ session('error') }}
-                                </div>
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
                                 @endif
-                                
+
                                 {{-- CONTADOR DE RATE LIMITING --}}
-                                @if($errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas'))
-                                <div class="rate-limit-alert" id="rateLimitAlert">
-                                    <div class="rate-limit-content">
-                                        <i class="bi bi-exclamation-triangle-fill"></i>
-                                        <div>
-                                            <strong>🚨 Muitas tentativas de login!</strong>
-                                            <p>Aguarde <span id="countdown">60</span> segundos para tentar novamente.</p>
-                                            <div class="progress-bar">
-                                                <div class="progress-fill" id="progressFill"></div>
+                                @if ($errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas'))
+                                    <div class="rate-limit-alert" id="rateLimitAlert">
+                                        <div class="rate-limit-content">
+                                            <i class="bi bi-exclamation-triangle-fill"></i>
+                                            <div>
+                                                <strong>🚨 Muitas tentativas de login!</strong>
+                                                <p>Aguarde <span id="countdown">60</span> segundos para tentar
+                                                    novamente.</p>
+                                                <div class="progress-bar">
+                                                    <div class="progress-fill" id="progressFill"></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                                 @endif
                             </div>
-                            
+
                             <form id="loginForm" method="POST" action="{{ route('login.attempt') }}">
                                 @csrf
                                 <div class="form-login-group">
                                     <label for="EMAIL" class="form-login-label">E-mail</label>
-                                    <input type="email" class="form-login-input" id="EMAIL" name="EMAIL" required
-                                        autocomplete="email" value="{{ old('EMAIL') }}" 
+                                    <input type="email" class="form-login-input" id="EMAIL" name="EMAIL"
+                                        required autocomplete="email" value="{{ old('EMAIL') }}"
                                         {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
-                                    @foreach($errors->get('EMAIL') as $message)
-                                        @if(!str_contains($message, 'Muitas tentativas'))
+                                    @foreach ($errors->get('EMAIL') as $message)
+                                        @if (!str_contains($message, 'Muitas tentativas'))
                                             <div class="form-login-error">{{ $message }}</div>
                                         @endif
                                     @endforeach
@@ -74,7 +75,7 @@
                                         required autocomplete="current-password" minlength="12"
                                         {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     <span id="toggleSenha" class="eye-icon" style="display: none;"></span>
-                                    @foreach($errors->get('SENHA_HASH') as $message)
+                                    @foreach ($errors->get('SENHA_HASH') as $message)
                                         <div class="form-login-error">{{ $message }}</div>
                                     @endforeach
                                 </div>
@@ -119,4 +120,5 @@
         </div>
     </div>
 </body>
+
 </html>

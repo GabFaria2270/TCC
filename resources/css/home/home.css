@@ -7,5 +7,4 @@
 @import 'btnrolagem.css';
 @import 'barravalores.css';
 @import 'sobre.css';
-@import'../cadastro/cadastro.css';
-@import'../login/login.css';
+/* CSS de páginas (login/cadastro) não deve ser importado aqui para evitar vazamento de estilos */

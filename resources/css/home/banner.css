@@ -8,7 +8,6 @@
     border-radius: 0 0 2.5rem 2.5rem;
     overflow: hidden;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-    background: linear-gradient(120deg, #232526 0%, #414345 100%);
     position: relative;
     left: 50%;
     right: 50%;
@@ -23,7 +22,7 @@
     display: block;
 }
 .carousel-caption {
-    background: rgba(0, 0, 0, 0.55);
+    background: transparent;
     border-radius: 0 0 2.5rem 2.5rem;
     padding: 2.5rem 3rem 2rem 3rem;
     color: #fff;

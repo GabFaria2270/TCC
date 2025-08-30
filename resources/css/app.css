@@ -1,5 +1,6 @@
+/* Importar variáveis primeiro para que estejam disponíveis aos demais estilos */
+@import 'colors.css';
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'bootstrap-icons/font/bootstrap-icons.min.css';
 @import './geral/navbar.css';
 @import './geral/footer.css';
-@import 'colors.css';

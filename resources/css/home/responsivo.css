@@ -81,12 +81,10 @@
     /* Banner/Carrossel: garantir que o background não ultrapasse a imagem também em telas menores */
     .carousel {
         height: auto !important;
-        background: linear-gradient(120deg, #232526 0%, #414345 100%);
+        background: transparent;
         overflow: hidden;
     }
     .carousel-item img {
-        width: 100% !important;
-        height: auto !important;
         object-fit: cover;
         display: block;
         margin: 0 auto;
@@ -321,8 +319,8 @@
         width: 100%;
         padding: 18px 10px 16px 10px;
         font-size: 1.08rem;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.32) 60%, rgba(0,0,0,0.18) 100%);
         border-radius: 0 0 16px 16px;
+        background: transparent;
         text-align: center;
         box-sizing: border-box;
     }
@@ -355,7 +353,6 @@
     .section-home, .section-card, .section-sobre, .section-cardv {
     .carousel {
         height: auto !important;
-        background: linear-gradient(120deg, #232526 0%, #414345 100%);
         overflow: hidden;
     }
     .carousel-item img {
