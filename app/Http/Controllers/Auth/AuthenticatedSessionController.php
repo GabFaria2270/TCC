@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -78,6 +80,29 @@ class AuthenticatedSessionController extends Controller
             Log::channel('security')->error('Erro no login (Controller)', ['timestamp' => now(), 'error' => $e->getMessage()]);
             throw $e;
         }
+    }
+
+    /**
+     * Retorna status de bloqueio do login (segundos restantes).
+     * NOVO MÉTODO PARA PERSISTÊNCIA DO BLOQUEIO
+     */
+    public function lockStatus(Request $request)
+    {
+        $email = (string) $request->query('email', '');
+        $key = Str::transliterate(Str::lower($email) . '|' . $request->ip());
+        $maxAttempts = 2; // Mesmo valor do seu middleware
+
+        if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+            return response()->json([
+                'locked' => true,
+                'seconds' => RateLimiter::availableIn($key),
+            ]);
+        }
+
+        return response()->json([
+            'locked' => false,
+            'seconds' => 0,
+        ]);
     }
 
     /**

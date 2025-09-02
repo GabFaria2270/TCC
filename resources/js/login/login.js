@@ -1,13 +1,12 @@
 /**
- * Sistema de Login com Rate Limiting
- * Gerencia funcionalidades do formulário de login e contador de bloqueio
+ * Sistema de Login
+ * Gerencia funcionalidades do formulário de login - IGUAL AO CADASTRO
  */
 
 class LoginSystem {
     constructor() {
         this.form = null;
         this.loader = null;
-        this.rateLimitingCounter = null;
         this.init();
     }
 
@@ -15,13 +14,19 @@ class LoginSystem {
         document.addEventListener('DOMContentLoaded', () => {
             this.setupElements();
             this.bindEvents();
-            this.initRateLimiting();
         });
     }
 
     setupElements() {
         this.form = document.getElementById('loginForm');
-        this.loader = document.getElementById('loader-cadastro');
+        this.loader = document.getElementById('loader-cadastro'); // MESMO ID DO CADASTRO
+        
+        console.log('🔧 Elementos do LoginSystem:', {
+            form: !!this.form,
+            loader: !!this.loader,
+            formId: this.form?.id,
+            loaderId: this.loader?.id
+        });
     }
 
     bindEvents() {
@@ -29,10 +34,12 @@ class LoginSystem {
             this.form.addEventListener('submit', (e) => this.handleSubmit(e));
         }
 
+        // Adiciona validação em tempo real
         this.addRealTimeValidation();
     }
 
     handleSubmit(event) {
+        // Mostra o loader se disponível
         if (this.loader) {
             this.mostrarLoader();
         }
@@ -43,6 +50,7 @@ class LoginSystem {
         if (this.loader) {
             this.loader.style.display = 'flex';
             this.iniciarAnimacaoLoader();
+            console.log('🔄 Loader do login ativado');
         }
     }
 
@@ -54,14 +62,14 @@ class LoginSystem {
     }
 
     iniciarAnimacaoLoader() {
-        const img = document.getElementById('imgloader');
+        const img = document.getElementById('imgloader'); // MESMO ID DO CADASTRO
         if (img) {
             img.style.display = 'block';
         }
     }
 
     pararAnimacaoLoader() {
-        const img = document.getElementById('imgloader');
+        const img = document.getElementById('imgloader'); // MESMO ID DO CADASTRO
         if (img) {
             img.style.display = 'none';
         }
@@ -94,165 +102,48 @@ class LoginSystem {
     validatePassword(event) {
         const password = event.target.value;
         
-        if (password && password.length < 6) {
+        if (password && password.length < 8) {
             event.target.style.borderColor = '#e74c3c';
         } else {
             event.target.style.borderColor = '';
         }
     }
-
-    initRateLimiting() {
-        this.rateLimitingCounter = new RateLimitingCounter();
-    }
 }
 
-/**
- * Rate Limiting Counter for Login Form
- */
-class RateLimitingCounter {
-    constructor() {
-        this.countdownDuration = 60;
-        this.countdownInterval = null;
-        this.elements = {};
-        this.init();
-    }
+// Inicializa o sistema - IGUAL AO CADASTRO
+const loginSystem = new LoginSystem();
 
-    init() {
-        this.setupElements();
-    }
+// Exporta para uso global se necessário
+window.LoginSystem = LoginSystem;
 
-    setupElements() {
-        this.elements = {
-            alert: document.getElementById('rateLimitAlert'),
-            countdown: document.getElementById('countdown'),
-            progressFill: document.getElementById('progressFill'),
-            loginForm: document.getElementById('loginForm'),
-            loginButton: document.getElementById('loginButton'),
-            emailInput: document.getElementById('EMAIL'),
-            senhaInput: document.getElementById('SENHA_HASH'),
-            rememberCheckbox: document.querySelector('input[name="remember"]')
-        };
-
-        if (this.elements.alert) {
-            // EXTRAI O TEMPO DA MENSAGEM DE ERRO
-            this.extractTimeFromMessage();
-            this.startCountdown();
-        }
-    }
-
-    /**
-     * Extrai o tempo da mensagem de erro do servidor
-     */
-    extractTimeFromMessage() {
-        const errorMessage = this.elements.alert.textContent;
-        const match = errorMessage.match(/(\d+)\s+segundos/);
-        
-        if (match) {
-            this.countdownDuration = parseInt(match[1]);
-            console.log(`⏱️ Tempo extraído do servidor: ${this.countdownDuration} segundos`);
-        } else {
-            this.countdownDuration = 60; // fallback
-        }
-    }
-
-    startCountdown() {
-        let seconds = this.countdownDuration;
-        
-        this.updateDisplay(seconds);
-        
-        this.countdownInterval = setInterval(() => {
-            seconds--;
-            this.updateDisplay(seconds);
+function passwordToggle() {
+    const senhaInput = document.getElementById('SENHA_HASH');
+    
+    // Só adiciona event listeners se os elementos existirem
+    document.querySelectorAll('.eye-icon').forEach(icon => {
+        icon.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
             
-            if (seconds <= 0) {
-                this.clearCountdown();
-                this.enableForm();
-                this.showSuccessMessage();
-            }
-        }, 1000);
-
-        console.log('🚨 Rate limiting ativo - Countdown iniciado');
-    }
-
-    updateDisplay(seconds) {
-        if (this.elements.countdown) {
-            this.elements.countdown.textContent = seconds;
-        }
-        
-        if (this.elements.progressFill) {
-            const progress = ((this.countdownDuration - seconds) / this.countdownDuration) * 100;
-            this.elements.progressFill.style.width = `${progress}%`;
-        }
-
-        if (seconds <= 10 && this.elements.countdown) {
-            this.elements.countdown.style.color = '#e74c3c';
-            this.elements.countdown.style.fontWeight = 'bold';
-        }
-    }
-
-    clearCountdown() {
-        if (this.countdownInterval) {
-            clearInterval(this.countdownInterval);
-            this.countdownInterval = null;
-        }
-    }
-
-    enableForm() {
-        if (this.elements.alert) {
-            this.elements.alert.style.animation = 'fadeOutAlert 0.5s ease-out forwards';
-            setTimeout(() => {
-                this.elements.alert.style.display = 'none';
-            }, 500);
-        }
-        
-        this.setFormElementsState(false);
-        
-        if (this.elements.loginButton) {
-            this.elements.loginButton.textContent = 'Entrar';
-        }
-
-        console.log('✅ Rate limiting removido - Formulário habilitado');
-    }
-
-    setFormElementsState(disabled) {
-        const elements = [
-            this.elements.emailInput,
-            this.elements.senhaInput,
-            this.elements.loginButton,
-            this.elements.rememberCheckbox
-        ];
-
-        elements.forEach(element => {
-            if (element) {
-                element.disabled = disabled;
+            if (input) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.remove('bi-eye');
+                    this.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('bi-eye-slash');
+                    this.classList.add('bi-eye');
+                }
             }
         });
-    }
-
-    showSuccessMessage() {
-        const messagesDiv = document.querySelector('.form-login-messages');
-        if (messagesDiv) {
-            const successMessage = document.createElement('div');
-            successMessage.className = 'alert alert-success';
-            successMessage.innerHTML = '✅ Você pode tentar fazer login novamente!';
-            successMessage.style.animation = 'fadeInAlert 0.5s ease-out';
-            
-            messagesDiv.innerHTML = '';
-            messagesDiv.appendChild(successMessage);
-            
-            setTimeout(() => {
-                successMessage.style.animation = 'fadeOutAlert 0.5s ease-out forwards';
-                setTimeout(() => {
-                    if (successMessage.parentNode) {
-                        successMessage.parentNode.removeChild(successMessage);
-                    }
-                }, 500);
-            }, 4000);
-        }
-    }
+    });
 }
 
-// Inicializa o sistema
-const loginSystem = new LoginSystem();
-window.LoginSystem = LoginSystem;
-window.RateLimitingCounter = RateLimitingCounter;
+// Só executa se estiver na página de login
+document.addEventListener('DOMContentLoaded', function() {
+    // Verifica se está na página de login antes de executar
+    if (document.getElementById('loginForm') || document.querySelector('.form-login')) {
+        passwordToggle();
+    }
+});

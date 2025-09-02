@@ -1,5 +1,22 @@
 /* CSS de login (cópia do cadastro) */
 @import 'rate-limiting.css';
+
+/* Remove o ícone padrão de mostrar/ocultar senha do navegador */
+.form-login-input[type="password"]::-ms-reveal,
+.form-login-input[type="password"]::-webkit-reveal-password {
+    display: none !important;
+}
+
+.form-login-input[type="password"]::-ms-clear,
+.form-login-input[type="password"]::-webkit-clear-password {
+    display: none !important;
+}
+
+/* Remove botões de auto-preenchimento do navegador */
+.form-login-input::-webkit-credentials-auto-fill-button {
+    display: none !important;
+}
+
 .loginf {
     justify-content: center;
     align-items: center;
@@ -100,7 +117,7 @@
 .form-login-page {
     display: flex;
     width: 100%;
-    height: 100vh; /* Centraliza verticalmente sem espaço extra */
+    height: 100vh;
     min-height: unset;
 }
 
@@ -110,9 +127,9 @@
     justify-content: center;
     align-items: center;
     background: transparent;
-    padding: 0; /* Remove o padding extra */
+    padding: 0;
     min-height: unset;
-    margin-top: -8%; /* Sobe o formulário */
+    margin-top: -8%;
 }
 
 .form-login-icon {
@@ -204,14 +221,13 @@
     text-decoration: none;
 }
 
-
 #loader-cadastro {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(255,255,255,0.7); /* fundo branco semi-transparente */
+  background: rgba(255,255,255,0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -226,7 +242,6 @@
 
 #loaderimg {
   width: 20px;
-  /* ajuste conforme o tamanho do seu SVG */
 }
 
 .loader-icon {
@@ -235,7 +250,25 @@
 }
 
 .imgloader {
-    width: 80px; /* Ajuste o tamanho conforme necessário */
-    height: 80px; /* Ajuste o tamanho conforme necessário */
+    width: 80px;
+    height: 80px;
+}
+
+/* Ícone de olho personalizado */
+.eye-icon {
+    position: absolute;
+    right: 14px;
+    top: 37px;
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: #101111;
+    opacity: 0.7;
+    transition: color 0.2s, opacity 0.2s;
+    z-index: 2;
+}
+
+.eye-icon:hover {
+    color: #777372;
+    opacity: 1;
 }
 

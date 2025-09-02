@@ -1,20 +1,36 @@
 /* Container do formulário */
+
+/* Remove o ícone padrão de mostrar/ocultar senha do navegador */
+.form-cadastro-input[type="password"]::-ms-reveal,
+.form-cadastro-input[type="password"]::-webkit-reveal-password {
+    display: none !important;
+}
+
+.form-cadastro-input[type="password"]::-ms-clear,
+.form-cadastro-input[type="password"]::-webkit-clear-password {
+    display: none !important;
+}
+
+/* Remove botões de auto-preenchimento do navegador */
+.form-cadastro-input::-webkit-credentials-auto-fill-button {
+    display: none !important;
+}
+
 .form-cadastro {
     display: flex;
-    flex-direction: column; /* Organiza os elementos verticalmente */
-    justify-content: space-between; /* Distribui os elementos verticalmente */
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    width: 100%; /* Garante que o formulário ocupe toda a largura disponível */
-    height: 100%; /* Estica o formulário para ocupar toda a altura */
-
+    width: 100%;
+    height: 100%;
 }
 
 .form-cadastro-card {
-    background: transparent; /* Remove o fundo do formulário */
+    background: transparent;
     width: 100%;
     padding: 32px 24px;
     border-radius: 8px;
-    box-shadow: none; /* Remove a sombra do formulário */
+    box-shadow: none;
 }
 
 /* Cabeçalho do formulário */
@@ -23,7 +39,7 @@
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 24px;
-    color: #0a0a0a; /* Texto branco */
+    color: #0a0a0a;
 }
 
 /* Campos do formulário */
@@ -44,16 +60,16 @@
     font-size: 1rem;
     border: 1px solid #000000;
     border-radius: 4px;
-    background: transparent; /* Fundo transparente */
-    color: #000000; /* Texto branco */
+    background: transparent;
+    color: #000000;
     transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
 .form-cadastro-input:focus {
-    border-color: #4692b6; /* Cor da borda ao focar */
-    background: rgba(255, 255, 255, 0.1); /* Fundo levemente destacado ao focar */
+    border-color: #4692b6;
+    background: rgba(255, 255, 255, 0.1);
     outline: none;
-    color: #000000; /* Mantém o texto branco */
+    color: #000000;
 }
 
 /* Botão de cadastro */
@@ -74,7 +90,6 @@
     background: #74b9ff;
 }
 
-
 /* Mensagem de erro no estilo do Bootstrap alert-danger */
 .form-cadastro-error {
     color: #842029;
@@ -91,45 +106,44 @@
 .form-cadastro-page {
     display: flex;
     width: 100%;
-    min-height: 100vh; /* Garante que ocupe 100% da altura da tela */
+    height: 100vh;
+    min-height: 100vh;
 }
 
 /* Lado Esquerdo: Formulário */
 .form-cadastro-container {
-    flex: 1; /* Ocupa 50% da tela */
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: transparent; /* Remove o fundo do formulário */
+    background: transparent;
     padding: 2rem;
-    min-height: 100vh; /* Garante que ocupe 100% da altura da tela */
+    min-height: 100vh;
 }
 
 /* Linha Divisória */
 .form-cadastro-divider {
     width: 3px;
     background: #ac0303;
-    height: 100%; /* Garante que a linha ocupe toda a altura */
+    height: 100%;
 }
 
 /* Lado Direito: Vídeo */
 .form-cadastro-icon {
-    flex: 1; /* Ocupa 50% da tela */
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: transparent; /* Remove o fundo do lado do vídeo */
+    background: transparent;
     padding: 2rem;
-    min-height: 100vh; /* Garante que ocupe 100% da altura da tela */
+    min-height: 100vh;
 }
 
 .form-cadastro-icon video {
-    max-width: 80%; /* Garante que o vídeo não ultrapasse o espaço */
-    border-radius: 8px; /* Bordas arredondadas */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+    max-width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
-
 
 .d-none {
     display: none !important;
@@ -157,7 +171,6 @@ display: flex;
     right: 0;
     z-index: 1;
     margin-left: 10px;
-
 }
 
 .botãoS {
@@ -179,20 +192,16 @@ display: flex;
 .object{
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Garante que a imagem cubra todo o espaço */
-    border-radius: 8px; /* Bordas arredondadas */
+    object-fit: cover;
+    border-radius: 8px;
     margin-bottom: 40%;
-
 }
 
 .cadastrof{
-
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-
-  
 }
 
 .login-link {
@@ -203,7 +212,7 @@ display: flex;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px; /* Espaço entre o texto e o botão */
+    gap: 8px;
 }
 
 .form-cadastro-link {
@@ -217,7 +226,7 @@ display: flex;
 
 .form-cadastro-link:hover {
     transform: translateY(-5px);
-    color: #f86019; /* Cor da escrita ao passar o mouse */
+    color: #f86019;
     text-decoration: none;
 }
 
@@ -227,7 +236,7 @@ display: flex;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(255,255,255,0.7); /* fundo branco semi-transparente */
+  background: rgba(255,255,255,0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -242,20 +251,19 @@ display: flex;
 
 #loaderimg {
   width: 20px;
-
 }
 
 .loader-icon {
     display: flex !important;
     animation: girar 0.8s linear infinite;
 }
+
 .imgloader {
     width: 80px; 
     height: 80px; 
 }
 
 .eye-icon {
-
     position: absolute;
     right: 14px;
     top: 37px;
@@ -266,7 +274,8 @@ display: flex;
     transition: color 0.2s, opacity 0.2s;
     z-index: 2;
 }
+
 .eye-icon:hover {
-    color: #777372; /* Cor de destaque ao passar o mouse */
+    color: #777372;
     opacity: 1;
 }

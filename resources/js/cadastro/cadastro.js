@@ -193,3 +193,49 @@ const registerSystem = new RegisterSystem();
 // Exporta para uso global se necessário
 window.RegisterSystem = RegisterSystem;
 
+function passwordToggle() {
+    const senhaInput = document.getElementById('SENHA_HASH');
+    const senhaConfirmInput = document.getElementById('SENHA_HASH_confirmation');
+    
+    // Verifica se os elementos existem antes de tentar usar
+    if (senhaInput) {
+        senhaInput.addEventListener('blur', function(event) {
+            registerSystem.validatePassword(event);
+        });
+    }
+
+    if (senhaConfirmInput) {
+        senhaConfirmInput.addEventListener('blur', function(event) {
+            registerSystem.validatePasswordConfirmation(event);
+        });
+    }
+
+    // Só adiciona event listeners se os elementos existirem
+    document.querySelectorAll('.eye-icon').forEach(icon => {
+        icon.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            
+            if (input) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.remove('bi-eye');
+                    this.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('bi-eye-slash');
+                    this.classList.add('bi-eye');
+                }
+            }
+        });
+    });
+}
+
+// Só executa se estiver na página de cadastro
+document.addEventListener('DOMContentLoaded', function() {
+    // Verifica se está na página de cadastro antes de executar
+    if (document.getElementById('SENHA_HASH') || document.querySelector('.form-cadastro')) {
+        passwordToggle();
+    }
+});
+
