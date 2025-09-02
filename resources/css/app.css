@@ -4,3 +4,6 @@
 @import 'bootstrap-icons/font/bootstrap-icons.min.css';
 @import './geral/navbar.css';
 @import './geral/footer.css';
+@import './login/login.css';
+@import './cadastro/cadastro.css';
+@import './home/animacoes.css';
