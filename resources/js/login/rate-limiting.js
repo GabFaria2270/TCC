@@ -1,42 +1,51 @@
 /**
- * Rate Limiting Counter for Login Form
- * Handles the countdown timer and form state when user exceeds login attempts
+ * Rate Limiting - CORRIGIDO REATIVAÇÃO E PERSISTÊNCIA
  */
 
 class RateLimitingCounter {
     constructor() {
-        this.countdownDuration = 60; // segundos
+        this.elements = {};
         this.countdownInterval = null;
-        this.elements = {
-            alert: null,
-            countdown: null,
-            progressFill: null,
-            loginForm: null,
-            loginButton: null,
-            emailInput: null,
-            senhaInput: null,
-            rememberCheckbox: null
-        };
+        this.isManuallyEnabled = false;
+        this.manualDetectionTimeout = null;
+        this.detectionCount = 0;
+        this.isServerBlocked = false;
+        this.manualCheckInterval = null; // ✅ NOVO: Intervalo para verificar mudanças manuais
+        
+        // ✅ Bind das funções
+        this.handleManualFocus = this.handleManualEnable.bind(this);
+        this.handleManualInput = this.handleManualEnable.bind(this);
+        this.checkManualChanges = this.checkManualChanges.bind(this);
         
         this.init();
     }
 
-    /**
-     * Inicializa o sistema de rate limiting
-     */
     init() {
-        // Aguarda o DOM estar completamente carregado
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.setupElements());
+            document.addEventListener('DOMContentLoaded', () => this.start());
         } else {
-            this.setupElements();
+            this.start();
         }
     }
 
-    /**
-     * Configura os elementos do DOM
-     */
-    setupElements() {
+    start() {
+        this.findElements();
+        
+        // ✅ CORRIGIDO: Verifica localStorage PRIMEIRO, depois servidor
+        const hasPersistedState = this.checkPersistedState();
+        
+        if (!hasPersistedState && this.elements.alert && this.isAlertVisible()) {
+            console.log('🚨 Alerta do servidor detectado');
+            this.isServerBlocked = true;
+            this.processServerAlert();
+        } else if (!hasPersistedState) {
+            this.enableForm();
+        }
+
+        console.log('🔄 RateLimitingCounter inicializado');
+    }
+
+    findElements() {
         this.elements = {
             alert: document.getElementById('rateLimitAlert'),
             countdown: document.getElementById('countdown'),
@@ -48,339 +57,144 @@ class RateLimitingCounter {
             rememberCheckbox: document.querySelector('input[name="remember"]')
         };
 
-        console.log('🔧 Elementos encontrados:', {
+        console.log('🔍 Elementos encontrados:', {
             alert: !!this.elements.alert,
-            loginButton: !!this.elements.loginButton,
-            emailInput: !!this.elements.emailInput
+            countdown: !!this.elements.countdown,
+            progressFill: !!this.elements.progressFill,
+            loginForm: !!this.elements.loginForm
         });
+    }
 
-        // ========================================
-        // SISTEMA DE BLOQUEIO PERSISTENTE - SEMPRE EXECUTA
-        // ========================================
-        this.checkServerLock();
+    isAlertVisible() {
+        if (!this.elements.alert) return false;
         
-        // Monitora mudanças no email
-        if (this.elements.emailInput) {
-            this.elements.emailInput.addEventListener('change', () => {
-                console.log('📧 Email mudou, verificando bloqueio...');
-                this.checkServerLock();
-            });
-        }
+        const computedStyle = window.getComputedStyle(this.elements.alert);
+        const isVisible = computedStyle.display !== 'none' && 
+                         computedStyle.visibility !== 'hidden' &&
+                         this.elements.alert.offsetHeight > 0;
+        
+        console.log('🔍 Alerta visível:', isVisible);
+        return isVisible;
+    }
 
-        // ========================================
-        // SISTEMA ORIGINAL - SÓ SE ALERTA EXISTIR NO HTML
-        // ========================================
-        if (this.elements.alert && this.elements.alert.style.display !== 'none') {
-            console.log('⚠️ Alerta do servidor detectado, extraindo tempo...');
-            this.extractTimeFromMessage();
-            this.startCountdown();
+    checkPersistedState() {
+        try {
+            const saved = localStorage.getItem('rateLimitState');
+            if (saved) {
+                const state = JSON.parse(saved);
+                const now = Date.now();
+                
+                if (state.blockedUntil && now < state.blockedUntil) {
+                    const remainingSeconds = Math.ceil((state.blockedUntil - now) / 1000);
+                    console.log(`⏰ Estado persistido: ${remainingSeconds}s restantes`);
+                    
+                    // ✅ CORRIGIDO: Marca como persistido, não servidor
+                    this.isServerBlocked = state.isServerBlocked || false;
+                    
+                    this.showAlert();
+                    this.startCountdown(remainingSeconds);
+                    return true;
+                } else {
+                    localStorage.removeItem('rateLimitState');
+                    return false;
+                }
+            }
+            return false;
+        } catch (error) {
+            console.log('❌ Erro ao verificar estado persistido:', error);
+            return false;
         }
     }
 
-    /**
-     * Extrai o tempo da mensagem de erro do servidor
-     */
-    extractTimeFromMessage() {
+    showAlert() {
+        if (this.elements.alert) {
+            if (!this.isAlertVisible()) {
+                this.elements.alert.style.display = 'block';
+                console.log('👁️ Alerta exibido via JavaScript');
+            } else {
+                console.log('👁️ Alerta já visível do servidor');
+            }
+        }
+    }
+
+    hideAlert() {
+        if (this.elements.alert) {
+            // ✅ CORRIGIDO: Sempre pode esconder alerta quando necessário
+            this.elements.alert.style.display = 'none';
+            console.log('👁️ Alerta escondido');
+        }
+    }
+
+    processServerAlert() {
         if (!this.elements.alert) return;
         
-        const errorMessage = this.elements.alert.textContent || this.elements.alert.innerText;
-        const match = errorMessage.match(/(\d+)\s+segundos/);
+        const text = this.elements.alert.textContent || this.elements.alert.innerText;
+        const match = text.match(/(\d+)\s+segundos/);
         
         if (match) {
-            this.countdownDuration = parseInt(match[1]);
-            console.log(`⏱️ Tempo extraído do servidor: ${this.countdownDuration} segundos`);
-        } else {
-            this.countdownDuration = 60; // fallback
-            console.log('⏱️ Usando tempo padrão: 60 segundos');
+            const seconds = parseInt(match[1]);
+            console.log(`⏰ Servidor indica ${seconds} segundos de bloqueio`);
+            
+            this.isServerBlocked = true;
+            this.startCountdown(seconds);
         }
     }
 
-    /**
-     * Gera chave para localStorage baseada no email/IP
-     */
-    storageKeyFor(emailOrIp) {
-        return 'login_lock_' + (emailOrIp || 'anon');
-    }
-
-    /**
-     * Inicia countdown persistente
-     */
-    startPersistentCountdown(expireAtMs) {
-        const email = (this.elements.emailInput?.value || '').trim().toLowerCase();
-        const key = this.storageKeyFor(email || 'ip');
-        localStorage.setItem(key, String(expireAtMs));
-        console.log('💾 Salvando bloqueio no localStorage:', key, new Date(expireAtMs));
-        this.updatePersistentUIAndTick(key);
-    }
-
-    /**
-     * Atualiza UI e executa tick do contador persistente
-     */
-    updatePersistentUIAndTick(key) {
-        clearInterval(this.countdownInterval);
+    startCountdown(seconds) {
+        console.log(`🚀 Iniciando countdown com ${seconds} segundos`);
         
+        // ✅ Reseta flags
+        this.isManuallyEnabled = false;
+        this.detectionCount = 0;
+        
+        // ✅ Limpa timeouts anteriores
+        if (this.manualDetectionTimeout) {
+            clearTimeout(this.manualDetectionTimeout);
+            this.manualDetectionTimeout = null;
+        }
+        
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+        }
+
+        if (this.manualCheckInterval) {
+            clearInterval(this.manualCheckInterval);
+        }
+
+        this.disableForm();
+        this.saveState(seconds); // ✅ SEMPRE salva estado
+
+        const initialSeconds = seconds;
+
         const tick = () => {
-            const now = Date.now();
-            const expire = Number(localStorage.getItem(key) || 0);
-            const remaining = Math.max(0, Math.ceil((expire - now) / 1000));
-
-            console.log('⏰ Tick:', { now: new Date(now), expire: new Date(expire), remaining });
-
-            if (remaining > 0) {
-                // Desabilita formulário
-                this.setFormElementsState(true);
-                
-                // Atualiza contador se existir
-                if (this.elements.countdown) {
-                    this.elements.countdown.textContent = remaining;
-                }
-                
-                // Atualiza barra de progresso se existir
-                if (this.elements.progressFill) {
-                    const progress = ((60 - remaining) / 60) * 100;
-                    this.elements.progressFill.style.width = `${progress}%`;
-                }
-
-                // Mostra alerta se não existir
-                if (!this.elements.alert || this.elements.alert.style.display === 'none') {
-                    this.showRateLimitAlert(remaining);
-                }
-                
-                // Cor especial para últimos segundos
-                if (remaining <= 10 && this.elements.countdown) {
-                    this.elements.countdown.style.color = '#e74c3c';
-                    this.elements.countdown.style.fontWeight = 'bold';
-                }
+            if (seconds > 0) {
+                this.updateDisplay(seconds, initialSeconds);
+                this.saveState(seconds); // ✅ SEMPRE atualiza estado
+                seconds--;
             } else {
-                // Habilita formulário
-                this.setFormElementsState(false);
-                localStorage.removeItem(key);
-                clearInterval(this.countdownInterval);
-                
-                // Remove alerta se existir
-                if (this.elements.alert) {
-                    this.elements.alert.style.animation = 'fadeOutAlert 0.5s ease-out forwards';
-                    setTimeout(() => {
-                        this.elements.alert.style.display = 'none';
-                    }, 500);
-                }
-
-                console.log('✅ Bloqueio persistente removido');
+                console.log('✅ Countdown finalizado');
+                this.finishCountdown();
             }
         };
 
         tick();
         this.countdownInterval = setInterval(tick, 1000);
+        
+        // ✅ NOVO: Inicia verificação manual constante
+        this.startManualDetection();
     }
 
-    /**
-     * Verifica bloqueio no servidor
-     */
-    async checkServerLock() {
-        try {
-            console.log('🔍 Verificando bloqueio no servidor...');
-            
-            const email = (this.elements.emailInput?.value || '').trim();
-            const url = '/login/lock-status' + (email ? `?email=${encodeURIComponent(email)}` : '');
-            
-            console.log('📡 Fazendo requisição para:', url);
-            
-            const res = await fetch(url, { 
-                credentials: 'same-origin',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
-            });
-            
-            if (!res.ok) {
-                console.log('❌ Resposta não OK:', res.status);
-                return;
-            }
-            
-            const data = await res.json();
-            console.log('📊 Resposta do servidor:', data);
-            
-            if (data.locked && data.seconds > 0) {
-                const expireAt = Date.now() + data.seconds * 1000;
-                this.startPersistentCountdown(expireAt);
-                console.log('🚨 Bloqueio detectado no servidor:', data.seconds, 'segundos');
-                return;
-            }
-
-            // Se servidor não bloqueou, checa localStorage (persistência entre reloads)
-            const key = this.storageKeyFor(email || 'ip');
-            const stored = Number(localStorage.getItem(key) || 0);
-            
-            console.log('📦 Verificando localStorage:', { key, stored, now: Date.now() });
-            
-            if (stored && stored > Date.now()) {
-                this.updatePersistentUIAndTick(key);
-                console.log('🚨 Bloqueio restaurado do localStorage');
-            } else {
-                // Remove bloqueio antigo
-                this.setFormElementsState(false);
-                localStorage.removeItem(key);
-                console.log('✅ Nenhum bloqueio ativo');
-            }
-        } catch (e) {
-            console.error('❌ Erro ao verificar bloqueio:', e);
-        }
+    // ✅ NOVO: Método para iniciar detecção manual constante
+    startManualDetection() {
+        // Verifica a cada 500ms se elementos foram reabilitados manualmente
+        this.manualCheckInterval = setInterval(this.checkManualChanges, 500);
+        console.log('👀 Detecção manual iniciada');
     }
 
-    /**
-     * Mostra alerta de rate limiting dinamicamente
-     */
-    showRateLimitAlert(seconds) {
-        console.log('🚨 Mostrando alerta de rate limiting:', seconds, 'segundos');
-        
-        // Se já existe, apenas atualiza
-        if (this.elements.alert && this.elements.alert.style.display !== 'none') {
-            if (this.elements.countdown) {
-                this.elements.countdown.textContent = seconds;
-            }
-            return;
-        }
+    // ✅ NOVO: Verifica se elementos foram reabilitados manualmente
+    checkManualChanges() {
+        if (this.isManuallyEnabled) return;
 
-        // Cria ou mostra o alerta
-        let alert = this.elements.alert;
-        if (!alert) {
-            alert = document.createElement('div');
-            alert.id = 'rateLimitAlert';
-            alert.className = 'alert alert-warning rate-limit-alert';
-            
-            // Encontra onde inserir o alerta (antes do formulário)
-            const form = this.elements.loginForm;
-            if (form && form.parentNode) {
-                form.parentNode.insertBefore(alert, form);
-                this.elements.alert = alert;
-            } else {
-                // Se não encontrar o form, insere no body
-                document.body.appendChild(alert);
-                this.elements.alert = alert;
-            }
-        }
-
-        alert.innerHTML = `
-            <div class="rate-limit-content">
-                <div class="rate-limit-icon">
-                    <i class="bi bi-exclamation-triangle"></i>
-                </div>
-                <div class="rate-limit-text">
-                    <strong>🚨 Muitas tentativas de login!</strong><br>
-                    Aguarde <span id="countdown">${seconds}</span> segundos para tentar novamente.
-                </div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-            </div>
-        `;
-        alert.style.display = 'block';
-        alert.style.animation = 'fadeInAlert 0.5s ease-out';
-
-        // Atualiza referências dos elementos
-        this.elements.countdown = document.getElementById('countdown');
-        this.elements.progressFill = document.getElementById('progressFill');
-        
-        console.log('✅ Alerta criado e elementos atualizados');
-    }
-
-    /**
-     * Inicia o contador regressivo (método original)
-     */
-    startCountdown() {
-        let seconds = this.countdownDuration;
-        
-        console.log('🕒 Iniciando countdown original:', seconds, 'segundos');
-        
-        // Atualiza imediatamente
-        this.updateDisplay(seconds);
-        
-        // TAMBÉM salva no localStorage para persistência
-        const email = (this.elements.emailInput?.value || '').trim().toLowerCase();
-        const key = this.storageKeyFor(email || 'ip');
-        const expireAt = Date.now() + seconds * 1000;
-        localStorage.setItem(key, String(expireAt));
-        console.log('💾 Salvando no localStorage (countdown original):', key, new Date(expireAt));
-        
-        // Inicia o intervalo
-        this.countdownInterval = setInterval(() => {
-            seconds--;
-            this.updateDisplay(seconds);
-            
-            // Quando chegar a zero, libera o formulário
-            if (seconds <= 0) {
-                this.clearCountdown();
-                this.enableForm();
-                this.showSuccessMessage();
-                
-                // Remove do localStorage
-                localStorage.removeItem(key);
-                console.log('✅ Countdown original finalizado');
-            }
-        }, 1000);
-
-        console.log('🚨 Rate limiting ativo - Countdown iniciado');
-    }
-
-    /**
-     * Atualiza a exibição do contador e barra de progresso
-     * @param {number} seconds - Segundos restantes
-     */
-    updateDisplay(seconds) {
-        // Atualiza o texto do contador
-        if (this.elements.countdown) {
-            this.elements.countdown.textContent = seconds;
-        }
-        
-        // Atualiza a barra de progresso
-        if (this.elements.progressFill) {
-            const progress = ((this.countdownDuration - seconds) / this.countdownDuration) * 100;
-            this.elements.progressFill.style.width = `${progress}%`;
-        }
-
-        // Adiciona classe especial quando restam poucos segundos
-        if (seconds <= 10 && this.elements.countdown) {
-            this.elements.countdown.style.color = '#e74c3c';
-            this.elements.countdown.style.fontWeight = 'bold';
-        }
-    }
-
-    /**
-     * Limpa o intervalo do contador
-     */
-    clearCountdown() {
-        if (this.countdownInterval) {
-            clearInterval(this.countdownInterval);
-            this.countdownInterval = null;
-        }
-    }
-
-    /**
-     * Habilita o formulário após o fim do bloqueio
-     */
-    enableForm() {
-        // Remove o alerta com animação
-        if (this.elements.alert) {
-            this.elements.alert.style.animation = 'fadeOutAlert 0.5s ease-out forwards';
-            setTimeout(() => {
-                this.elements.alert.style.display = 'none';
-            }, 500);
-        }
-        
-        // Habilita todos os campos
-        this.setFormElementsState(false); // false = habilitado
-        
-        console.log('✅ Rate limiting removido - Formulário habilitado');
-    }
-
-    /**
-     * Desabilita/habilita elementos do formulário
-     * @param {boolean} disabled - Se true, desabilita; se false, habilita
-     */
-    setFormElementsState(disabled) {
         const elements = [
             this.elements.emailInput,
             this.elements.senhaInput,
@@ -388,131 +202,229 @@ class RateLimitingCounter {
             this.elements.rememberCheckbox
         ];
 
-        elements.forEach(element => {
-            if (element) {
-                element.disabled = disabled;
+        let hasEnabledElement = false;
+        elements.forEach(el => {
+            if (el && !el.disabled) {
+                hasEnabledElement = true;
             }
         });
 
-        // Atualiza texto do botão
-        if (this.elements.loginButton) {
-            this.elements.loginButton.textContent = disabled ? 'Aguarde...' : 'Entrar';
+        if (hasEnabledElement) {
+            this.detectionCount++;
+            console.log(`🔍 Elemento reabilitado detectado! Detecção ${this.detectionCount}/3`);
+            
+            // ✅ Força disabled novamente
+            elements.forEach(el => {
+                if (el) el.disabled = true;
+            });
+
+            if (this.detectionCount >= 3) {
+                this.handleManualEnable();
+            }
+        }
+    }
+
+    finishCountdown() {
+        clearInterval(this.countdownInterval);
+        this.countdownInterval = null;
+        
+        // ✅ NOVO: Para detecção manual
+        if (this.manualCheckInterval) {
+            clearInterval(this.manualCheckInterval);
+            this.manualCheckInterval = null;
         }
         
-        console.log('🔧 Estado do formulário atualizado:', disabled ? 'DESABILITADO' : 'HABILITADO');
+        this.isServerBlocked = false;
+        localStorage.removeItem('rateLimitState');
+        this.enableForm();
     }
 
-    /**
-     * Mostra mensagem de sucesso quando o bloqueio é removido
-     */
-    showSuccessMessage() {
-        const messagesDiv = document.querySelector('.form-login-messages');
-        if (messagesDiv) {
-            // Cria a mensagem de liberação
-            const successMessage = document.createElement('div');
-            successMessage.className = 'alert alert-success';
-            successMessage.innerHTML = '✅ Você pode tentar fazer login novamente!';
-            successMessage.style.animation = 'fadeInAlert 0.5s ease-out';
-            
-            // Limpa mensagens anteriores e adiciona a nova
-            messagesDiv.innerHTML = '';
-            messagesDiv.appendChild(successMessage);
-            
-            // Remove a mensagem após 4 segundos
-            setTimeout(() => {
-                successMessage.style.animation = 'fadeOutAlert 0.5s ease-out forwards';
-                setTimeout(() => {
-                    if (successMessage.parentNode) {
-                        successMessage.parentNode.removeChild(successMessage);
-                    }
-                }, 500);
-            }, 4000);
+    saveState(seconds) {
+        try {
+            const state = {
+                blockedUntil: Date.now() + (seconds * 1000),
+                seconds: seconds,
+                isServerBlocked: this.isServerBlocked, // ✅ SALVA flag do servidor
+                timestamp: Date.now()
+            };
+            localStorage.setItem('rateLimitState', JSON.stringify(state));
+            console.log(`💾 Estado salvo: ${seconds}s restantes`);
+        } catch (error) {
+            console.log('❌ Erro ao salvar estado:', error);
         }
     }
-}
 
-// CSS adicional para animações (inserido via JavaScript)
-const additionalCSS = `
-@keyframes fadeOutAlert {
-    0% {
-        opacity: 1;
-        transform: translateY(0);
+    updateDisplay(seconds, initialSeconds = 60) {
+        // Atualiza contador
+        if (this.elements.countdown) {
+            this.elements.countdown.textContent = seconds;
+            console.log(`⏰ Contador atualizado: ${seconds}s`);
+        }
+
+        // Atualiza barra de progresso
+        if (this.elements.progressFill) {
+            const elapsed = initialSeconds - seconds;
+            const progress = (elapsed / initialSeconds) * 100;
+            
+            this.elements.progressFill.style.width = progress + '%';
+            console.log(`📊 Barra de progresso: ${progress.toFixed(1)}%`);
+        }
     }
-    100% {
-        opacity: 0;
-        transform: translateY(-20px);
+
+    disableForm() {
+        const elements = [
+            this.elements.emailInput,
+            this.elements.senhaInput,
+            this.elements.loginButton,
+            this.elements.rememberCheckbox
+        ];
+
+        elements.forEach(el => {
+            if (el) {
+                el.disabled = true;
+                
+                // ✅ SEMPRE adiciona listeners para detectar mudanças
+                el.addEventListener('focus', this.handleManualFocus);
+                el.addEventListener('input', this.handleManualInput);
+                el.addEventListener('click', this.handleManualFocus);
+            }
+        });
+
+        if (this.elements.loginButton) {
+            this.elements.loginButton.textContent = 'Aguarde...';
+        }
+
+        console.log('🔒 Formulário desabilitado');
+    }
+
+    handleManualEnable() {
+        if (!this.isManuallyEnabled) {
+            console.log('🔓 Reativação manual confirmada');
+            this.isManuallyEnabled = true;
+            
+            // Para o countdown
+            if (this.countdownInterval) {
+                clearInterval(this.countdownInterval);
+                this.countdownInterval = null;
+            }
+
+            // Para detecção manual
+            if (this.manualCheckInterval) {
+                clearInterval(this.manualCheckInterval);
+                this.manualCheckInterval = null;
+            }
+            
+            // Remove estado persistido
+            localStorage.removeItem('rateLimitState');
+            this.hideAlert();
+            
+            // ✅ TIMEOUT PARA PUNIÇÃO - 10 segundos
+            this.manualDetectionTimeout = setTimeout(() => {
+                if (this.isManuallyEnabled) {
+                    console.log('⚠️ Aplicando punição por burla do sistema');
+                    this.isManuallyEnabled = false;
+                    this.detectionCount = 0;
+                    
+                    // Punição: 90 segundos
+                    this.showAlert();
+                    this.startCountdown(90);
+                    
+                    // Atualiza texto do alerta
+                    if (this.elements.alert) {
+                        const alertText = this.elements.alert.querySelector('strong');
+                        if (alertText) {
+                            alertText.textContent = '🚨 Tentativa de burlar o sistema detectada!';
+                        }
+                        const alertDesc = this.elements.alert.querySelector('p');
+                        if (alertDesc) {
+                            alertDesc.innerHTML = 'Bloqueio estendido. Aguarde <span id="countdown">90</span> segundos para tentar novamente.';
+                        }
+                    }
+                }
+            }, 10000); // ✅ 10 segundos para ver se realmente burlou
+        }
+    }
+
+    enableForm() {
+        const elements = [
+            this.elements.emailInput,
+            this.elements.senhaInput,
+            this.elements.loginButton,
+            this.elements.rememberCheckbox
+        ];
+
+        elements.forEach(el => {
+            if (el) {
+                el.disabled = false;
+                
+                // Remove listeners
+                el.removeEventListener('focus', this.handleManualFocus);
+                el.removeEventListener('input', this.handleManualInput);
+                el.removeEventListener('click', this.handleManualFocus);
+            }
+        });
+
+        if (this.elements.loginButton) {
+            this.elements.loginButton.textContent = 'Entrar';
+        }
+
+        this.hideAlert();
+
+        // Reseta barra de progresso
+        if (this.elements.progressFill) {
+            this.elements.progressFill.style.width = '0%';
+        }
+
+        // ✅ Limpa todos os timeouts e intervals
+        if (this.manualDetectionTimeout) {
+            clearTimeout(this.manualDetectionTimeout);
+            this.manualDetectionTimeout = null;
+        }
+
+        if (this.manualCheckInterval) {
+            clearInterval(this.manualCheckInterval);
+            this.manualCheckInterval = null;
+        }
+
+        console.log('🔓 Formulário habilitado');
+    }
+
+    forceReset() {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+        
+        if (this.manualDetectionTimeout) {
+            clearTimeout(this.manualDetectionTimeout);
+            this.manualDetectionTimeout = null;
+        }
+
+        if (this.manualCheckInterval) {
+            clearInterval(this.manualCheckInterval);
+            this.manualCheckInterval = null;
+        }
+        
+        localStorage.removeItem('rateLimitState');
+        this.isManuallyEnabled = true;
+        this.detectionCount = 0;
+        this.isServerBlocked = false;
+        this.enableForm();
+        
+        console.log('🔄 Reset forçado do rate limiting');
     }
 }
 
-@keyframes fadeInAlert {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.rate-limit-alert {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border-radius: 0.375rem;
-    background-color: #fff3cd;
-    border: 1px solid #ffeaa7;
-    color: #856404;
-}
-
-.rate-limit-content {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-}
-
-.rate-limit-icon {
-    font-size: 1.5rem;
-    color: #f39c12;
-}
-
-.progress-container {
-    width: 100%;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 6px;
-    background-color: #f8f9fa;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background-color: #f39c12;
-    width: 0%;
-    transition: width 1s ease;
-}
-`;
-
-// Adiciona o CSS adicional ao documento
-function addAdditionalCSS() {
-    const style = document.createElement('style');
-    style.textContent = additionalCSS;
-    document.head.appendChild(style);
-}
-
-// Inicializa o sistema quando o script é carregado
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Inicializando Rate Limiting Counter...');
-    addAdditionalCSS();
+// Inicializa apenas na página de login
+if (document.getElementById('loginForm')) {
+    const rateLimiter = new RateLimitingCounter();
+    window.rateLimiter = rateLimiter;
     
-    // Cria uma instância global para permitir controle externo se necessário
-    window.rateLimitingCounter = new RateLimitingCounter();
-});
-
-// Exporta a classe para uso em outros módulos (se necessário)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = RateLimitingCounter;
+    // Atalho para reset (Ctrl+Shift+R)
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+            console.log('🔄 Reset manual ativado');
+            rateLimiter.forceReset();
+        }
+    });
 }

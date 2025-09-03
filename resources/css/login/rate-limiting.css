@@ -62,7 +62,7 @@
 }
 
 /* =========================
-   BARRA DE PROGRESSO
+   BARRA DE PROGRESSO - CORRIGIDA
    ========================= */
 .progress-bar {
     width: 100%;
@@ -78,7 +78,7 @@
     height: 100%;
     background: linear-gradient(90deg, #e74c3c 0%, #f39c12 100%);
     width: 0%;
-    transition: width 1s ease;
+    transition: width 0.8s ease; /* Transição suave */
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
 }
