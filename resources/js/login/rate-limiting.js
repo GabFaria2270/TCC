@@ -1,5 +1,5 @@
 /**
- * Rate Limiting - CORRIGIDO REATIVAÇÃO E PERSISTÊNCIA
+ * Rate Limiting - CORRIGIDO ALERTA VISUAL AO RECARREGAR
  */
 
 class RateLimitingCounter {
@@ -10,7 +10,7 @@ class RateLimitingCounter {
         this.manualDetectionTimeout = null;
         this.detectionCount = 0;
         this.isServerBlocked = false;
-        this.manualCheckInterval = null; // ✅ NOVO: Intervalo para verificar mudanças manuais
+        this.manualCheckInterval = null;
         
         // ✅ Bind das funções
         this.handleManualFocus = this.handleManualEnable.bind(this);
@@ -91,7 +91,8 @@ class RateLimitingCounter {
                     // ✅ CORRIGIDO: Marca como persistido, não servidor
                     this.isServerBlocked = state.isServerBlocked || false;
                     
-                    this.showAlert();
+                    // ✅ NOVO: Cria ou mostra alerta mesmo se não existir
+                    this.createOrShowAlert(remainingSeconds);
                     this.startCountdown(remainingSeconds);
                     return true;
                 } else {
@@ -106,20 +107,65 @@ class RateLimitingCounter {
         }
     }
 
+    // ✅ NOVO: Cria ou mostra alerta visual
+    createOrShowAlert(remainingSeconds = 60) {
+        if (!this.elements.alert) {
+            // ✅ NOVO: Cria alerta dinamicamente se não existir
+            this.createAlertElement(remainingSeconds);
+        } else {
+            // ✅ Mostra alerta existente
+            this.showAlert();
+        }
+    }
+
+    // ✅ NOVO: Cria elemento de alerta dinamicamente
+    createAlertElement(remainingSeconds = 60) {
+        // Encontra container do formulário
+        const formContainer = document.querySelector('.form-login-body') || 
+                             document.querySelector('.form-login-container') ||
+                             document.querySelector('#loginForm').parentElement;
+
+        if (formContainer) {
+            // Cria HTML do alerta
+            const alertHTML = `
+                <div class="rate-limit-alert" id="rateLimitAlert">
+                    <div class="rate-limit-content">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <div>
+                            <strong>🚨 Sessão bloqueada!</strong>
+                            <p>Aguarde <span id="countdown">${remainingSeconds}</span> segundos para tentar novamente.</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Insere no início do container
+            formContainer.insertAdjacentHTML('afterbegin', alertHTML);
+
+            // Atualiza referências dos elementos
+            this.elements.alert = document.getElementById('rateLimitAlert');
+            this.elements.countdown = document.getElementById('countdown');
+            this.elements.progressFill = document.getElementById('progressFill');
+
+            console.log('✅ Alerta criado dinamicamente');
+        } else {
+            console.error('❌ Container do formulário não encontrado para criar alerta');
+        }
+    }
+
     showAlert() {
         if (this.elements.alert) {
-            if (!this.isAlertVisible()) {
-                this.elements.alert.style.display = 'block';
-                console.log('👁️ Alerta exibido via JavaScript');
-            } else {
-                console.log('👁️ Alerta já visível do servidor');
-            }
+            // ✅ CORRIGIDO: Sempre força exibição
+            this.elements.alert.style.display = 'block';
+            console.log('👁️ Alerta exibido');
         }
     }
 
     hideAlert() {
         if (this.elements.alert) {
-            // ✅ CORRIGIDO: Sempre pode esconder alerta quando necessário
             this.elements.alert.style.display = 'none';
             console.log('👁️ Alerta escondido');
         }
@@ -162,14 +208,14 @@ class RateLimitingCounter {
         }
 
         this.disableForm();
-        this.saveState(seconds); // ✅ SEMPRE salva estado
+        this.saveState(seconds);
 
         const initialSeconds = seconds;
 
         const tick = () => {
             if (seconds > 0) {
                 this.updateDisplay(seconds, initialSeconds);
-                this.saveState(seconds); // ✅ SEMPRE atualiza estado
+                this.saveState(seconds);
                 seconds--;
             } else {
                 console.log('✅ Countdown finalizado');
@@ -180,18 +226,18 @@ class RateLimitingCounter {
         tick();
         this.countdownInterval = setInterval(tick, 1000);
         
-        // ✅ NOVO: Inicia verificação manual constante
+        // ✅ Inicia verificação manual constante
         this.startManualDetection();
     }
 
-    // ✅ NOVO: Método para iniciar detecção manual constante
+    // ✅ Método para iniciar detecção manual constante
     startManualDetection() {
         // Verifica a cada 500ms se elementos foram reabilitados manualmente
         this.manualCheckInterval = setInterval(this.checkManualChanges, 500);
         console.log('👀 Detecção manual iniciada');
     }
 
-    // ✅ NOVO: Verifica se elementos foram reabilitados manualmente
+    // ✅ Verifica se elementos foram reabilitados manualmente
     checkManualChanges() {
         if (this.isManuallyEnabled) return;
 
@@ -228,7 +274,7 @@ class RateLimitingCounter {
         clearInterval(this.countdownInterval);
         this.countdownInterval = null;
         
-        // ✅ NOVO: Para detecção manual
+        // ✅ Para detecção manual
         if (this.manualCheckInterval) {
             clearInterval(this.manualCheckInterval);
             this.manualCheckInterval = null;
@@ -244,7 +290,7 @@ class RateLimitingCounter {
             const state = {
                 blockedUntil: Date.now() + (seconds * 1000),
                 seconds: seconds,
-                isServerBlocked: this.isServerBlocked, // ✅ SALVA flag do servidor
+                isServerBlocked: this.isServerBlocked,
                 timestamp: Date.now()
             };
             localStorage.setItem('rateLimitState', JSON.stringify(state));
@@ -326,7 +372,7 @@ class RateLimitingCounter {
                     this.detectionCount = 0;
                     
                     // Punição: 90 segundos
-                    this.showAlert();
+                    this.createOrShowAlert(90);
                     this.startCountdown(90);
                     
                     // Atualiza texto do alerta
@@ -341,7 +387,7 @@ class RateLimitingCounter {
                         }
                     }
                 }
-            }, 10000); // ✅ 10 segundos para ver se realmente burlou
+            }, 10000);
         }
     }
 
