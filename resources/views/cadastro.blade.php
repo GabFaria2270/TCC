@@ -37,29 +37,54 @@
                                         {{ session('error') }}
                                     </div>
                                 @endif
+
+                                {{-- CONTADOR DE RATE LIMITING PARA CADASTRO --}}
+                                @if ($errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas'))
+                                    <div class="rate-limit-alert" id="rateLimitAlert">
+                                        <div class="rate-limit-content">
+                                            <i class="bi bi-exclamation-triangle-fill"></i>
+                                            <div>
+                                                <strong>🚨 Muitas tentativas de cadastro!</strong>
+                                                <p>Aguarde <span id="countdown">60</span> segundos para tentar
+                                                    novamente.</p>
+                                                <div class="progress-bar">
+                                                    <div class="progress-fill" id="progressFill"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
-                            <form id="cadastroForm" method="POST" action="{{ route('cadastro') }}">
+
+                            <form id="cadastroForm" method="POST" action="{{ route('cadastro.attempt') }}">
                                 @csrf
                                 <div class="form-cadastro-group">
                                     <label for="NOME" class="form-cadastro-label">Nome</label>
                                     <input type="text" class="form-cadastro-input" id="NOME" name="NOME"
-                                        value="{{ old('NOME') }}">
+                                        value="{{ old('NOME') }}"
+                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     @error('NOME')
                                         <div class="form-cadastro-error">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                                 <div class="form-cadastro-group">
                                     <label for="EMAIL" class="form-cadastro-label">E-mail</label>
                                     <input type="email" class="form-cadastro-input" id="EMAIL" name="EMAIL"
-                                        required value="{{ old('EMAIL') }}">
-                                    @error('EMAIL')
-                                        <div class="form-cadastro-error">{{ $message }}</div>
-                                    @enderror
+                                        required value="{{ old('EMAIL') }}"
+                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
+                                    @foreach ($errors->get('EMAIL') as $message)
+                                        @if (!str_contains($message, 'Muitas tentativas'))
+                                            <div class="form-cadastro-error">{{ $message }}</div>
+                                        @endif
+                                    @endforeach
                                 </div>
+
                                 <div class="form-cadastro-group" style="position: relative;">
                                     <label for="SENHA_HASH" class="form-cadastro-label">Senha</label>
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required minlength="12" placeholder="Mínimo 12 caracteres">
+                                        required minlength="12" placeholder="Mínimo 12 caracteres"
+                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     <span id="toggleSenha" class="eye-icon" style="display: none;"></span>
                                     @error('SENHA_HASH')
                                         @if (!str_contains($message, 'confere'))
@@ -67,13 +92,14 @@
                                         @endif
                                     @enderror
                                 </div>
-                                <!-- Confirme se existe este campo no formulário -->
+
                                 <div class="form-cadastro-group" style="position: relative;">
                                     <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirmar
                                         Senha</label>
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
                                         name="SENHA_HASH_confirmation" required minlength="12"
-                                        placeholder="Digite a senha novamente">
+                                        placeholder="Digite a senha novamente"
+                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     <span id="toggleSenhaConfirm" class="eye-icon" style="display: none;"></span>
                                     @error('SENHA_HASH')
                                         @if (str_contains($message, 'confere'))
@@ -81,32 +107,41 @@
                                         @endif
                                     @enderror
                                 </div>
+
                                 <div class="form-cadastro-group">
                                     <label for="PERFIL" class="form-cadastro-label">Perfil</label>
                                     <input type="text" class="form-cadastro-input" id="PERFIL" name="PERFIL"
-                                        required value="{{ old('PERFIL') }}">
+                                        required value="{{ old('PERFIL') }}"
+                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     @error('PERFIL')
                                         <div class="form-cadastro-error">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                                 <div class="form-cadastro-group">
                                     <label for="COMERCIO_NOME" class="form-cadastro-label">Nome do Comércio</label>
                                     <input type="text" class="form-cadastro-input" id="COMERCIO_NOME"
-                                        name="COMERCIO_NOME" required value="{{ old('COMERCIO_NOME') }}">
+                                        name="COMERCIO_NOME" required value="{{ old('COMERCIO_NOME') }}"
+                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     @error('COMERCIO_NOME')
                                         <div class="form-cadastro-error">{{ $message }}</div>
                                     @enderror
                                 </div>
+
                                 <div class="form-cadastro-group">
                                     <label for="COMERCIO_CNPJ" class="form-cadastro-label">CNPJ do Comércio</label>
                                     <input type="text" class="form-cadastro-input" id="COMERCIO_CNPJ"
-                                        name="COMERCIO_CNPJ" required value="{{ old('COMERCIO_CNPJ') }}">
+                                        name="COMERCIO_CNPJ" required value="{{ old('COMERCIO_CNPJ') }}"
+                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                     @error('COMERCIO_CNPJ')
                                         <div class="form-cadastro-error">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <button type="submit" class="form-cadastro-button">Cadastrar</button>
+                                <button type="submit" class="form-cadastro-button"
+                                    {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
+                                    {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'Aguarde...' : 'Cadastrar' }}
+                                </button>
                             </form>
                             <div class="login-link">
                                 <span>Já tem uma conta?</span>

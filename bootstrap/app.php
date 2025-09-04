@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'login.rate.limiting' => \App\Http\Middleware\LoginRateLimiting::class,
+            'cadastro.rate.limiting' => \App\Http\Middleware\CadastroRateLimiting::class,
           
         ]);
 

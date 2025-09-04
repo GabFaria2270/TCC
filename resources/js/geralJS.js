@@ -11,4 +11,5 @@ import './reultilizaveis/validation-system.js';
 import './cadastro/cadastro.js';
 import './login/login.js';
 import './login/rate-limiting.js';
+import './cadastro/rate-limiting.js';
 
