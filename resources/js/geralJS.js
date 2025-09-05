@@ -6,6 +6,7 @@ import './home/home.js';
 import './reultilizaveis/loader-system.js';
 import './reultilizaveis/password-toggle.js';
 import './reultilizaveis/validation-system.js';
+import './reultilizaveis/cnpj-formatter.js';
 
 // Sistemas específicos (refatorados)
 import './cadastro/cadastro.js';

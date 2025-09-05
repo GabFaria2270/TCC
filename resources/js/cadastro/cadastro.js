@@ -28,6 +28,12 @@ class RegisterSystem {
         this.validation.addValidation('SENHA_HASH', 'password');
         this.validation.addValidation('SENHA_HASH_confirmation', 'passwordConfirmation');
         this.validation.addValidation('PERFIL', 'perfil');
+        this.validation.addValidation('COMERCIO_CNPJ', 'cnpj');
+        
+
+        if (typeof CNPJFormatter !== 'undefined') {
+            this.cnpjFormatter = new CNPJFormatter();
+        }
         
         console.log('✅ Sistema de cadastro inicializado');
     }

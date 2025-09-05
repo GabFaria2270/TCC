@@ -10,7 +10,8 @@ class ValidationSystem {
             email: this.validateEmail.bind(this),
             password: this.validatePassword.bind(this),
             passwordConfirmation: this.validatePasswordConfirmation.bind(this),
-            perfil: this.validatePerfil.bind(this)
+            perfil: this.validatePerfil.bind(this),
+            cnpj: this.validateCnpj.bind(this)
         };
     }
 
@@ -74,6 +75,54 @@ class ValidationSystem {
         } else {
             event.target.style.borderColor = '';
         }
+    }
+
+    // ✅ NOVO: Método de validação de CNPJ
+    validateCnpj(event) {
+        const cnpj = event.target.value.replace(/\D/g, ''); // Remove formatação
+        
+        if (cnpj && (cnpj.length !== 14 || !this.isValidCnpj(cnpj))) {
+            event.target.style.borderColor = '#e74c3c';
+        } else {
+            event.target.style.borderColor = '';
+        }
+    }
+
+    // ✅ NOVO: Método auxiliar para validar CNPJ
+    isValidCnpj(cnpj) {
+        // Verifica se são todos iguais
+        if (/^(\d)\1{13}$/.test(cnpj)) {
+            return false;
+        }
+        
+        // Algoritmo de validação do CNPJ
+        let sum = 0;
+        let weights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        
+        // Primeiro dígito verificador
+        for (let i = 0; i < 12; i++) {
+            sum += parseInt(cnpj[i]) * weights[i];
+        }
+        
+        let remainder = sum % 11;
+        let digit1 = remainder < 2 ? 0 : 11 - remainder;
+        
+        if (parseInt(cnpj[12]) !== digit1) {
+            return false;
+        }
+        
+        // Segundo dígito verificador
+        sum = 0;
+        weights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        
+        for (let i = 0; i < 13; i++) {
+            sum += parseInt(cnpj[i]) * weights[i];
+        }
+        
+        remainder = sum % 11;
+        let digit2 = remainder < 2 ? 0 : 11 - remainder;
+        
+        return parseInt(cnpj[13]) === digit2;
     }
 }
 
