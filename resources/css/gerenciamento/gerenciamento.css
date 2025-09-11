@@ -1,0 +1,12 @@
+/* Estilos específicos da página de Gerenciamento */
+body { font-size: 1.125rem; }
+.sidebar { width: 280px; }
+.sidebar .list-group-item { font-size: 1.05rem; padding: 0.9rem 1rem; }
+.brand-title { font-size: 1.25rem; font-weight: 700; }
+.quick-actions .btn { padding: 0.875rem 1.25rem; font-size: 1.05rem; }
+.card-title { font-size: 1.15rem; }
+.large-icon { font-size: 1.35rem; vertical-align: text-bottom; }
+
+@media (max-width: 991.98px){ /* lg breakpoint */
+    .sidebar { width: 100%; }
+}
