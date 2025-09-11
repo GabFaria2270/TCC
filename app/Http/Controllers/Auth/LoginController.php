@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\LoginService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse; // ✅ ADICIONAR
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * CONTROLADOR DE LOGIN - CORRIGIDO PARA VINCULAÇÃO
+ * CONTROLADOR DE LOGIN - COM TOKEN CACHE
  */
 class LoginController extends Controller
 {
@@ -33,8 +34,9 @@ class LoginController extends Controller
 
     /**
      * Processa o login
+     * ✅ CORRIGIDO: Pode retornar RedirectResponse OU JsonResponse
      */
-    public function login(LoginRequest $request): RedirectResponse
+    public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
         try {
             // LOG DA TENTATIVA
@@ -47,8 +49,11 @@ class LoginController extends Controller
 
             if ($result['success']) {
                 $usuario = $result['user'];
+                
+                // ✅ SÓ PEGA TOKEN SE IMPLEMENTOU O SERVICE
+                $tokenData = $result['token_data'] ?? null;
 
-                // ✅ CORRIGIDO: ORDEM E VINCULAÇÃO DE SESSÃO
+                // ✅ ORDEM CORRIGIDA
                 
                 // PASSO 1: Regenera sessão
                 $request->session()->regenerate();
@@ -63,8 +68,37 @@ class LoginController extends Controller
                 // LOG DE SUCESSO
                 $this->logLoginSuccess($usuario, $request);
 
-                return redirect()->route('home')
+                // ✅ RESPOSTA AJAX COM TOKEN (se implementado)
+                if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                    $response = [
+                        'success' => true,
+                        'message' => 'Login realizado com sucesso!',
+                        'user' => [
+                            'id' => $usuario->id,
+                            'nome' => $usuario->NOME,
+                            'email' => $usuario->EMAIL,
+                            'perfil' => $usuario->PERFIL,
+                        ]
+                    ];
+                    
+                    // Adiciona token só se foi implementado
+                    if ($tokenData) {
+                        $response['auth'] = $tokenData;
+                    }
+                    
+                    return response()->json($response);
+                }
+
+                // RESPOSTA WEB NORMAL
+                $redirect = redirect()->route('home')
                     ->with('success', 'Login realizado com sucesso!');
+                
+                // Adiciona token na sessão só se foi implementado
+                if ($tokenData) {
+                    $redirect->with('auth_token', $tokenData);
+                }
+                
+                return $redirect;
             }
 
             // LOGIN FALHOU
@@ -96,63 +130,30 @@ class LoginController extends Controller
     private function vincularSessaoAoUsuario($request, $usuario): void
     {
         try {
-            $sessionId = $request->session()->getId();
-            $userId = $usuario->id;
-
-            // Valida se temos os dados necessários
-            if (!$sessionId || !$userId) {
-                Log::channel('security')->error('Dados insuficientes para vinculação', [
-                    'session_id' => $sessionId ?? 'NULL',
-                    'user_id' => $userId ?? 'NULL',
-                ]);
+            if (!$usuario || !$request->session()->getId()) {
+                Log::channel('security')->error('Dados insuficientes para vinculação');
                 return;
             }
 
-            // ✅ ATUALIZA/INSERE NA TABELA SESSIONS
-            $affected = DB::table('sessions')->updateOrInsert(
-                ['id' => $sessionId],
+            $success = $usuario->linkCurrentSession($request);
+
+            Log::channel('security')->{$success ? 'info' : 'error'}(
+                $success ? '✅ Sessão vinculada com sucesso' : '❌ Falha na vinculação',
                 [
-                    'user_id' => $userId, // ✅ CAMPO CORRETO DAS MIGRATIONS
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                    'last_activity' => time(),
-                    'payload' => $request->session()->serialize(),
+                    'session_id' => $request->session()->getId(),
+                    'user_id' => $usuario->id,
+                    'user_email' => $usuario->EMAIL,
                 ]
             );
-
-            // ✅ VERIFICA SE FUNCIONOU
-            $vinculacao = DB::table('sessions')
-                ->where('id', $sessionId)
-                ->where('user_id', $userId)
-                ->first();
-
-            if ($vinculacao) {
-                Log::channel('security')->info('✅ Sessão vinculada com sucesso no LOGIN', [
-                    'session_id' => $sessionId,
-                    'user_id' => $userId,
-                    'user_email' => $usuario->EMAIL,
-                    'affected_rows' => $affected,
-                ]);
-            } else {
-                Log::channel('security')->error('❌ Falha na vinculação no LOGIN', [
-                    'session_id' => $sessionId,
-                    'user_id' => $userId,
-                    'affected_rows' => $affected,
-                ]);
-            }
-
         } catch (\Exception $e) {
-            Log::channel('security')->error('Erro ao vincular sessão no LOGIN', [
+            Log::channel('security')->error('Erro ao vincular sessão', [
                 'error' => $e->getMessage(),
                 'user_id' => $usuario->id ?? 'N/A',
-                'session_id' => $request->session()->getId() ?? 'N/A',
             ]);
         }
     }
 
-    /**
-     * LOGS DE AUDITORIA
-     */
+    // ...existing code... (métodos de log permanecem iguais)
     private function logLoginAttempt(Request $request): void
     {
         Log::channel('security')->info('Tentativa de login', [

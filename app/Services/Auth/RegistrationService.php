@@ -3,15 +3,22 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
+use App\Services\Auth\CacheTokenService; // ✅ ADICIONAR
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Comercio;
 
-
 class RegistrationService
 {
+    protected ?CacheTokenService $tokenService; // ✅ ADICIONAR
+
+    public function __construct(?CacheTokenService $tokenService = null) // ✅ ADICIONAR
+    {
+        $this->tokenService = $tokenService;
+    }
+
     /**
      * Cria um novo usuário
      */
@@ -52,7 +59,6 @@ class RegistrationService
                 'EMAIL' => $data['EMAIL'],
                 'SENHA_HASH' => $data['SENHA_HASH'],
                 'PERFIL' => $data['PERFIL'],
-     
             ]);
 
             // VERIFICA SE USUÁRIO FOI CRIADO
@@ -85,13 +91,35 @@ class RegistrationService
             // FAZER LOGIN AUTOMÁTICO
             Auth::login($usuario, false);
 
+            // ✅ GERAR TOKEN DE CACHE (NOVO!)
+            $tokenData = null;
+            if ($this->tokenService) {
+                try {
+                    $tokenData = $this->tokenService->getTokenData($usuario);
+                    
+                    Log::channel('security')->info('🎯 Token gerado no CADASTRO', [
+                        'user_id' => $usuario->id,
+                        'email' => $usuario->EMAIL,
+                        'token_preview' => substr($tokenData['token'], 0, 10) . '...',
+                        'action' => 'registration_auto_login'
+                    ]);
+                    
+                } catch (\Exception $e) {
+                    Log::warning('Erro ao gerar token no cadastro', [
+                        'error' => $e->getMessage(),
+                        'user_id' => $usuario->id
+                    ]);
+                }
+            }
+
             // CONFIRMA TRANSAÇÃO
             DB::commit();
 
             return [
                 'success' => true,
                 'user' => $usuario,
-                'reason' => 'success'
+                'reason' => 'success',
+                'token_data' => $tokenData // ✅ INCLUIR TOKEN
             ];
 
         } catch (\Illuminate\Database\QueryException $e) {
@@ -101,27 +129,8 @@ class RegistrationService
             Log::error('Erro de banco no RegistrationService', [
                 'error' => $e->getMessage(),
                 'code' => $e->getCode(),
-                'sql' => $e->getSql() ?? 'N/A',
                 'data' => $data,
             ]);
-
-            // VERIFICA SE É ERRO DE DUPLICATA
-            if (str_contains($e->getMessage(), 'Duplicate entry')) {
-                if (str_contains($e->getMessage(), 'EMAIL')) {
-                    return [
-                        'success' => false,
-                        'errors' => ['EMAIL' => 'Este e-mail já está cadastrado.'],
-                        'reason' => 'email_duplicate'
-                    ];
-                }
-                if (str_contains($e->getMessage(), 'PERFIL')) {
-                    return [
-                        'success' => false,
-                        'errors' => ['PERFIL' => 'Este perfil já está em uso.'],
-                        'reason' => 'profile_duplicate'
-                    ];
-                }
-            }
 
             return [
                 'success' => false,

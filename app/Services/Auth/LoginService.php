@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
+use App\Services\Auth\CacheTokenService; // ✅ ADICIONAR
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -10,6 +11,13 @@ use Illuminate\Support\Facades\Log;
 
 class LoginService
 {
+    protected CacheTokenService $tokenService; // ✅ CORRIGIDO
+
+    public function __construct(CacheTokenService $tokenService) // ✅ CORRIGIDO
+    {
+        $this->tokenService = $tokenService;
+    }
+
     /**
      * Tenta fazer login
      */
@@ -46,10 +54,14 @@ class LoginService
         // LOGIN BEM-SUCEDIDO
         Auth::login($usuario, $remember);
 
+        // ✅ GERA TOKEN VIA CACHE NATIVO
+        $tokenData = $this->tokenService->getTokenData($usuario);
+
         return [
             'success' => true,
             'user' => $usuario,
-            'reason' => 'success'
+            'reason' => 'success',
+            'token_data' => $tokenData // ✅ Token via Cache
         ];
     }
 

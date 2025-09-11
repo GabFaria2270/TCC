@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\Auth\CacheTokenService;
+use App\Services\Auth\RegistrationService; // ✅ ADICIONAR
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,16 +13,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Registra os services de autenticação
-        $this->app->bind(
-            \App\Services\Auth\LoginService::class,
-            \App\Services\Auth\LoginService::class
-        );
-        
-        $this->app->bind(
-            \App\Services\Auth\RegistrationService::class,
-            \App\Services\Auth\RegistrationService::class
-        );
+        // ✅ REGISTRA O CacheTokenService no container
+        $this->app->singleton(CacheTokenService::class, function ($app) {
+            return new CacheTokenService();
+        });
+
+        // ✅ REGISTRA O RegistrationService com CacheTokenService
+        $this->app->singleton(RegistrationService::class, function ($app) {
+            return new RegistrationService($app->make(CacheTokenService::class));
+        });
     }
 
     /**

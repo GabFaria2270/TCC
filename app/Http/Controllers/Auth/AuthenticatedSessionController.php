@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -36,51 +35,7 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    /**
-     * Handle authentication request - NÃO USADO
-     * Você usa LoginController->login()
-     */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-        try {
-            Log::channel('security')->info('Tentativa de login (Controller)', ['timestamp' => now()]);
-
-            $request->authenticate();
-            $request->session()->regenerate();
-
-            // garante que a sessão seja gravada no storage (cria a linha quando usa driver database)
-            $request->session()->save();
-
-            $usuario = Auth::user();
-            $sessionId = $request->session()->getId();
-
-            // pega a chave primária do model independentemente do nome do campo
-            $usuarioKey = $usuario ? $usuario->getKey() : null;
-
-            // cria ou atualiza a linha da sessão garantindo associação ao usuário
-            DB::table('sessions')->updateOrInsert(
-                ['id' => $sessionId],
-                [
-                    'usuario_id'    => $usuarioKey,
-                    'ip_address'    => $request->ip(),
-                    'user_agent'    => $request->userAgent(),
-                    'last_activity' => time(),
-                ]
-            );
-
-            Log::channel('security')->info('Login realizado com sucesso (Controller)', [
-                'user_key' => $usuarioKey ?? 'N/A',
-                'session_id' => $sessionId,
-                'ip' => $request->ip(),
-                'timestamp' => now(),
-            ]);
-
-            return redirect()->intended(route('home', absolute: false));
-        } catch (\Exception $e) {
-            Log::channel('security')->error('Erro no login (Controller)', ['timestamp' => now(), 'error' => $e->getMessage()]);
-            throw $e;
-        }
-    }
+    // ✅ MÉTODO REMOVIDO - Você usa LoginController customizado
 
     /**
      * Retorna status de bloqueio do login (segundos restantes).

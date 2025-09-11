@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UsuarioRequest;
 use App\Services\Auth\RegistrationService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse; // ✅ ADICIONAR
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
- * CONTROLADOR DE CADASTRO - CORRIGIDO PARA VINCULAÇÃO
+ * CONTROLADOR DE CADASTRO - COM TOKEN CACHE
  */
 class RegisterController extends Controller
 {
@@ -33,8 +34,9 @@ class RegisterController extends Controller
 
     /**
      * Processa cadastro
+     * ✅ PODE RETORNAR REDIRECT OU JSON
      */
-    public function register(UsuarioRequest $request): RedirectResponse
+    public function register(UsuarioRequest $request): RedirectResponse|JsonResponse
     {
         try {
             // LOG DA TENTATIVA
@@ -45,8 +47,9 @@ class RegisterController extends Controller
 
             if ($result['success']) {
                 $usuario = $result['user'];
+                $tokenData = $result['token_data'] ?? null; // ✅ PEGA TOKEN
 
-                // ✅ CORRIGIDO: ORDEM E VINCULAÇÃO DE SESSÃO
+                // ✅ ORDEM CORRIGIDA
                 
                 // PASSO 1: Regenera sessão
                 $request->session()->regenerate();
@@ -57,9 +60,38 @@ class RegisterController extends Controller
                 
                 // LOG DE SUCESSO
                 $this->logRegistrationSuccess($usuario, $request);
-                
-                return redirect()->route('home')
+
+                // ✅ RESPOSTA AJAX COM TOKEN (se for AJAX)
+                if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                    $response = [
+                        'success' => true,
+                        'message' => 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!',
+                        'user' => [
+                            'id' => $usuario->id,
+                            'nome' => $usuario->NOME,
+                            'email' => $usuario->EMAIL,
+                            'perfil' => $usuario->PERFIL,
+                        ]
+                    ];
+                    
+                    // Adiciona token se disponível
+                    if ($tokenData) {
+                        $response['auth'] = $tokenData;
+                    }
+                    
+                    return response()->json($response);
+                }
+
+                // ✅ RESPOSTA WEB NORMAL COM TOKEN NA SESSÃO
+                $redirect = redirect()->route('home')
                     ->with('success', 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!');
+                
+                // Adiciona token na sessão se disponível
+                if ($tokenData) {
+                    $redirect->with('auth_token', $tokenData);
+                }
+                
+                return $redirect;
             }
 
             // CADASTRO FALHOU
@@ -193,7 +225,6 @@ class RegisterController extends Controller
             'error' => $e->getMessage(),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
-            'trace' => $e->getTraceAsString(),
             'timestamp' => now(),
         ]);
     }

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * MODEL USUARIO - CORRIGIDO PARA SESSIONS
@@ -79,5 +82,37 @@ class Usuario extends Authenticatable
     public function scopeWithComercio($query)
     {
         return $query->with('comercio');
+    }
+
+    /**
+     * ✅ MÉTODO PARA VINCULAR SESSÃO AO USUÁRIO
+     */
+    public function linkCurrentSession(Request $request): bool
+    {
+        $sessionId = $request->session()->getId();
+        if (!$sessionId) return false;
+
+        try {
+            // ✅ CORRIGIDO: Usa json_encode + base64_encode
+            $sessionData = json_encode($request->session()->all());
+            
+            return (bool) DB::table('sessions')->updateOrInsert(
+                ['id' => $sessionId],
+                [
+                    'user_id' => $this->getKey(), // ✅ USA user_id
+                    'ip_address' => $request->ip(),
+                    'user_agent' => substr((string) $request->userAgent(), 0, 500),
+                    'last_activity' => time(),
+                    'payload' => base64_encode($sessionData), // ✅ CORRIGIDO
+                ]
+            );
+        } catch (\Exception $e) {
+            Log::error('Erro ao vincular sessão', [
+                'user_id' => $this->id,
+                'session_id' => $sessionId,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
     }
 }
