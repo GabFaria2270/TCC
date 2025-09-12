@@ -6,15 +6,13 @@
     <title>Gerenciamento</title>
     @vite([
         'resources/css/app.css',
-        'resources/css/gerenciamento/gerenciamento.css',
-        'resources/js/geralJS.js',
-        'resources/js/gerenciamento/gerenciamento.js',
+        'resources/js/geralJS.js'
     ])
 </head>
 <body class="bg-body-tertiary">
     <div class="d-flex min-vh-100">
         <!-- Sidebar -->
-        <nav id="sidebar" class="sidebar bg-white border-end d-none d-lg-block" aria-label="Navegação principal">
+        <nav id="sidebar" class="sidebar bg-white border-end" aria-label="Navegação principal">
             <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
                 <div class="brand-title">Mercearia Fácil</div>
                 <button id="sidebarClose" class="btn btn-sm btn-outline-secondary d-lg-none" aria-label="Fechar menu">
@@ -76,73 +74,141 @@
                     <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
                 @endif
 
-                <!-- Ações rápidas -> botões grandes e claros -->
-                <div class="row g-3 quick-actions">
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Nova Venda</h5>
-                                <p class="text-secondary mb-3">Registre uma venda rapidamente.</p>
-                                <a href="#" class="btn btn-primary mt-auto">➕ Registrar Venda</a>
+                <!-- Barra de acessibilidade: tamanho do texto e alto contraste -->
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-3" role="region" aria-label="Acessibilidade">
+                    <span class="text-secondary">Acessibilidade:</span>
+                    <button class="btn btn-sm btn-outline-secondary" id="a11y-font-dec" type="button" aria-label="Diminuir tamanho do texto">A-</button>
+                    <button class="btn btn-sm btn-outline-secondary" id="a11y-font-inc" type="button" aria-label="Aumentar tamanho do texto">A+</button>
+                    <button class="btn btn-sm btn-outline-dark" id="a11y-contrast" type="button" aria-pressed="false">Alto contraste</button>
+                </div>
+
+                <!-- KPIs do dia -->
+                <div class="row g-3">
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="card shadow-sm h-100 kpi" aria-label="Total de vendas hoje">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="kpi-label">Vendas hoje</div>
+                                        <div class="kpi-value">12</div>
+                                    </div>
+                                    <span class="large-icon" aria-hidden="true">🧾</span>
+                                </div>
+                                <small class="text-secondary">R$ 784,00 em 12 vendas</small>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Pagamento</h5>
-                                <p class="text-secondary mb-3">Registrar pagamento de fiado.</p>
-                                <a href="#" class="btn btn-success mt-auto">💵 Registrar Pagamento</a>
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="card shadow-sm h-100 kpi" aria-label="Pagamentos recebidos">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="kpi-label">Pagamentos</div>
+                                        <div class="kpi-value text-success">+ R$ 320,00</div>
+                                    </div>
+                                    <span class="large-icon" aria-hidden="true">💵</span>
+                                </div>
+                                <small class="text-secondary">5 clientes quitaram parcelas</small>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Cliente</h5>
-                                <p class="text-secondary mb-3">Adicionar novo cliente.</p>
-                                <a href="#" class="btn btn-outline-primary mt-auto">🧑➕ Adicionar Cliente</a>
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="card shadow-sm h-100 kpi" aria-label="Novos fiados">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="kpi-label">Fiados lançados</div>
+                                        <div class="kpi-value text-danger">R$ 150,00</div>
+                                    </div>
+                                    <span class="large-icon" aria-hidden="true">📒</span>
+                                </div>
+                                <small class="text-secondary">2 novos lançamentos</small>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Estoque</h5>
-                                <p class="text-secondary mb-3">Atualizar produtos e quantidades.</p>
-                                <a href="#" class="btn btn-outline-secondary mt-auto">📦 Gerir Estoque</a>
+                    <div class="col-12 col-md-6 col-xxl-3">
+                        <div class="card shadow-sm h-100 kpi" aria-label="Itens com pouco estoque">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="kpi-label">Baixo estoque</div>
+                                        <div class="kpi-value">7</div>
+                                    </div>
+                                    <span class="large-icon" aria-hidden="true">📦</span>
+                                </div>
+                                <small class="text-secondary">Itens abaixo do mínimo</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Área principal (exemplo de tabela/resumo) -->
+                <!-- Ações rápidas -->
+                <div class="row g-3 mt-1">
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <a class="btn btn-primary w-100 py-3" href="#" role="button">➕ Registrar venda</a>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <a class="btn btn-success w-100 py-3" href="#" role="button">💵 Receber pagamento</a>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <a class="btn btn-outline-primary w-100 py-3" href="#" role="button">🧑➕ Novo cliente</a>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <a class="btn btn-outline-secondary w-100 py-3" href="#" role="button">📦 Repor estoque</a>
+                    </div>
+                </div>
+
+                <!-- Próximos vencimentos e Ajuda rápida -->
                 <div class="row g-3 mt-1">
                     <div class="col-12 col-xxl-8">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-white">
-                                <strong>Resumo do Dia</strong>
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <strong>Próximos vencimentos</strong>
+                                <a class="btn btn-sm btn-outline-secondary" href="#" role="button">Ver todos</a>
                             </div>
                             <div class="card-body">
-                                <ul class="list-unstyled mb-0">
-                                    <li class="mb-2">• Vendas hoje: <strong>—</strong></li>
-                                    <li class="mb-2">• Pagamentos recebidos: <strong>—</strong></li>
-                                    <li class="mb-2">• Fiados lançados: <strong>—</strong></li>
-                                </ul>
-                                <small class="text-secondary">Os dados serão exibidos aqui quando conectarmos às rotas.</small>
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Cliente</th>
+                                                <th class="text-nowrap">Vence em</th>
+                                                <th class="text-end">Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Maria Silva</td>
+                                                <td>Hoje</td>
+                                                <td class="text-end">R$ 45,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td>João Santos</td>
+                                                <td>Amanhã</td>
+                                                <td class="text-end">R$ 80,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Padaria Bom Pão</td>
+                                                <td>Em 3 dias</td>
+                                                <td class="text-end">R$ 120,00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <small class="text-secondary">Exemplo fictício para visualização do layout.</small>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-xxl-4">
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-white">
-                                <strong>Dicas Rápidas</strong>
+                                <strong>Ajuda rápida</strong>
                             </div>
                             <div class="card-body">
-                                <ul>
-                                    <li>Use os botões grandes para ações comuns.</li>
-                                    <li>O menu fica à esquerda, sempre visível em telas grandes.</li>
-                                    <li>No celular, toque em "Menu" para abrir a barra lateral.</li>
+                                <ul class="mb-0">
+                                    <li>Use A- e A+ para ajustar o tamanho do texto.</li>
+                                    <li>Ative alto contraste para melhorar a leitura.</li>
+                                    <li>No celular, toque em “Menu” para abrir a barra lateral.</li>
                                 </ul>
                             </div>
                         </div>

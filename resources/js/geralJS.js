@@ -11,6 +11,7 @@ import './reultilizaveis/cnpj-formatter.js';
 // Sistemas específicos (refatorados)
 import './cadastro/cadastro.js';
 import './login/login.js';
+import './gerenciamento/gerenciamento.js';
 import './login/rate-limiting.js';
 import './cadastro/rate-limiting.js';
 
