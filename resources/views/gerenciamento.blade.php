@@ -82,131 +82,54 @@
                     <button class="btn btn-sm btn-outline-dark" id="a11y-contrast" type="button" aria-pressed="false">Alto contraste</button>
                 </div>
 
-                <!-- KPIs do dia -->
+                <!-- Boas-vindas e informações da mercearia -->
                 <div class="row g-3">
-                    <div class="col-12 col-md-6 col-xxl-3">
-                        <div class="card shadow-sm h-100 kpi" aria-label="Total de vendas hoje">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="kpi-label">Vendas hoje</div>
-                                        <div class="kpi-value">12</div>
-                                    </div>
-                                    <span class="large-icon" aria-hidden="true">🧾</span>
+                    <div class="col-12">
+                        <div class="card shadow-sm welcome-hero">
+                            <div class="card-body d-flex flex-column flex-lg-row align-items-lg-center gap-3">
+                                <div class="flex-grow-1">
+                                    <h2 class="h3 m-0">Bem-vindo(a), {{ auth()->user()->NOME ?? 'Usuário' }} 👋</h2>
+                                    <p class="text-secondary mb-0">Aqui você gerencia sua mercearia de forma simples e acessível.</p>
                                 </div>
-                                <small class="text-secondary">R$ 784,00 em 12 vendas</small>
+                                <div>
+                                    <a href="#" class="btn btn-primary">Começar agora</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-xxl-3">
-                        <div class="card shadow-sm h-100 kpi" aria-label="Pagamentos recebidos">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="kpi-label">Pagamentos</div>
-                                        <div class="kpi-value text-success">+ R$ 320,00</div>
-                                    </div>
-                                    <span class="large-icon" aria-hidden="true">💵</span>
-                                </div>
-                                <small class="text-secondary">5 clientes quitaram parcelas</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xxl-3">
-                        <div class="card shadow-sm h-100 kpi" aria-label="Novos fiados">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="kpi-label">Fiados lançados</div>
-                                        <div class="kpi-value text-danger">R$ 150,00</div>
-                                    </div>
-                                    <span class="large-icon" aria-hidden="true">📒</span>
-                                </div>
-                                <small class="text-secondary">2 novos lançamentos</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xxl-3">
-                        <div class="card shadow-sm h-100 kpi" aria-label="Itens com pouco estoque">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="kpi-label">Baixo estoque</div>
-                                        <div class="kpi-value">7</div>
-                                    </div>
-                                    <span class="large-icon" aria-hidden="true">📦</span>
-                                </div>
-                                <small class="text-secondary">Itens abaixo do mínimo</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Ações rápidas -->
-                <div class="row g-3 mt-1">
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <a class="btn btn-primary w-100 py-3" href="#" role="button">➕ Registrar venda</a>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <a class="btn btn-success w-100 py-3" href="#" role="button">💵 Receber pagamento</a>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <a class="btn btn-outline-primary w-100 py-3" href="#" role="button">🧑➕ Novo cliente</a>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <a class="btn btn-outline-secondary w-100 py-3" href="#" role="button">📦 Repor estoque</a>
-                    </div>
-                </div>
-
-                <!-- Próximos vencimentos e Ajuda rápida -->
-                <div class="row g-3 mt-1">
-                    <div class="col-12 col-xxl-8">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                                <strong>Próximos vencimentos</strong>
-                                <a class="btn btn-sm btn-outline-secondary" href="#" role="button">Ver todos</a>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table align-middle mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Cliente</th>
-                                                <th class="text-nowrap">Vence em</th>
-                                                <th class="text-end">Valor</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Maria Silva</td>
-                                                <td>Hoje</td>
-                                                <td class="text-end">R$ 45,00</td>
-                                            </tr>
-                                            <tr>
-                                                <td>João Santos</td>
-                                                <td>Amanhã</td>
-                                                <td class="text-end">R$ 80,00</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Padaria Bom Pão</td>
-                                                <td>Em 3 dias</td>
-                                                <td class="text-end">R$ 120,00</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <small class="text-secondary">Exemplo fictício para visualização do layout.</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-xxl-4">
+                    <div class="col-12 col-xxl-7">
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-white">
-                                <strong>Ajuda rápida</strong>
+                                <strong>Informações da mercearia</strong>
+                            </div>
+                            <div class="card-body">
+                                @php($comercio = auth()->user()->comercio ?? null)
+                                <dl class="row mb-0">
+                                    <dt class="col-12 col-sm-4">Nome</dt>
+                                    <dd class="col-12 col-sm-8">{{ $comercio->nome ?? '—' }}</dd>
+
+                                    <dt class="col-12 col-sm-4">CNPJ</dt>
+                                    <dd class="col-12 col-sm-8">{{ $comercio->cnpj ?? '—' }}</dd>
+
+                                    <dt class="col-12 col-sm-4">Responsável</dt>
+                                    <dd class="col-12 col-sm-8">{{ auth()->user()->NOME ?? '—' }}</dd>
+
+                                    <dt class="col-12 col-sm-4">Perfil</dt>
+                                    <dd class="col-12 col-sm-8">{{ auth()->user()->PERFIL ?? '—' }}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xxl-5">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-white">
+                                <strong>Dicas rápidas</strong>
                             </div>
                             <div class="card-body">
                                 <ul class="mb-0">
-                                    <li>Use A- e A+ para ajustar o tamanho do texto.</li>
+                                    <li>Use A- e A+ para aumentar ou reduzir o texto.</li>
                                     <li>Ative alto contraste para melhorar a leitura.</li>
                                     <li>No celular, toque em “Menu” para abrir a barra lateral.</li>
                                 </ul>
