@@ -16,9 +16,9 @@ require __DIR__.'/cadastro.php';
 require __DIR__.'/login.php';
 
 // Rota principal pós login/cadastro (painel)
-// Usa 'auth' para sessão normal e 'require.token' como fallback + regeneração de token
+// Usamos apenas require.token para que ele mesmo regenere token ou reconstrua sessão
+// Se a sessão expirar, o middleware fará login via token sem redirecionar para login
 Route::get('/gerenciamento', function () {
-        return view('gerenciamento');
-})->middleware(['require.token'])
-    ->name('gerenciamento');
+    return view('gerenciamento');
+})->middleware(['require.token'])->name('gerenciamento');
 
