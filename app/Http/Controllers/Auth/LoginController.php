@@ -90,14 +90,28 @@ class LoginController extends Controller
                 }
 
                 // RESPOSTA WEB NORMAL
-                $redirect = redirect()->route('home')
+                $redirect = redirect()->intended(route('gerenciamento'))
                     ->with('success', 'Login realizado com sucesso!');
-                
-                // Adiciona token na sessão só se foi implementado
+
                 if ($tokenData) {
+                    // Guarda também em sessão se quiser
                     $redirect->with('auth_token', $tokenData);
+                    // Define cookie HttpOnly SameSite=Lax
+                    cookie()->queue(
+                        cookie(
+                            'auth_token',
+                            $tokenData['token'],
+                            60, // minutos
+                            '/',
+                            null,
+                            false,
+                            true,
+                            false,
+                            'Lax'
+                        )
+                    );
                 }
-                
+
                 return $redirect;
             }
 

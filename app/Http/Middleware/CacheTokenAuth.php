@@ -21,7 +21,7 @@ class CacheTokenAuth
 
     public function handle(Request $request, Closure $next): Response
     {
-        // Se já autenticado via sessão, prossegue
+        // Se já autenticado via sessão, apenas segue (mas pode opcionalmente renovar token)
         if (Auth::check()) {
             return $next($request);
         }
@@ -45,8 +45,14 @@ class CacheTokenAuth
             return $this->unauthorized('Usuário não encontrado');
         }
 
-        // Autentica via Laravel
+        // Autentica via Laravel e garante regeneração de sessão persistente se não existir
+        $hadSession = $request->hasSession() && $request->session()->isStarted();
         Auth::login($usuario);
+        if ($request->hasSession()) {
+            // Regenera para evitar fixation e criar cookie novo caso venha só com Bearer
+            $request->session()->regenerate();
+            $request->session()->put('_rebuild_from_token', true);
+        }
         
         // Adiciona dados do token na request
         $request->attributes->set('token_data', $tokenData);

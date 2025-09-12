@@ -13,14 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up'
-        // ✅ Rotas já estão sendo carregadas pelo web.php via require
+     
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // ✅ REGISTRAR TODOS OS MIDDLEWARES DE ALIAS
+  
         $middleware->alias([
-            'login.rate.limit' => \App\Http\Middleware\LoginRateLimiting::class,
-            'cadastro.rate.limiting' => \App\Http\Middleware\CadastroRateLimiting::class, // ✅ FALTAVA
+            'login.rate.limiting' => \App\Http\Middleware\LoginRateLimiting::class,
+            'cadastro.rate.limiting' => \App\Http\Middleware\CadastroRateLimiting::class,
             'cache.token.auth' => \App\Http\Middleware\CacheTokenAuth::class,
+            'require.token' => \App\Http\Middleware\RequireTokenOrSession::class,
         ]);
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);

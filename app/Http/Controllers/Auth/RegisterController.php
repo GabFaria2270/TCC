@@ -82,15 +82,27 @@ class RegisterController extends Controller
                     return response()->json($response);
                 }
 
-                // ✅ RESPOSTA WEB NORMAL COM TOKEN NA SESSÃO
-                $redirect = redirect()->route('home')
+                // ✅ RESPOSTA WEB NORMAL COM TOKEN NA SESSÃO (gerenciamento)
+                $redirect = redirect()->intended(route('gerenciamento'))
                     ->with('success', 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!');
-                
-                // Adiciona token na sessão se disponível
+
                 if ($tokenData) {
                     $redirect->with('auth_token', $tokenData);
+                    cookie()->queue(
+                        cookie(
+                            'auth_token',
+                            $tokenData['token'],
+                            60, // minutos
+                            '/',
+                            null,
+                            false,
+                            true,
+                            false,
+                            'Lax'
+                        )
+                    );
                 }
-                
+
                 return $redirect;
             }
 

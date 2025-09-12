@@ -15,3 +15,10 @@ require __DIR__.'/auth.php';
 require __DIR__.'/cadastro.php';
 require __DIR__.'/login.php';
 
+// Rota principal pós login/cadastro (painel)
+// Usa 'auth' para sessão normal e 'require.token' como fallback + regeneração de token
+Route::get('/gerenciamento', function () {
+        return view('gerenciamento');
+})->middleware(['require.token'])
+    ->name('gerenciamento');
+
