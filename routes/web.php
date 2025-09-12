@@ -15,10 +15,17 @@ require __DIR__.'/auth.php';
 require __DIR__.'/cadastro.php';
 require __DIR__.'/login.php';
 
-// Rota principal pós login/cadastro (painel)
-// Usa 'auth' para sessão normal e 'require.token' como fallback + regeneração de token
-Route::get('/gerenciamento', function () {
-        return view('gerenciamento');
-})->middleware(['require.token'])
-    ->name('gerenciamento');
+// Gerenciamento via Inertia (respeitando o tratamento de dados antes do painel)
+Route::middleware(['require.token'])->group(function () {
+    Route::get('/gerenciamento', function () {
+        $user = request()->user();
+        return Inertia::render('gerenciamento/Inicio', [
+            'comercio' => optional($user?->comercio)->only(['nome','cnpj']),
+        ]);
+    })->name('gerenciamento');
+
+    Route::get('/gerenciamento/clientes', function () {
+        return Inertia::render('gerenciamento/Clientes');
+    })->name('gerenciamento.clientes');
+});
 
