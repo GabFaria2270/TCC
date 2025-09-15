@@ -36,19 +36,8 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     */
-    public function messages(): array
-    {
-        return [
-            'EMAIL.required' => 'O e-mail é obrigatório.',
-            'EMAIL.email' => 'Digite um e-mail válido.',
-            'EMAIL.max' => 'O e-mail deve ter no máximo 150 caracteres.',
-            'SENHA_HASH.required' => 'A senha é obrigatória.',
-            'SENHA_HASH.min' => 'A senha deve ter pelo menos 6 caracteres.',
-        ];
-    }
+   
+
 
     /**
      * Prepare the data for validation.
