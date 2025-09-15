@@ -1,14 +1,20 @@
 import React from 'react';
 import { Link, Head, usePage } from '@inertiajs/react';
+import type { SharedProps } from '../types/inertia';
+import Toast from '../components/Toast';
 
 export default function GerenciamentoLayout({ children, title }: { children: React.ReactNode; title?: string }) {
-  const { props } = usePage();
-  const user = (props as any).auth?.user;
+  const { props } = usePage<SharedProps>();
+  const user = props.auth?.user;
+  const flash: any = (usePage() as any).props.flash || {};
 
   return (
     <>
       <Head title={title ?? 'Gerenciamento'} />
       <div className="d-flex min-vh-100 bg-body-tertiary">
+        <Toast message={flash.success} type="success" />
+        <Toast message={flash.error} type="error" />
+        <Toast message={flash.info} type="info" />
         <nav id="sidebar" className="sidebar bg-white border-end" aria-label="Navegação principal">
           <div className="p-3 border-bottom d-flex align-items-center justify-content-between">
             <div className="brand-title">Mercearia Fácil</div>

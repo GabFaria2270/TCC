@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
+import type { SharedProps } from '../../types/inertia';
 
 export default function Inicio() {
   const h1Ref = useRef<HTMLHeadingElement>(null);
-  const { props } = usePage();
-  const user = (props as any).auth?.user;
-  const comercio = (props as any).comercio;
+  const { props } = usePage<SharedProps>();
+  const user = props.auth?.user;
+  const comercio = props.comercio;
 
   useEffect(() => { h1Ref.current?.focus(); }, []);
 
@@ -21,7 +22,7 @@ export default function Inicio() {
             <p className="text-secondary mb-0">Aqui você gerencia sua mercearia de forma simples e acessível.</p>
           </div>
           <div>
-            <a href="#" className="btn btn-primary">Começar agora</a>
+            <Link href={'/gerenciamento/clientes'} className="btn btn-primary">Começar agora</Link>
           </div>
         </div>
       </div>

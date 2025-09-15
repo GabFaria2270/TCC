@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Link } from '@inertiajs/react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 
 export default function Clientes() {
@@ -14,8 +15,8 @@ export default function Clientes() {
         <div className="card-body">
           <p className="mb-3">Exemplo de página de clientes. Aqui entraremos com a lista e ações.</p>
           <div className="d-flex gap-2">
-            <a className="btn btn-primary" href="#">Novo cliente</a>
-            <a className="btn btn-outline-secondary" href="#">Importar</a>
+            <Link className="btn btn-primary" href="#" onClick={(e) => e.preventDefault()}>Novo cliente</Link>
+            <Link className="btn btn-outline-secondary" href="#" onClick={(e) => e.preventDefault()}>Importar</Link>
           </div>
         </div>
       </div>
