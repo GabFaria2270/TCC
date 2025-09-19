@@ -114,11 +114,21 @@ class CadastroRateLimitingCounter {
 
     // ✅ NOVO: Cria ou mostra alerta visual
     createOrShowAlert(remainingSeconds = 60) {
+        if (this.elements.alert && this.isAlertVisible()) {
+            console.log('👁️ Alerta já existe e está visível');
+            this.showAlert();
+            return;
+        }
+
         if (!this.elements.alert) {
-            // ✅ NOVO: Cria alerta dinamicamente se não existir
+            console.log('🆕 Criando alerta dinamicamente');
             this.createAlertElement(remainingSeconds);
+            // ✅ ATUALIZA REFERÊNCIAS APÓS CRIAR
+            setTimeout(() => {
+                this.findElements();
+            }, 50);
         } else {
-            // ✅ Mostra alerta existente
+            console.log('👁️ Exibindo alerta existente');
             this.showAlert();
         }
     }
@@ -309,11 +319,21 @@ class CadastroRateLimitingCounter {
         }
     }
 
+    // resources/js/login/rate-limiting.js
     updateDisplay(seconds, initialSeconds = 60) {
+        // ✅ VERIFICA SE ELEMENTOS AINDA EXISTEM
+        if (!this.elements.countdown || !this.elements.countdown.parentNode) {
+            console.log('🔄 Re-encontrando elementos perdidos...');
+            this.findElements();
+        }
+        
         // Atualiza contador
         if (this.elements.countdown) {
             this.elements.countdown.textContent = seconds;
-            console.log(`⏰ Contador do cadastro atualizado: ${seconds}s`);
+            console.log(`⏰ Contador atualizado: ${seconds}s`);
+        } else {
+            console.error('❌ Elemento countdown não encontrado para atualização');
+            return;
         }
 
         // Atualiza barra de progresso
@@ -322,7 +342,7 @@ class CadastroRateLimitingCounter {
             const progress = (elapsed / initialSeconds) * 100;
             
             this.elements.progressFill.style.width = progress + '%';
-            console.log(`📊 Barra de progresso do cadastro: ${progress.toFixed(1)}%`);
+            console.log(`📊 Barra de progresso: ${progress.toFixed(1)}%`);
         }
     }
 
@@ -344,7 +364,7 @@ class CadastroRateLimitingCounter {
                 
                 // ✅ SEMPRE adiciona listeners para detectar mudanças
                 el.addEventListener('focus', this.handleManualFocus);
-                el.addEventListener('input', this.handleManualInput);
+                el.addEventListener('input', this.handleManualEnable);
                 el.addEventListener('click', this.handleManualFocus);
             }
         });
@@ -384,21 +404,27 @@ class CadastroRateLimitingCounter {
                     this.isManuallyEnabled = false;
                     this.detectionCount = 0;
                     
-                    // Punição: 90 segundos
+                    // ✅ CORRIGIDO: Recriar alerta e atualizar referências
                     this.createOrShowAlert(90);
-                    this.startCountdown(90);
                     
-                    // Atualiza texto do alerta
-                    if (this.elements.alert) {
-                        const alertText = this.elements.alert.querySelector('strong');
-                        if (alertText) {
-                            alertText.textContent = '🚨 Tentativa de burlar o sistema detectada!';
+                    // ✅ AGUARDA ELEMENTOS SEREM CRIADOS
+                    setTimeout(() => {
+                        this.findElements();
+                        
+                        if (this.elements.alert) {
+                            const alertText = this.elements.alert.querySelector('strong');
+                            if (alertText) {
+                                alertText.textContent = '🚨 Tentativa de burlar o sistema detectada!';
+                            }
+                            const alertDesc = this.elements.alert.querySelector('p');
+                            if (alertDesc) {
+                                alertDesc.innerHTML = 'Bloqueio estendido. Aguarde <span id="countdown">90</span> segundos para tentar novamente.';
+                                this.elements.countdown = alertDesc.querySelector('#countdown');
+                            }
                         }
-                        const alertDesc = this.elements.alert.querySelector('p');
-                        if (alertDesc) {
-                            alertDesc.innerHTML = 'Bloqueio estendido. Aguarde <span id="countdown">90</span> segundos para tentar novamente.';
-                        }
-                    }
+                        
+                        this.startCountdown(90);
+                    }, 100);
                 }
             }, 10000);
         }
