@@ -15,17 +15,9 @@ require __DIR__.'/auth.php';
 require __DIR__.'/cadastro.php';
 require __DIR__.'/login.php';
 
-// Gerenciamento via Inertia (respeitando o tratamento de dados antes do painel)
-Route::middleware(['require.token'])->group(function () {
-    Route::get('/gerenciamento', function () {
-        $user = request()->user();
-        return Inertia::render('gerenciamento/Inicio', [
-            'comercio' => optional($user?->comercio)->only(['nome','cnpj']),
-        ]);
-    })->name('gerenciamento');
-
-    Route::get('/gerenciamento/clientes', function () {
-        return Inertia::render('gerenciamento/Clientes');
-    })->name('gerenciamento.clientes');
-});
-
+// Rota principal pós login/cadastro (painel)
+// Usamos apenas require.token para que ele mesmo regenere token ou reconstrua sessão
+// Se a sessão expirar, o middleware fará login via token sem redirecionar para login
+Route::get('/gerenciamento', function () {
+    return view('gerenciamento');
+})->middleware(['require.token'])->name('gerenciamento');

@@ -12,7 +12,7 @@ class UsuarioRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation(): void
+    public function prepareForValidation()
     {
         $this->merge([
             'EMAIL' => strtolower(trim($this->EMAIL ?? '')),
@@ -43,20 +43,10 @@ class UsuarioRequest extends FormRequest
                 'unique:comercio,cnpj',
                 function ($attribute, $value, $fail) {
                     if (!$this->isValidCnpj($value)) {
-                        $fail('O CNPJ informado é inválido.');
+                        $fail(__('validation.cnpj_invalid', ['attribute' => $attribute]));
                     }
                 },
             ],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'COMERCIO_CNPJ.required' => 'O CNPJ é obrigatório.',
-            'COMERCIO_CNPJ.size' => 'O CNPJ deve ter exatamente 14 dígitos.',
-            'COMERCIO_CNPJ.regex' => 'O CNPJ deve conter apenas números.',
-            'COMERCIO_CNPJ.unique' => 'Este CNPJ já está cadastrado.',
         ];
     }
 

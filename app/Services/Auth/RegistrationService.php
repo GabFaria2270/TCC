@@ -45,7 +45,7 @@ class RegistrationService
                 DB::rollback();
                 return [
                     'success' => false,
-                    'errors' => ['PERFIL' => 'Este perfil já está em uso.'],
+                    'errors' => ['PERFIL' => __('validation.profile_in_use')],
                     'reason' => 'profile_exists'
                 ];
             }

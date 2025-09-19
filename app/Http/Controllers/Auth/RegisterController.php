@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UsuarioRequest;
 use App\Services\Auth\RegistrationService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse; // ✅ ADICIONAR
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-// use Illuminate\Support\Facades\DB; // não usado após remover vinculação de sessão
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -35,7 +36,7 @@ class RegisterController extends Controller
      * Processa cadastro
      * ✅ PODE RETORNAR REDIRECT OU JSON
      */
-    public function register(UsuarioRequest $request): RedirectResponse
+    public function register(UsuarioRequest $request): RedirectResponse|JsonResponse
     {
         try {
             // LOG DA TENTATIVA
@@ -46,28 +47,147 @@ class RegisterController extends Controller
 
             if ($result['success']) {
                 $usuario = $result['user'];
+                $tokenData = $result['token_data'] ?? null; // ✅ PEGA TOKEN
+
+                // ✅ ORDEM CORRIGIDA
+                
+                // PASSO 1: Regenera sessão
+                $request->session()->regenerate();
+                $request->session()->save();
+
+                // PASSO 2: Vincula sessão ao usuário
+                $this->vincularSessaoAoUsuario($request, $usuario);
+                
+                // LOG DE SUCESSO
                 $this->logRegistrationSuccess($usuario, $request);
-                return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso! Faça login para continuar.');
+
+                // ✅ RESPOSTA AJAX COM TOKEN (se for AJAX)
+                if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                    $response = [
+                        'success' => true,
+                        'message' => 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!',
+                        'user' => [
+                            'id' => $usuario->id,
+                            'nome' => $usuario->NOME,
+                            'email' => $usuario->EMAIL,
+                            'perfil' => $usuario->PERFIL,
+                        ]
+                    ];
+                    
+                    // Adiciona token se disponível
+                    if ($tokenData) {
+                        $response['auth'] = $tokenData;
+                    }
+                    
+                    return response()->json($response);
+                }
+
+                // ✅ RESPOSTA WEB NORMAL COM TOKEN NA SESSÃO (gerenciamento)
+                $redirect = redirect()->intended(route('gerenciamento'))
+                    ->with('success', 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!');
+
+                if ($tokenData) {
+                    $redirect->with('auth_token', $tokenData);
+                    cookie()->queue(
+                        cookie(
+                            'auth_token',
+                            $tokenData['token'],
+                            1440, // 24 horas
+                            '/',
+                            null,
+                            false,
+                            true,
+                            false,
+                            'Lax'
+                        )
+                    );
+                }
+
+                return $redirect;
             }
 
             // CADASTRO FALHOU
-            return back()->withErrors($result['errors']);
+            return back()
+                ->withErrors($result['errors'])
+                ->withInput($request->except('SENHA_HASH', 'SENHA_HASH_confirmation'));
 
         } catch (ValidationException $e) {
             // ERRO DE VALIDAÇÃO
             $this->logValidationError($e, $request);
             
-            return back()->withErrors($e->errors());
+            return back()
+                ->withErrors($e->errors())
+                ->withInput($request->except('SENHA_HASH', 'SENHA_HASH_confirmation'));
 
         } catch (\Exception $e) {
             // ERRO INTERNO
             $this->logSystemError($e, $request);
             
-            return back()->with('error', 'Erro interno do sistema. Tente novamente.');
+            return back()
+                ->with('error', 'Erro interno do sistema. Tente novamente.')
+                ->withInput($request->except('SENHA_HASH', 'SENHA_HASH_confirmation'));
         }
     }
 
-    // Removida vinculação de sessão no cadastro: login é feito apenas na tela de login
+    /**
+     * ✅ MÉTODO PARA VINCULAR SESSÃO AO USUÁRIO (MESMO DO LOGIN)
+     */
+    private function vincularSessaoAoUsuario($request, $usuario): void
+    {
+        try {
+            $sessionId = $request->session()->getId();
+            $userId = $usuario->id;
+
+            // Valida se temos os dados necessários
+            if (!$sessionId || !$userId) {
+                Log::channel('security')->error('Dados insuficientes para vinculação', [
+                    'session_id' => $sessionId ?? 'NULL',
+                    'user_id' => $userId ?? 'NULL',
+                ]);
+                return;
+            }
+
+            // ✅ ATUALIZA/INSERE NA TABELA SESSIONS
+            $affected = DB::table('sessions')->updateOrInsert(
+                ['id' => $sessionId],
+                [
+                    'user_id' => $userId, // ✅ CAMPO CORRETO DAS MIGRATIONS
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'last_activity' => time(),
+                    'payload' => $request->session()->serialize(),
+                ]
+            );
+
+            // ✅ VERIFICA SE FUNCIONOU
+            $vinculacao = DB::table('sessions')
+                ->where('id', $sessionId)
+                ->where('user_id', $userId)
+                ->first();
+
+            if ($vinculacao) {
+                Log::channel('security')->info('✅ Sessão vinculada com sucesso no CADASTRO', [
+                    'session_id' => $sessionId,
+                    'user_id' => $userId,
+                    'user_email' => $usuario->EMAIL,
+                    'affected_rows' => $affected,
+                ]);
+            } else {
+                Log::channel('security')->error('❌ Falha na vinculação no CADASTRO', [
+                    'session_id' => $sessionId,
+                    'user_id' => $userId,
+                    'affected_rows' => $affected,
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            Log::channel('security')->error('Erro ao vincular sessão no CADASTRO', [
+                'error' => $e->getMessage(),
+                'user_id' => $usuario->id ?? 'N/A',
+                'session_id' => $request->session()->getId() ?? 'N/A',
+            ]);
+        }
+    }
 
     /**
      * LOGS DE AUDITORIA
@@ -121,3 +241,5 @@ class RegisterController extends Controller
         ]);
     }
 }
+
+

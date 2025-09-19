@@ -101,7 +101,7 @@ class LoginController extends Controller
                         cookie(
                             'auth_token',
                             $tokenData['token'],
-                            60, // minutos
+                          1440, // 24 horas
                             '/',
                             null,
                             false,
