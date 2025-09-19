@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class CacheTokenService
 {
-    private int $expirationMinutes = 60; // 1 hora
+  private int $expirationMinutes = 1440; // 24 horas
     
     /**
      * ✅ FUNCIONA COM SUA TABELA CACHE EXISTENTE

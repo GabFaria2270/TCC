@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UsuarioRequest;
 use App\Services\Auth\RegistrationService;
+use App\Services\Auth\CacheTokenService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\DB; // não usado após remover vinculação de sessão
 use Illuminate\Validation\ValidationException;
 
@@ -17,10 +20,12 @@ use Illuminate\Validation\ValidationException;
 class RegisterController extends Controller
 {
     protected $registrationService;
+    protected CacheTokenService $tokenService;
 
-    public function __construct(RegistrationService $registrationService)
+    public function __construct(RegistrationService $registrationService, CacheTokenService $tokenService)
     {
         $this->registrationService = $registrationService;
+        $this->tokenService = $tokenService;
     }
 
     /**
@@ -35,7 +40,7 @@ class RegisterController extends Controller
      * Processa cadastro
      * ✅ PODE RETORNAR REDIRECT OU JSON
      */
-    public function register(UsuarioRequest $request): RedirectResponse
+    public function register(UsuarioRequest $request): RedirectResponse|JsonResponse
     {
         try {
             // LOG DA TENTATIVA
@@ -47,7 +52,50 @@ class RegisterController extends Controller
             if ($result['success']) {
                 $usuario = $result['user'];
                 $this->logRegistrationSuccess($usuario, $request);
-                return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso! Faça login para continuar.');
+
+                // Autentica usuário e garante sessão
+                Auth::login($usuario, true);
+                if ($request->hasSession()) {
+                    if (!$request->session()->isStarted()) {
+                        $request->session()->start();
+                    }
+                    $request->session()->regenerate();
+                }
+
+                // Gera token via cache e define cookie httpOnly
+                $tokenData = $this->tokenService->getTokenData($usuario);
+                cookie()->queue(
+                    cookie(
+                        'auth_token',
+                        $tokenData['token'],
+                        1440, // 24 horas
+                        '/',
+                        null,
+                        false,
+                        true,
+                        false,
+                        'Lax'
+                    )
+                );
+
+                // Resposta AJAX
+                if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!',
+                        'user' => [
+                            'id' => $usuario->id,
+                            'nome' => $usuario->NOME,
+                            'email' => $usuario->EMAIL,
+                            'perfil' => $usuario->PERFIL,
+                        ],
+                        'auth' => $tokenData
+                    ]);
+                }
+
+                // Redireciona ao painel SPA protegido por require.token (que também garantirá o token)
+                return redirect()->intended(route('gerenciamento'))
+                    ->with('success', 'Cadastro realizado com sucesso! Bem-vindo(a), ' . $usuario->NOME . '!');
             }
 
             // CADASTRO FALHOU
