@@ -16,7 +16,7 @@ class HandleInertiaRequests extends Middleware
      *
      * @var string
      */
-    protected $rootView = 'home';
+    protected $rootView = 'app';
 
     /**
      * Determines the current asset version.
@@ -44,7 +44,19 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => fn () => optional(request()->user(), function ($u) {
+                    return [
+                        'id' => $u->id,
+                        'NOME' => $u->NOME,
+                        'EMAIL' => $u->EMAIL,
+                        'PERFIL' => $u->PERFIL,
+                    ];
+                }),
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

@@ -21,4 +21,3 @@ require __DIR__.'/login.php';
 Route::get('/gerenciamento', function () {
     return view('gerenciamento');
 })->middleware(['require.token'])->name('gerenciamento');
-

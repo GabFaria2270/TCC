@@ -88,29 +88,8 @@ class RegistrationService
                 ];
             }
 
-            // FAZER LOGIN AUTOMÁTICO
-            Auth::login($usuario, false);
-
-            // ✅ GERAR TOKEN DE CACHE (NOVO!)
+            // Não faz login automático e não gera token no cadastro.
             $tokenData = null;
-            if ($this->tokenService) {
-                try {
-                    $tokenData = $this->tokenService->getTokenData($usuario);
-                    
-                    Log::channel('security')->info('🎯 Token gerado no CADASTRO', [
-                        'user_id' => $usuario->id,
-                        'email' => $usuario->EMAIL,
-                        'token_preview' => substr($tokenData['token'], 0, 10) . '...',
-                        'action' => 'registration_auto_login'
-                    ]);
-                    
-                } catch (\Exception $e) {
-                    Log::warning('Erro ao gerar token no cadastro', [
-                        'error' => $e->getMessage(),
-                        'user_id' => $usuario->id
-                    ]);
-                }
-            }
 
             // CONFIRMA TRANSAÇÃO
             DB::commit();
@@ -119,7 +98,7 @@ class RegistrationService
                 'success' => true,
                 'user' => $usuario,
                 'reason' => 'success',
-                'token_data' => $tokenData // ✅ INCLUIR TOKEN
+                'token_data' => $tokenData
             ];
 
         } catch (\Illuminate\Database\QueryException $e) {

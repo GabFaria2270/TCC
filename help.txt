@@ -35,3 +35,4 @@ php artisan migrate
    
 2. Remova o ponto e vírgula (;) do início da linha para ativar:
    ;extension=zip => extension=zip
+   dsfsdfsdf
