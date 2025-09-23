@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\ClienteController; // ✅ NAMESPACE Auth CORRETO
 
 Route::get('/', function () {
     return view('home');
@@ -15,8 +16,10 @@ require __DIR__.'/auth.php';
 require __DIR__.'/cadastro.php';
 require __DIR__.'/login.php';
 
-// Gerenciamento via Inertia (respeitando o tratamento de dados antes do painel)
+// ✅ GERENCIAMENTO VIA INERTIA (ROTAS ORGANIZADAS)
 Route::middleware(['require.token'])->group(function () {
+    
+    // Dashboard principal
     Route::get('/gerenciamento', function () {
         $user = request()->user();
         return Inertia::render('gerenciamento/Inicio', [
@@ -24,8 +27,34 @@ Route::middleware(['require.token'])->group(function () {
         ]);
     })->name('gerenciamento');
 
-    Route::get('/gerenciamento/clientes', function () {
-        return Inertia::render('gerenciamento/Clientes');
-    })->name('gerenciamento.clientes');
+    // ✅ GRUPO DE ROTAS DE CLIENTES (middleware aplicado pelo grupo pai)
+    Route::prefix('gerenciamento')->group(function () {
+        
+        // Lista de clientes
+        Route::get('clientes', [ClienteController::class, 'index'])
+            ->name('clientes.index');
+        
+        // Formulário de cadastro
+        Route::get('clientes/create', [ClienteController::class, 'create'])
+            ->name('clientes.create');
+        
+        // Processar cadastro
+        Route::post('clientes', [ClienteController::class, 'store'])
+            ->name('clientes.store');
+        
+        // Visualizar cliente específico
+        Route::get('clientes/{cliente}', [ClienteController::class, 'show'])
+            ->name('clientes.show');
+            
+        // Editar cliente
+        Route::get('clientes/{cliente}/edit', [ClienteController::class, 'edit'])
+            ->name('clientes.edit');
+            
+        // Atualizar cliente
+        Route::put('clientes/{cliente}', [ClienteController::class, 'update'])
+            ->name('clientes.update');
+    });
 });
+
+
 
