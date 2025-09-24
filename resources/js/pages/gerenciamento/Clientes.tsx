@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-
 
 interface Cliente {
   id: number;
@@ -24,34 +23,80 @@ export default function Clientes({ clientes = [], error }: Props) {
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // ✅ Estado do modal
+  const [showModal, setShowModal] = useState(false);
+  
+  // ✅ Formulário do modal
+  const { data, setData, post, processing, errors, reset } = useForm({
+    nome: '',
+    email: '',
+    telefone: '',
+    saldo_inicial: '',
+  });
 
   useEffect(() => { 
     h1Ref.current?.focus(); 
     
-    // ✅ CORREÇÃO: Verificação segura com tipagem
-    const initClienteSystem = () => {
-      if (typeof window !== 'undefined' && window.ClienteSystem) {
-        try {
-          window.ClienteSystem.init();
-          console.log('✅ ClienteSystem inicializado');
-        } catch (error) {
-          console.warn('⚠️ Erro ao inicializar ClienteSystem:', error);
-        }
-      } else {
-        console.log('📝 ClienteSystem não encontrado - carregando...');
-        
-        // Tenta novamente após um pequeno delay (para garantir que JS carregou)
-        setTimeout(() => {
-          if (window.ClienteSystem) {
-            window.ClienteSystem.init();
-            console.log('✅ ClienteSystem inicializado (delay)');
-          }
-        }, 100);
+    // ✅ REMOVIDO: Não precisa mais do ClienteSystem JavaScript
+    // O React agora gerencia tudo sozinho
+    console.log('✅ Sistema React de clientes inicializado');
+  }, []);
+
+  // ✅ Função para abrir o modal
+  const abrirModal = () => {
+    setShowModal(true);
+    reset(); // Limpa o formulário
+    
+    // ✅ IMPORTANTE: Foca no primeiro campo após abrir
+    setTimeout(() => {
+      const nomeInput = document.getElementById('nome');
+      if (nomeInput) nomeInput.focus();
+    }, 100);
+  };
+
+  // ✅ Função para fechar o modal
+  const fecharModal = () => {
+    setShowModal(false);
+    reset();
+  };
+
+  // ✅ Função para submeter o formulário
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    post(route('clientes.store'), {
+      onSuccess: () => {
+        fecharModal();
+        // Recarrega a lista de clientes
+        router.get('/gerenciamento/clientes');
+      },
+      onError: () => {
+        console.log('Erro ao cadastrar cliente:', errors);
+      }
+    });
+  };
+
+  // ✅ Função para fechar modal com ESC
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showModal) {
+        fecharModal();
       }
     };
 
-    initClienteSystem();
-  }, []);
+    if (showModal) {
+      document.addEventListener('keydown', handleEsc);
+      // Previne scroll da página quando modal está aberto
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModal]);
 
   // Garante que clientes é sempre um array
   const clientesArray = Array.isArray(clientes) ? clientes : [];
@@ -95,13 +140,13 @@ export default function Clientes({ clientes = [], error }: Props) {
                 )}
                 Atualizar
               </button>
-              <Link
-                href="/gerenciamento/clientes/create"
+              <button
+                onClick={abrirModal}
                 className="btn-new-client"
               >
                 <i className="bi bi-plus-lg"></i>
                 Novo Cliente
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -222,13 +267,13 @@ export default function Clientes({ clientes = [], error }: Props) {
                   {search ? 'Tente ajustar os filtros de busca' : 'Comece cadastrando seu primeiro cliente'}
                 </p>
                 {!search && (
-                  <Link
-                    href="/gerenciamento/clientes/create"
+                  <button
+                    onClick={abrirModal}
                     className="btn-first-client"
                   >
                     <i className="bi bi-plus-lg"></i>
                     Cadastrar Primeiro Cliente
-                  </Link>
+                  </button>
                 )}
               </div>
             )}
@@ -263,6 +308,134 @@ export default function Clientes({ clientes = [], error }: Props) {
           </div>
         )}
       </div>
+
+      {/* ✅ Modal de Cadastro - ESTRUTURA CORRIGIDA */}
+      {showModal && (
+        <>
+          {/* Backdrop separado */}
+          <div 
+            className="modal-backdrop fade show"
+            onClick={fecharModal}
+          ></div>
+          
+          {/* Modal principal */}
+          <div 
+            className="modal fade show" 
+            style={{display: 'block'}} 
+            tabIndex={-1}
+          >
+            <div className="modal-dialog modal-lg">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    <i className="bi bi-person-plus me-2"></i>
+                    Novo Cliente
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={fecharModal}
+                    aria-label="Fechar modal"
+                  ></button>
+                </div>
+                <form onSubmit={submit}>
+                  <div className="modal-body">
+                    <div className="row">
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="nome" className="form-label">Nome *</label>
+                        <input
+                          id="nome"
+                          type="text"
+                          className={`form-control ${errors.nome ? 'is-invalid' : ''}`}
+                          value={data.nome}
+                          onChange={(e) => setData('nome', e.target.value)}
+                          required
+                          autoFocus
+                          disabled={processing}
+                        />
+                        {errors.nome && <div className="invalid-feedback">{errors.nome}</div>}
+                      </div>
+
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="email" className="form-label">E-mail *</label>
+                        <input
+                          id="email"
+                          type="email"
+                          className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                          value={data.email}
+                          onChange={(e) => setData('email', e.target.value)}
+                          required
+                          disabled={processing}
+                        />
+                        {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+                      </div>
+                    </div>
+
+                    <div className="row">
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="telefone" className="form-label">Telefone</label>
+                        <input
+                          id="telefone"
+                          type="tel"
+                          className={`form-control ${errors.telefone ? 'is-invalid' : ''}`}
+                          value={data.telefone}
+                          onChange={(e) => setData('telefone', e.target.value)}
+                          placeholder="(00) 00000-0000"
+                          disabled={processing}
+                        />
+                        {errors.telefone && <div className="invalid-feedback">{errors.telefone}</div>}
+                      </div>
+
+                      <div className="col-md-6 mb-3">
+                        <label htmlFor="saldo_inicial" className="form-label">Saldo Inicial</label>
+                        <input
+                          id="saldo_inicial"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          className={`form-control ${errors.saldo_inicial ? 'is-invalid' : ''}`}
+                          value={data.saldo_inicial}
+                          onChange={(e) => setData('saldo_inicial', e.target.value)}
+                          placeholder="0.00"
+                          disabled={processing}
+                        />
+                        {errors.saldo_inicial && <div className="invalid-feedback">{errors.saldo_inicial}</div>}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={fecharModal}
+                      disabled={processing}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={processing}
+                    >
+                      {processing ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2"></span>
+                          Salvando...
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-check-lg me-2"></i>
+                          Salvar Cliente
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </GerenciamentoLayout>
   );
 }

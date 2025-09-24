@@ -21,7 +21,7 @@ class ClienteController extends Controller
             $user = Auth::user();
             
             Log::channel('security')->info('Acessando lista de clientes', [
-                'user_id' => $user->id,
+                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
                 'email' => $user->EMAIL,
                 'timestamp' => now(),
             ]);
@@ -36,7 +36,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro no ClienteController@index', [
                 'error' => $e->getMessage(),
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'timestamp' => now(),
@@ -58,7 +58,7 @@ class ClienteController extends Controller
             $user = Auth::user();
             
             Log::channel('security')->info('Acessando formulário de cadastro de cliente', [
-                'user_id' => $user->id,
+                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
                 'email' => $user->EMAIL,
                 'timestamp' => now(),
             ]);
@@ -70,7 +70,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro no ClienteController@create', [
                 'error' => $e->getMessage(),
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'timestamp' => now(),
@@ -113,7 +113,7 @@ class ClienteController extends Controller
             Log::channel('security')->info('Tentativa de cadastro de cliente', [
                 'nome' => $validatedData['nome'],
                 'email' => $validatedData['email'],
-                'user_id' => $user->id,
+                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
                 'user_email' => $user->EMAIL,
                 'ip' => $request->ip(),
                 'user_agent' => substr($request->userAgent(), 0, 200),
@@ -126,9 +126,17 @@ class ClienteController extends Controller
             Log::channel('security')->info('Cliente cadastrado com sucesso (simulado)', [
                 'nome' => $validatedData['nome'],
                 'email' => $validatedData['email'],
-                'user_id' => $user->id,
+                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
                 'timestamp' => now(),
             ]);
+
+            // ✅ IMPORTANTE: Como é um modal, retornar JSON ao invés de redirect
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Cliente cadastrado com sucesso! (simulado até implementar banco)',
+                    'success' => true
+                ]);
+            }
 
             return redirect()
                 ->route('clientes.index')
@@ -139,11 +147,19 @@ class ClienteController extends Controller
             Log::channel('security')->warning('Erro de validação no cadastro de cliente', [
                 'nome' => $request->nome ?? 'N/A',
                 'email' => $request->email ?? 'N/A',
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
                 'errors' => $e->errors(),
                 'ip' => $request->ip(),
                 'timestamp' => now(),
             ]);
+
+            // ✅ Para requisições AJAX/Inertia, retorna JSON
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $e->errors(),
+                    'message' => 'Dados inválidos'
+                ], 422);
+            }
 
             return back()
                 ->withErrors($e->errors())
@@ -154,13 +170,21 @@ class ClienteController extends Controller
             Log::channel('security')->error('Erro no sistema de cadastro de cliente', [
                 'nome' => $request->nome ?? 'N/A',
                 'email' => $request->email ?? 'N/A',
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
                 'error' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'ip' => $request->ip(),
                 'timestamp' => now(),
             ]);
+            
+            // ✅ Para requisições AJAX/Inertia, retorna JSON
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Erro interno. Tente novamente.',
+                    'success' => false
+                ], 500);
+            }
             
             return back()
                 ->with('error', 'Erro interno. Tente novamente.')
@@ -178,7 +202,7 @@ class ClienteController extends Controller
             
             Log::channel('security')->info('Acessando detalhes do cliente', [
                 'cliente_id' => $id,
-                'user_id' => $user->id,
+                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
                 'timestamp' => now(),
             ]);
 
@@ -191,7 +215,7 @@ class ClienteController extends Controller
             Log::channel('security')->error('Erro no ClienteController@show', [
                 'error' => $e->getMessage(),
                 'cliente_id' => $id,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'timestamp' => now(),
@@ -210,7 +234,7 @@ class ClienteController extends Controller
     {
         Log::channel('security')->info('Tentativa de acessar edição de cliente (não implementado)', [
             'cliente_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
             'timestamp' => now(),
         ]);
 
@@ -226,7 +250,7 @@ class ClienteController extends Controller
     {
         Log::channel('security')->info('Tentativa de atualizar cliente (não implementado)', [
             'cliente_id' => $id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
             'timestamp' => now(),
         ]);
 
