@@ -4,6 +4,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ClienteRequest;
+use App\Services\Auth\ClienteService; // ✅ NAMESPACE CORRETO
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -12,8 +14,15 @@ use Inertia\Inertia;
 
 class ClienteController extends Controller
 {
+    protected ClienteService $clienteService;
+
+    public function __construct(ClienteService $clienteService)
+    {
+        $this->clienteService = $clienteService;
+    }
+
     /**
-     * ✅ LISTA TODOS OS CLIENTES
+     * ✅ LISTA CLIENTES
      */
     public function index()
     {
@@ -21,25 +30,27 @@ class ClienteController extends Controller
             $user = Auth::user();
             
             Log::channel('security')->info('Acessando lista de clientes', [
-                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
+                'user_id' => $user->ID,
                 'email' => $user->EMAIL,
-                'timestamp' => now(),
             ]);
             
-            // Por enquanto retorna array vazio até conectar com banco
-            $clientes = [];
+            $result = $this->clienteService->listarClientes();
             
+            if ($result['success']) {
+                return Inertia::render('gerenciamento/Clientes', [
+                    'clientes' => $result['clientes'],
+                ]);
+            }
+
             return Inertia::render('gerenciamento/Clientes', [
-                'clientes' => $clientes,
+                'clientes' => [],
+                'error' => $result['errors']['system'] ?? 'Erro ao carregar clientes.',
             ]);
 
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro no ClienteController@index', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'timestamp' => now(),
+                'user_id' => Auth::id(),
             ]);
 
             return Inertia::render('gerenciamento/Clientes', [
@@ -58,9 +69,8 @@ class ClienteController extends Controller
             $user = Auth::user();
             
             Log::channel('security')->info('Acessando formulário de cadastro de cliente', [
-                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
+                'user_id' => $user->ID,
                 'email' => $user->EMAIL,
-                'timestamp' => now(),
             ]);
 
             return Inertia::render('gerenciamento/ClienteForm', [
@@ -70,10 +80,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro no ClienteController@create', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'timestamp' => now(),
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()
@@ -85,79 +92,60 @@ class ClienteController extends Controller
     /**
      * ✅ PROCESSA CADASTRO DE NOVO CLIENTE
      */
-    public function store(Request $request)
+    public function store(ClienteRequest $request)
     {
         try {
             $user = Auth::user();
             
-            // Validação básica seguindo padrão do projeto (similar ao UsuarioRequest)
-            $validatedData = $request->validate([
-                'nome' => 'required|string|max:100|regex:/^[A-Za-zÀ-ÿ\s]+$/',
-                'email' => 'required|email|max:150',
-                'telefone' => 'nullable|string|max:20',
-                'saldo_inicial' => 'nullable|numeric|min:0|max:999999.99',
-            ], [
-                'nome.required' => 'O nome do cliente é obrigatório.',
-                'nome.regex' => 'O nome deve conter apenas letras e espaços.',
-                'nome.max' => 'O nome não pode ter mais que 100 caracteres.',
-                'email.required' => 'O e-mail é obrigatório.',
-                'email.email' => 'Digite um e-mail válido.',
-                'email.max' => 'O e-mail não pode ter mais que 150 caracteres.',
-                'telefone.max' => 'O telefone não pode ter mais que 20 caracteres.',
-                'saldo_inicial.numeric' => 'O saldo inicial deve ser um número válido.',
-                'saldo_inicial.min' => 'O saldo inicial não pode ser negativo.',
-                'saldo_inicial.max' => 'O saldo inicial é muito alto.',
-            ]);
-
-            // Log da tentativa (seguindo padrão de segurança do projeto)
             Log::channel('security')->info('Tentativa de cadastro de cliente', [
-                'nome' => $validatedData['nome'],
-                'email' => $validatedData['email'],
-                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
-                'user_email' => $user->EMAIL,
+                'nome' => $request->validated()['nome'],
+                'email' => $request->validated()['email'],
+                'user_id' => $user->ID,
                 'ip' => $request->ip(),
-                'user_agent' => substr($request->userAgent(), 0, 200),
-                'timestamp' => now(),
             ]);
 
-            // Por enquanto simula sucesso até conectar com banco
-            // TODO: Implementar salvamento real no banco de dados usando models
-            
-            Log::channel('security')->info('Cliente cadastrado com sucesso (simulado)', [
-                'nome' => $validatedData['nome'],
-                'email' => $validatedData['email'],
-                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
-                'timestamp' => now(),
-            ]);
+            $result = $this->clienteService->cadastrar($request->validated(), $request);
 
-            // ✅ IMPORTANTE: Como é um modal, retornar JSON ao invés de redirect
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'message' => 'Cliente cadastrado com sucesso! (simulado até implementar banco)',
-                    'success' => true
+            if ($result['success']) {
+                Log::channel('security')->info('Cliente cadastrado com sucesso', [
+                    'cliente_id' => $result['cliente']->id,
+                    'nome' => $result['cliente']->nome,
+                    'user_id' => $user->ID,
                 ]);
+
+                // ✅ RESPOSTA PARA MODAL (JSON)
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Cliente cadastrado com sucesso!',
+                        'cliente' => $result['cliente'],
+                    ]);
+                }
+
+                return redirect()
+                    ->route('clientes.index')
+                    ->with('success', 'Cliente cadastrado com sucesso!');
             }
 
-            return redirect()
-                ->route('clientes.index')
-                ->with('success', 'Cliente cadastrado com sucesso! (simulado até implementar banco)');
-
-        } catch (ValidationException $e) {
-            // Log de erro de validação (seguindo padrão do projeto)
-            Log::channel('security')->warning('Erro de validação no cadastro de cliente', [
-                'nome' => $request->nome ?? 'N/A',
-                'email' => $request->email ?? 'N/A',
-                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
-                'errors' => $e->errors(),
-                'ip' => $request->ip(),
-                'timestamp' => now(),
-            ]);
-
-            // ✅ Para requisições AJAX/Inertia, retorna JSON
+            // ✅ RESPOSTA DE ERRO PARA MODAL
             if ($request->expectsJson()) {
                 return response()->json([
+                    'success' => false,
+                    'errors' => $result['errors'],
+                    'message' => 'Falha no cadastro do cliente.',
+                ], 422);
+            }
+
+            return back()
+                ->withErrors($result['errors'])
+                ->withInput();
+
+        } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
                     'errors' => $e->errors(),
-                    'message' => 'Dados inválidos'
+                    'message' => 'Dados de entrada inválidos.',
                 ], 422);
             }
 
@@ -166,23 +154,15 @@ class ClienteController extends Controller
                 ->withInput();
 
         } catch (\Exception $e) {
-            // Log de erro do sistema (seguindo padrão do projeto)
-            Log::channel('security')->error('Erro no sistema de cadastro de cliente', [
-                'nome' => $request->nome ?? 'N/A',
-                'email' => $request->email ?? 'N/A',
-                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
+            Log::channel('security')->error('Erro no cadastro de cliente', [
                 'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'ip' => $request->ip(),
-                'timestamp' => now(),
+                'user_id' => Auth::id(),
             ]);
-            
-            // ✅ Para requisições AJAX/Inertia, retorna JSON
+
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => 'Erro interno. Tente novamente.',
-                    'success' => false
+                    'success' => false,
+                    'message' => 'Erro interno do sistema.',
                 ], 500);
             }
             
@@ -202,8 +182,7 @@ class ClienteController extends Controller
             
             Log::channel('security')->info('Acessando detalhes do cliente', [
                 'cliente_id' => $id,
-                'user_id' => $user->ID, // ✅ CORRIGIDO: ID maiúsculo
-                'timestamp' => now(),
+                'user_id' => $user->ID,
             ]);
 
             return Inertia::render('gerenciamento/ClienteDetalhes', [
@@ -215,10 +194,7 @@ class ClienteController extends Controller
             Log::channel('security')->error('Erro no ClienteController@show', [
                 'error' => $e->getMessage(),
                 'cliente_id' => $id,
-                'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'timestamp' => now(),
+                'user_id' => Auth::id(),
             ]);
 
             return redirect()
@@ -234,8 +210,7 @@ class ClienteController extends Controller
     {
         Log::channel('security')->info('Tentativa de acessar edição de cliente (não implementado)', [
             'cliente_id' => $id,
-            'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
-            'timestamp' => now(),
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()
@@ -250,8 +225,7 @@ class ClienteController extends Controller
     {
         Log::channel('security')->info('Tentativa de atualizar cliente (não implementado)', [
             'cliente_id' => $id,
-            'user_id' => Auth::id(), // ✅ CORRIGIDO: usando Auth::id()
-            'timestamp' => now(),
+            'user_id' => Auth::id(),
         ]);
 
         return redirect()

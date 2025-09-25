@@ -1,7 +1,7 @@
 <?php
+// filepath: c:\Users\User\Desktop\TCC\app\Services\Auth\ClienteService.php
 
-
-namespace App\Services;
+namespace App\Services\Auth; // ✅ CORRIGIR PARA COINCIDIR COM A PASTA
 
 use App\Models\Cliente;
 use App\Models\ContaFiada;
@@ -36,8 +36,8 @@ class ClienteService
             }
 
             // VERIFICA SE EMAIL JÁ EXISTE NESTE COMÉRCIO
-            $emailExists = Cliente::byEmail($data['email'])
-                ->byComercio($comercio->id)
+            $emailExists = Cliente::where('email', $data['email'])
+                ->where('comercio_id', $comercio->id)
                 ->exists();
 
             if ($emailExists) {
@@ -49,8 +49,11 @@ class ClienteService
                 ];
             }
 
-            // LOG DE DEBUG
-            $this->logCadastroDebug($data, $comercio->id);
+            Log::info('ClienteService: Criando cliente', [
+                'nome' => $data['nome'],
+                'email' => $data['email'],
+                'comercio_id' => $comercio->id
+            ]);
 
             // CRIA CLIENTE
             $cliente = Cliente::create([
@@ -62,6 +65,7 @@ class ClienteService
 
             if (!$cliente) {
                 DB::rollback();
+                Log::error('ClienteService: Falha ao criar cliente');
                 return [
                     'success' => false,
                     'errors' => ['system' => 'Falha ao criar cliente.'],
@@ -69,15 +73,28 @@ class ClienteService
                 ];
             }
 
-            // CRIA CONTA FIADA
+            // CRIA CONTA FIADA COM DESCRIÇÃO
+            $saldoInicial = 0.00;
+            if (isset($data['saldo_inicial']) && $data['saldo_inicial'] !== null && $data['saldo_inicial'] !== '') {
+                $saldoInicial = floatval(str_replace(',', '.', $data['saldo_inicial']));
+            }
+
+            // DESCRIÇÃO PADRÃO OU PERSONALIZADA
+            $descricao = 'Saldo inicial do cliente';
+            if (isset($data['descricao']) && !empty(trim($data['descricao']))) {
+                $descricao = trim($data['descricao']);
+            }
+
             $contaFiada = ContaFiada::create([
                 'cliente_id' => $cliente->id,
-                'saldo' => $data['saldo_inicial'] ?? 0.00,
                 'comercio_id' => $comercio->id,
+                'saldo' => $saldoInicial,
+                'descricao' => $descricao, // NOVO CAMPO
             ]);
 
             if (!$contaFiada) {
                 DB::rollback();
+                Log::error('ClienteService: Falha ao criar conta fiada');
                 return [
                     'success' => false,
                     'errors' => ['system' => 'Falha ao criar conta fiada.'],
@@ -88,19 +105,26 @@ class ClienteService
             // CONFIRMA TRANSAÇÃO
             DB::commit();
 
-            // LOG DE SUCESSO
-            $this->logCadastroSucesso($cliente, $request);
+            // CARREGAR RELACIONAMENTOS
+            $cliente->load('contaFiada');
+
+            Log::info('ClienteService: Cliente cadastrado com sucesso', [
+                'cliente_id' => $cliente->id,
+                'nome' => $cliente->nome,
+                'saldo' => $saldoInicial,
+                'descricao' => $descricao
+            ]);
 
             return [
                 'success' => true,
-                'cliente' => $cliente->load('contaFiada'),
+                'cliente' => $cliente,
                 'reason' => 'success'
             ];
 
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollback();
             
-            Log::error('Erro de banco no ClienteService', [
+            Log::error('ClienteService: Erro de banco', [
                 'error' => $e->getMessage(),
                 'code' => $e->getCode(),
                 'data' => $data,
@@ -108,14 +132,14 @@ class ClienteService
 
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro de banco de dados.'],
+                'errors' => ['system' => 'Erro de banco de dados: ' . $e->getMessage()],
                 'reason' => 'database_error'
             ];
 
         } catch (\Exception $e) {
             DB::rollback();
             
-            Log::error('Erro geral no ClienteService', [
+            Log::error('ClienteService: Erro geral', [
                 'error' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -124,7 +148,7 @@ class ClienteService
 
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro interno do sistema.'],
+                'errors' => ['system' => 'Erro interno: ' . $e->getMessage()],
                 'reason' => 'system_error'
             ];
         }
@@ -147,9 +171,12 @@ class ClienteService
                 ];
             }
 
-            $clientes = Cliente::byComercio($comercio->id)
-                ->withContaFiada()
-                ->orderBy('nome')
+            // ✅ CARREGAR CONTA FIADA COM TODOS OS CAMPOS
+            $clientes = Cliente::where('comercio_id', $comercio->id)
+                ->with(['contaFiada' => function($query) {
+                    $query->select('id', 'cliente_id', 'comercio_id', 'saldo', 'descricao'); // ✅ INCLUIR DESCRIÇÃO
+                }])
+                ->orderBy('nome', 'asc')
                 ->get();
 
             return [
@@ -166,39 +193,9 @@ class ClienteService
 
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro ao carregar clientes.'],
+                'errors' => ['system' => 'Erro ao carregar clientes: ' . $e->getMessage()],
                 'reason' => 'system_error'
             ];
         }
-    }
-
-    /**
-     * Log de debug para cadastro
-     */
-    private function logCadastroDebug(array $data, int $comercioId): void
-    {
-        Log::channel('security')->info('DEBUG Cliente Service', [
-            'nome_enviado' => $data['nome'],
-            'email_enviado' => $data['email'],
-            'telefone_enviado' => $data['telefone'] ?? 'N/A',
-            'saldo_inicial' => $data['saldo_inicial'] ?? 0,
-            'comercio_id' => $comercioId,
-        ]);
-    }
-
-    /**
-     * Log de sucesso
-     */
-    private function logCadastroSucesso(Cliente $cliente, Request $request): void
-    {
-        Log::channel('security')->info('Cliente cadastrado com sucesso', [
-            'cliente_id' => $cliente->id,
-            'nome' => $cliente->nome,
-            'email' => $cliente->email,
-            'comercio_id' => $cliente->comercio_id,
-            'user_id' => Auth::id(),
-            'ip' => $request->ip(),
-            'timestamp' => now(),
-        ]);
     }
 }

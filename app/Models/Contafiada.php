@@ -1,5 +1,5 @@
 <?php
-
+// filepath: c:\Users\User\Desktop\TCC\app\Models\Contafiada.php
 
 namespace App\Models;
 
@@ -16,12 +16,22 @@ class ContaFiada extends Model
 
     protected $fillable = [
         'cliente_id',
-        'saldo',
         'comercio_id',
+        'saldo',
+        'descricao', // ✅ CAMPO DESCRIÇÃO
     ];
 
     protected $casts = [
         'saldo' => 'decimal:2',
+        'cliente_id' => 'integer',
+        'comercio_id' => 'integer',
+        'descricao' => 'string',
+    ];
+
+    // ✅ ADICIONAR CAMPOS NO RETORNO JSON
+    protected $appends = [
+        'saldo_formatado',
+        'status'
     ];
 
     /**
@@ -37,34 +47,65 @@ class ContaFiada extends Model
         return $this->belongsTo(Comercio::class, 'comercio_id');
     }
 
-    public function historicosPagamento()
-    {
-        return $this->hasMany(HistoricoDePagamento::class, 'conta_fiada_id');
-    }
-
     /**
-     * MÉTODOS DE NEGÓCIO
-     */
-    public function adicionarSaldo($valor)
-    {
-        $this->saldo += $valor;
-        return $this->save();
-    }
-
-    public function subtrairSaldo($valor)
-    {
-        if ($this->saldo >= $valor) {
-            $this->saldo -= $valor;
-            return $this->save();
-        }
-        return false;
-    }
-
-    /**
-     * ACCESSORS
+     * ✅ ACCESSORS (CORRIGIDOS)
      */
     public function getSaldoFormatadoAttribute()
     {
         return 'R$ ' . number_format($this->saldo, 2, ',', '.');
+    }
+
+    public function getStatusAttribute()
+    {
+        if ($this->saldo > 0) {
+            return 'positivo';
+        } elseif ($this->saldo < 0) {
+            return 'negativo';
+        } else {
+            return 'zero';
+        }
+    }
+
+    /**
+     * ✅ MÉTODOS DE NEGÓCIO
+     */
+    public function atualizarSaldo($novoSaldo, $novaDescricao)
+    {
+        $this->saldo = $novoSaldo;
+        $this->descricao = $novaDescricao;
+        $this->save();
+        
+        return $this;
+    }
+
+    public function adicionarCompra($valor, $descricaoCompra)
+    {
+        $this->saldo -= $valor;
+        $this->descricao = $descricaoCompra;
+        $this->save();
+        
+        return $this;
+    }
+
+    public function adicionarPagamento($valor, $descricaoPagamento)
+    {
+        $this->saldo += $valor;
+        $this->descricao = $descricaoPagamento;
+        $this->save();
+        
+        return $this;
+    }
+
+    /**
+     * SCOPES
+     */
+    public function scopeByCliente($query, $clienteId)
+    {
+        return $query->where('cliente_id', $clienteId);
+    }
+
+    public function scopeByComercio($query, $comercioId)
+    {
+        return $query->where('comercio_id', $comercioId);
     }
 }

@@ -5,11 +5,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'cliente';
     protected $primaryKey = 'id';
@@ -22,16 +21,15 @@ class Cliente extends Model
         'comercio_id',
     ];
 
-    protected $hidden = [];
-
     protected $casts = [
         'nome' => 'string',
         'email' => 'string',
         'telefone' => 'string',
+        'comercio_id' => 'integer',
     ];
 
     /**
-     * RELACIONAMENTOS
+     * ✅ RELACIONAMENTOS
      */
     public function comercio()
     {
@@ -49,11 +47,11 @@ class Cliente extends Model
     }
 
     /**
-     * SCOPES
+     * ✅ SCOPES PARA CONSULTAS
      */
     public function scopeByEmail($query, $email)
     {
-        return $query->where('email', strtolower($email));
+        return $query->where('email', $email);
     }
 
     public function scopeByComercio($query, $comercioId)
@@ -66,21 +64,45 @@ class Cliente extends Model
         return $query->with('contaFiada');
     }
 
+    public function scopeOrderByNome($query)
+    {
+        return $query->orderBy('nome', 'asc');
+    }
+
     /**
-     * ACCESSOR PARA FORMATAÇÃO
+     * ✅ ACCESSORS
      */
     public function getTelefoneFormatadoAttribute()
     {
-        if (!$this->telefone) return null;
+        if (!$this->telefone) return 'Não informado';
         
         $telefone = preg_replace('/[^0-9]/', '', $this->telefone);
         
-        if (strlen($telefone) === 11) {
-            return '(' . substr($telefone, 0, 2) . ') ' . substr($telefone, 2, 5) . '-' . substr($telefone, 7);
-        } elseif (strlen($telefone) === 10) {
-            return '(' . substr($telefone, 0, 2) . ') ' . substr($telefone, 2, 4) . '-' . substr($telefone, 6);
+        if (strlen($telefone) === 10) {
+            return preg_replace('/(\d{2})(\d{4})(\d{4})/', '($1) $2-$3', $telefone);
+        } elseif (strlen($telefone) === 11) {
+            return preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', $telefone);
         }
         
         return $this->telefone;
+    }
+
+    public function getContaFiadaFormatadaAttribute()
+    {
+        $conta = $this->contaFiada;
+        
+        if (!$conta) {
+            return [
+                'saldo' => 0,
+                'saldo_formatado' => 'R$ 0,00',
+                'status' => 'sem_conta'
+            ];
+        }
+        
+        return [
+            'saldo' => (float) $conta->saldo,
+            'saldo_formatado' => 'R$ ' . number_format($conta->saldo, 2, ',', '.'),
+            'status' => $conta->saldo > 0 ? 'positivo' : ($conta->saldo < 0 ? 'negativo' : 'zero')
+        ];
     }
 }

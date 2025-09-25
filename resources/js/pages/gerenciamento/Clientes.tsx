@@ -10,8 +10,20 @@ interface Cliente {
   conta_fiada: {
     saldo: number;
     saldo_formatado: string;
+    descricao?: string; // ✅ ADICIONAR DESCRIÇÃO
+    status: string; // ✅ ADICIONAR STATUS
   };
   created_at: string;
+}
+
+// ✅ CORRIGIR: Adicionar índice para satisfazer FormDataType
+interface ClienteFormData {
+  nome: string;
+  email: string;
+  telefone: string;
+  saldo_inicial: string;
+  descricao: string;
+  [key: string]: string; // ✅ ISSO RESOLVE O ERRO 2344
 }
 
 interface Props {
@@ -26,79 +38,23 @@ export default function Clientes({ clientes = [], error }: Props) {
   
   // ✅ Estado do modal
   const [showModal, setShowModal] = useState(false);
+  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [clienteId, setClienteId] = useState<number | null>(null);
   
   // ✅ Formulário do modal
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const { data, setData, post, put, processing, errors, reset } = useForm<ClienteFormData>({
     nome: '',
     email: '',
     telefone: '',
     saldo_inicial: '',
+    descricao: '',
   });
 
   useEffect(() => { 
     h1Ref.current?.focus(); 
-    
-    // ✅ REMOVIDO: Não precisa mais do ClienteSystem JavaScript
-    // O React agora gerencia tudo sozinho
-    console.log('✅ Sistema React de clientes inicializado');
   }, []);
 
-  // ✅ Função para abrir o modal
-  const abrirModal = () => {
-    setShowModal(true);
-    reset(); // Limpa o formulário
-    
-    // ✅ IMPORTANTE: Foca no primeiro campo após abrir
-    setTimeout(() => {
-      const nomeInput = document.getElementById('nome');
-      if (nomeInput) nomeInput.focus();
-    }, 100);
-  };
-
-  // ✅ Função para fechar o modal
-  const fecharModal = () => {
-    setShowModal(false);
-    reset();
-  };
-
-  // ✅ Função para submeter o formulário
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    post(route('clientes.store'), {
-      onSuccess: () => {
-        fecharModal();
-        // Recarrega a lista de clientes
-        router.get('/gerenciamento/clientes');
-      },
-      onError: () => {
-        console.log('Erro ao cadastrar cliente:', errors);
-      }
-    });
-  };
-
-  // ✅ Função para fechar modal com ESC
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showModal) {
-        fecharModal();
-      }
-    };
-
-    if (showModal) {
-      document.addEventListener('keydown', handleEsc);
-      // Previne scroll da página quando modal está aberto
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'unset';
-    };
-  }, [showModal]);
-
-  // Garante que clientes é sempre um array
+  // Filtrar clientes baseado na pesquisa
   const clientesArray = Array.isArray(clientes) ? clientes : [];
   const clientesFiltrados = clientesArray.filter(cliente =>
     cliente.nome.toLowerCase().includes(search.toLowerCase()) ||
@@ -111,6 +67,84 @@ export default function Clientes({ clientes = [], error }: Props) {
       onFinish: () => setLoading(false)
     });
   };
+
+  // ✅ Função para abrir o modal
+  const abrirModal = (modo: 'create' | 'edit', cliente?: Cliente) => {
+    setModalMode(modo);
+    setShowModal(true);
+    reset();
+    
+    if (modo === 'edit' && cliente) {
+      setClienteId(cliente.id);
+      setData({
+        nome: cliente.nome,
+        email: cliente.email,
+        telefone: cliente.telefone_formatado || '',
+        saldo_inicial: String(cliente.conta_fiada.saldo),
+        descricao: '',
+      });
+    } else {
+      setClienteId(null);
+    }
+    
+    setTimeout(() => {
+      const nomeInput = document.getElementById('nome');
+      if (nomeInput) nomeInput.focus();
+    }, 100);
+  };
+
+  // ✅ Função para fechar o modal
+  const fecharModal = () => {
+    setShowModal(false);
+    reset();
+  };
+
+  // ✅ CORRIGIR: Função para submeter o formulário
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const onSuccess = () => {
+      fecharModal();
+      router.get('/gerenciamento/clientes');
+    };
+    
+    if (modalMode === 'create') {
+      post('/gerenciamento/clientes', { // ✅ USAR URL DIRETA
+        onSuccess,
+        onError: () => {
+          console.log('Erro ao cadastrar cliente:', errors);
+        }
+      });
+    } else if (clienteId) { // ✅ VERIFICAR SE clienteId NÃO É NULL
+      put(`/gerenciamento/clientes/${clienteId}`, { // ✅ USAR URL DIRETA
+        onSuccess,
+        onError: () => {
+          console.log('Erro ao atualizar cliente:', errors);
+        }
+      });
+    }
+  };
+
+  // ✅ Função para fechar modal com ESC
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showModal) {
+        fecharModal();
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModal]);
 
   return (
     <GerenciamentoLayout title="Clientes">
@@ -141,7 +175,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                 Atualizar
               </button>
               <button
-                onClick={abrirModal}
+                onClick={() => abrirModal('create')}
                 className="btn-new-client"
               >
                 <i className="bi bi-plus-lg"></i>
@@ -207,7 +241,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                         <td>
                           <div className="cliente-info">
                             <strong className="cliente-nome">{cliente.nome}</strong>
-                            <small className="cliente-id">ID: {cliente.id}</small>
+                          
                           </div>
                         </td>
                         <td>
@@ -221,17 +255,28 @@ export default function Clientes({ clientes = [], error }: Props) {
                           </div>
                         </td>
                         <td>
-                          <span 
-                            className={`saldo-badge ${
-                              cliente.conta_fiada.saldo > 0 
-                                ? 'saldo-positivo' 
-                                : cliente.conta_fiada.saldo < 0 
-                                ? 'saldo-negativo' 
-                                : 'saldo-zero'
-                            }`}
-                          >
-                            {cliente.conta_fiada.saldo_formatado}
-                          </span>
+                          <div className="conta-fiada-info">
+                            <span 
+                              className={`saldo-badge ${
+                                cliente.conta_fiada.saldo > 0 
+                                  ? 'saldo-positivo' 
+                                  : cliente.conta_fiada.saldo < 0 
+                                  ? 'saldo-negativo' 
+                                  : 'saldo-zero'
+                              }`}
+                            >
+                              {cliente.conta_fiada.saldo_formatado}
+                            </span>
+                            {/* ✅ ADICIONAR DESCRIÇÃO DO CLIENTE */}
+                            {cliente.conta_fiada.descricao && (
+                              <small className="conta-descricao" title={cliente.conta_fiada.descricao}>
+                                {cliente.conta_fiada.descricao.length > 30 
+                                  ? `${cliente.conta_fiada.descricao.substring(0, 30)}...` 
+                                  : cliente.conta_fiada.descricao
+                                }
+                              </small>
+                            )}
+                          </div>
                         </td>
                         <td>
                           <small className="data-cadastro">
@@ -252,6 +297,13 @@ export default function Clientes({ clientes = [], error }: Props) {
                             >
                               <i className="bi bi-wallet2"></i>
                             </button>
+                            <button
+                              onClick={() => abrirModal('edit', cliente)}
+                              className="btn-action btn-edit"
+                              title="Editar cliente"
+                            >
+                              <i className="bi bi-pencil"></i>
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -268,7 +320,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                 </p>
                 {!search && (
                   <button
-                    onClick={abrirModal}
+                    onClick={() => abrirModal('create')}
                     className="btn-first-client"
                   >
                     <i className="bi bi-plus-lg"></i>
@@ -279,46 +331,16 @@ export default function Clientes({ clientes = [], error }: Props) {
             )}
           </div>
         </div>
-
-        {/* Estatísticas */}
-        {clientesArray.length > 0 && (
-          <div className="clientes-stats">
-            <div className="stat-card stat-total">
-              <div className="stat-content">
-                <h5 className="stat-number">{clientesArray.length}</h5>
-                <p className="stat-label">Total de Clientes</p>
-              </div>
-            </div>
-            <div className="stat-card stat-positive">
-              <div className="stat-content">
-                <h5 className="stat-number">
-                  {clientesArray.filter(c => c.conta_fiada.saldo > 0).length}
-                </h5>
-                <p className="stat-label">Com Saldo Positivo</p>
-              </div>
-            </div>
-            <div className="stat-card stat-negative">
-              <div className="stat-content">
-                <h5 className="stat-number">
-                  {clientesArray.filter(c => c.conta_fiada.saldo < 0).length}
-                </h5>
-                <p className="stat-label">Em Débito</p>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* ✅ Modal de Cadastro - ESTRUTURA CORRIGIDA */}
+      {/* ✅ Modal de Cadastro */}
       {showModal && (
         <>
-          {/* Backdrop separado */}
           <div 
             className="modal-backdrop fade show"
             onClick={fecharModal}
           ></div>
           
-          {/* Modal principal */}
           <div 
             className="modal fade show" 
             style={{display: 'block'}} 
@@ -329,7 +351,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                 <div className="modal-header">
                   <h5 className="modal-title">
                     <i className="bi bi-person-plus me-2"></i>
-                    Novo Cliente
+                    {modalMode === 'create' ? 'Novo Cliente' : 'Editar Cliente'}
                   </h5>
                   <button
                     type="button"
@@ -386,22 +408,61 @@ export default function Clientes({ clientes = [], error }: Props) {
                         {errors.telefone && <div className="invalid-feedback">{errors.telefone}</div>}
                       </div>
 
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="saldo_inicial" className="form-label">Saldo Inicial</label>
-                        <input
-                          id="saldo_inicial"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          className={`form-control ${errors.saldo_inicial ? 'is-invalid' : ''}`}
-                          value={data.saldo_inicial}
-                          onChange={(e) => setData('saldo_inicial', e.target.value)}
-                          placeholder="0.00"
-                          disabled={processing}
-                        />
-                        {errors.saldo_inicial && <div className="invalid-feedback">{errors.saldo_inicial}</div>}
-                      </div>
+                      {modalMode === 'create' && (
+                        <div className="col-md-6 mb-3">
+                          <label htmlFor="saldo_inicial" className="form-label">
+                            Saldo Inicial (opcional)
+                          </label>
+                          <div className="input-group">
+                            <span className="input-group-text">R$</span>
+                            <input
+                              type="number"
+                              step="0.01"
+                              className={`form-control ${errors.saldo_inicial ? 'is-invalid' : ''}`}
+                              id="saldo_inicial"
+                              value={data.saldo_inicial}
+                              onChange={(e) => setData('saldo_inicial', e.target.value)}
+                              placeholder="0,00"
+                            />
+                          </div>
+                          {errors.saldo_inicial && (
+                            <div className="invalid-feedback d-block">
+                              {errors.saldo_inicial}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
+
+                    {/* ✅ CAMPO DESCRIÇÃO */}
+                    {modalMode === 'create' && (
+                      <div className="row">
+                        <div className="col-12">
+                          <label htmlFor="descricao" className="form-label">
+                            Descrição da Conta (opcional)
+                          </label>
+                          <textarea
+                            className={`form-control ${errors.descricao ? 'is-invalid' : ''}`}
+                            id="descricao"
+                            rows={3}
+                            value={data.descricao}
+                            onChange={(e) => setData('descricao', e.target.value)}
+                            placeholder="Ex: Compras do mês, Produtos diversos, etc..."
+                            maxLength={500}
+                          />
+                          <div className="form-text">
+                            <small className="text-muted">
+                              Descreva o que foi comprado ou o motivo do saldo inicial.
+                            </small>
+                          </div>
+                          {errors.descricao && (
+                            <div className="invalid-feedback d-block">
+                              {errors.descricao}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="modal-footer">
                     <button
@@ -425,7 +486,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                       ) : (
                         <>
                           <i className="bi bi-check-lg me-2"></i>
-                          Salvar Cliente
+                          {modalMode === 'create' ? 'Salvar Cliente' : 'Atualizar Cliente'}
                         </>
                       )}
                     </button>

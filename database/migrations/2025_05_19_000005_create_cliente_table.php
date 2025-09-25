@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nome', 100);
             $table->string('email', 150)->unique();
             $table->string('telefone', 20)->nullable();
-            $table->unsignedBigInteger('cliente_id')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('comercio_id');
             $table->foreign('comercio_id')->references('id')->on('comercio')->onDelete('cascade');

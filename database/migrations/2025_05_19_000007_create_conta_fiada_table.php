@@ -14,13 +14,21 @@ return new class extends Migration
         Schema::create('conta_fiada', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cliente_id');
-            $table->decimal('saldo', 10, 2)->default(0);
-            $table->timestamps();
             $table->unsignedBigInteger('comercio_id');
+            $table->decimal('saldo', 10, 2)->default(0);
+            $table->text('descricao')->nullable(); // ✅ ADICIONADO AQUI
+            $table->timestamps();
 
-            $table->foreign('comercio_id')->references('id')->on('comercio')->onDelete('cascade');
-
+            // Foreign keys
             $table->foreign('cliente_id')->references('id')->on('cliente')->onDelete('cascade');
+            $table->foreign('comercio_id')->references('id')->on('comercio')->onDelete('cascade');
+            
+            // ✅ ÍNDICES PARA PERFORMANCE
+            $table->index('cliente_id');
+            $table->index('comercio_id');
+            
+            // ✅ CONSTRAINT: Um cliente só pode ter uma conta fiada por comércio
+            $table->unique(['cliente_id', 'comercio_id']);
         });
     }
 
