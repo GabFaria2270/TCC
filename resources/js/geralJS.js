@@ -7,10 +7,6 @@ import './reultilizaveis/validation-system.js';
 import './reultilizaveis/cnpj-formatter.js';
 import './cadastro/cadastro.js';
 import './login/login.js';
-import './gerenciamento/gerenciamento.js';
 import './login/rate-limiting.js';
 import './cadastro/rate-limiting.js';
-
-// ✅ NOVA IMPORTAÇÃO
-import './gerenciamento/clientes.js';
 

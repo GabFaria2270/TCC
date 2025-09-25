@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ClienteController; // ✅ NAMESPACE Auth CORRETO
+use App\Http\Controllers\Auth\ProdutoController;
 
 Route::get('/', function () {
     return view('home');
@@ -53,6 +54,13 @@ Route::middleware(['require.token'])->group(function () {
         // Atualizar cliente
         Route::put('clientes/{cliente}', [ClienteController::class, 'update'])
             ->name('clientes.update');
+
+        // Produtos
+        Route::get('produtos', [ProdutoController::class, 'index'])
+            ->name('produtos.index');
+
+        Route::post('produtos', [ProdutoController::class, 'store'])
+            ->name('produtos.store');
     });
 });
 
