@@ -67,22 +67,22 @@ Route::middleware('auth')->group(function () {
 
 // Refresh Token via Cache
 Route::post('/refresh-token', function (Request $request) {
-    $usuario = Auth::usuario();
-    if (!$usuario) {
+    $user = Auth::user();
+    if (!$user) {
         return response()->json(['success' => false, 'message' => 'Não autenticado'], 401);
     }
     
     $tokenService = app(\App\Services\Auth\CacheTokenService::class);
-    $tokenData = $tokenService->getTokenData($usuario);
+    $tokenData = $tokenService->getTokenData($user);
     
     return response()->json([
         'success' => true,
         'auth' => $tokenData,
-        'usuario' => [
-            'id' => $usuario->id,
-            'nome' => $usuario->NOME,
-            'email' => $usuario->EMAIL,
-            'perfil' => $usuario->PERFIL,
+        'user' => [
+            'id' => $user->id,
+            'nome' => $user->NOME,
+            'email' => $user->EMAIL,
+            'perfil' => $user->PERFIL,
         ]
     ]);
 })->middleware(['web', 'cache.token.auth']);

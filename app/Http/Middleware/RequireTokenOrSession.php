@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\Auth\CacheTokenService;
-use App\Models\Usuario;
+use App\Models\user;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +56,7 @@ class RequireTokenOrSession
 
             if ($needsNewToken) {
                 try {
-                    $tokenData = $this->tokenService->getTokenData(Auth::usuario());
+                    $tokenData = $this->tokenService->getTokenData(Auth::user());
                     cookie()->queue(
                         cookie(
                             'auth_token',
@@ -71,13 +71,13 @@ class RequireTokenOrSession
                         )
                     );
                     Log::channel('security')->info('Token regenerado para sessão existente', [
-                        'usuario_id' => Auth::id(),
+                        'user_id' => Auth::id(),
                         'motivo' => $reason
                     ]);
                 } catch (\Exception $e) {
                     Log::warning('Falha ao regenerar token para sessão existente', [
                         'error' => $e->getMessage(),
-                        'usuario_id' => Auth::id(),
+                        'user_id' => Auth::id(),
                         'motivo' => $reason
                     ]);
                 }
@@ -97,12 +97,12 @@ class RequireTokenOrSession
                 $sessionId = $request->session()->getId();
                 if ($sessionId) {
                     $row = DB::table('sessions')->where('id', $sessionId)->first();
-                    if ($row && $row->usuario_id) {
-                        $usuarioRow = Usuario::find($row->usuario_id);
-                        if ($usuarioRow) {
-                            Auth::login($usuarioRow, false);
+                    if ($row && $row->user_id) {
+                        $userRow = user::find($row->user_id);
+                        if ($userRow) {
+                            Auth::login($userRow, false);
                             Log::channel('security')->info('Usuário restaurado a partir da linha da tabela sessions', [
-                                'usuario_id' => $usuarioRow->id,
+                                'user_id' => $userRow->id,
                                 'session_id' => $sessionId
                             ]);
                             // Agora que temos usuário autenticado, refaz a lógica de garantia de token
@@ -113,16 +113,16 @@ class RequireTokenOrSession
                             else if (!$this->tokenService->validateToken($existingToken)) { $needsNewToken = true; $reason = 'invalido_pos_restore'; }
                             if ($needsNewToken) {
                                 try {
-                                    $tokenData = $this->tokenService->getTokenData(Auth::usuario());
+                                    $tokenData = $this->tokenService->getTokenData(Auth::user());
                                     cookie()->queue(cookie('auth_token',$tokenData['token'],1440,'/',null,false,true,false,'Lax'));
                                     Log::channel('security')->info('Token regenerado após restauração de usuário via sessão DB', [
-                                        'usuario_id' => Auth::id(),
+                                        'user_id' => Auth::id(),
                                         'motivo' => $reason
                                     ]);
                                 } catch (\Exception $e) {
                                     Log::channel('security')->warning('Falha ao regenerar token após restauração de usuário', [
                                         'error' => $e->getMessage(),
-                                        'usuario_id' => Auth::id(),
+                                        'user_id' => Auth::id(),
                                         'motivo' => $reason
                                     ]);
                                 }
@@ -156,25 +156,25 @@ class RequireTokenOrSession
             return $this->deny($request, 'Token inválido ou expirado');
         }
 
-        $usuario = Usuario::find($data['usuario_id']);
-        if (!$usuario) {
+        $user = user::find($data['user_id']);
+        if (!$user) {
             Log::channel('security')->warning('Acesso negado: usuário não encontrado', [
-                'usuario_id' => $data['usuario_id']
+                'user_id' => $data['user_id']
             ]);
             return $this->deny($request, 'Usuário não encontrado');
         }
 
         // 3. Faz login para contexto da request e cria sessão persistente
-        Auth::login($usuario, false);
+        Auth::login($user, false);
         if ($request->hasSession()) {
             if (!$request->session()->isStarted()) {
                 $request->session()->start();
             }
             $request->session()->regenerate();
-            $request->session()->put('_token_auth_usuario', $usuario->id);
+            $request->session()->put('_token_auth_user', $user->id);
         }
         Log::channel('security')->info('Sessão reconstruída via token', [
-            'usuario_id' => $usuario->id,
+            'user_id' => $user->id,
             'ip' => $request->ip()
         ]);
 
