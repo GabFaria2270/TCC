@@ -1,5 +1,5 @@
 <?php
-// filepath: c:\Users\User\Desktop\TCC\app\Http\Controllers\Auth\ClienteController.php
+// filepath: c:\usuarios\usuario\Desktop\TCC\app\Http\Controllers\Auth\ClienteController.php
 
 namespace App\Http\Controllers\Auth;
 
@@ -27,11 +27,11 @@ class ClienteController extends Controller
     public function index()
     {
         try {
-            $user = Auth::user();
+            $usuario = Auth::usuario();
             
             Log::channel('security')->info('Acessando lista de clientes', [
-                'user_id' => $user->ID,
-                'email' => $user->EMAIL,
+                'usuario_id' => $usuario->ID,
+                'email' => $usuario->EMAIL,
             ]);
             
             $result = $this->clienteService->listarClientes();
@@ -50,7 +50,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro no ClienteController@index', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::id(),
+                'usuario_id' => Auth::id(),
             ]);
 
             return Inertia::render('gerenciamento/Clientes', [
@@ -66,11 +66,11 @@ class ClienteController extends Controller
     public function create()
     {
         try {
-            $user = Auth::user();
+            $usuario = Auth::usuario();
             
             Log::channel('security')->info('Acessando formulário de cadastro de cliente', [
-                'user_id' => $user->ID,
-                'email' => $user->EMAIL,
+                'usuario_id' => $usuario->ID,
+                'email' => $usuario->EMAIL,
             ]);
 
             return Inertia::render('gerenciamento/ClienteForm', [
@@ -80,7 +80,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro no ClienteController@create', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::id(),
+                'usuario_id' => Auth::id(),
             ]);
 
             return redirect()
@@ -95,12 +95,12 @@ class ClienteController extends Controller
     public function store(ClienteRequest $request)
     {
         try {
-            $user = Auth::user();
+            $usuario = Auth::usuario();
             
             Log::channel('security')->info('Tentativa de cadastro de cliente', [
                 'nome' => $request->validated()['nome'],
                 'email' => $request->validated()['email'],
-                'user_id' => $user->ID,
+                'usuario_id' => $usuario->ID,
                 'ip' => $request->ip(),
             ]);
 
@@ -110,7 +110,7 @@ class ClienteController extends Controller
                 Log::channel('security')->info('Cliente cadastrado com sucesso', [
                     'cliente_id' => $result['cliente']->id,
                     'nome' => $result['cliente']->nome,
-                    'user_id' => $user->ID,
+                    'usuario_id' => $usuario->ID,
                 ]);
 
                 // ✅ RESPOSTA PARA MODAL (JSON)
@@ -156,7 +156,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro no cadastro de cliente', [
                 'error' => $e->getMessage(),
-                'user_id' => Auth::id(),
+                'usuario_id' => Auth::id(),
             ]);
 
             if ($request->expectsJson()) {
@@ -178,11 +178,11 @@ class ClienteController extends Controller
     public function show($id)
     {
         try {
-            $user = Auth::user();
+            $usuario = Auth::usuario();
             
             Log::channel('security')->info('Acessando detalhes do cliente', [
                 'cliente_id' => $id,
-                'user_id' => $user->ID,
+                'usuario_id' => $usuario->ID,
             ]);
 
             return Inertia::render('gerenciamento/ClienteDetalhes', [
@@ -194,7 +194,7 @@ class ClienteController extends Controller
             Log::channel('security')->error('Erro no ClienteController@show', [
                 'error' => $e->getMessage(),
                 'cliente_id' => $id,
-                'user_id' => Auth::id(),
+                'usuario_id' => Auth::id(),
             ]);
 
             return redirect()
@@ -210,7 +210,7 @@ class ClienteController extends Controller
     {
         Log::channel('security')->info('Tentativa de acessar edição de cliente (não implementado)', [
             'cliente_id' => $id,
-            'user_id' => Auth::id(),
+            'usuario_id' => Auth::id(),
         ]);
 
         return redirect()
@@ -225,7 +225,7 @@ class ClienteController extends Controller
     {
         Log::channel('security')->info('Tentativa de atualizar cliente (não implementado)', [
             'cliente_id' => $id,
-            'user_id' => Auth::id(),
+            'usuario_id' => Auth::id(),
         ]);
 
         return redirect()
