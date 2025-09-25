@@ -10,20 +10,19 @@ interface Cliente {
   conta_fiada: {
     saldo: number;
     saldo_formatado: string;
-    descricao?: string; // ✅ ADICIONAR DESCRIÇÃO
-    status: string; // ✅ ADICIONAR STATUS
+    descricao?: string; 
+    status: string;
   };
   created_at: string;
 }
 
-// ✅ CORRIGIR: Adicionar índice para satisfazer FormDataType
 interface ClienteFormData {
   nome: string;
   email: string;
   telefone: string;
   saldo_inicial: string;
   descricao: string;
-  [key: string]: string; // ✅ ISSO RESOLVE O ERRO 2344
+  [key: string]: string; 
 }
 
 interface Props {
@@ -36,12 +35,13 @@ export default function Clientes({ clientes = [], error }: Props) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // ✅ Estado do modal
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [clienteId, setClienteId] = useState<number | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [clienteDetalhes, setClienteDetalhes] = useState<Cliente | null>(null);
   
-  // ✅ Formulário do modal
+  
   const { data, setData, post, put, processing, errors, reset } = useForm<ClienteFormData>({
     nome: '',
     email: '',
@@ -54,7 +54,7 @@ export default function Clientes({ clientes = [], error }: Props) {
     h1Ref.current?.focus(); 
   }, []);
 
-  // Filtrar clientes baseado na pesquisa
+
   const clientesArray = Array.isArray(clientes) ? clientes : [];
   const clientesFiltrados = clientesArray.filter(cliente =>
     cliente.nome.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,7 +68,7 @@ export default function Clientes({ clientes = [], error }: Props) {
     });
   };
 
-  // ✅ Função para abrir o modal
+
   const abrirModal = (modo: 'create' | 'edit', cliente?: Cliente) => {
     setModalMode(modo);
     setShowModal(true);
@@ -93,13 +93,22 @@ export default function Clientes({ clientes = [], error }: Props) {
     }, 100);
   };
 
-  // ✅ Função para fechar o modal
+  
   const fecharModal = () => {
     setShowModal(false);
     reset();
   };
 
-  // ✅ CORRIGIR: Função para submeter o formulário
+  const abrirDetalhesConta = (cliente: Cliente) => {
+    setClienteDetalhes(cliente);
+    setShowDetailsModal(true);
+  };
+
+  const fecharDetalhesConta = () => {
+    setShowDetailsModal(false);
+    setClienteDetalhes(null);
+  };
+  
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -109,14 +118,14 @@ export default function Clientes({ clientes = [], error }: Props) {
     };
     
     if (modalMode === 'create') {
-      post('/gerenciamento/clientes', { // ✅ USAR URL DIRETA
+      post('/gerenciamento/clientes', { 
         onSuccess,
         onError: () => {
           console.log('Erro ao cadastrar cliente:', errors);
         }
       });
-    } else if (clienteId) { // ✅ VERIFICAR SE clienteId NÃO É NULL
-      put(`/gerenciamento/clientes/${clienteId}`, { // ✅ USAR URL DIRETA
+    } else if (clienteId) { 
+      put(`/gerenciamento/clientes/${clienteId}`, { 
         onSuccess,
         onError: () => {
           console.log('Erro ao atualizar cliente:', errors);
@@ -125,15 +134,19 @@ export default function Clientes({ clientes = [], error }: Props) {
     }
   };
 
-  // ✅ Função para fechar modal com ESC
+  
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showModal) {
-        fecharModal();
+      if (e.key === 'Escape') {
+        if (showDetailsModal) {
+          fecharDetalhesConta();
+        } else if (showModal) {
+          fecharModal();
+        }
       }
     };
 
-    if (showModal) {
+    if (showModal || showDetailsModal) {
       document.addEventListener('keydown', handleEsc);
       document.body.style.overflow = 'hidden';
     } else {
@@ -144,7 +157,7 @@ export default function Clientes({ clientes = [], error }: Props) {
       document.removeEventListener('keydown', handleEsc);
       document.body.style.overflow = 'unset';
     };
-  }, [showModal]);
+  }, [showModal, showDetailsModal]);
 
   return (
     <GerenciamentoLayout title="Clientes">
@@ -267,15 +280,6 @@ export default function Clientes({ clientes = [], error }: Props) {
                             >
                               {cliente.conta_fiada.saldo_formatado}
                             </span>
-                            {/* ✅ ADICIONAR DESCRIÇÃO DO CLIENTE */}
-                            {cliente.conta_fiada.descricao && (
-                              <small className="conta-descricao" title={cliente.conta_fiada.descricao}>
-                                {cliente.conta_fiada.descricao.length > 30 
-                                  ? `${cliente.conta_fiada.descricao.substring(0, 30)}...` 
-                                  : cliente.conta_fiada.descricao
-                                }
-                              </small>
-                            )}
                           </div>
                         </td>
                         <td>
@@ -288,6 +292,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                             <button 
                               className="btn-action btn-view"
                               title="Ver detalhes"
+                              onClick={() => abrirDetalhesConta(cliente)}
                             >
                               <i className="bi bi-eye"></i>
                             </button>
@@ -333,7 +338,7 @@ export default function Clientes({ clientes = [], error }: Props) {
         </div>
       </div>
 
-      {/* ✅ Modal de Cadastro */}
+      {/* ================= MODAL: CADASTRO DE CLIENTE ================= */}
       {showModal && (
         <>
           <div 
@@ -492,6 +497,82 @@ export default function Clientes({ clientes = [], error }: Props) {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ================= MODAL: DETALHES DO CLIENTE ================= */}
+      {showDetailsModal && clienteDetalhes && (
+        <>
+          <div
+            className="modal-backdrop fade show"
+            onClick={fecharDetalhesConta}
+          ></div>
+
+          <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
+            <div className="modal-dialog modal-lg">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    <i className="bi bi-eye me-2"></i>
+                    Detalhes do Cliente
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={fecharDetalhesConta}
+                    aria-label="Fechar modal"
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <dl className="row mb-0 cliente-detalhes-list">
+                    <dt className="col-sm-4 cliente-detalhes-label">Nome</dt>
+                    <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
+                      {clienteDetalhes.nome}
+                    </dd>
+
+                    <dt className="col-sm-4 cliente-detalhes-label">E-mail</dt>
+                    <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
+                      {clienteDetalhes.email}
+                    </dd>
+
+                    {clienteDetalhes.telefone_formatado && (
+                      <>
+                        <dt className="col-sm-4 cliente-detalhes-label">Telefone</dt>
+                        <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
+                          {clienteDetalhes.telefone_formatado}
+                        </dd>
+                      </>
+                    )}
+
+                    <dt className="col-sm-4 cliente-detalhes-label">Status da Conta</dt>
+                    <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
+                      {clienteDetalhes.conta_fiada.status}
+                    </dd>
+
+                    <dt className="col-sm-4 cliente-detalhes-label">Saldo</dt>
+                    <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
+                      {clienteDetalhes.conta_fiada.saldo_formatado}
+                    </dd>
+
+                    <dt className="col-sm-4 cliente-detalhes-label">Descrição</dt>
+                    <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value cliente-detalhes-descricao text-break">
+                      {clienteDetalhes.conta_fiada.descricao || 'Sem descrição informada.'}
+                    </dd>
+
+                    <dt className="col-sm-4 cliente-detalhes-label">Cadastrado em</dt>
+                    <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value">
+                      {new Date(clienteDetalhes.created_at).toLocaleDateString('pt-BR')}
+                    </dd>
+                  </dl>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={fecharDetalhesConta}>
+                    Fechar
+                  </button>
+                </div>
               </div>
             </div>
           </div>

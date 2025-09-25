@@ -2,7 +2,7 @@
    ESTILOS ESPECÍFICOS DOS CLIENTES
    ========================= */
 
-/* Header da página */
+/* ---------- Página: Layout principal ---------- */
 .clientes-header {
     margin-bottom: 2rem;
 }
@@ -340,6 +340,16 @@
     color: white;
 }
 
+.btn-edit {
+    color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-edit:hover {
+    background: #ffc107;
+    color: #212529;
+}
+
 /* Estado vazio */
 .clientes-empty-state {
     text-align: center;
@@ -439,24 +449,59 @@
     align-items: flex-start;
 }
 
-.conta-descricao {
-    color: #6c757d;
-    font-size: 0.75rem;
-    font-style: italic;
-    max-width: 200px; /* ✅ AUMENTADO PARA MOSTRAR MAIS TEXTO */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    cursor: help;
-    background: #f8f9fa;
-    padding: 2px 6px;
-    border-radius: 3px;
-    border: 1px solid #e9ecef;
+/* ---------- Modais: Cadastro de Cliente ---------- */
+/* (Customizações adicionais podem ser incluídas aqui) */
+
+/* ---------- Modais: Detalhes do Cliente ---------- */
+.cliente-detalhes {
+    margin-top: 1.5rem;
 }
 
-.conta-descricao:hover {
-    color: #495057;
-    background: #e9ecef;
+.cliente-detalhes-list {
+    margin: 0;
+    row-gap: 0.75rem;
+}
+
+.cliente-detalhes-list dt,
+.cliente-detalhes-list dd {
+    margin-bottom: 0;
+}
+
+.cliente-detalhes-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6c757d;
+    padding-top: 0.35rem;
+}
+
+.cliente-detalhes-value {
+    display: block;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    background: #f8f9fa;
+    color: #212529;
+    line-height: 1.4;
+    min-height: 44px;
+}
+
+.cliente-detalhes-descricao {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.cliente-detalhes-descricao::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cliente-detalhes-descricao::-webkit-scrollbar-thumb {
+    background: #ced4da;
+    border-radius: 3px;
+}
+
+.cliente-detalhes-descricao::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd;
 }
 
 /* =========================
