@@ -1,5 +1,5 @@
 <?php
-// filepath: c:\users\user\Desktop\TCC\app\Http\Controllers\Auth\ClienteController.php
+// filepath: c:\Users\User\Desktop\TCC\app\Http\Controllers\Auth\ClienteController.php
 
 namespace App\Http\Controllers\Auth;
 
