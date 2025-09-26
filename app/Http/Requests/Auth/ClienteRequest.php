@@ -74,11 +74,24 @@ class ClienteRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $saldo = $this->saldo_inicial;
+
+        // Remove pontos de milhar e troca vírgula por ponto
+        if (is_string($saldo)) {
+            $saldo = str_replace('.', '', $saldo);
+            $saldo = str_replace(',', '.', $saldo);
+        }
+
+        // Se não for numérico ou estiver vazio, vira null
+        if ($saldo === '' || $saldo === null || !is_numeric($saldo)) {
+            $saldo = null;
+        }
+
         $this->merge([
             'nome' => $this->nome ? ucwords(strtolower(trim($this->nome))) : null,
             'email' => $this->email ? strtolower(trim($this->email)) : null,
             'telefone' => $this->telefone ? preg_replace('/[^0-9]/', '', $this->telefone) : null,
-            'saldo_inicial' => $this->saldo_inicial === '' ? null : $this->saldo_inicial,
+            'saldo_inicial' => $saldo,
             'descricao' => $this->descricao ? trim($this->descricao) : null,
         ]);
     }
