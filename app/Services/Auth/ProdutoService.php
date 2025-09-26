@@ -211,25 +211,9 @@ class ProdutoService
                 'categoria_id' => $categoriaId,
             ]);
 
-            // Atualiza quantidade no Estoque e, se existir, na coluna do Produto (mantendo consistência atual)
-            if (isset($data['quantidade'])) {
-                $quantidade = (int) $data['quantidade'];
-                Estoque::updateOrCreate(
-                    [
-                        'produto_id' => $produto->id,
-                        'comercio_id' => $comercio->id,
-                    ],
-                    [
-                        'quantidade' => $quantidade,
-                    ]
-                );
-
-                // Se a coluna "quantidade_estoque" continuar sendo usada na view, mantém sincronizada
-                if ($produto->isFillable('quantidade_estoque')) {
-                    $produto->quantidade_estoque = $quantidade;
-                    $produto->save();
-                }
-            }
+            // A manipulação de estoque agora é feita pelos endpoints específicos
+            // de movimentos (entrada/saída/ajuste). Mantemos o update do produto
+            // focado apenas nos seus próprios campos.
 
             DB::commit();
 

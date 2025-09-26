@@ -151,6 +151,13 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
     </nav>
   );
 
+  // Fecha a sidebar ao clicar no conteúdo principal em telas pequenas
+  const onMainClick = () => {
+    if (!isDesktop && sidebarOpen) {
+      closeSidebar();
+    }
+  };
+
   return (
     <>
       <Head title={title ?? 'Gerenciamento'} />
@@ -158,10 +165,9 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         <Toast message={flash.success} type="success" />
         <Toast message={flash.error} type="error" />
         <Toast message={flash.info} type="info" />
-        {renderSidebar()}
-        {!isDesktop && sidebarOpen && <div className="offcanvas-backdrop fade show" onClick={closeSidebar} />}
+  {renderSidebar()}
 
-        <main className="flex-grow-1">
+  <main className="flex-grow-1" onClick={onMainClick}>
           <header className="d-flex align-items-center justify-content-between p-3 border-bottom bg-white">
             <div className="d-flex align-items-center gap-2">
               {!isDesktop && (

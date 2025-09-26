@@ -87,12 +87,5 @@ body { font-size: 1.125rem; }
     }
     /* Quando visível no mobile, exibimos com translateX(0) */
     body.sidebar-open #sidebar { transform: translateX(0); }
-    /* Overlay clicável quando a sidebar está aberta */
-    body.sidebar-open::after {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,.35);
-        z-index: 1030;
-    }
+    /* Overlay removido: não exibir backdrop quando a sidebar está aberta */
 }

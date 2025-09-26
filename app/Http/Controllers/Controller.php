@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 /**
  * Controller base do Laravel
  * Classe abstrata herdada por todos os controllers
@@ -14,6 +16,7 @@ namespace App\Http\Controllers;
  */
 abstract class Controller
 {
+    use AuthorizesRequests;
     // Métodos comuns podem ser adicionados aqui
     // Exemplo: protected function successResponse(), logAction(), etc.
 }

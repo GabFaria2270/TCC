@@ -70,6 +70,18 @@ Route::middleware(['require.token'])->group(function () {
         Route::delete('produtos/{produto}', [ProdutoController::class, 'destroy'])
             ->name('produtos.destroy');
 
+        // Estoque - movimentos (entrada/saída/ajuste)
+        Route::post('produtos/{produto}/estoque/entrada', [ProdutoController::class, 'estoqueEntrada'])
+            ->name('produtos.estoque.entrada');
+        Route::post('produtos/{produto}/estoque/saida', [ProdutoController::class, 'estoqueSaida'])
+            ->name('produtos.estoque.saida');
+        Route::post('produtos/{produto}/estoque/ajuste', [ProdutoController::class, 'estoqueAjuste'])
+            ->name('produtos.estoque.ajuste');
+
+        // Histórico de movimentos do produto
+        Route::get('produtos/{produto}/historico', [ProdutoController::class, 'historico'])
+            ->name('produtos.historico');
+
         Route::delete('clientes/{cliente}/conta-fiada', [ClienteController::class, 'pagarContaFiada'])->name('clientes.pagarContaFiada');
     });
 });
