@@ -232,4 +232,23 @@ class ClienteController extends Controller
             ->route('clientes.index')
             ->with('info', 'Funcionalidade de atualização em desenvolvimento.');
     }
+
+    /**
+     * ✅ PAGAR CONTA FIADA
+     */
+    public function pagarContaFiada($clienteId)
+    {
+        try {
+            $user = Auth::user();
+            $result = $this->clienteService->pagarContaFiada($clienteId, $user);
+            if ($result['success']) {
+                // Retorne um redirect Inertia para a tela de clientes
+                return redirect()->route('clientes.index')->with('success', 'Conta fiada paga/deletada com sucesso!');
+            }
+            return redirect()->route('clientes.index')->with('error', $result['error'] ?? 'Erro ao pagar conta fiada.');
+        } catch (\Exception $e) {
+            \Log::error('Erro ao pagar conta fiada', ['error' => $e->getMessage()]);
+            return redirect()->route('clientes.index')->with('error', 'Erro interno ao pagar conta fiada.');
+        }
+    }
 }

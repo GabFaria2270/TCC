@@ -198,4 +198,29 @@ class ClienteService
             ];
         }
     }
+
+    public function pagarContaFiada($clienteId, $usuario)
+    {
+        try {
+            $cliente = Cliente::where('id', $clienteId)
+                ->where('comercio_id', $usuario->comercio->id)
+                ->first();
+
+            if (!$cliente) {
+                return ['success' => false, 'error' => 'Cliente não encontrado.'];
+            }
+
+            $contaFiada = $cliente->contaFiada;
+            if (!$contaFiada) {
+                return ['success' => false, 'error' => 'Conta fiada não encontrada.'];
+            }
+
+            $contaFiada->delete(); // ou zere o saldo se preferir
+
+            return ['success' => true];
+        } catch (\Exception $e) {
+            \Log::error('Erro ao pagar conta fiada', ['error' => $e->getMessage()]);
+            return ['success' => false, 'error' => 'Erro interno ao pagar conta fiada.'];
+        }
+    }
 }

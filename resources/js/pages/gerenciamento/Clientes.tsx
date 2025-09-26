@@ -40,6 +40,8 @@ export default function Clientes({ clientes = [], error }: Props) {
   const [clienteId, setClienteId] = useState<number | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [clienteDetalhes, setClienteDetalhes] = useState<Cliente | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [clienteParaPagar, setClienteParaPagar] = useState<Cliente | null>(null);
   
   
   const { data, setData, post, put, processing, errors, reset } = useForm<ClienteFormData>({
@@ -159,6 +161,30 @@ export default function Clientes({ clientes = [], error }: Props) {
     };
   }, [showModal, showDetailsModal]);
 
+  const abrirConfirmarPagamento = (cliente: Cliente) => {
+    setClienteParaPagar(cliente);
+    setShowConfirmModal(true);
+  };
+
+  const fecharConfirmarPagamento = () => {
+    setShowConfirmModal(false);
+    setClienteParaPagar(null);
+  };
+
+  const pagarContaFiada = () => {
+    if (!clienteParaPagar) return;
+    router.delete(`/gerenciamento/clientes/${clienteParaPagar.id}/conta-fiada`, {
+      preserveScroll: true,
+      onSuccess: () => {
+        fecharConfirmarPagamento();
+      },
+      onError: () => {
+        fecharConfirmarPagamento();
+        // Exiba um toast/alerta se quiser
+      }
+    });
+  };
+
   return (
     <GerenciamentoLayout title="Clientes">
       <Head title="Clientes" />
@@ -269,17 +295,21 @@ export default function Clientes({ clientes = [], error }: Props) {
                         </td>
                         <td>
                           <div className="conta-fiada-info">
-                            <span 
-                              className={`saldo-badge ${
-                                cliente.conta_fiada.saldo > 0 
-                                  ? 'saldo-positivo' 
-                                  : cliente.conta_fiada.saldo < 0 
-                                  ? 'saldo-negativo' 
-                                  : 'saldo-zero'
-                              }`}
-                            >
-                              {cliente.conta_fiada.saldo_formatado}
-                            </span>
+                            {cliente.conta_fiada ? (
+                              <span 
+                                className={`saldo-badge ${
+                                  cliente.conta_fiada.saldo > 0 
+                                    ? 'saldo-positivo' 
+                                    : cliente.conta_fiada.saldo < 0 
+                                    ? 'saldo-negativo' 
+                                    : 'saldo-zero'
+                                }`}
+                              >
+                                {cliente.conta_fiada.saldo_formatado}
+                              </span>
+                            ) : (
+                              <span className="saldo-badge saldo-zero">—</span>
+                            )}
                           </div>
                         </td>
                         <td>
@@ -299,6 +329,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                             <button 
                               className="btn-action btn-wallet"
                               title="Conta fiada"
+                              onClick={() => abrirConfirmarPagamento(cliente)}
                             >
                               <i className="bi bi-wallet2"></i>
                             </button>
@@ -547,19 +578,14 @@ export default function Clientes({ clientes = [], error }: Props) {
                       </>
                     )}
 
-                    <dt className="col-sm-4 cliente-detalhes-label">Status da Conta</dt>
-                    <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
-                      {clienteDetalhes.conta_fiada.status}
-                    </dd>
-
                     <dt className="col-sm-4 cliente-detalhes-label">Saldo</dt>
                     <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
-                      {clienteDetalhes.conta_fiada.saldo_formatado}
+                      {clienteDetalhes.conta_fiada?.saldo_formatado || ''}
                     </dd>
 
                     <dt className="col-sm-4 cliente-detalhes-label">Descrição</dt>
                     <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value cliente-detalhes-descricao text-break">
-                      {clienteDetalhes.conta_fiada.descricao || 'Sem descrição informada.'}
+                      {clienteDetalhes.conta_fiada?.descricao || ''}
                     </dd>
 
                     <dt className="col-sm-4 cliente-detalhes-label">Cadastrado em</dt>
@@ -576,6 +602,50 @@ export default function Clientes({ clientes = [], error }: Props) {
               </div>
             </div>
           </div>
+        </>
+      )}
+
+      {/* ================= MODAL: CONFIRMAR PAGAMENTO ================= */}
+      {showConfirmModal && clienteParaPagar && (
+        <>
+          <div
+            className="modal-backdrop fade show"
+            onClick={fecharConfirmarPagamento}
+          ></div>
+
+          <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content text-center p-4">
+                <div className="modal-body">
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem', animation: 'spin 1.2s linear infinite' }}>
+                    <i className="bi bi-wallet2 text-warning wallet-animated"></i>
+                  </div>
+                  <h5 className="mb-3">Tem certeza que deseja pagar (deletar) a conta fiada deste cliente?</h5>
+                  <p className="mb-4">
+                    Esta ação é <strong>irreversível</strong>! O saldo da conta fiada será zerado e o histórico removido.
+                  </p>
+                  <div className="d-flex justify-content-center gap-3">
+                    <button className="btn btn-secondary" onClick={fecharConfirmarPagamento}>
+                      Cancelar
+                    </button>
+                    <button className="btn btn-danger" onClick={pagarContaFiada}>
+                      <i className="bi bi-check-circle me-2"></i>
+                      Sim, pagar conta fiada
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <style>
+            {`
+              @keyframes spin {
+                0% { transform: rotate(-10deg);}
+                50% { transform: rotate(10deg);}
+                100% { transform: rotate(-10deg);}
+              }
+            `}
+          </style>
         </>
       )}
     </GerenciamentoLayout>

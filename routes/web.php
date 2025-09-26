@@ -61,6 +61,8 @@ Route::middleware(['require.token'])->group(function () {
 
         Route::post('produtos', [ProdutoController::class, 'store'])
             ->name('produtos.store');
+
+        Route::delete('clientes/{cliente}/conta-fiada', [ClienteController::class, 'pagarContaFiada'])->name('clientes.pagarContaFiada');
     });
 });
 
