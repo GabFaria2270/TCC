@@ -15,14 +15,15 @@ class ProdutoController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $resultado = $this->produtoService->listar();
+        $resultado = $this->produtoService->listar($request);
 
         if ($resultado['success']) {
             return Inertia::render('gerenciamento/Produtos', [
                 'produtos' => $resultado['data']['produtos'],
                 'categorias' => $resultado['data']['categorias'],
+                'filters' => $resultado['data']['filters'] ?? [],
             ]);
         }
 
@@ -48,5 +49,35 @@ class ProdutoController extends Controller
         return back()
             ->withErrors($resultado['errors'] ?? [])
             ->withInput();
+    }
+
+    public function update(ProdutoRequest $request, \App\Models\Produto $produto)
+    {
+        $validated = $request->validated();
+
+        $resultado = $this->produtoService->atualizar($produto, $validated, $request);
+
+        if ($resultado['success']) {
+            return redirect()
+                ->route('produtos.index')
+                ->with('success', 'Produto atualizado com sucesso!');
+        }
+
+        return back()
+            ->withErrors($resultado['errors'] ?? [])
+            ->withInput();
+    }
+
+    public function destroy(Request $request, \App\Models\Produto $produto)
+    {
+        $resultado = $this->produtoService->remover($produto, $request);
+
+        if ($resultado['success']) {
+            return redirect()
+                ->route('produtos.index')
+                ->with('success', 'Produto removido com sucesso!');
+        }
+
+        return back()->with('error', $resultado['errors']['system'] ?? 'Não foi possível remover o produto.');
     }
 }
