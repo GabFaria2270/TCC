@@ -219,18 +219,67 @@ class ClienteController extends Controller
     }
 
     /**
-     * ✅ PROCESSA ATUALIZAÇÃO (FUTURO)
+     * PROCESSA ATUALIZAÇÃO DE CLIENTE
      */
-    public function update(Request $request, $id)
+    public function update(ClienteRequest $request, $id)
     {
-        Log::channel('security')->info('Tentativa de atualizar cliente (não implementado)', [
-            'cliente_id' => $id,
-            'user_id' => Auth::id(),
-        ]);
+        try {
+            $user = Auth::user();
+            Log::channel('security')->info('Tentativa de atualização de cliente', [
+                'cliente_id' => $id,
+                'user_id' => $user->ID,
+                'ip' => $request->ip(),
+            ]);
 
-        return redirect()
-            ->route('clientes.index')
-            ->with('info', 'Funcionalidade de atualização em desenvolvimento.');
+            $result = $this->clienteService->atualizar($id, $request->validated(), $request);
+
+            if ($result['success']) {
+                Log::channel('security')->info('Cliente atualizado com sucesso', [
+                    'cliente_id' => $result['cliente']->id,
+                    'nome' => $result['cliente']->nome,
+                    'user_id' => $user->ID,
+                ]);
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Cliente atualizado com sucesso!',
+                        'cliente' => $result['cliente'],
+                    ]);
+                }
+                return redirect()->route('clientes.index')->with('success', 'Cliente atualizado com sucesso!');
+            }
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $result['errors'],
+                    'message' => 'Falha na atualização do cliente.',
+                ], 422);
+            }
+            return back()->withErrors($result['errors'])->withInput();
+        } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Dados de entrada inválidos.',
+                ], 422);
+            }
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::channel('security')->error('Erro na atualização de cliente', [
+                'error' => $e->getMessage(),
+                'cliente_id' => $id,
+                'user_id' => Auth::id(),
+            ]);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erro interno do sistema.',
+                ], 500);
+            }
+            return back()->with('error', 'Erro interno. Tente novamente.')->withInput();
+        }
     }
 
     /**

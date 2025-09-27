@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Head, router } from '@inertiajs/react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-import ClienteForm from '../../components/ClienteForm';
+import ClienteCreateModal from '../../components/ClienteCreateModal';
+import ClienteEditModal from '../../components/ClienteEditModal';
 import ClienteDetalhesModal from '../../components/ClienteDetalhesModal';
 import ClienteTabela from '../../components/ClienteTabela';
 import ConfirmarPagamentoModal from '../../components/ConfirmarPagamentoModal';
@@ -113,6 +114,19 @@ export default function Clientes({ clientes = [], error }: Props) {
     };
   }, [showModal, showDetailsModal]);
 
+  const clienteComContaFiada = (cliente?: Cliente) => {
+    if (!cliente) return undefined;
+    return {
+      ...cliente,
+      conta_fiada: {
+        saldo: cliente.conta_fiada?.saldo ?? 0,
+        saldo_formatado: cliente.conta_fiada?.saldo_formatado ?? 'R$ 0,00',
+        descricao: cliente.conta_fiada?.descricao ?? '',
+        status: cliente.conta_fiada?.status ?? '',
+      },
+    };
+  };
+
   return (
     <GerenciamentoLayout title="Clientes">
       <Head title="Clientes" />
@@ -147,23 +161,66 @@ export default function Clientes({ clientes = [], error }: Props) {
             </button>
           </div>
         </div>
+        {/* Barra de busca */}
+        <div className="clientes-search-container">
+          <div className="search-input-group">
+            <i className="bi bi-search search-icon" aria-hidden="true"></i>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Buscar por nome ou e-mail..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              maxLength={100}
+              aria-label="Buscar clientes"
+            />
+          </div>
+        </div>
         {/* Adicione o contador aqui */}
         <div className="clientes-counter">
           {clientesFiltrados.length} de {clientesArray.length} clientes
         </div>
       </div>
 
-      <ClienteTabela
-        clientes={clientesFiltrados}
-        abrirDetalhes={abrirDetalhesConta}
-        abrirConfirmarPagamento={abrirConfirmarPagamento}
-        abrirModal={abrirModal}
-      />
+      {/* Mensagem de vazio ou tabela */}
+      {clientesArray.length === 0 ? (
+        <div className="clientes-empty-state">
+          <i className="bi bi-people clientes-empty-icon"></i>
+          <h3>Nenhum cliente cadastrado</h3>
+          <p>Cadastre seu primeiro cliente para começar a gerenciar contas fiadas.</p>
+          <button className="btn btn-primary" onClick={() => abrirModal('create')}>
+            <i className="bi bi-plus-lg"></i> Cadastrar Primeiro Cliente
+          </button>
+        </div>
+      ) : clientesFiltrados.length === 0 ? (
+        <div className="clientes-empty-state">
+          <i className="bi bi-search clientes-empty-icon"></i>
+          <h3>Nenhum resultado encontrado</h3>
+          <p>Não encontramos clientes com esse nome ou e-mail.</p>
+        </div>
+      ) : (
+        <ClienteTabela
+          clientes={clientesFiltrados}
+          abrirDetalhes={abrirDetalhesConta}
+          abrirConfirmarPagamento={abrirConfirmarPagamento}
+          abrirModal={abrirModal}
+        />
+      )}
 
-      {showModal && (
-        <ClienteForm
-          cliente={modalMode === 'edit' ? clientesArray.find(c => c.id === clienteId) : undefined}
-          modo={modalMode}
+      {modalMode === 'create' && showModal && (
+        <ClienteCreateModal
+          show={showModal}
+          onClose={fecharModal}
+          onSuccess={() => {
+            fecharModal();
+            router.get('/gerenciamento/clientes');
+          }}
+        />
+      )}
+      {modalMode === 'edit' && showModal && clienteId !== null && (
+        <ClienteEditModal
+          show={showModal}
+          cliente={clienteComContaFiada(clientesArray.find(c => c.id === clienteId))!}
           onClose={fecharModal}
           onSuccess={() => {
             fecharModal();

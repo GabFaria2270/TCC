@@ -187,4 +187,92 @@ class ClienteService
             return ['success' => false, 'error' => 'Erro interno ao pagar conta fiada.'];
         }
     }
+
+    /**
+     * Atualiza um cliente e sua conta fiada
+     */
+    public function atualizar(int $clienteId, array $data, $request): array
+    {
+        try {
+            DB::beginTransaction();
+
+            $usuario = Auth::user();
+            $comercio = $usuario->comercio;
+
+            if (!$comercio) {
+                DB::rollback();
+                return [
+                    'success' => false,
+                    'errors' => ['system' => 'Comércio não encontrado para o usuário.'],
+                    'reason' => 'comercio_not_found'
+                ];
+            }
+
+            // Busca cliente do comércio
+            $cliente = Cliente::where('id', $clienteId)
+                ->where('comercio_id', $comercio->id)
+                ->first();
+
+            if (!$cliente) {
+                DB::rollback();
+                return [
+                    'success' => false,
+                    'errors' => ['system' => 'Cliente não encontrado.'],
+                    'reason' => 'cliente_not_found'
+                ];
+            }
+
+            // Verifica se o email está sendo alterado para um já existente
+            if (isset($data['email']) && $data['email'] !== $cliente->email) {
+                $emailExists = Cliente::where('email', $data['email'])
+                    ->where('comercio_id', $comercio->id)
+                    ->where('id', '!=', $clienteId)
+                    ->exists();
+                if ($emailExists) {
+                    DB::rollback();
+                    return [
+                        'success' => false,
+                        'errors' => ['email' => 'Este e-mail já está cadastrado neste comércio.'],
+                        'reason' => 'email_exists'
+                    ];
+                }
+            }
+
+            // Atualiza cliente
+            $cliente->nome = $data['nome'];
+            $cliente->email = $data['email'];
+            $cliente->telefone = $data['telefone'] ?? null;
+            $cliente->save();
+
+            // Atualiza conta fiada
+            $contaFiada = $cliente->contaFiada;
+            if ($contaFiada) {
+                $contaFiada->saldo = isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' ? floatval($data['saldo_inicial']) : 0.00;
+                $contaFiada->descricao = isset($data['descricao']) ? trim($data['descricao']) : '';
+                $contaFiada->save();
+            }
+
+            DB::commit();
+            $cliente->load('contaFiada');
+            return [
+                'success' => true,
+                'cliente' => $cliente,
+                'reason' => 'success'
+            ];
+        } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollback();
+            return [
+                'success' => false,
+                'errors' => ['system' => 'Erro de banco de dados: ' . $e->getMessage()],
+                'reason' => 'database_error'
+            ];
+        } catch (\Exception $e) {
+            DB::rollback();
+            return [
+                'success' => false,
+                'errors' => ['system' => 'Erro interno: ' . $e->getMessage()],
+                'reason' => 'system_error'
+            ];
+        }
+    }
 }
