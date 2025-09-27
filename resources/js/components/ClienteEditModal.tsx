@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { formatarTelefone, formatarMoeda } from '../utils/formatters';
+import { useInertiaPut } from './useInertiaPut';
 
 interface ClienteEditModalProps {
   show: boolean;
@@ -15,6 +17,8 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
     descricao: '',
     saldo_inicial: '',
   });
+  const [loading, setLoading] = useState(false);
+  const inertiaPut = useInertiaPut();
 
   // Preenche os campos ao abrir o modal
   useEffect(() => {
@@ -30,7 +34,28 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
   }, [show, cliente]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    if (id === 'saldo_inicial') {
+      setForm({ ...form, [id]: formatarMoeda(value) });
+    } else if (id === 'telefone') {
+      setForm({ ...form, [id]: formatarTelefone(value) });
+    } else {
+      setForm({ ...form, [id]: value });
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    inertiaPut(`/gerenciamento/clientes/${cliente.id}`, form, {
+      onSuccess: () => {
+        setLoading(false);
+        onSuccess();
+      },
+      onError: () => {
+        setLoading(false);
+      },
+    });
   };
 
   return !show ? null : (
@@ -43,22 +68,30 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
               <h5 className="modal-title">Editar Cliente</h5>
               <button type="button" className="btn-close" onClick={onClose} aria-label="Fechar modal"></button>
             </div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label htmlFor="nome" className="form-label">Nome *</label>
-                    <input id="nome" className="form-control" required type="text" value={form.nome} onChange={handleChange} />
+                    <input id="nome" className="form-control" required type="text" value={form.nome} onChange={handleChange} disabled={loading} />
                   </div>
                   <div className="col-md-6 mb-3">
                     <label htmlFor="email" className="form-label">E-mail *</label>
-                    <input id="email" className="form-control" required type="email" value={form.email} onChange={handleChange} />
+                    <input id="email" className="form-control" required type="email" value={form.email} onChange={handleChange} disabled={loading} />
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label htmlFor="telefone" className="form-label">Telefone</label>
-                    <input id="telefone" className="form-control" placeholder="(00) 00000-0000" type="tel" value={form.telefone} onChange={handleChange} />
+                    <input
+                      id="telefone"
+                      className="form-control"
+                      placeholder="(00) 00000-0000"
+                      type="tel"
+                      value={form.telefone}
+                      onChange={handleChange}
+                      disabled={loading}
+                    />
                   </div>
                   <div className="col-md-6 mb-3 campo-saldo">
                     <label htmlFor="saldo_inicial" className="form-label">Saldo da Conta Fiada</label>
@@ -71,6 +104,8 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
                         value={form.saldo_inicial}
                         onChange={handleChange}
                         placeholder="0,00"
+                        inputMode="numeric"
+                        disabled={loading}
                       />
                     </div>
                   </div>
@@ -88,6 +123,7 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
                       onChange={handleChange}
                       placeholder="Ex: Compras do mês, Produtos diversos, etc..."
                       maxLength={500}
+                      disabled={loading}
                     />
                     <small className="form-text text-muted">
                       Descreva o que foi comprado ou o motivo do saldo inicial.
@@ -96,9 +132,16 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-                <button type="submit" className="btn btn-primary">
-                  <i className="bi bi-check-lg me-2"></i>Atualizar Cliente
+                <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? (
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  ) : (
+                    <i className="bi bi-check-lg me-2"></i>
+                  )}
+                  Atualizar Cliente
                 </button>
               </div>
             </form>
