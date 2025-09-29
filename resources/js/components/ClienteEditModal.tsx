@@ -27,8 +27,21 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
         nome: cliente.nome || '',
         email: cliente.email || '',
         telefone: cliente.telefone_formatado || cliente.telefone || '',
-        descricao: cliente.conta_fiada?.descricao || '',
-        saldo_inicial: cliente.conta_fiada?.saldo?.toString() || '',
+        descricao: typeof cliente.conta_fiada?.descricao === 'string'
+          ? cliente.conta_fiada.descricao
+          : '',
+        saldo_inicial: cliente.conta_fiada && cliente.conta_fiada.saldo !== undefined && cliente.conta_fiada.saldo !== null
+          ? formatarMoeda(String(cliente.conta_fiada.saldo))
+          : '0,00',
+      });
+    } else if (show && !cliente) {
+      // Cadastro novo
+      setForm({
+        nome: '',
+        email: '',
+        telefone: '',
+        descricao: '',
+        saldo_inicial: '0,00',
       });
     }
   }, [show, cliente]);

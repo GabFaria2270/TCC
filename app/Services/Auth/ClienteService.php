@@ -250,6 +250,17 @@ class ClienteService
                 $contaFiada->saldo = isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' ? floatval($data['saldo_inicial']) : 0.00;
                 $contaFiada->descricao = isset($data['descricao']) ? trim($data['descricao']) : '';
                 $contaFiada->save();
+            } else if (
+                (isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' && floatval($data['saldo_inicial']) != 0)
+                || (isset($data['descricao']) && trim($data['descricao']) !== '')
+            ) {
+                // Cria nova conta fiada se algum campo for preenchido
+                \App\Models\ContaFiada::create([
+                    'cliente_id' => $cliente->id,
+                    'comercio_id' => $comercio->id,
+                    'saldo' => isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' ? floatval($data['saldo_inicial']) : 0.00,
+                    'descricao' => isset($data['descricao']) ? trim($data['descricao']) : '',
+                ]);
             }
 
             DB::commit();
