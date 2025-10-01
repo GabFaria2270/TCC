@@ -85,6 +85,23 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess }: Clien
     }
   };
 
+  // ✅ Função para aplicar limite de caracteres no telefone
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    
+    // Remove tudo que não é número
+    const apenasNumeros = value.replace(/\D/g, '');
+    
+    // ✅ LIMITE: máximo 11 dígitos (DDD + 9 dígitos)
+    if (apenasNumeros.length > 11) {
+      return; // Não permite mais caracteres
+    }
+    
+    // Formata o telefone
+    const telefoneFormatado = formatarTelefone(value);
+    setData('telefone', telefoneFormatado);
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -137,14 +154,18 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess }: Clien
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="telefone" className="form-label">Telefone</label>
+                    <label htmlFor="telefone" className="form-label">
+                      Telefone 
+                      <small className="text-muted ms-1">(máx. 11 dígitos)</small>
+                    </label>
                     <input
                       id="telefone"
                       type="tel"
                       className={`form-control ${errors.telefone ? 'is-invalid' : ''}`}
                       value={data.telefone}
-                      onChange={(e) => setData('telefone', formatarTelefone(e.target.value))}
+                      onChange={handleTelefoneChange}
                       placeholder="(00) 00000-0000"
+                      maxLength={15} // ✅ Limite de caracteres formatados: (00) 00000-0000
                       disabled={processing}
                     />
                     {errors.telefone && <div className="invalid-feedback">{errors.telefone}</div>}

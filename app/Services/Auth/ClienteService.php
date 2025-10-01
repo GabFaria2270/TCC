@@ -13,15 +13,13 @@ use Illuminate\Support\Facades\Log;
 class ClienteService
 {
     /**
-     * Cadastra um novo cliente com conta fiada
+     * ✅ Usa mensagens centralizadas do validation.php
      */
     public function cadastrar(array $data, Request $request): array
     {
         try {
-            // INICIA TRANSAÇÃO
             DB::beginTransaction();
 
-            // PEGA COMÉRCIO DO USUÁRIO LOGADO
             $usuario = Auth::user();
             $comercio = $usuario->comercio;
 
@@ -29,12 +27,12 @@ class ClienteService
                 DB::rollback();
                 return [
                     'success' => false,
-                    'errors' => ['system' => 'Comércio não encontrado para o usuário.'],
+                    'errors' => ['system' => __('validation.comercio_not_found')],
                     'reason' => 'comercio_not_found'
                 ];
             }
 
-            // VERIFICA SE EMAIL JÁ EXISTE NESTE COMÉRCIO
+            // ✅ Verifica email usando mensagem centralizada
             $emailExists = Cliente::where('email', $data['email'])
                 ->where('comercio_id', $comercio->id)
                 ->exists();
@@ -43,12 +41,11 @@ class ClienteService
                 DB::rollback();
                 return [
                     'success' => false,
-                    'errors' => ['email' => 'Este e-mail já está cadastrado neste comércio.'],
+                    'errors' => ['email' => __('validation.cliente_email_exists')],
                     'reason' => 'email_exists'
                 ];
             }
 
-            // CRIA CLIENTE
             $cliente = Cliente::create([
                 'nome' => $data['nome'],
                 'email' => $data['email'],
@@ -60,20 +57,16 @@ class ClienteService
                 DB::rollback();
                 return [
                     'success' => false,
-                    'errors' => ['system' => 'Falha ao criar cliente.'],
+                    'errors' => ['system' => __('validation.cliente_creation_failed')],
                     'reason' => 'creation_failed'
                 ];
             }
 
-            // CRIA CONTA FIADA COM DESCRIÇÃO
             $saldoInicial = 0.00;
             if (isset($data['saldo_inicial']) && $data['saldo_inicial'] !== null && $data['saldo_inicial'] !== '') {
                 $saldoInicial = floatval($data['saldo_inicial']);
             }
 
-            Log::info('Valor recebido para saldo_inicial:', ['valor' => $data['saldo_inicial']]);
-
-            // Descrição: vazio se não informado
             $descricao = '';
             if (isset($data['descricao']) && !empty(trim($data['descricao']))) {
                 $descricao = trim($data['descricao']);
@@ -90,15 +83,12 @@ class ClienteService
                 DB::rollback();
                 return [
                     'success' => false,
-                    'errors' => ['system' => 'Falha ao criar conta fiada.'],
+                    'errors' => ['system' => __('validation.conta_creation_failed')],
                     'reason' => 'conta_creation_failed'
                 ];
             }
 
-            // CONFIRMA TRANSAÇÃO
             DB::commit();
-
-            // CARREGAR RELACIONAMENTOS
             $cliente->load('contaFiada');
 
             return [
@@ -109,17 +99,19 @@ class ClienteService
 
         } catch (\Illuminate\Database\QueryException $e) {
             DB::rollback();
+            Log::error('Erro de banco ao cadastrar cliente', ['error' => $e->getMessage()]);
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro de banco de dados: ' . $e->getMessage()],
+                'errors' => ['system' => __('validation.database_error')],
                 'reason' => 'database_error'
             ];
 
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('Erro interno ao cadastrar cliente', ['error' => $e->getMessage()]);
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro interno: ' . $e->getMessage()],
+                'errors' => ['system' => __('validation.system_error')],
                 'reason' => 'system_error'
             ];
         }
@@ -203,12 +195,11 @@ class ClienteService
                 DB::rollback();
                 return [
                     'success' => false,
-                    'errors' => ['system' => 'Comércio não encontrado para o usuário.'],
+                    'errors' => ['system' => __('validation.comercio_not_found')],
                     'reason' => 'comercio_not_found'
                 ];
             }
 
-            // Busca cliente do comércio
             $cliente = Cliente::where('id', $clienteId)
                 ->where('comercio_id', $comercio->id)
                 ->first();
@@ -217,22 +208,23 @@ class ClienteService
                 DB::rollback();
                 return [
                     'success' => false,
-                    'errors' => ['system' => 'Cliente não encontrado.'],
+                    'errors' => ['system' => __('validation.cliente_not_found')],
                     'reason' => 'cliente_not_found'
                 ];
             }
 
-            // Verifica se o email está sendo alterado para um já existente
+            // ✅ Verifica email duplicado com mensagem centralizada
             if (isset($data['email']) && $data['email'] !== $cliente->email) {
                 $emailExists = Cliente::where('email', $data['email'])
                     ->where('comercio_id', $comercio->id)
                     ->where('id', '!=', $clienteId)
                     ->exists();
+                
                 if ($emailExists) {
                     DB::rollback();
                     return [
                         'success' => false,
-                        'errors' => ['email' => 'Este e-mail já está cadastrado neste comércio.'],
+                        'errors' => ['email' => __('validation.cliente_email_exists')],
                         'reason' => 'email_exists'
                     ];
                 }
@@ -265,23 +257,18 @@ class ClienteService
 
             DB::commit();
             $cliente->load('contaFiada');
+            
             return [
                 'success' => true,
                 'cliente' => $cliente,
                 'reason' => 'success'
             ];
-        } catch (\Illuminate\Database\QueryException $e) {
-            DB::rollback();
-            return [
-                'success' => false,
-                'errors' => ['system' => 'Erro de banco de dados: ' . $e->getMessage()],
-                'reason' => 'database_error'
-            ];
+
         } catch (\Exception $e) {
             DB::rollback();
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro interno: ' . $e->getMessage()],
+                'errors' => ['system' => __('validation.system_error')],
                 'reason' => 'system_error'
             ];
         }

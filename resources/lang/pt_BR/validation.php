@@ -141,4 +141,58 @@ return [
         'name' => 'nome',
         'username' => 'usuário',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | ✅ MENSAGENS CENTRALIZADAS - CLIENTE
+    |--------------------------------------------------------------------------
+    */
+    
+    // Mensagens globais para clientes
+    'cliente_email_exists' => 'Este e-mail já está cadastrado neste comércio.',
+    'cliente_creation_failed' => 'Falha ao criar cliente. Tente novamente.',
+    'cliente_not_found' => 'Cliente não encontrado.',
+    'conta_creation_failed' => 'Falha ao criar conta fiada.',
+    'comercio_not_found' => 'Comércio não encontrado para o usuário.',
+    
+    'custom' => [
+        // ✅ MENSAGENS ESPECÍFICAS DO CLIENTE
+        'nome' => [
+            'required' => 'O nome do cliente é obrigatório.',
+            'string' => 'O nome deve ser um texto válido.',
+            'max' => 'O nome não pode ter mais que :max caracteres.',
+            'regex' => 'O nome deve conter apenas letras e espaços.',
+        ],
+        
+        'email' => [
+            'required' => 'O e-mail é obrigatório.',
+            'email' => 'Digite um e-mail válido.',
+            'max' => 'O e-mail não pode ter mais que :max caracteres.',
+            'unique' => 'Este e-mail já está cadastrado.',
+        ],
+        
+        'telefone' => [
+            'string' => 'O telefone deve ser um texto válido.',
+            'max' => 'O telefone não pode ter mais que :max caracteres.',
+            'regex' => 'Formato de telefone inválido. Use apenas números, espaços, parênteses e hífens.',
+            // ✅ Mensagens específicas para limites de dígitos
+            'digits_max' => 'O telefone não pode ter mais que 11 dígitos.',
+            'digits_min' => 'O telefone deve ter pelo menos 10 dígitos.',
+        ],
+        
+        'saldo_inicial' => [
+            'numeric' => 'O saldo inicial deve ser um número válido.',
+            'min' => 'O saldo inicial não pode ser menor que R$ :min.',
+            'max' => 'O saldo inicial não pode ser maior que R$ :max.',
+        ],
+        
+        'descricao' => [
+            'string' => 'A descrição deve ser um texto válido.',
+            'max' => 'A descrição não pode ter mais que :max caracteres.',
+        ],
+    ],
+
+    // ✅ Mensagens de erro de sistema
+    'database_error' => 'Erro de conexão com o banco de dados. Tente novamente.',
+    'system_error' => 'Erro interno do sistema. Contate o suporte.',
 ];

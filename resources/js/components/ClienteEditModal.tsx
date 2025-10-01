@@ -48,9 +48,18 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
+    
     if (id === 'saldo_inicial') {
       setForm({ ...form, [id]: formatarMoeda(value) });
     } else if (id === 'telefone') {
+      // ✅ Aplicar limite de telefone
+      const apenasNumeros = value.replace(/\D/g, '');
+      
+      // LIMITE: máximo 11 dígitos
+      if (apenasNumeros.length > 11) {
+        return; // Não permite mais caracteres
+      }
+      
       setForm({ ...form, [id]: formatarTelefone(value) });
     } else {
       setForm({ ...form, [id]: value });
@@ -95,7 +104,10 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="telefone" className="form-label">Telefone</label>
+                    <label htmlFor="telefone" className="form-label">
+                      Telefone
+                      <small className="text-muted ms-1">(máx. 11 dígitos)</small>
+                    </label>
                     <input
                       id="telefone"
                       className="form-control"
@@ -103,6 +115,7 @@ export default function ClienteEditModal({ show, cliente, onClose, onSuccess }: 
                       type="tel"
                       value={form.telefone}
                       onChange={handleChange}
+                      maxLength={15} // ✅ Limite de caracteres formatados
                       disabled={loading}
                     />
                   </div>

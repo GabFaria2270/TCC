@@ -296,7 +296,7 @@ class ClienteController extends Controller
             }
             return redirect()->route('clientes.index')->with('error', $result['error'] ?? 'Erro ao pagar conta fiada.');
         } catch (\Exception $e) {
-            \Log::error('Erro ao pagar conta fiada', ['error' => $e->getMessage()]);
+            Log::error('Erro ao pagar conta fiada', ['error' => $e->getMessage()]);
             return redirect()->route('clientes.index')->with('error', 'Erro interno ao pagar conta fiada.');
         }
     }

@@ -27,7 +27,6 @@ export default function ClienteCreateModal({ show, onClose, onSuccess }: Cliente
               modo="create"
               onClose={onClose}
               onSuccess={onSuccess}
-              show={show}
             />
           </div>
         </div>
