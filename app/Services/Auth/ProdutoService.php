@@ -35,6 +35,7 @@ class ProdutoService
             $sort = $request?->query('sort', 'nome');
             $dir = strtolower((string) ($request?->query('dir', 'asc')));
             $perPage = (int) ($request?->query('perPage', 10));
+            $onlyLow = (bool) ($request?->query('onlyLow', false));
 
             if ($q !== '') {
                 $query->where(function ($qb) use ($q) {
@@ -44,6 +45,10 @@ class ProdutoService
 
             if (!empty($categoriaId)) {
                 $query->where('categoria_id', (int) $categoriaId);
+            }
+
+            if ($onlyLow) {
+                $query->whereColumn('quantidade_estoque', '<=', 'estoque_minimo');
             }
 
             // Ordenação segura
@@ -56,7 +61,7 @@ class ProdutoService
 
             $produtos = $query->paginate(max(1, min($perPage, 100)))->withQueryString();
 
-            $categorias = Categoria::orderByNome()->get();
+            $categorias = Categoria::byComercio($comercio->id)->orderByNome()->get();
 
             return [
                 'success' => true,
@@ -69,6 +74,7 @@ class ProdutoService
                         'sort' => $sort,
                         'dir' => $dir,
                         'perPage' => $perPage,
+                        'onlyLow' => $onlyLow,
                     ],
                 ],
             ];
@@ -106,11 +112,45 @@ class ProdutoService
             $categoriaId = $data['categoria_id'] ?? null;
             $novaCategoria = $data['nova_categoria_nome'] ?? null;
 
+            // Unicidade de nome por comércio (ignora soft-deletados)
+            $nomeNormalizado = trim((string) $data['nome']);
+            $dup = \App\Models\Produto::where('comercio_id', $comercio->id)
+                ->where('nome', $nomeNormalizado)
+                ->whereNull('deleted_at')
+                ->exists();
+            if ($dup) {
+                DB::rollBack();
+                return [
+                    'success' => false,
+                    'errors' => ['nome' => 'Já existe um produto com este nome no seu comércio.'],
+                    'reason' => 'duplicate_name',
+                ];
+            }
+
             if (!$categoriaId && $novaCategoria) {
-                $categoria = Categoria::firstOrCreate([
-                    'nome' => ucwords(strtolower($novaCategoria)),
-                ]);
+                $categoria = Categoria::firstOrCreate(
+                    [
+                        'nome' => ucwords(strtolower($novaCategoria)),
+                        'comercio_id' => $comercio->id,
+                    ],
+                    [
+                        'nome' => ucwords(strtolower($novaCategoria)),
+                        'comercio_id' => $comercio->id,
+                    ]
+                );
                 $categoriaId = $categoria->id;
+            }
+
+            if ($categoriaId) {
+                $catOk = Categoria::where('id', $categoriaId)->where('comercio_id', $comercio->id)->exists();
+                if (!$catOk) {
+                    DB::rollBack();
+                    return [
+                        'success' => false,
+                        'errors' => ['categoria_id' => 'Categoria não pertence ao seu comércio.'],
+                        'reason' => 'categoria_forbidden',
+                    ];
+                }
             }
 
             if (!$categoriaId) {
@@ -126,6 +166,7 @@ class ProdutoService
                 'nome' => $data['nome'],
                 'preco' => $data['preco'],
                 'quantidade_estoque' => $data['quantidade'],
+                'estoque_minimo' => (int) ($data['estoque_minimo'] ?? 0),
                 'categoria_id' => $categoriaId,
                 'comercio_id' => $comercio->id,
             ]);
@@ -191,10 +232,28 @@ class ProdutoService
             $categoriaId = $data['categoria_id'] ?? null;
             $novaCategoria = $data['nova_categoria_nome'] ?? null;
             if (!$categoriaId && $novaCategoria) {
-                $categoria = Categoria::firstOrCreate([
-                    'nome' => ucwords(strtolower($novaCategoria)),
-                ]);
+                $categoria = Categoria::firstOrCreate(
+                    [
+                        'nome' => ucwords(strtolower($novaCategoria)),
+                        'comercio_id' => $comercio->id,
+                    ],
+                    [
+                        'nome' => ucwords(strtolower($novaCategoria)),
+                        'comercio_id' => $comercio->id,
+                    ]
+                );
                 $categoriaId = $categoria->id;
+            }
+            if ($categoriaId) {
+                $catOk = Categoria::where('id', $categoriaId)->where('comercio_id', $comercio->id)->exists();
+                if (!$catOk) {
+                    DB::rollBack();
+                    return [
+                        'success' => false,
+                        'errors' => ['categoria_id' => 'Categoria não pertence ao seu comércio.'],
+                        'reason' => 'categoria_forbidden',
+                    ];
+                }
             }
             if (!$categoriaId) {
                 DB::rollBack();
@@ -205,10 +264,27 @@ class ProdutoService
                 ];
             }
 
+            // Unicidade no update
+            $nomeNovo = trim((string) $data['nome']);
+            $dupUpdate = \App\Models\Produto::where('comercio_id', $comercio->id)
+                ->where('nome', $nomeNovo)
+                ->whereNull('deleted_at')
+                ->where('id', '!=', $produto->id)
+                ->exists();
+            if ($dupUpdate) {
+                DB::rollBack();
+                return [
+                    'success' => false,
+                    'errors' => ['nome' => 'Já existe um produto com este nome no seu comércio.'],
+                    'reason' => 'duplicate_name',
+                ];
+            }
+
             $produto->update([
                 'nome' => $data['nome'],
                 'preco' => $data['preco'],
                 'categoria_id' => $categoriaId,
+                'estoque_minimo' => isset($data['estoque_minimo']) ? (int) $data['estoque_minimo'] : $produto->estoque_minimo,
             ]);
 
             // A manipulação de estoque agora é feita pelos endpoints específicos

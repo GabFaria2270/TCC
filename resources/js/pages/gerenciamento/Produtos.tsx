@@ -12,6 +12,7 @@ interface Produto {
     nome: string;
     preco: string | number;
     quantidade_estoque: number;
+    estoque_minimo?: number;
     categoria?: Categoria | null;
     created_at: string;
     updated_at: string;
@@ -31,6 +32,7 @@ interface ServerFilters {
     sort?: 'nome' | 'preco' | 'quantidade_estoque' | 'updated_at';
     dir?: 'asc' | 'desc';
     perPage?: number;
+    onlyLow?: boolean;
 }
 
 interface Props {
@@ -46,6 +48,7 @@ type ProdutoFormData = {
     quantidade: string;
     categoria_id: string;
     nova_categoria_nome: string;
+    estoque_minimo?: string;
 };
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
@@ -85,13 +88,15 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         }
     }
     // Detecta paginação vinda do servidor ou array simples
-    const isPaginated = (p: any): p is Paginacao<Produto> => p && typeof p === 'object' && Array.isArray(p.data) && typeof p.current_page === 'number';
+    const isPaginated = (p: any): p is Paginacao<Produto> =>
+        p && typeof p === 'object' && Array.isArray(p.data) && typeof p.current_page === 'number';
 
     const initialQ = filters?.q ?? '';
     const initialCategoria = filters?.categoriaId ? String(filters.categoriaId) : '';
     const initialSort: SortField = fromServerSort(filters?.sort ?? 'nome');
     const initialDir = (filters?.dir as any) ?? 'asc';
     const initialPerPage = typeof filters?.perPage === 'number' ? String(filters!.perPage) : '10';
+    const initialOnlyLow = Boolean(filters?.onlyLow ?? false);
 
     const [searchTerm, setSearchTerm] = useState(initialQ);
     const [categoriaFiltro, setCategoriaFiltro] = useState(initialCategoria);
@@ -101,6 +106,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [perPage, setPerPage] = useState<string>(initialPerPage);
+    const [onlyLow, setOnlyLow] = useState<boolean>(initialOnlyLow);
 
     // Estado para movimentos de estoque
     const [showStockModal, setShowStockModal] = useState(false);
@@ -118,6 +124,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         quantidade: '0',
         categoria_id: '',
         nova_categoria_nome: '',
+        estoque_minimo: '0',
     });
 
     useEffect(() => {
@@ -180,12 +187,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     };
 
     const renderSortIcon = (field: SortField) => {
-        if (sortBy !== field) return <i className="bi bi-arrow-down-up ms-1 text-muted" />;
-        return sortDir === 'asc' ? (
-            <i className="bi bi-caret-up-fill ms-1" />
-        ) : (
-            <i className="bi bi-caret-down-fill ms-1" />
-        );
+        if (sortBy !== field) return <i className="bi bi-arrow-down-up text-muted ms-1" />;
+        return sortDir === 'asc' ? <i className="bi bi-caret-up-fill ms-1" /> : <i className="bi bi-caret-down-fill ms-1" />;
     };
 
     // Debounce para busca: aplica filtro no servidor após digitação (suave)
@@ -225,6 +228,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             sort: toServerSort(sortBy),
             dir: sortDir,
             perPage: Number(perPage) || 10,
+            onlyLow: onlyLow || undefined,
             ...(overrides ?? {}),
         };
         router.get('/gerenciamento/produtos', payload, { preserveScroll: true, replace: true, preserveState: true });
@@ -236,12 +240,23 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setLoading(false);
     };
 
+    const handleClearFilters = () => {
+        setSearchTerm('');
+        setCategoriaFiltro('');
+        setPerPage('10');
+        setSortBy('nome');
+        setSortDir('asc');
+        setOnlyLow(false);
+        router.get('/gerenciamento/produtos', {}, { preserveScroll: true, replace: true, preserveState: true });
+    };
+
     const abrirModalCriar = () => {
         setModalMode('create');
         setProdutoSelecionado(null);
         setShowModal(true);
         reset();
         setData('quantidade', '0');
+        setData('estoque_minimo', '0');
         setTimeout(() => {
             document.getElementById('produto-nome')?.focus();
         }, 100);
@@ -258,6 +273,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             quantidade: String(produto.quantidade_estoque ?? '0'),
             categoria_id: produto.categoria ? String(produto.categoria.id) : '',
             nova_categoria_nome: '',
+            estoque_minimo: String(produto.estoque_minimo ?? '0'),
         });
         setTimeout(() => {
             document.getElementById('produto-nome')?.focus();
@@ -277,10 +293,11 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setTimeout(() => abrirModalEstoque(prod, 'ajuste'), 120);
     };
 
-    const abrirModalEstoque = (produto: Produto, modo: 'entrada' | 'saida' | 'ajuste') => {
+    const abrirModalEstoque = (produto: Produto, modo?: 'entrada' | 'saida' | 'ajuste') => {
         setProdutoSelecionado(produto);
-        setStockMode(modo);
-        if (modo === 'ajuste') {
+        const m = modo ?? 'entrada';
+        setStockMode(m);
+        if (m === 'ajuste') {
             setEstoqueNovoSaldo(String(produto.quantidade_estoque ?? '0'));
         } else {
             setEstoqueQuantidade('');
@@ -288,7 +305,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setEstoqueMotivo('');
         setShowStockModal(true);
         setTimeout(() => {
-            const id = modo === 'ajuste' ? 'ajuste-novo-saldo' : 'mov-quantidade';
+            const id = m === 'ajuste' ? 'ajuste-novo-saldo' : 'mov-quantidade';
             document.getElementById(id)?.focus();
         }, 100);
     };
@@ -306,29 +323,41 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         if (!produtoSelecionado) return;
         const base = `/gerenciamento/produtos/${produtoSelecionado.id}/estoque`;
         if (stockMode === 'entrada') {
-            router.post(`${base}/entrada`, { quantidade: Number(estoqueQuantidade), motivo: estoqueMotivo || undefined }, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    fecharModalEstoque();
-                    router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+            router.post(
+                `${base}/entrada`,
+                { quantidade: Number(estoqueQuantidade), motivo: estoqueMotivo || undefined },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        fecharModalEstoque();
+                        router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                    },
                 },
-            });
+            );
         } else if (stockMode === 'saida') {
-            router.post(`${base}/saida`, { quantidade: Number(estoqueQuantidade), motivo: estoqueMotivo || undefined }, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    fecharModalEstoque();
-                    router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+            router.post(
+                `${base}/saida`,
+                { quantidade: Number(estoqueQuantidade), motivo: estoqueMotivo || undefined },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        fecharModalEstoque();
+                        router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                    },
                 },
-            });
+            );
         } else {
-            router.post(`${base}/ajuste`, { novoSaldo: Number(estoqueNovoSaldo), motivo: estoqueMotivo || undefined }, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    fecharModalEstoque();
-                    router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+            router.post(
+                `${base}/ajuste`,
+                { novoSaldo: Number(estoqueNovoSaldo), motivo: estoqueMotivo || undefined },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        fecharModalEstoque();
+                        router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                    },
                 },
-            });
+            );
         }
     };
 
@@ -435,7 +464,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 />
                             </div>
                         </div>
-                        <div className="col-md-4 col-12">
+                        <div className="col-md-3 col-12">
                             <label htmlFor="filtro-categoria" className="form-label">
                                 Categoria
                             </label>
@@ -477,6 +506,28 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ))}
                             </select>
                         </div>
+                        <div className="col-md-1 d-flex align-items-end col-12">
+                            <div className="form-check">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="only-low"
+                                    checked={onlyLow}
+                                    onChange={(e) => {
+                                        setOnlyLow(e.target.checked);
+                                        navegarComFiltros({ page: 1, onlyLow: e.target.checked || undefined });
+                                    }}
+                                />
+                                <label className="form-check-label" htmlFor="only-low">
+                                    Baixos
+                                </label>
+                            </div>
+                        </div>
+                        <div className="col-md-0 d-flex align-items-end justify-content-end col-12">
+                            <button className="btn btn-outline-secondary" type="button" onClick={handleClearFilters}>
+                                Limpar filtros
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -492,13 +543,11 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                     <th role="button" onClick={() => toggleSort('nome')} className="user-select-none">
                                         Produto {renderSortIcon('nome')}
                                     </th>
-                                    <th className="user-select-none">
-                                        Categoria
-                                    </th>
-                                    <th role="button" onClick={() => toggleSort('preco')} className="text-end user-select-none">
+                                    <th className="user-select-none">Categoria</th>
+                                    <th role="button" onClick={() => toggleSort('preco')} className="user-select-none text-end">
                                         Preço {renderSortIcon('preco')}
                                     </th>
-                                    <th role="button" onClick={() => toggleSort('quantidade')} className="text-end user-select-none">
+                                    <th role="button" onClick={() => toggleSort('quantidade')} className="user-select-none text-end">
                                         Estoque {renderSortIcon('quantidade')}
                                     </th>
                                     <th role="button" onClick={() => toggleSort('updated_at')} className="user-select-none">
@@ -519,75 +568,74 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                         </td>
                                     </tr>
                                 ) : (
-                                    produtosOrdenados.map((produto) => (
-                                        <tr key={produto.id}>
-                                            <td>
-                                                <div className="fw-semibold">{produto.nome}</div>
-                                                <small className="text-secondary">ID: {produto.id}</small>
-                                            </td>
-                                            <td>{produto.categoria?.nome ?? '—'}</td>
-                                            <td className="text-end">{currencyFormatter.format(Number(produto.preco ?? 0))}</td>
-                                            <td className="text-end">{produto.quantidade_estoque}</td>
-                                            <td>
-                                                <div className="d-flex align-items-center justify-content-between">
-                                                    <span>{new Date(produto.updated_at).toLocaleString('pt-BR')}</span>
-                                                    <div className="d-flex ms-3 gap-2 flex-wrap">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-secondary"
-                                                            title="Editar"
-                                                            onClick={() => abrirModalEditar(produto)}
-                                                        >
-                                                            <i className="bi bi-pencil" />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-primary"
-                                                            title="Entrada de estoque"
-                                                            onClick={() => abrirModalEstoque(produto, 'entrada')}
-                                                        >
-                                                            +
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-warning"
-                                                            title="Saída de estoque"
-                                                            onClick={() => abrirModalEstoque(produto, 'saida')}
-                                                        >
-                                                            −
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-success"
-                                                            title="Ajustar estoque"
-                                                            onClick={() => abrirModalEstoque(produto, 'ajuste')}
-                                                        >
-                                                            Ajuste
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-info"
-                                                            title="Histórico de estoque"
-                                                            onClick={() => router.get(`/gerenciamento/produtos/${produto.id}/historico`, {}, { preserveScroll: true })}
-                                                        >
-                                                            Histórico
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-outline-danger"
-                                                            title="Excluir"
-                                                            onClick={() => {
-                                                                setProdutoSelecionado(produto);
-                                                                setShowDeleteConfirm(true);
-                                                            }}
-                                                        >
-                                                            <i className="bi bi-trash" />
-                                                        </button>
+                                    produtosOrdenados.map((produto) => {
+                                        const min = produto.estoque_minimo ?? 0;
+                                        const qtd = produto.quantidade_estoque ?? 0;
+                                        // Considera "baixo" quando quantidade <= mínimo, mesmo que mínimo seja 0
+                                        const isLow = qtd <= min;
+                                        return (
+                                            <tr key={produto.id} className={isLow ? 'table-warning' : ''}>
+                                                <td>
+                                                    <div className="fw-semibold">{produto.nome}</div>
+                                                    <small className="text-secondary">ID: {produto.id}</small>
+                                                </td>
+                                                <td>{produto.categoria?.nome ?? '—'}</td>
+                                                <td className="text-end">{currencyFormatter.format(Number(produto.preco ?? 0))}</td>
+                                                <td className="text-end">
+                                                    {produto.quantidade_estoque}
+                                                    {isLow && <span className="badge text-bg-danger ms-2">Baixo</span>}
+                                                </td>
+                                                <td>
+                                                    <div className="d-flex align-items-center justify-content-between">
+                                                        <span>{new Date(produto.updated_at).toLocaleString('pt-BR')}</span>
+                                                        <div className="d-flex ms-3 flex-wrap gap-2">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-outline-secondary btn-sm px-3"
+                                                                title="Editar"
+                                                                onClick={() => abrirModalEditar(produto)}
+                                                            >
+                                                                <i className="bi bi-pencil me-1" /> Editar
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-outline-primary btn-sm px-3"
+                                                                title="Movimentar estoque"
+                                                                onClick={() => abrirModalEstoque(produto)}
+                                                            >
+                                                                <i className="bi bi-box-arrow-in-down-up me-1" /> Movimentar
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-outline-info btn-sm px-3"
+                                                                title="Histórico de estoque"
+                                                                onClick={() =>
+                                                                    router.get(
+                                                                        `/gerenciamento/produtos/${produto.id}/historico`,
+                                                                        {},
+                                                                        { preserveScroll: true },
+                                                                    )
+                                                                }
+                                                            >
+                                                                <i className="bi bi-clock-history me-1" /> Histórico
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-outline-danger btn-sm px-3"
+                                                                title="Excluir"
+                                                                onClick={() => {
+                                                                    setProdutoSelecionado(produto);
+                                                                    setShowDeleteConfirm(true);
+                                                                }}
+                                                            >
+                                                                <i className="bi bi-trash me-1" /> Excluir
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>
@@ -728,6 +776,24 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                             </div>
 
                                             <div className="col-md-6 col-12">
+                                                <label htmlFor="produto-estoque-minimo" className="form-label">
+                                                    Estoque mínimo (alerta)
+                                                </label>
+                                                <input
+                                                    id="produto-estoque-minimo"
+                                                    type="number"
+                                                    min={0}
+                                                    step={1}
+                                                    className={`form-control ${errors.estoque_minimo ? 'is-invalid' : ''}`}
+                                                    value={data.estoque_minimo ?? '0'}
+                                                    onChange={(e) => setData('estoque_minimo', e.target.value)}
+                                                    disabled={processing}
+                                                />
+                                                {errors.estoque_minimo && <div className="invalid-feedback">{errors.estoque_minimo}</div>}
+                                                <small className="text-secondary">Usado para destacar produtos com estoque baixo.</small>
+                                            </div>
+
+                                            <div className="col-md-6 col-12">
                                                 <label htmlFor="produto-nova-categoria" className="form-label">
                                                     Nova categoria (opcional)
                                                 </label>
@@ -816,25 +882,76 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 </div>
                                 <form onSubmit={submitMovimentoEstoque}>
                                     <div className="modal-body">
+                                        <div className="mb-3">
+                                            <label htmlFor="mov-tipo" className="form-label">
+                                                Tipo de movimento
+                                            </label>
+                                            <select
+                                                id="mov-tipo"
+                                                className="form-select"
+                                                value={stockMode}
+                                                onChange={(e) => setStockMode(e.target.value as any)}
+                                            >
+                                                <option value="entrada">Entrada</option>
+                                                <option value="saida">Saída</option>
+                                                <option value="ajuste">Ajuste</option>
+                                            </select>
+                                        </div>
+
                                         {stockMode === 'ajuste' ? (
                                             <div className="mb-3">
-                                                <label htmlFor="ajuste-novo-saldo" className="form-label">Novo estoque</label>
-                                                <input id="ajuste-novo-saldo" type="number" min={0} step={1} className="form-control" value={estoqueNovoSaldo} onChange={(e) => setEstoqueNovoSaldo(e.target.value)} required />
+                                                <label htmlFor="ajuste-novo-saldo" className="form-label">
+                                                    Novo estoque
+                                                </label>
+                                                <input
+                                                    id="ajuste-novo-saldo"
+                                                    type="number"
+                                                    min={0}
+                                                    step={1}
+                                                    className="form-control"
+                                                    value={estoqueNovoSaldo}
+                                                    onChange={(e) => setEstoqueNovoSaldo(e.target.value)}
+                                                    required
+                                                />
                                             </div>
                                         ) : (
                                             <div className="mb-3">
-                                                <label htmlFor="mov-quantidade" className="form-label">Quantidade*</label>
-                                                <input id="mov-quantidade" type="number" min={1} step={1} className="form-control" value={estoqueQuantidade} onChange={(e) => setEstoqueQuantidade(e.target.value)} required />
+                                                <label htmlFor="mov-quantidade" className="form-label">
+                                                    Quantidade*
+                                                </label>
+                                                <input
+                                                    id="mov-quantidade"
+                                                    type="number"
+                                                    min={1}
+                                                    step={1}
+                                                    className="form-control"
+                                                    value={estoqueQuantidade}
+                                                    onChange={(e) => setEstoqueQuantidade(e.target.value)}
+                                                    required
+                                                />
                                             </div>
                                         )}
                                         <div className="mb-3">
-                                            <label htmlFor="mov-motivo" className="form-label">Motivo (opcional)</label>
-                                            <input id="mov-motivo" type="text" className="form-control" value={estoqueMotivo} onChange={(e) => setEstoqueMotivo(e.target.value)} maxLength={255} />
+                                            <label htmlFor="mov-motivo" className="form-label">
+                                                Motivo (opcional)
+                                            </label>
+                                            <input
+                                                id="mov-motivo"
+                                                type="text"
+                                                className="form-control"
+                                                value={estoqueMotivo}
+                                                onChange={(e) => setEstoqueMotivo(e.target.value)}
+                                                maxLength={255}
+                                            />
                                         </div>
                                     </div>
                                     <div className="modal-footer d-flex justify-content-between">
-                                        <button type="button" className="btn btn-outline-secondary" onClick={fecharModalEstoque}>Cancelar</button>
-                                        <button type="submit" className="btn btn-primary">Confirmar</button>
+                                        <button type="button" className="btn btn-outline-secondary" onClick={fecharModalEstoque}>
+                                            Cancelar
+                                        </button>
+                                        <button type="submit" className="btn btn-primary" disabled={processing}>
+                                            Confirmar
+                                        </button>
                                     </div>
                                 </form>
                             </div>

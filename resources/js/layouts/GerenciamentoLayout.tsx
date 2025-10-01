@@ -22,9 +22,15 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         setFontSize(storedFont);
       }
 
-      const storedContrast = localStorage.getItem('a11y.highContrast');
-      if (storedContrast !== null) {
-        setHighContrast(storedContrast === 'true');
+      // Preferir a nova chave 'a11y.darkMode', mantendo compatibilidade com 'a11y.highContrast'
+      const storedDark = localStorage.getItem('a11y.darkMode');
+      if (storedDark !== null) {
+        setHighContrast(storedDark === 'true');
+      } else {
+        const storedContrast = localStorage.getItem('a11y.highContrast');
+        if (storedContrast !== null) {
+          setHighContrast(storedContrast === 'true');
+        }
       }
     } catch (error) {
       console.error('Falha ao carregar preferências de acessibilidade', error);
@@ -52,9 +58,11 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
     document.body.classList.toggle('high-contrast', highContrast);
 
     try {
+      // Persistir nas duas chaves para compatibilidade
+      localStorage.setItem('a11y.darkMode', String(highContrast));
       localStorage.setItem('a11y.highContrast', String(highContrast));
     } catch (error) {
-      console.error('Falha ao salvar modo de contraste', error);
+      console.error('Falha ao salvar configuração de modo escuro', error);
     }
 
     return () => {
@@ -219,9 +227,10 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 type="button"
                 className="btn btn-sm btn-outline-dark"
                 aria-pressed={highContrast}
+                aria-label="Alternar modo escuro"
                 onClick={toggleContrast}
               >
-                Alto contraste
+                Modo escuro
               </button>
             </div>
             {children}

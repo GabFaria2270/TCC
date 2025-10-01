@@ -12,6 +12,7 @@ class Categoria extends Model
     protected $table = 'categoria';
     protected $fillable = [
         'nome',
+        'comercio_id',
     ];
 
     public function produtos()
@@ -19,8 +20,18 @@ class Categoria extends Model
         return $this->hasMany(Produto::class, 'categoria_id');
     }
 
+    public function comercio()
+    {
+        return $this->belongsTo(Comercio::class, 'comercio_id');
+    }
+
     public function scopeOrderByNome($query)
     {
         return $query->orderBy('nome');
+    }
+
+    public function scopeByComercio($query, int $comercioId)
+    {
+        return $query->where('comercio_id', $comercioId);
     }
 }

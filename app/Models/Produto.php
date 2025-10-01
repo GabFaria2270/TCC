@@ -4,24 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Produto extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'produto';
 
     protected $fillable = [
         'nome',
         'preco',
+        'foto_path',
         'quantidade_estoque',
+        'estoque_minimo',
         'categoria_id',
         'comercio_id',
     ];
 
     protected $casts = [
         'preco' => 'decimal:2',
+        'foto_path' => 'string',
         'quantidade_estoque' => 'integer',
+        'estoque_minimo' => 'integer',
         'categoria_id' => 'integer',
         'comercio_id' => 'integer',
     ];
