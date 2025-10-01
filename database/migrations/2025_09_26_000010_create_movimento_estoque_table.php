@@ -4,30 +4,32 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up(): void
+return new class extends Migration
+{
+    public function up()
     {
-        Schema::create('movimento_estoque', function (Blueprint $table) {
+        Schema::create('movimentos_estoque', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('produto_id');
-            $table->unsignedBigInteger('comercio_id');
+            $table->foreignId('produto_id')->constrained('produto')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('usuario')->onDelete('cascade');
+            $table->foreignId('venda_id')->nullable()->constrained('vendas')->onDelete('set null');
             $table->enum('tipo', ['entrada', 'saida', 'ajuste']);
-            $table->integer('quantidade');
-            $table->integer('saldo_apos');
-            $table->string('motivo', 255)->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->integer('quantidade_anterior');
+            $table->integer('quantidade_movimentada');
+            $table->integer('quantidade_atual');
+            $table->string('motivo')->nullable();
+            $table->text('observacoes')->nullable();
             $table->timestamps();
-
-            $table->index(['produto_id', 'comercio_id']);
+            
+            // Índices para performance
+            $table->index(['produto_id', 'tipo']);
+            $table->index(['venda_id']);
             $table->index(['created_at']);
-
-            $table->foreign('produto_id')->references('id')->on('produto')->cascadeOnDelete();
-            $table->foreign('comercio_id')->references('id')->on('comercio')->cascadeOnDelete();
         });
     }
 
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('movimento_estoque');
+        Schema::dropIfExists('movimentos_estoque');
     }
 };

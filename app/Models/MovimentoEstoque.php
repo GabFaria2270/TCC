@@ -2,40 +2,63 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MovimentoEstoque extends Model
 {
     use HasFactory;
 
-    protected $table = 'movimento_estoque';
+    protected $table = 'movimentos_estoque';
 
     protected $fillable = [
         'produto_id',
-        'comercio_id',
+        'usuario_id',
+        'venda_id',
         'tipo',
-        'quantidade',
-        'saldo_apos',
+        'quantidade_anterior',
+        'quantidade_movimentada',
+        'quantidade_atual',
         'motivo',
-        'user_id',
+        'observacoes',
     ];
 
     protected $casts = [
-        'produto_id' => 'integer',
-        'comercio_id' => 'integer',
-        'quantidade' => 'integer',
-        'saldo_apos' => 'integer',
-        'user_id' => 'integer',
+        'quantidade_anterior' => 'integer',
+        'quantidade_movimentada' => 'integer',
+        'quantidade_atual' => 'integer',
     ];
 
-    public function produto()
+    // Relacionamentos
+    public function produto(): BelongsTo
     {
-        return $this->belongsTo(Produto::class, 'produto_id');
+        return $this->belongsTo(Produto::class);
     }
 
-    public function comercio()
+    public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Comercio::class, 'comercio_id');
+        return $this->belongsTo(Usuario::class);
+    }
+
+    public function venda(): BelongsTo
+    {
+        return $this->belongsTo(Venda::class);
+    }
+
+    // Scopes
+    public function scopeEntradas($query)
+    {
+        return $query->where('tipo', 'entrada');
+    }
+
+    public function scopeSaidas($query)
+    {
+        return $query->where('tipo', 'saida');
+    }
+
+    public function scopeAjustes($query)
+    {
+        return $query->where('tipo', 'ajuste');
     }
 }

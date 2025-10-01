@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Produto;
+use App\Models\Venda;
 use App\Policies\ProdutoPolicy;
+use App\Policies\VendaPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Produto::class => ProdutoPolicy::class,
+        Venda::class => VendaPolicy::class,
     ];
 
     /**

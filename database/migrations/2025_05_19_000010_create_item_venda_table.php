@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('item_venda', function (Blueprint $table) {
+        Schema::create('itens_venda', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('venda_id');
-            $table->unsignedBigInteger('produto_id');
+            $table->foreignId('venda_id')->constrained('vendas')->onDelete('cascade');
+            $table->foreignId('produto_id')->constrained('produto')->onDelete('cascade');
             $table->integer('quantidade');
             $table->decimal('preco_unitario', 10, 2);
+            $table->decimal('subtotal', 10, 2);
             $table->timestamps();
-
-            $table->foreign('venda_id')->references('id')->on('venda')->onDelete('cascade');
-            $table->foreign('produto_id')->references('id')->on('produto')->onDelete('cascade');
+            
+            // Índices para performance
+            $table->index(['venda_id']);
+            $table->index(['produto_id']);
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('item_venda');
+        Schema::dropIfExists('itens_venda');
     }
 };

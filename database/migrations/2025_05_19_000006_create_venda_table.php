@@ -11,13 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('venda', function (Blueprint $table) {
+        Schema::create('vendas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cliente_id')->nullable();
+            $table->foreignId('usuario_id')->constrained('usuario')->onDelete('cascade');
+            $table->foreignId('cliente_id')->nullable()->constrained('cliente')->onDelete('set null');
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('desconto', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
+            $table->enum('forma_pagamento', ['dinheiro', 'pix', 'cartao_debito', 'cartao_credito', 'conta_fiada']);
+            $table->decimal('valor_recebido', 10, 2)->nullable();
+            $table->decimal('troco', 10, 2)->nullable();
+            $table->enum('status', ['pendente', 'concluida', 'cancelada', 'conta_fiada'])->default('pendente');
+            $table->text('observacoes')->nullable();
             $table->timestamps();
-
-            $table->foreign('cliente_id')->references('id')->on('cliente')->onDelete('set null');
+            
+            // Índices para performance
+            $table->index(['usuario_id', 'status']);
+            $table->index(['cliente_id']);
+            $table->index(['created_at']);
         });
     }
 
@@ -26,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('venda');
+        Schema::dropIfExists('vendas');
     }
 };

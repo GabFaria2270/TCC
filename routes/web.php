@@ -3,8 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\ClienteController; // ✅ NAMESPACE Auth CORRETO
+use App\Http\Controllers\Auth\ClienteController;
 use App\Http\Controllers\Auth\ProdutoController;
+use App\Http\Controllers\Auth\VendasController; // ✅ ADICIONAR IMPORT
 
 Route::get('/', function () {
     return view('home');
@@ -28,45 +29,41 @@ Route::middleware(['require.token'])->group(function () {
         ]);
     })->name('gerenciamento');
 
-    // ✅ GRUPO DE ROTAS DE CLIENTES (middleware aplicado pelo grupo pai)
+    // ✅ GRUPO DE ROTAS DE GERENCIAMENTO
     Route::prefix('gerenciamento')->group(function () {
         
-        // Lista de clientes
+        // ✅ ROTAS DE CLIENTES
         Route::get('clientes', [ClienteController::class, 'index'])
             ->name('clientes.index');
         
-        // Formulário de cadastro
         Route::get('clientes/create', [ClienteController::class, 'create'])
             ->name('clientes.create');
         
-        // Processar cadastro
         Route::post('clientes', [ClienteController::class, 'store'])
             ->name('clientes.store');
         
-        // Visualizar cliente específico
         Route::get('clientes/{cliente}', [ClienteController::class, 'show'])
             ->name('clientes.show');
             
-        // Editar cliente
         Route::get('clientes/{cliente}/edit', [ClienteController::class, 'edit'])
             ->name('clientes.edit');
             
-        // Atualizar cliente
         Route::put('clientes/{cliente}', [ClienteController::class, 'update'])
             ->name('clientes.update');
 
-        // Produtos
+        Route::delete('clientes/{cliente}/conta-fiada', [ClienteController::class, 'pagarContaFiada'])
+            ->name('clientes.pagarContaFiada');
+
+        // ✅ ROTAS DE PRODUTOS
         Route::get('produtos', [ProdutoController::class, 'index'])
             ->name('produtos.index');
 
         Route::post('produtos', [ProdutoController::class, 'store'])
             ->name('produtos.store');
 
-        // Atualizar produto
         Route::put('produtos/{produto}', [ProdutoController::class, 'update'])
             ->name('produtos.update');
 
-        // Excluir produto
         Route::delete('produtos/{produto}', [ProdutoController::class, 'destroy'])
             ->name('produtos.destroy');
 
@@ -78,11 +75,27 @@ Route::middleware(['require.token'])->group(function () {
         Route::post('produtos/{produto}/estoque/ajuste', [ProdutoController::class, 'estoqueAjuste'])
             ->name('produtos.estoque.ajuste');
 
-        // Histórico de movimentos do produto
         Route::get('produtos/{produto}/historico', [ProdutoController::class, 'historico'])
             ->name('produtos.historico');
 
-        Route::delete('clientes/{cliente}/conta-fiada', [ClienteController::class, 'pagarContaFiada'])->name('clientes.pagarContaFiada');
+        // ✅ ROTAS DE VENDAS (IGUAL AOS CLIENTES)
+        Route::get('vendas', [VendasController::class, 'index'])
+            ->name('vendas.index');
+        
+        Route::post('vendas', [VendasController::class, 'store'])
+            ->name('vendas.store');
+        
+        Route::get('vendas/{venda}', [VendasController::class, 'show'])
+            ->name('vendas.show');
+            
+        Route::get('vendas/{venda}/edit', [VendasController::class, 'edit'])
+            ->name('vendas.edit');
+            
+        Route::put('vendas/{venda}', [VendasController::class, 'update'])
+            ->name('vendas.update');
+            
+        Route::delete('vendas/{venda}', [VendasController::class, 'destroy'])
+            ->name('vendas.destroy');
     });
 });
 

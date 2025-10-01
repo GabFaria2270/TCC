@@ -1,0 +1,625 @@
+/* ===================================================================
+   🛒 ESTILOS DA PÁGINA DE VENDAS - PDV E HISTÓRICO
+   =================================================================== */
+
+/* ------------------------------------------------------------------
+   🎨 ANIMAÇÕES E TRANSIÇÕES GERAIS
+   ------------------------------------------------------------------ */
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------------
+   📊 NAVEGAÇÃO POR ABAS
+   ------------------------------------------------------------------ */
+
+.nav-pills .nav-link {
+  border-radius: 0.5rem;
+  margin-right: 0.5rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-pills .nav-link.active {
+  background-color: #0d6efd;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.nav-pills .nav-link i {
+  font-size: 1.1rem;
+}
+
+/* ------------------------------------------------------------------
+   🔍 FILTROS E BUSCA
+   ------------------------------------------------------------------ */
+
+.filtros-card {
+  border: 1px solid #007bff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-limpar-filtros {
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-limpar-filtros:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Campo de busca de produtos */
+.input-group .input-group-text {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+  color: #6c757d;
+}
+
+.input-group .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.input-group .form-control:focus + .input-group-text {
+  border-color: #0d6efd;
+}
+
+/* ------------------------------------------------------------------
+   📋 TABELA DE VENDAS
+   ------------------------------------------------------------------ */
+
+.vendas-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.vendas-table th {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  font-weight: 600;
+  color: #495057;
+  padding: 12px 15px;
+  vertical-align: middle;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.vendas-table td {
+  padding: 12px 15px;
+  vertical-align: middle;
+  border: 1px solid #dee2e6;
+}
+
+.vendas-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.vendas-table tbody tr:hover {
+  background-color: #f1f1f1;
+  transform: translateX(2px);
+}
+
+/* Badge ID da venda */
+.venda-id {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+}
+
+/* Informações do cliente */
+.cliente-info {
+  line-height: 1.2;
+}
+
+.cliente-info .cliente-nome {
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 0.125rem;
+}
+
+.cliente-info .cliente-email {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+/* Estados vazios */
+.estado-vazio {
+  text-align: center;
+  padding: 50px 0 !important;
+  color: #6c757d;
+}
+
+.estado-vazio i {
+  color: #adb5bd;
+  opacity: 0.7;
+}
+
+/* Scroll com sombra */
+.scroll-shadow {
+  position: relative;
+}
+
+.scroll-shadow::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scroll-shadow::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.scroll-shadow::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.scroll-shadow::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ------------------------------------------------------------------
+   🛒 CARDS DE PRODUTOS (PDV)
+   ------------------------------------------------------------------ */
+
+.produto-card {
+  border: 1px solid #e3e6f0;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.produto-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(13, 110, 253, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.produto-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #0d6efd;
+}
+
+.produto-card:hover::before {
+  left: 100%;
+}
+
+.produto-card:active {
+  transform: translateY(-2px);
+  transition: transform 0.1s ease;
+}
+
+.produto-card .card-title {
+  color: #212529;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.produto-card .card-text {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.produto-card .text-success {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* Badges de estoque */
+.produto-card .badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.4rem;
+}
+
+/* ------------------------------------------------------------------
+   🛍️ CARRINHO DE COMPRAS
+   ------------------------------------------------------------------ */
+
+.carrinho-container {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.carrinho-header {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+.carrinho-lista {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.carrinho-lista::-webkit-scrollbar {
+  width: 6px;
+}
+
+.carrinho-lista::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.carrinho-lista::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.carrinho-lista::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Itens do carrinho */
+.carrinho-item {
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.carrinho-item:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
+}
+
+.carrinho-item .produto-nome {
+  font-weight: 500;
+  color: #212529;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+.carrinho-item .preco-info {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.carrinho-item .subtotal {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+/* Controles de quantidade */
+.quantidade-controles {
+  border: 1px solid #dee2e6;
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+
+.quantidade-controles .btn {
+  border: none;
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.quantidade-controles .btn:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.quantidade-controles .form-control {
+  border: none;
+  padding: 0.25rem;
+  text-align: center;
+  font-weight: 600;
+  background: #f8f9fa;
+}
+
+.quantidade-controles .form-control:focus {
+  box-shadow: none;
+  background: white;
+}
+
+/* ------------------------------------------------------------------
+   💰 RESUMO E TOTAIS
+   ------------------------------------------------------------------ */
+
+.resumo-venda {
+  background-color: #f8f9fa;
+  border: 1px solid #007bff;
+  border-radius: 0.5rem;
+}
+
+.resumo-venda .resumo-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 0.9rem;
+}
+
+.resumo-venda .resumo-linha.total {
+  border-top: 2px solid #dee2e6;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #0d6efd;
+}
+
+.resumo-venda .resumo-linha.desconto {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+/* Troco */
+.troco-info {
+  background: linear-gradient(135deg, #d4edda, #c3e6cb);
+  border: 1px solid #28a745;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-weight: 600;
+  color: #155724;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background-color: #007bff;
+  margin: 8px 0;
+}
+
+/* ------------------------------------------------------------------
+   🎛️ FORMAS DE PAGAMENTO
+   ------------------------------------------------------------------ */
+
+.pagamento-opcoes .btn-check:checked + .btn-outline-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+  transform: scale(1.05);
+}
+
+.pagamento-opcoes .btn-outline-primary {
+  transition: all 0.3s ease;
+  border-width: 2px;
+  font-weight: 500;
+  padding: 0.75rem 0.5rem;
+}
+
+.pagamento-opcoes .btn-outline-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+/* ------------------------------------------------------------------
+   🔲 BOTÕES PRINCIPAIS
+   ------------------------------------------------------------------ */
+
+.btn-finalizar-venda {
+  background-color: #28a745;
+  color: white;
+  font-weight: 500;
+  padding: 10px;
+  border: none;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-finalizar-venda:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.btn-finalizar-venda:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
+
+.btn-finalizar-venda:disabled {
+  background-color: #6c757d;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-finalizar-venda.processing {
+  background-color: #007bff;
+  pointer-events: none;
+}
+
+.btn-finalizar-venda.processing:hover {
+  background-color: #0056b3;
+}
+
+/* ------------------------------------------------------------------
+   📱 MODAL DE DETALHES
+   ------------------------------------------------------------------ */
+
+.modal-content {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  border-bottom: 1px solid #e9ecef;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+.modal-backdrop.show {
+  opacity: 0.6;
+  backdrop-filter: blur(2px);
+}
+
+/* Tabela dentro do modal */
+.modal .table-sm th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-top: none;
+}
+
+.modal .table-sm td {
+  padding: 0.75rem 0.5rem;
+  vertical-align: middle;
+}
+
+/* ------------------------------------------------------------------
+   📱 RESPONSIVIDADE
+   ------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+  .nav-pills .nav-link {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .produto-card {
+    margin-bottom: 1rem;
+  }
+  
+  .carrinho-lista {
+    max-height: 250px;
+  }
+  
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  .btn-finalizar-venda {
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .vendas-table th,
+  .vendas-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+  }
+  
+  .produto-card .card-body {
+    padding: 0.75rem;
+  }
+  
+  .carrinho-item .card-body {
+    padding: 0.75rem;
+  }
+}
+
+/* ------------------------------------------------------------------
+   🎨 ESTADOS ESPECIAIS
+   ------------------------------------------------------------------ */
+
+/* Loading/Processing */
+.processing {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.processing * {
+  cursor: wait !important;
+}
+
+/* Success state */
+.success-highlight {
+  animation: successPulse 1s ease-in-out;
+}
+
+@keyframes successPulse {
+  0% { background-color: transparent; }
+  50% { background-color: rgba(40, 167, 69, 0.2); }
+  100% { background-color: transparent; }
+}
+
+/* Error state */
+.error-highlight {
+  animation: errorShake 0.5s ease-in-out;
+  border-color: #dc3545 !important;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ------------------------------------------------------------------
+   🔧 UTILITÁRIOS ESPECÍFICOS
+   ------------------------------------------------------------------ */
+
+/* Truncate text com tooltip */
+.text-truncate-custom {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Badge com pulso */
+.badge-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Focus visible melhorado */
+.focus-visible:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}

@@ -141,6 +141,14 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         >
           <span className="me-2 large-icon">🏠</span> Início
         </Link>
+        {/* ✅ ADICIONANDO O BOTÃO DE VENDAS */}
+        <Link
+          href={'/gerenciamento/vendas'}
+          className="list-group-item list-group-item-action d-flex align-items-center"
+          onClick={closeSidebar}
+        >
+          <span className="me-2 large-icon">🧾</span> Vendas
+        </Link>
         <Link
           href={'/gerenciamento/clientes'}
           className="list-group-item list-group-item-action d-flex align-items-center"
@@ -173,9 +181,9 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         <Toast message={flash.success} type="success" />
         <Toast message={flash.error} type="error" />
         <Toast message={flash.info} type="info" />
-  {renderSidebar()}
+        {renderSidebar()}
 
-  <main className="flex-grow-1" onClick={onMainClick}>
+        <main className="flex-grow-1" onClick={onMainClick}>
           <header className="d-flex align-items-center justify-content-between p-3 border-bottom bg-white">
             <div className="d-flex align-items-center gap-2">
               {!isDesktop && (
