@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-import ClienteCreateModal from '../../components/ClienteCreateModal'; // ✅ CORRIGIDO
 
 // ✅ Interfaces baseadas nas suas tabelas
 interface Produto {
@@ -69,9 +68,9 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   const [filtroCliente, setFiltroCliente] = useState('');
   const [vendaSelecionada, setVendaSelecionada] = useState<Venda | null>(null);
   const [showDetalhes, setShowDetalhes] = useState(false);
-
-  // ✅ ESTADO AUSENTE ADICIONADO
-  const [showClienteModal, setShowClienteModal] = useState(false);
+  
+  // Estado do loading para venda
+  const [loadingVenda, setLoadingVenda] = useState(false);
 
   const { data, setData, post, processing } = useForm({});
 
@@ -162,10 +161,8 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   const calcularTotal = () => calcularSubtotal() - desconto;
   const calcularTroco = () => valorRecebido ? Math.max(0, valorRecebido - calcularTotal()) : 0;
 
-  // ✅ Finalizar venda
+  // Finalizar venda
   const finalizarVenda = async () => {
-    console.log('🚀 finalizarVenda chamada!');
-    
     if (carrinho.length === 0) {
       alert('Adicione pelo menos um produto à venda!');
       return;
@@ -183,6 +180,9 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
       return;
     }
 
+    // Ativar loading
+    setLoadingVenda(true);
+
     const dadosVenda = {
       itens: carrinho.map(item => ({
         produto_id: item.produto_id,
@@ -196,89 +196,40 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
       valor_recebido: valorRecebido,
     };
 
-    console.log('📦 Dados da venda antes do envio:', dadosVenda);
-    console.log('� Estado do carrinho:', carrinho);
-    console.log('🔍 Cliente selecionado:', clienteSelecionado);
-    console.log('🔍 Forma de pagamento:', formaPagamento);
-    console.log('🔍 Desconto:', desconto);
-    console.log('🔍 Observações:', observacoes);
-    console.log('🔍 Valor recebido:', valorRecebido);
-    
     try {
-      // Usar uma abordagem mais explícita com fetch
-      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      console.log('🔑 CSRF Token:', csrfToken);
-
-      const response = await fetch('/gerenciamento/vendas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-CSRF-TOKEN': csrfToken || '',
-          'X-Requested-With': 'XMLHttpRequest',
+      // Usar router.post do Inertia sem fetch customizado
+      router.post('/gerenciamento/vendas', dadosVenda, {
+        onSuccess: () => {
+          // Aguardar um pouco para mostrar o sucesso
+          setTimeout(() => {
+            // Limpar formulário
+            setCarrinho([]);
+            setClienteSelecionado(null);
+            setFormaPagamento('dinheiro');
+            setDesconto(0);
+            setObservacoes('');
+            setValorRecebido(0);
+            setBusca('');
+            
+            // Mudar para aba de histórico
+            setAbaAtiva('lista');
+            setLoadingVenda(false);
+            
+            // Recarregar dados das vendas
+            router.reload({ only: ['vendas'] });
+          }, 1500);
         },
-        body: JSON.stringify(dadosVenda),
+        onError: (errors) => {
+          console.error('Erro ao finalizar venda:', errors);
+          alert('Erro ao processar venda. Tente novamente.');
+          setLoadingVenda(false);
+        }
       });
-
-      console.log('📡 Response status:', response.status);
-
-      if (response.ok) {
-        // Tentar processar como JSON
-        try {
-          const responseData = await response.json();
-          console.log('✅ Venda processada com sucesso!', responseData);
-          
-          // Limpar carrinho e voltar para lista
-          setCarrinho([]);
-          setClienteSelecionado(null);
-          setDesconto(0);
-          setValorRecebido(0);
-          setObservacoes('');
-          setBusca('');
-          setAbaAtiva('lista');
-          
-          // Recarregar a página para atualizar os dados do histórico
-          window.location.reload();
-          
-        } catch (jsonError) {
-          // Se não conseguir processar como JSON, ainda considera sucesso
-          console.log('✅ Venda processada (resposta não-JSON)');
-          
-          // Limpar carrinho e voltar para lista
-          setCarrinho([]);
-          setClienteSelecionado(null);
-          setDesconto(0);
-          setValorRecebido(0);
-          setObservacoes('');
-          setBusca('');
-          setAbaAtiva('lista');
-          
-          // Recarregar a página para atualizar os dados do histórico
-          window.location.reload();
-        }
-      } else {
-        let errorMessage = 'Erro desconhecido';
-        
-        try {
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('application/json')) {
-            const errorData = await response.json();
-            errorMessage = errorData.message || 'Erro na requisição';
-            console.error('❌ Erro JSON:', errorData);
-          } else {
-            const errorText = await response.text();
-            errorMessage = `Erro HTTP ${response.status}`;
-            console.error('❌ Erro HTML/Text:', errorText.substring(0, 500));
-          }
-        } catch (parseError) {
-          console.error('❌ Erro ao processar resposta de erro:', parseError);
-        }
-        
-        alert('Erro ao finalizar venda: ' + errorMessage);
-      }
+      
     } catch (error) {
-      console.error('❌ Erro na requisição:', error);
+      console.error('Erro ao finalizar venda:', error);
       alert('Erro ao conectar com o servidor.');
+      setLoadingVenda(false);
     }
   };
 
@@ -500,7 +451,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
           </div>
         ) : (
           /* ABA 2: NOVA VENDA (PDV) */
-          <div className="row fade-in">
+          <div className={`row fade-in vendas-container ${loadingVenda ? 'processing' : ''}`}>
             {/* Coluna Esquerda - Produtos */}
             <div className="col-lg-8">
               <div className="card h-100">
@@ -582,7 +533,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
 
             {/* Coluna Direita - Carrinho */}
             <div className="col-lg-4">
-              <div className="card h-100 carrinho-container">
+              <div className={`card h-100 carrinho-container ${loadingVenda ? 'loading' : ''}`}>
                 <div className="card-header carrinho-header text-white">
                   <h5 className="mb-0">
                     <i className="bi bi-cart me-2"></i>
@@ -747,36 +698,26 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                         {formaPagamento === 'conta_fiada' && (
                           <div className="col-12 mb-3">
                             <label className="form-label small">Cliente</label>
-                            <div className="d-flex gap-2">
-                              <select
-                                className="form-select form-select-sm"
-                                value={clienteSelecionado?.id || ''}
-                                onChange={(e) => {
-                                  const cliente = clientes.find(c => c.id === parseInt(e.target.value));
-                                  setClienteSelecionado(cliente || null);
-                                }}
-                              >
-                                <option value="">Selecionar cliente...</option>
-                                {clientes.map(cliente => (
-                                  <option key={cliente.id} value={cliente.id}>
-                                    {cliente.nome} - {cliente.email}
-                                  </option>
-                                ))}
-                              </select>
-                              <button 
-                                type="button"
-                                className="btn btn-outline-primary btn-sm"
-                                onClick={() => setShowClienteModal(true)}
-                                title="Cadastrar novo cliente"
-                              >
-                                <i className="bi bi-plus"></i>
-                              </button>
-                            </div>
+                            <select
+                              className="form-select form-select-sm"
+                              value={clienteSelecionado?.id || ''}
+                              onChange={(e) => {
+                                const cliente = clientes.find(c => c.id === parseInt(e.target.value));
+                                setClienteSelecionado(cliente || null);
+                              }}
+                            >
+                              <option value="">Selecionar cliente...</option>
+                              {clientes.map(cliente => (
+                                <option key={cliente.id} value={cliente.id}>
+                                  {cliente.nome} - {cliente.email}
+                                </option>
+                              ))}
+                            </select>
                             
                             {!clienteSelecionado && (
                               <div className="alert alert-warning alert-sm mt-2 mb-0">
                                 <i className="bi bi-exclamation-triangle me-1"></i>
-                                <small>Selecione um cliente ou cadastre um novo para venda fiada</small>
+                                <small>Selecione um cliente para venda fiada</small>
                               </div>
                             )}
                           </div>
@@ -850,14 +791,23 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
 
                       {/* Botão Finalizar */}
                       <button
-                        className={`btn btn-finalizar-venda w-100 ${processing ? 'processing' : ''}`}
+                        className={`btn btn-finalizar-venda w-100 ${loadingVenda ? 'processing' : ''}`}
                         onClick={finalizarVenda}
-                        disabled={processing}
+                        disabled={loadingVenda || carrinho.length === 0}
                       >
-                        {processing ? (
+                        {loadingVenda ? (
                           <>
-                            <span className="spinner-border spinner-border-sm me-2"></span>
-                            Processando...
+                            <div className="spinner-border spinner-border-sm me-2" role="status">
+                              <span className="visually-hidden">Processando...</span>
+                            </div>
+                            <span className="processing-text">
+                              Processando venda
+                              <span className="dots">
+                                <span>.</span>
+                                <span>.</span>
+                                <span>.</span>
+                              </span>
+                            </span>
                           </>
                         ) : (
                           <>
@@ -958,24 +908,6 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         </>
       )}
 
-      {/* Modal de cadastro de cliente */}
-      {showClienteModal && (
-        <ClienteCreateModal
-          show={showClienteModal}
-          onClose={() => setShowClienteModal(false)}
-          onSuccess={(novoCliente: Cliente) => { // ✅ TIPADO CORRETAMENTE
-            setShowClienteModal(false);
-            if (novoCliente) {
-              setClienteSelecionado(novoCliente);
-            }
-            // Recarregar lista de clientes
-            router.get('/gerenciamento/vendas', {}, { 
-              preserveState: true,
-              preserveScroll: true 
-            });
-          }}
-        />
-      )}
     </GerenciamentoLayout>
   );
 }

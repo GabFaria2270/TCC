@@ -538,6 +538,81 @@
   background-color: #0056b3;
 }
 
+/* Spinner customizado */
+.btn-finalizar-venda .spinner-border {
+  width: 1rem;
+  height: 1rem;
+  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.3);
+  border-right-color: white;
+  animation: spinner-rotate 0.75s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estado de processamento */
+.btn-finalizar-venda.processing {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.btn-finalizar-venda.processing:hover {
+  background-color: #6c757d !important;
+  transform: none !important;
+}
+
+/* Apenas desabilitar campos do carrinho durante loading */
+.carrinho-container.loading input,
+.carrinho-container.loading select,
+.carrinho-container.loading button:not(.btn-finalizar-venda) {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Animação dos pontos no texto de loading */
+.processing-text .dots span {
+  animation: loading-dots 1.4s infinite ease-in-out both;
+}
+
+.processing-text .dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.processing-text .dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loading-dots {
+  0%, 80%, 100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* Apenas desabilitar campos durante processamento */
+.vendas-container.processing input,
+.vendas-container.processing select,
+.vendas-container.processing textarea,
+.vendas-container.processing button:not(.btn-finalizar-venda) {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vendas-container.processing .produto-card {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ------------------------------------------------------------------
    📱 MODAL DE DETALHES
    ------------------------------------------------------------------ */

@@ -8,12 +8,12 @@ use App\Models\Cliente;
 use App\Models\Produto;
 use App\Models\Estoque;
 use App\Models\MovimentoEstoque;
-use App\Models\ContaFiada; // ✅ ADICIONADO
+use App\Models\ContaFiada;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Exception; // ✅ ADICIONADO
+use Exception;
 
 class VendaService
 {
@@ -22,7 +22,7 @@ class VendaService
         try {
             $user = $request->user();
             $comercio = $user->comercio;
-            
+
             if (!$comercio) {
                 return [
                     'success' => false,
@@ -99,12 +99,10 @@ class VendaService
                 ]
             ];
 
-        } catch (Exception $e) { // ✅ CORRIGIDO
-            Log::error('Erro ao listar vendas: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString()); // ✅ ADICIONADO PARA DEBUG
+        } catch (Exception $e) {
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro interno do sistema: ' . $e->getMessage()] // ✅ MOSTRA O ERRO ESPECÍFICO
+                'errors' => ['system' => 'Erro interno do sistema']
             ];
         }
     }
@@ -203,27 +201,14 @@ class VendaService
             // 🚀 COMMIT da transação principal primeiro
             DB::commit();
 
-            // 🏦 ATUALIZAR CONTA FIADA APÓS COMMIT (para garantir que não haja conflitos de transação)
+            // Atualizar conta fiada após commit
             if ($dados['forma_pagamento'] === 'conta_fiada' && isset($dados['cliente_id']) && $dados['cliente_id']) {
-                Log::info("🔄 Atualizando conta fiada PÓS-COMMIT", [
-                    'venda_id' => $venda->id,
-                    'cliente_id' => $dados['cliente_id'],
-                    'total' => $total
-                ]);
-                
                 try {
                     DB::beginTransaction();
                     $this->atualizarContaFiada((int) $dados['cliente_id'], $total);
                     DB::commit();
-                    
-                    Log::info("✅ Conta fiada atualizada pós-commit com sucesso");
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    Log::error("❌ ERRO ao atualizar conta fiada pós-commit", [
-                        'erro' => $e->getMessage(),
-                        'venda_id' => $venda->id,
-                        'cliente_id' => $dados['cliente_id']
-                    ]);
                     // Não falha a venda, apenas registra o erro
                 }
             }
@@ -237,10 +222,9 @@ class VendaService
 
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Erro ao criar venda: ' . $e->getMessage());
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro ao processar venda: ' . $e->getMessage()]
+                'errors' => ['system' => 'Erro ao processar venda']
             ];
         }
     }
@@ -303,78 +287,24 @@ class VendaService
 
     private function atualizarContaFiada(int $clienteId, float $valor)
     {
-        Log::info("=== INICIANDO ATUALIZAÇÃO CONTA FIADA ===", [
-            'cliente_id' => $clienteId,
-            'valor_venda' => $valor
-        ]);
-
-        // Buscar cliente com conta fiada
         $cliente = Cliente::with('contaFiada')->find($clienteId);
         
         if (!$cliente) {
-            Log::error("❌ Cliente não encontrado", ['cliente_id' => $clienteId]);
             throw new Exception("Cliente não encontrado para ID: {$clienteId}");
         }
 
-        Log::info("✅ Cliente encontrado", [
-            'cliente_id' => $cliente->id,
-            'cliente_nome' => $cliente->nome,
-            'comercio_id' => $cliente->comercio_id,
-            'tem_conta_fiada' => $cliente->contaFiada ? 'SIM' : 'NÃO'
-        ]);
-
-        try {
-            if ($cliente->contaFiada) {
-                // CENÁRIO 1: Conta fiada JÁ EXISTE - apenas adicionar valor
-                $contaFiada = $cliente->contaFiada;
-                $saldoAnterior = (float) $contaFiada->saldo;
-                $novoSaldo = $saldoAnterior + $valor;
-                
-                Log::info("💰 Atualizando conta fiada existente", [
-                    'conta_fiada_id' => $contaFiada->id,
-                    'saldo_anterior' => $saldoAnterior,
-                    'valor_adicionar' => $valor,
-                    'novo_saldo' => $novoSaldo
-                ]);
-                
-                $contaFiada->update(['saldo' => $novoSaldo]);
-                
-                Log::info("✅ Conta fiada atualizada com sucesso", [
-                    'conta_fiada_id' => $contaFiada->id,
-                    'saldo_final' => $novoSaldo
-                ]);
-                
-            } else {
-                // CENÁRIO 2: Cliente NÃO TEM conta fiada - criar nova
-                Log::info("🆕 Criando nova conta fiada", [
-                    'cliente_id' => $cliente->id,
-                    'comercio_id' => $cliente->comercio_id,
-                    'saldo_inicial' => $valor
-                ]);
-                
-                $novaContaFiada = ContaFiada::create([
-                    'cliente_id' => $cliente->id,
-                    'comercio_id' => $cliente->comercio_id,
-                    'saldo' => $valor,
-                    'descricao' => 'Conta criada automaticamente na primeira venda fiada'
-                ]);
-                
-                Log::info("✅ Nova conta fiada criada com sucesso", [
-                    'nova_conta_id' => $novaContaFiada->id,
-                    'saldo_inicial' => $novaContaFiada->saldo
-                ]);
-            }
-            
-            Log::info("=== CONTA FIADA ATUALIZADA COM SUCESSO ===");
-            
-        } catch (\Exception $e) {
-            Log::error("❌ ERRO ao atualizar conta fiada", [
-                'cliente_id' => $clienteId,
-                'valor' => $valor,
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+        if ($cliente->contaFiada) {
+            $contaFiada = $cliente->contaFiada;
+            $saldoAnterior = (float) $contaFiada->saldo;
+            $novoSaldo = $saldoAnterior + $valor;
+            $contaFiada->update(['saldo' => $novoSaldo]);
+        } else {
+            ContaFiada::create([
+                'cliente_id' => $cliente->id,
+                'comercio_id' => $cliente->comercio_id,
+                'saldo' => $valor,
+                'descricao' => 'Conta criada automaticamente na primeira venda fiada'
             ]);
-            throw $e;
         }
     }
 
@@ -401,7 +331,6 @@ class VendaService
             ];
 
         } catch (Exception $e) {
-            Log::error('Erro ao buscar venda: ' . $e->getMessage());
             return [
                 'success' => false,
                 'errors' => ['system' => 'Erro interno do sistema']
@@ -457,7 +386,6 @@ class VendaService
 
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Erro ao cancelar venda: ' . $e->getMessage());
             return [
                 'success' => false,
                 'errors' => ['system' => 'Erro ao cancelar venda']
@@ -498,80 +426,15 @@ class VendaService
         $cliente = Cliente::with('contaFiada')->find($clienteId);
         
         if (!$cliente) {
-            Log::error("Cliente não encontrado para reverter conta fiada", ['cliente_id' => $clienteId]);
             return;
         }
 
-        // ✅ CORRIGIDO: Usar relacionamento correto e adicionar logs
         if ($cliente->contaFiada) {
             $saldoAtual = (float) $cliente->contaFiada->saldo;
             $novoSaldo = max(0, $saldoAtual - $valor);
             $cliente->contaFiada->update(['saldo' => $novoSaldo]);
-            
-            Log::info("Conta fiada revertida", [
-                'cliente_id' => $clienteId,
-                'saldo_anterior' => $saldoAtual,
-                'valor_revertido' => $valor,
-                'novo_saldo' => $novoSaldo
-            ]);
-        } else {
-            Log::warning("Tentativa de reverter conta fiada inexistente", ['cliente_id' => $clienteId]);
         }
     }
 
-    /**
-     * 🧪 MÉTODO DE TESTE PARA DEBUG DE CONTA FIADA
-     */
-    public function testarContaFiada(int $clienteId, float $valor)
-    {
-        Log::info("🧪 TESTE: Iniciando teste de conta fiada", [
-            'cliente_id' => $clienteId,
-            'valor' => $valor
-        ]);
 
-        $cliente = Cliente::with('contaFiada')->find($clienteId);
-        
-        if (!$cliente) {
-            Log::error("🧪 TESTE: Cliente não encontrado", ['cliente_id' => $clienteId]);
-            return false;
-        }
-
-        Log::info("🧪 TESTE: Cliente encontrado", [
-            'cliente_id' => $cliente->id,
-            'nome' => $cliente->nome,
-            'comercio_id' => $cliente->comercio_id,
-            'tem_conta_fiada' => $cliente->contaFiada ? 'SIM' : 'NÃO',
-            'saldo_atual' => $cliente->contaFiada ? $cliente->contaFiada->saldo : 'N/A'
-        ]);
-
-        try {
-            if ($cliente->contaFiada) {
-                $saldoAnterior = $cliente->contaFiada->saldo;
-                $cliente->contaFiada->update(['saldo' => $saldoAnterior + $valor]);
-                Log::info("🧪 TESTE: Conta fiada atualizada", [
-                    'saldo_anterior' => $saldoAnterior,
-                    'valor_adicionado' => $valor,
-                    'saldo_novo' => $saldoAnterior + $valor
-                ]);
-            } else {
-                $novaConta = ContaFiada::create([
-                    'cliente_id' => $cliente->id,
-                    'comercio_id' => $cliente->comercio_id,
-                    'saldo' => $valor,
-                    'descricao' => 'Teste de criação de conta fiada'
-                ]);
-                Log::info("🧪 TESTE: Nova conta fiada criada", [
-                    'conta_id' => $novaConta->id,
-                    'saldo_inicial' => $novaConta->saldo
-                ]);
-            }
-            return true;
-        } catch (\Exception $e) {
-            Log::error("🧪 TESTE: Erro", [
-                'erro' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return false;
-        }
-    }
 }

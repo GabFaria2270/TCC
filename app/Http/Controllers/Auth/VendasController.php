@@ -42,14 +42,6 @@ class VendasController extends Controller
      */
     public function store(Request $request)
     {
-        // 🔍 LOG PARA DEBUG
-        \Log::info("🎯 VendasController@store CHAMADO", [
-            'user_id' => $request->user()?->id,
-            'dados_recebidos' => $request->all(),
-            'url' => $request->url(),
-            'method' => $request->method()
-        ]);
-
         $validated = $request->validate([
             'itens' => 'required|array|min:1',
             'itens.*.produto_id' => 'required|integer|exists:produto,id',
@@ -65,27 +57,9 @@ class VendasController extends Controller
         $resultado = $this->vendaService->criar($validated, $request);
 
         if ($resultado['success']) {
-            // Se for uma requisição AJAX, retornar JSON
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Venda realizada com sucesso!',
-                    'data' => $resultado['data'] ?? null
-                ]);
-            }
-
             return redirect()
                 ->route('vendas.index')
                 ->with('success', 'Venda realizada com sucesso!');
-        }
-
-        // Se for uma requisição AJAX, retornar JSON de erro
-        if ($request->expectsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao criar venda',
-                'errors' => $resultado['errors'] ?? []
-            ], 422);
         }
 
         return back()
