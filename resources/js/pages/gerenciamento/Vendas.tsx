@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
+import ClienteCreateModal from '../../components/ClienteCreateModal'; // ✅ CORRIGIDO
 
 // ✅ Interfaces baseadas nas suas tabelas
 interface Produto {
@@ -58,10 +59,10 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   const [busca, setBusca] = useState('');
   const [produtosFiltrados, setProdutosFiltrados] = useState(produtos);
   const [clienteSelecionado, setClienteSelecionado] = useState<Cliente | null>(null);
-  const [desconto, setDesconto] = useState(0);
+  const [desconto, setDesconto] = useState<number>(0);
   const [observacoes, setObservacoes] = useState('');
   const [formaPagamento, setFormaPagamento] = useState('dinheiro');
-  const [valorRecebido, setValorRecebido] = useState<number | null>(null);
+  const [valorRecebido, setValorRecebido] = useState<number>(0);
 
   // Estados da listagem
   const [filtroStatus, setFiltroStatus] = useState('');
@@ -69,7 +70,10 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   const [vendaSelecionada, setVendaSelecionada] = useState<Venda | null>(null);
   const [showDetalhes, setShowDetalhes] = useState(false);
 
-  const { post, processing } = useForm();
+  // ✅ ESTADO AUSENTE ADICIONADO
+  const [showClienteModal, setShowClienteModal] = useState(false);
+
+  const { data, setData, post, processing } = useForm({});
 
   // 🔍 Filtrar produtos em tempo real
   useEffect(() => {
@@ -103,7 +107,8 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
           ? {
               ...item,
               quantidade: novaQuantidade,
-              subtotal: novaQuantidade * item.preco_unitario
+              preco_unitario: Number(item.preco_unitario), // ✅ GARANTIR NÚMERO
+              subtotal: novaQuantidade * Number(item.preco_unitario) // ✅ GARANTIR NÚMERO
             }
           : item
       ));
@@ -112,8 +117,8 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         produto_id: produto.id,
         produto,
         quantidade,
-        preco_unitario: produto.preco,
-        subtotal: quantidade * produto.preco,
+        preco_unitario: Number(produto.preco), // ✅ GARANTIR NÚMERO
+        subtotal: quantidade * Number(produto.preco), // ✅ GARANTIR NÚMERO
       };
       setCarrinho([...carrinho, novoItem]);
     }
@@ -158,7 +163,9 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   const calcularTroco = () => valorRecebido ? Math.max(0, valorRecebido - calcularTotal()) : 0;
 
   // ✅ Finalizar venda
-  const finalizarVenda = () => {
+  const finalizarVenda = async () => {
+    console.log('🚀 finalizarVenda chamada!');
+    
     if (carrinho.length === 0) {
       alert('Adicione pelo menos um produto à venda!');
       return;
@@ -184,23 +191,95 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
       })),
       cliente_id: clienteSelecionado?.id || null,
       forma_pagamento: formaPagamento,
-      desconto,
-      observacoes,
+      desconto: desconto,
+      observacoes: observacoes,
       valor_recebido: valorRecebido,
     };
 
-    post('/gerenciamento/vendas', dadosVenda, {
-      onSuccess: () => {
-        // Limpar carrinho e voltar para lista
-        setCarrinho([]);
-        setClienteSelecionado(null);
-        setDesconto(0);
-        setValorRecebido(null);
-        setObservacoes('');
-        setBusca('');
-        setAbaAtiva('lista');
-      },
-    });
+    console.log('📦 Dados da venda antes do envio:', dadosVenda);
+    console.log('� Estado do carrinho:', carrinho);
+    console.log('🔍 Cliente selecionado:', clienteSelecionado);
+    console.log('🔍 Forma de pagamento:', formaPagamento);
+    console.log('🔍 Desconto:', desconto);
+    console.log('🔍 Observações:', observacoes);
+    console.log('🔍 Valor recebido:', valorRecebido);
+    
+    try {
+      // Usar uma abordagem mais explícita com fetch
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      console.log('🔑 CSRF Token:', csrfToken);
+
+      const response = await fetch('/gerenciamento/vendas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken || '',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify(dadosVenda),
+      });
+
+      console.log('📡 Response status:', response.status);
+
+      if (response.ok) {
+        // Tentar processar como JSON
+        try {
+          const responseData = await response.json();
+          console.log('✅ Venda processada com sucesso!', responseData);
+          
+          // Limpar carrinho e voltar para lista
+          setCarrinho([]);
+          setClienteSelecionado(null);
+          setDesconto(0);
+          setValorRecebido(0);
+          setObservacoes('');
+          setBusca('');
+          setAbaAtiva('lista');
+          
+          // Recarregar a página para atualizar os dados do histórico
+          window.location.reload();
+          
+        } catch (jsonError) {
+          // Se não conseguir processar como JSON, ainda considera sucesso
+          console.log('✅ Venda processada (resposta não-JSON)');
+          
+          // Limpar carrinho e voltar para lista
+          setCarrinho([]);
+          setClienteSelecionado(null);
+          setDesconto(0);
+          setValorRecebido(0);
+          setObservacoes('');
+          setBusca('');
+          setAbaAtiva('lista');
+          
+          // Recarregar a página para atualizar os dados do histórico
+          window.location.reload();
+        }
+      } else {
+        let errorMessage = 'Erro desconhecido';
+        
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await response.json();
+            errorMessage = errorData.message || 'Erro na requisição';
+            console.error('❌ Erro JSON:', errorData);
+          } else {
+            const errorText = await response.text();
+            errorMessage = `Erro HTTP ${response.status}`;
+            console.error('❌ Erro HTML/Text:', errorText.substring(0, 500));
+          }
+        } catch (parseError) {
+          console.error('❌ Erro ao processar resposta de erro:', parseError);
+        }
+        
+        alert('Erro ao finalizar venda: ' + errorMessage);
+      }
+    } catch (error) {
+      console.error('❌ Erro na requisição:', error);
+      alert('Erro ao conectar com o servidor.');
+    }
   };
 
   // 📋 Filtrar vendas
@@ -209,6 +288,11 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     const filtroClienteMatch = !filtroCliente || venda.cliente?.id === parseInt(filtroCliente);
     return filtroStatusMatch && filtroClienteMatch;
   });
+
+  // Helper para garantir formatação de valores
+  const formatarMoeda = (valor: any): string => {
+    return Number(valor || 0).toFixed(2).replace('.', ',');
+  };
 
   return (
     <GerenciamentoLayout>
@@ -554,7 +638,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                               
                               <div className="text-end">
                                 <small className="preco-info d-block">
-                                  R$ {item.preco_unitario.toFixed(2)} × {item.quantidade}
+                                  R$ {formatarMoeda(item.preco_unitario)} × {item.quantidade}
                                 </small>
                                 <strong className="subtotal">
                                   R$ {item.subtotal.toFixed(2).replace('.', ',')}
@@ -570,79 +654,159 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                   {/* Configurações da Venda */}
                   {carrinho.length > 0 && (
                     <>
-                      {/* Cliente */}
-                      <div className="mb-2">
-                        <label className="form-label small">Cliente (opcional)</label>
-                        <select
-                          className="form-select form-select-sm"
-                          value={clienteSelecionado?.id || ''}
-                          onChange={(e) => {
-                            const cliente = clientes.find(c => c.id === parseInt(e.target.value));
-                            setClienteSelecionado(cliente || null);
-                          }}
-                        >
-                          <option value="">Venda avulsa</option>
-                          {clientes.map(cliente => (
-                            <option key={cliente.id} value={cliente.id}>
-                              {cliente.nome}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* Forma de Pagamento */}
-                      <div className="mb-2">
-                        <label className="form-label small">Forma de Pagamento</label>
-                        <div className="pagamento-opcoes">
-                          <div className="row g-1">
-                            {[
-                              { value: 'dinheiro', label: '💵', text: 'Dinheiro' },
-                              { value: 'pix', label: '📱', text: 'PIX' },
-                              { value: 'cartao_debito', label: '💳', text: 'Débito' },
-                              { value: 'cartao_credito', label: '💳', text: 'Crédito' },
-                              { value: 'conta_fiada', label: '📋', text: 'Fiado' }
-                            ].map(forma => (
-                              <div key={forma.value} className="col-6 col-md-4">
-                                <input
-                                  type="radio"
-                                  className="btn-check"
-                                  name="forma_pagamento"
-                                  id={forma.value}
-                                  value={forma.value}
-                                  checked={formaPagamento === forma.value}
+                      {/* Forma de pagamentos */}
+                      <div className="row mb-3">
+                        <div className="col-12 mb-3">
+                          <label className="form-label small">Forma de Pagamento</label>
+                          <div className="pagamento-opcoes">
+                            <div className="row g-2">
+                              <div className="col-6 col-md-3">
+                                <input 
+                                  type="radio" 
+                                  className="btn-check" 
+                                  name="formaPagamento" 
+                                  id="dinheiro" 
+                                  value="dinheiro"
+                                  checked={formaPagamento === 'dinheiro'}
                                   onChange={(e) => setFormaPagamento(e.target.value)}
                                 />
-                                <label className="btn btn-outline-primary w-100 small" htmlFor={forma.value}>
-                                  {forma.label}
-                                  <br />
-                                  <span style={{ fontSize: '0.7rem' }}>{forma.text}</span>
+                                <label className="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" htmlFor="dinheiro">
+                                  <i className="bi bi-cash-coin fs-4 mb-2"></i>
+                                  <span className="small">Dinheiro</span>
                                 </label>
                               </div>
-                            ))}
+                              
+                              <div className="col-6 col-md-3">
+                                <input 
+                                  type="radio" 
+                                  className="btn-check" 
+                                  name="formaPagamento" 
+                                  id="pix" 
+                                  value="pix"
+                                  checked={formaPagamento === 'pix'}
+                                  onChange={(e) => setFormaPagamento(e.target.value)}
+                                />
+                                <label className="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" htmlFor="pix">
+                                  <i className="bi bi-qr-code fs-4 mb-2"></i>
+                                  <span className="small">PIX</span>
+                                </label>
+                              </div>
+                              
+                              <div className="col-6 col-md-3">
+                                <input 
+                                  type="radio" 
+                                  className="btn-check" 
+                                  name="formaPagamento" 
+                                  id="cartao_debito" 
+                                  value="cartao_debito"
+                                  checked={formaPagamento === 'cartao_debito'}
+                                  onChange={(e) => setFormaPagamento(e.target.value)}
+                                />
+                                <label className="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" htmlFor="cartao_debito">
+                                  <i className="bi bi-credit-card-2-front fs-4 mb-2"></i>
+                                  <span className="small">Débito</span>
+                                </label>
+                              </div>
+                              
+                              <div className="col-6 col-md-3">
+                                <input 
+                                  type="radio" 
+                                  className="btn-check" 
+                                  name="formaPagamento" 
+                                  id="cartao_credito" 
+                                  value="cartao_credito"
+                                  checked={formaPagamento === 'cartao_credito'}
+                                  onChange={(e) => setFormaPagamento(e.target.value)}
+                                />
+                                <label className="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" htmlFor="cartao_credito">
+                                  <i className="bi bi-credit-card fs-4 mb-2"></i>
+                                  <span className="small">Crédito</span>
+                                </label>
+                              </div>
+                              
+                              <div className="col-12 col-md-6">
+                                <input 
+                                  type="radio" 
+                                  className="btn-check" 
+                                  name="formaPagamento" 
+                                  id="conta_fiada" 
+                                  value="conta_fiada"
+                                  checked={formaPagamento === 'conta_fiada'}
+                                  onChange={(e) => setFormaPagamento(e.target.value)}
+                                />
+                                <label className="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" htmlFor="conta_fiada">
+                                  <i className="bi bi-wallet2 fs-4 mb-2"></i>
+                                  <span className="small">Conta Fiada</span>
+                                </label>
+                              </div>
+                            </div>
                           </div>
                         </div>
+
+                        {/* Cliente só aparece quando for conta fiada */}
+                        {formaPagamento === 'conta_fiada' && (
+                          <div className="col-12 mb-3">
+                            <label className="form-label small">Cliente</label>
+                            <div className="d-flex gap-2">
+                              <select
+                                className="form-select form-select-sm"
+                                value={clienteSelecionado?.id || ''}
+                                onChange={(e) => {
+                                  const cliente = clientes.find(c => c.id === parseInt(e.target.value));
+                                  setClienteSelecionado(cliente || null);
+                                }}
+                              >
+                                <option value="">Selecionar cliente...</option>
+                                {clientes.map(cliente => (
+                                  <option key={cliente.id} value={cliente.id}>
+                                    {cliente.nome} - {cliente.email}
+                                  </option>
+                                ))}
+                              </select>
+                              <button 
+                                type="button"
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => setShowClienteModal(true)}
+                                title="Cadastrar novo cliente"
+                              >
+                                <i className="bi bi-plus"></i>
+                              </button>
+                            </div>
+                            
+                            {!clienteSelecionado && (
+                              <div className="alert alert-warning alert-sm mt-2 mb-0">
+                                <i className="bi bi-exclamation-triangle me-1"></i>
+                                <small>Selecione um cliente ou cadastre um novo para venda fiada</small>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
 
-                      {/* Valor Recebido (só para dinheiro) */}
+                      {/* Valor recebido só para dinheiro */}
                       {formaPagamento === 'dinheiro' && (
-                        <div className="mb-2">
-                          <label className="form-label small">Valor Recebido</label>
-                          <div className="input-group input-group-sm">
-                            <span className="input-group-text">R$</span>
-                            <input
-                              type="number"
-                              className="form-control"
-                              step="0.01"
-                              min={calcularTotal()}
-                              value={valorRecebido || ''}
-                              onChange={(e) => setValorRecebido(parseFloat(e.target.value) || null)}
-                            />
+                        <div className="row mb-2">
+                          <div className="col-md-6 mb-3">
+                            <label className="form-label small">Valor Recebido</label>
+                            <div className="input-group input-group-sm">
+                              <span className="input-group-text">R$</span>
+                              <input
+                                type="number"
+                                className="form-control"
+                                step="0.01"
+                                min="0"
+                                value={valorRecebido || 0} // ✅ CORRIGIDO
+                                onChange={(e) => setValorRecebido(parseFloat(e.target.value) || 0)}
+                                placeholder="0,00"
+                              />
+                            </div>
+                            {/* ✅ VERIFICAÇÃO CORRIGIDA */}
+                            {valorRecebido && valorRecebido > 0 && valorRecebido >= calcularTotal() && (
+                              <small className="text-success">
+                                Troco: R$ {(valorRecebido - calcularTotal()).toFixed(2).replace('.', ',')}
+                              </small>
+                            )}
                           </div>
-                          {valorRecebido && valorRecebido >= calcularTotal() && (
-                            <small className="troco-info d-block mt-1">
-                              Troco: R$ {calcularTroco().toFixed(2).replace('.', ',')}
-                            </small>
-                          )}
                         </div>
                       )}
 
@@ -764,8 +928,8 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                           <tr key={index}>
                             <td>{item.produto.nome}</td>
                             <td>{item.quantidade}</td>
-                            <td>R$ {item.preco_unitario.toFixed(2).replace('.', ',')}</td>
-                            <td>R$ {item.subtotal.toFixed(2).replace('.', ',')}</td>
+                            <td>R$ {Number(item.preco_unitario).toFixed(2).replace('.', ',')}</td>
+                            <td>R$ {Number(item.subtotal).toFixed(2).replace('.', ',')}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -792,6 +956,25 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
             </div>
           </div>
         </>
+      )}
+
+      {/* Modal de cadastro de cliente */}
+      {showClienteModal && (
+        <ClienteCreateModal
+          show={showClienteModal}
+          onClose={() => setShowClienteModal(false)}
+          onSuccess={(novoCliente: Cliente) => { // ✅ TIPADO CORRETAMENTE
+            setShowClienteModal(false);
+            if (novoCliente) {
+              setClienteSelecionado(novoCliente);
+            }
+            // Recarregar lista de clientes
+            router.get('/gerenciamento/vendas', {}, { 
+              preserveState: true,
+              preserveScroll: true 
+            });
+          }}
+        />
       )}
     </GerenciamentoLayout>
   );

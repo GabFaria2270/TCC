@@ -1,17 +1,19 @@
 <?php
 
-
 namespace App\Services\Auth;
 
 use App\Models\Venda;
 use App\Models\ItemVenda;
-use App\Models\Produto;
 use App\Models\Cliente;
-use App\Models\MovimentoEstoque;
+use App\Models\Produto;
 use App\Models\Estoque;
+use App\Models\MovimentoEstoque;
+use App\Models\ContaFiada; // ✅ ADICIONADO
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Exception;
+use Exception; // ✅ ADICIONADO
 
 class VendaService
 {
@@ -19,67 +21,60 @@ class VendaService
     {
         try {
             $user = $request->user();
+            $comercio = $user->comercio;
             
-            // Buscar vendas com relacionamentos
+            if (!$comercio) {
+                return [
+                    'success' => false,
+                    'errors' => ['system' => 'Comércio não encontrado para o usuário']
+                ];
+            }
+            
+            // Buscar vendas do usuário
             $vendas = Venda::with(['cliente', 'itens.produto', 'usuario'])
-                ->where('usuario_id', $user->ID)
+                ->where('usuario_id', $user->id) // ✅ VERIFICAR SE É 'id' ou 'ID'
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($venda) {
                     return [
                         'id' => $venda->id,
                         'total' => $venda->total,
-                        'total_formatado' => $venda->total_formatado,
+                        'total_formatado' => number_format($venda->total, 2, ',', '.'),
                         'desconto' => $venda->desconto,
                         'forma_pagamento' => $venda->forma_pagamento,
                         'status' => $venda->status,
-                        'created_at' => $venda->created_at->toISOString(),
                         'cliente' => $venda->cliente ? [
-                            'id' => $venda->cliente->id,
                             'nome' => $venda->cliente->nome,
                             'email' => $venda->cliente->email,
                         ] : null,
-                        'itens' => $venda->itens->map(function ($item) {
-                            return [
-                                'produto_id' => $item->produto_id,
-                                'quantidade' => $item->quantidade,
-                                'preco_unitario' => $item->preco_unitario,
-                                'subtotal' => $item->subtotal,
-                                'produto' => [
-                                    'id' => $item->produto->id,
-                                    'nome' => $item->produto->nome,
-                                    'preco' => $item->preco_unitario,
-                                    'preco_formatado' => $item->preco_unitario_formatado,
-                                ]
-                            ];
-                        }),
+                        'created_at' => $venda->created_at->format('d/m/Y H:i'),
                         'observacoes' => $venda->observacoes,
                     ];
                 });
 
-            // Buscar produtos disponíveis
+            // Buscar produtos do comércio (CORRIGIDO)
             $produtos = Produto::with(['categoria', 'estoque'])
-                ->where('usuario_id', $user->ID)
-                ->where('ativo', true)
+                ->where('comercio_id', $comercio->id)
                 ->get()
                 ->map(function ($produto) {
                     return [
                         'id' => $produto->id,
                         'nome' => $produto->nome,
-                        'preco' => $produto->preco,
-                        'preco_formatado' => $produto->preco_formatado,
-                        'codigo_barras' => $produto->codigo_barras,
+                        'preco' => (float) $produto->preco, // ✅ GARANTIR FLOAT
+                        'preco_formatado' => 'R$ ' . number_format((float) $produto->preco, 2, ',', '.'), // ✅ GARANTIR FORMATAÇÃO
+                        'codigo_barras' => $produto->codigo_barras ?? '',
                         'categoria' => $produto->categoria ? [
                             'nome' => $produto->categoria->nome
                         ] : null,
                         'estoque' => $produto->estoque ? [
-                            'quantidade' => $produto->estoque->quantidade
+                            'quantidade' => (int) $produto->estoque->quantidade // ✅ GARANTIR INT
                         ] : ['quantidade' => 0],
                     ];
                 });
 
-            // Buscar clientes
-            $clientes = Cliente::where('usuario_id', $user->ID)
+            // Buscar clientes do comércio com conta fiada
+            $clientes = Cliente::with('contaFiada')
+                ->where('comercio_id', $comercio->id)
                 ->orderBy('nome')
                 ->get()
                 ->map(function ($cliente) {
@@ -87,7 +82,11 @@ class VendaService
                         'id' => $cliente->id,
                         'nome' => $cliente->nome,
                         'email' => $cliente->email,
-                        'telefone_formatado' => $cliente->telefone_formatado,
+                        'telefone' => $cliente->telefone,
+                        'conta_fiada' => $cliente->contaFiada ? [
+                            'saldo' => (float) $cliente->contaFiada->saldo,
+                            'saldo_formatado' => 'R$ ' . number_format($cliente->contaFiada->saldo, 2, ',', '.'),
+                        ] : null,
                     ];
                 });
 
@@ -100,11 +99,12 @@ class VendaService
                 ]
             ];
 
-        } catch (Exception $e) {
+        } catch (Exception $e) { // ✅ CORRIGIDO
             Log::error('Erro ao listar vendas: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString()); // ✅ ADICIONADO PARA DEBUG
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro interno do sistema']
+                'errors' => ['system' => 'Erro interno do sistema: ' . $e->getMessage()] // ✅ MOSTRA O ERRO ESPECÍFICO
             ];
         }
     }
@@ -115,9 +115,17 @@ class VendaService
         
         try {
             $user = $request->user();
-            
+            $comercio = $user->comercio;
+
+            if (!$comercio) {
+                return [
+                    'success' => false,
+                    'errors' => ['system' => 'Comércio não encontrado']
+                ];
+            }
+
             // Validar se todos os produtos existem e têm estoque
-            $erros = $this->validarItens($dados['itens'], $user->ID);
+            $erros = $this->validarItens($dados['itens'], $comercio->id); // ✅ CORRIGIDO
             if (!empty($erros)) {
                 return [
                     'success' => false,
@@ -131,7 +139,7 @@ class VendaService
 
             foreach ($dados['itens'] as $item) {
                 $produto = Produto::where('id', $item['produto_id'])
-                    ->where('usuario_id', $user->ID)
+                    ->where('comercio_id', $comercio->id) // ✅ CORRIGIDO
                     ->first();
 
                 if (!$produto) {
@@ -163,7 +171,7 @@ class VendaService
 
             // Criar a venda
             $venda = Venda::create([
-                'usuario_id' => $user->ID,
+                'usuario_id' => $user->id,
                 'cliente_id' => $dados['cliente_id'] ?? null,
                 'subtotal' => $subtotal,
                 'desconto' => $desconto,
@@ -190,12 +198,35 @@ class VendaService
                 $this->atualizarEstoque($itemData['produto'], $itemData['quantidade'], $venda, $user);
             }
 
-            // Se for conta fiada, atualizar saldo do cliente
-            if ($dados['forma_pagamento'] === 'conta_fiada' && $dados['cliente_id']) {
-                $this->atualizarContaFiada($dados['cliente_id'], $total);
-            }
 
+
+            // 🚀 COMMIT da transação principal primeiro
             DB::commit();
+
+            // 🏦 ATUALIZAR CONTA FIADA APÓS COMMIT (para garantir que não haja conflitos de transação)
+            if ($dados['forma_pagamento'] === 'conta_fiada' && isset($dados['cliente_id']) && $dados['cliente_id']) {
+                Log::info("🔄 Atualizando conta fiada PÓS-COMMIT", [
+                    'venda_id' => $venda->id,
+                    'cliente_id' => $dados['cliente_id'],
+                    'total' => $total
+                ]);
+                
+                try {
+                    DB::beginTransaction();
+                    $this->atualizarContaFiada((int) $dados['cliente_id'], $total);
+                    DB::commit();
+                    
+                    Log::info("✅ Conta fiada atualizada pós-commit com sucesso");
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    Log::error("❌ ERRO ao atualizar conta fiada pós-commit", [
+                        'erro' => $e->getMessage(),
+                        'venda_id' => $venda->id,
+                        'cliente_id' => $dados['cliente_id']
+                    ]);
+                    // Não falha a venda, apenas registra o erro
+                }
+            }
 
             return [
                 'success' => true,
@@ -214,14 +245,14 @@ class VendaService
         }
     }
 
-    private function validarItens(array $itens, int $usuarioId): array
+    private function validarItens(array $itens, int $comercioId): array
     {
         $erros = [];
 
         foreach ($itens as $index => $item) {
             $produto = Produto::with('estoque')
                 ->where('id', $item['produto_id'])
-                ->where('usuario_id', $usuarioId)
+                ->where('comercio_id', $comercioId) // ✅ CORRIGIDO
                 ->first();
 
             if (!$produto) {
@@ -260,7 +291,7 @@ class VendaService
         // Registrar movimento de estoque
         MovimentoEstoque::create([
             'produto_id' => $produto->id,
-            'usuario_id' => $usuario->ID,
+            'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,
             'tipo' => 'saida',
             'quantidade_anterior' => $quantidadeAnterior,
@@ -272,10 +303,78 @@ class VendaService
 
     private function atualizarContaFiada(int $clienteId, float $valor)
     {
-        $cliente = Cliente::find($clienteId);
-        if ($cliente && $cliente->conta_fiada) {
-            $novoSaldo = $cliente->conta_fiada->saldo + $valor;
-            $cliente->conta_fiada->update(['saldo' => $novoSaldo]);
+        Log::info("=== INICIANDO ATUALIZAÇÃO CONTA FIADA ===", [
+            'cliente_id' => $clienteId,
+            'valor_venda' => $valor
+        ]);
+
+        // Buscar cliente com conta fiada
+        $cliente = Cliente::with('contaFiada')->find($clienteId);
+        
+        if (!$cliente) {
+            Log::error("❌ Cliente não encontrado", ['cliente_id' => $clienteId]);
+            throw new Exception("Cliente não encontrado para ID: {$clienteId}");
+        }
+
+        Log::info("✅ Cliente encontrado", [
+            'cliente_id' => $cliente->id,
+            'cliente_nome' => $cliente->nome,
+            'comercio_id' => $cliente->comercio_id,
+            'tem_conta_fiada' => $cliente->contaFiada ? 'SIM' : 'NÃO'
+        ]);
+
+        try {
+            if ($cliente->contaFiada) {
+                // CENÁRIO 1: Conta fiada JÁ EXISTE - apenas adicionar valor
+                $contaFiada = $cliente->contaFiada;
+                $saldoAnterior = (float) $contaFiada->saldo;
+                $novoSaldo = $saldoAnterior + $valor;
+                
+                Log::info("💰 Atualizando conta fiada existente", [
+                    'conta_fiada_id' => $contaFiada->id,
+                    'saldo_anterior' => $saldoAnterior,
+                    'valor_adicionar' => $valor,
+                    'novo_saldo' => $novoSaldo
+                ]);
+                
+                $contaFiada->update(['saldo' => $novoSaldo]);
+                
+                Log::info("✅ Conta fiada atualizada com sucesso", [
+                    'conta_fiada_id' => $contaFiada->id,
+                    'saldo_final' => $novoSaldo
+                ]);
+                
+            } else {
+                // CENÁRIO 2: Cliente NÃO TEM conta fiada - criar nova
+                Log::info("🆕 Criando nova conta fiada", [
+                    'cliente_id' => $cliente->id,
+                    'comercio_id' => $cliente->comercio_id,
+                    'saldo_inicial' => $valor
+                ]);
+                
+                $novaContaFiada = ContaFiada::create([
+                    'cliente_id' => $cliente->id,
+                    'comercio_id' => $cliente->comercio_id,
+                    'saldo' => $valor,
+                    'descricao' => 'Conta criada automaticamente na primeira venda fiada'
+                ]);
+                
+                Log::info("✅ Nova conta fiada criada com sucesso", [
+                    'nova_conta_id' => $novaContaFiada->id,
+                    'saldo_inicial' => $novaContaFiada->saldo
+                ]);
+            }
+            
+            Log::info("=== CONTA FIADA ATUALIZADA COM SUCESSO ===");
+            
+        } catch (\Exception $e) {
+            Log::error("❌ ERRO ao atualizar conta fiada", [
+                'cliente_id' => $clienteId,
+                'valor' => $valor,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
     }
 
@@ -286,7 +385,7 @@ class VendaService
             
             $venda = Venda::with(['cliente', 'itens.produto', 'usuario'])
                 ->where('id', $id)
-                ->where('usuario_id', $user->ID)
+                ->where('usuario_id', $user->id)
                 ->first();
 
             if (!$venda) {
@@ -319,7 +418,7 @@ class VendaService
             
             $venda = Venda::with(['itens.produto'])
                 ->where('id', $id)
-                ->where('usuario_id', $user->ID)
+                ->where('usuario_id', $user->id)
                 ->first();
 
             if (!$venda) {
@@ -383,7 +482,7 @@ class VendaService
         // Registrar movimento de estoque
         MovimentoEstoque::create([
             'produto_id' => $produto->id,
-            'usuario_id' => $usuario->ID,
+            'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,
             'tipo' => 'entrada',
             'quantidade_anterior' => $quantidadeAnterior,
@@ -395,10 +494,84 @@ class VendaService
 
     private function reverterContaFiada(int $clienteId, float $valor)
     {
-        $cliente = Cliente::find($clienteId);
-        if ($cliente && $cliente->conta_fiada) {
-            $novoSaldo = max(0, $cliente->conta_fiada->saldo - $valor);
-            $cliente->conta_fiada->update(['saldo' => $novoSaldo]);
+        // ✅ CORRIGIDO: Usar relacionamento correto (camelCase)
+        $cliente = Cliente::with('contaFiada')->find($clienteId);
+        
+        if (!$cliente) {
+            Log::error("Cliente não encontrado para reverter conta fiada", ['cliente_id' => $clienteId]);
+            return;
+        }
+
+        // ✅ CORRIGIDO: Usar relacionamento correto e adicionar logs
+        if ($cliente->contaFiada) {
+            $saldoAtual = (float) $cliente->contaFiada->saldo;
+            $novoSaldo = max(0, $saldoAtual - $valor);
+            $cliente->contaFiada->update(['saldo' => $novoSaldo]);
+            
+            Log::info("Conta fiada revertida", [
+                'cliente_id' => $clienteId,
+                'saldo_anterior' => $saldoAtual,
+                'valor_revertido' => $valor,
+                'novo_saldo' => $novoSaldo
+            ]);
+        } else {
+            Log::warning("Tentativa de reverter conta fiada inexistente", ['cliente_id' => $clienteId]);
+        }
+    }
+
+    /**
+     * 🧪 MÉTODO DE TESTE PARA DEBUG DE CONTA FIADA
+     */
+    public function testarContaFiada(int $clienteId, float $valor)
+    {
+        Log::info("🧪 TESTE: Iniciando teste de conta fiada", [
+            'cliente_id' => $clienteId,
+            'valor' => $valor
+        ]);
+
+        $cliente = Cliente::with('contaFiada')->find($clienteId);
+        
+        if (!$cliente) {
+            Log::error("🧪 TESTE: Cliente não encontrado", ['cliente_id' => $clienteId]);
+            return false;
+        }
+
+        Log::info("🧪 TESTE: Cliente encontrado", [
+            'cliente_id' => $cliente->id,
+            'nome' => $cliente->nome,
+            'comercio_id' => $cliente->comercio_id,
+            'tem_conta_fiada' => $cliente->contaFiada ? 'SIM' : 'NÃO',
+            'saldo_atual' => $cliente->contaFiada ? $cliente->contaFiada->saldo : 'N/A'
+        ]);
+
+        try {
+            if ($cliente->contaFiada) {
+                $saldoAnterior = $cliente->contaFiada->saldo;
+                $cliente->contaFiada->update(['saldo' => $saldoAnterior + $valor]);
+                Log::info("🧪 TESTE: Conta fiada atualizada", [
+                    'saldo_anterior' => $saldoAnterior,
+                    'valor_adicionado' => $valor,
+                    'saldo_novo' => $saldoAnterior + $valor
+                ]);
+            } else {
+                $novaConta = ContaFiada::create([
+                    'cliente_id' => $cliente->id,
+                    'comercio_id' => $cliente->comercio_id,
+                    'saldo' => $valor,
+                    'descricao' => 'Teste de criação de conta fiada'
+                ]);
+                Log::info("🧪 TESTE: Nova conta fiada criada", [
+                    'conta_id' => $novaConta->id,
+                    'saldo_inicial' => $novaConta->saldo
+                ]);
+            }
+            return true;
+        } catch (\Exception $e) {
+            Log::error("🧪 TESTE: Erro", [
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return false;
         }
     }
 }

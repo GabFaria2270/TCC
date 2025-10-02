@@ -355,6 +355,59 @@
     color: #212529;
 }
 
+/* ---------- Botão de Histórico de Conta Fiada ---------- */
+.btn-historico-fiada {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #6f42c1, #5a2d91);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(111, 66, 193, 0.3);
+}
+
+.btn-historico-fiada:hover {
+    background: linear-gradient(135deg, #5a2d91, #4a256b);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
+    color: white;
+}
+
+.btn-historico-fiada:active {
+    transform: translateY(0);
+}
+
+.btn-historico-fiada i {
+    font-size: 1.1rem;
+}
+
+.btn-historico-fiada .badge-total {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
+
+/* Animação do ícone da carteira */
+.btn-historico-fiada:hover i {
+    animation: walletBounce 0.6s ease-in-out;
+}
+
+@keyframes walletBounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-3px); }
+    60% { transform: translateY(-1px); }
+}
+
 /* Estado vazio */
 .clientes-empty-state {
     text-align: center;

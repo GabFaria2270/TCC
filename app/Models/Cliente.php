@@ -41,6 +41,12 @@ class Cliente extends Model
         return $this->hasOne(ContaFiada::class, 'cliente_id');
     }
 
+    // ✅ Alias para compatibilidade com underscore
+    public function conta_fiada()
+    {
+        return $this->contaFiada();
+    }
+
     public function vendas()
     {
         return $this->hasMany(Venda::class, 'cliente_id');

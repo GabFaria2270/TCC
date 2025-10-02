@@ -62,13 +62,23 @@ class ClienteRequest extends FormRequest
     {
         $saldo = $this->saldo_inicial;
 
+        // ✅ CORRIGIDO: Limpa formatação da moeda brasileira
         if (is_string($saldo)) {
+            // Remove separadores de milhares (pontos)
             $saldo = str_replace('.', '', $saldo);
+            // Converte vírgula decimal para ponto
             $saldo = str_replace(',', '.', $saldo);
+            // Remove espaços e caracteres não numéricos (exceto ponto decimal)
+            $saldo = preg_replace('/[^0-9.-]/', '', $saldo);
         }
 
-        if ($saldo === '' || $saldo === null || !is_numeric($saldo)) {
+        // ✅ CORRIGIDO: Só converte para null se realmente for vazio ou inválido
+        if ($saldo === '' || $saldo === null) {
             $saldo = null;
+        } else if (!is_numeric($saldo)) {
+            $saldo = null; // ✅ Só aqui que vira null se não for numérico
+        } else {
+            $saldo = floatval($saldo); // ✅ Converte para float se for válido
         }
 
         // ✅ Limpa telefone e remove caracteres especiais

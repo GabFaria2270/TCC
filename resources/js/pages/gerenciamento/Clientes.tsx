@@ -5,6 +5,7 @@ import ClienteDetalhesModal from '../../components/ClienteDetalhesModal';
 import ClienteEditModal from '../../components/ClienteEditModal';
 import ClienteTabela from '../../components/ClienteTabela';
 import ConfirmarPagamentoModal from '../../components/ConfirmarPagamentoModal';
+import HistoricoContaFiada from '../../components/HistoricoContaFiada';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 
 export interface Cliente {
@@ -147,10 +148,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                             {loading ? <span className="spinner-loading" /> : <i className="bi bi-arrow-clockwise"></i>}
                             Atualizar
                         </button>
-                        <button onClick={() => abrirModal('create')} className="btn-new-client">
-                            <i className="bi bi-plus-lg"></i>
-                            Novo Cliente
-                        </button>
+                        <HistoricoContaFiada />
                     </div>
                 </div>
                 {/* Barra de busca */}

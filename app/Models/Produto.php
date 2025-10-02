@@ -55,4 +55,13 @@ class Produto extends Model
     {
         return $query->orderBy('nome');
     }
+
+    /**
+     * Accessor para determinar se o produto está ativo
+     * Um produto está ativo se não foi excluído logicamente
+     */
+    public function getAtivoAttribute(): bool
+    {
+        return is_null($this->deleted_at);
+    }
 }

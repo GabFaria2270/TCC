@@ -63,7 +63,11 @@ class ClienteService
             }
 
             $saldoInicial = 0.00;
-            if (isset($data['saldo_inicial']) && $data['saldo_inicial'] !== null && $data['saldo_inicial'] !== '') {
+            // ✅ CORRIGIDO: Verifica se existe, não é null, não é string vazia E é numérico
+            if (isset($data['saldo_inicial']) && 
+                $data['saldo_inicial'] !== null && 
+                $data['saldo_inicial'] !== '' && 
+                is_numeric($data['saldo_inicial'])) {
                 $saldoInicial = floatval($data['saldo_inicial']);
             }
 
@@ -78,15 +82,6 @@ class ClienteService
                 'saldo' => $saldoInicial,
                 'descricao' => $descricao,
             ]);
-
-            if (!$contaFiada) {
-                DB::rollback();
-                return [
-                    'success' => false,
-                    'errors' => ['system' => __('validation.conta_creation_failed')],
-                    'reason' => 'conta_creation_failed'
-                ];
-            }
 
             DB::commit();
             $cliente->load('contaFiada');
