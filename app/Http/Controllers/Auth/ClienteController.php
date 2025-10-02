@@ -113,12 +113,25 @@ class ClienteController extends Controller
                     'user_id' => $user->ID,
                 ]);
 
-                // ✅ RESPOSTA PARA MODAL (JSON)
-                if ($request->expectsJson()) {
+                // ✅ SEMPRE RETORNAR JSON PARA REQUISIÇÕES AJAX/MODAL
+                if ($request->expectsJson() || $request->header('X-Inertia')) {
                     return response()->json([
                         'success' => true,
                         'message' => 'Cliente cadastrado com sucesso!',
-                        'cliente' => $result['cliente'],
+                        'cliente' => [
+                            'id' => $result['cliente']->id,
+                            'nome' => $result['cliente']->nome,
+                            'email' => $result['cliente']->email,
+                            'telefone' => $result['cliente']->telefone,
+                            'telefone_formatado' => $result['cliente']->telefone_formatado,
+                            'conta_fiada' => $result['cliente']->contaFiada ? [
+                                'saldo' => $result['cliente']->contaFiada->saldo,
+                                'saldo_formatado' => 'R$ ' . number_format($result['cliente']->contaFiada->saldo, 2, ',', '.'),
+                                'descricao' => $result['cliente']->contaFiada->descricao,
+                                'status' => $result['cliente']->contaFiada->status,
+                            ] : null,
+                            'created_at' => $result['cliente']->created_at->format('d/m/Y H:i:s'),
+                        ]
                     ]);
                 }
 
@@ -127,48 +140,33 @@ class ClienteController extends Controller
                     ->with('success', 'Cliente cadastrado com sucesso!');
             }
 
-            // ✅ RESPOSTA DE ERRO PARA MODAL
-            if ($request->expectsJson()) {
+            // ✅ Se falhar, também retornar JSON se for requisição AJAX
+            if ($request->expectsJson() || $request->header('X-Inertia')) {
                 return response()->json([
                     'success' => false,
-                    'errors' => $result['errors'],
-                    'message' => 'Falha no cadastro do cliente.',
+                    'message' => $result['message'] ?? 'Erro ao cadastrar cliente'
                 ], 422);
             }
 
-            return back()
-                ->withErrors($result['errors'])
-                ->withInput();
-
-        } catch (ValidationException $e) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $e->errors(),
-                    'message' => 'Dados de entrada inválidos.',
-                ], 422);
-            }
-
-            return back()
-                ->withErrors($e->errors())
-                ->withInput();
+            return redirect()->back()->withErrors(['error' => $result['message'] ?? 'Erro ao cadastrar cliente']);
 
         } catch (\Exception $e) {
-            Log::channel('security')->error('Erro no cadastro de cliente', [
+            Log::channel('security')->error('Erro no ClienteController@store', [
                 'error' => $e->getMessage(),
                 'user_id' => Auth::id(),
             ]);
 
-            if ($request->expectsJson()) {
+            // ✅ Para requisições AJAX, retornar JSON de erro
+            if ($request->expectsJson() || $request->header('X-Inertia')) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Erro interno do sistema.',
+                    'message' => 'Erro interno do servidor'
                 ], 500);
             }
-            
-            return back()
-                ->with('error', 'Erro interno. Tente novamente.')
-                ->withInput();
+
+            return redirect()
+                ->back()
+                ->with('error', 'Erro ao cadastrar cliente. Tente novamente.');
         }
     }
 

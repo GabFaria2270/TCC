@@ -62,26 +62,35 @@ class ClienteService
                 ];
             }
 
+            // ✅ MODIFICADO: Só cria conta fiada se houver saldo inicial ou descrição
             $saldoInicial = 0.00;
-            // ✅ CORRIGIDO: Verifica se existe, não é null, não é string vazia E é numérico
+            $descricao = '';
+            $deveCriarContaFiada = false;
+
+            // Verifica se tem saldo inicial
             if (isset($data['saldo_inicial']) && 
                 $data['saldo_inicial'] !== null && 
                 $data['saldo_inicial'] !== '' && 
                 is_numeric($data['saldo_inicial'])) {
                 $saldoInicial = floatval($data['saldo_inicial']);
+                $deveCriarContaFiada = true;
             }
 
-            $descricao = '';
+            // Verifica se tem descrição
             if (isset($data['descricao']) && !empty(trim($data['descricao']))) {
                 $descricao = trim($data['descricao']);
+                $deveCriarContaFiada = true;
             }
 
-            $contaFiada = ContaFiada::create([
-                'cliente_id' => $cliente->id,
-                'comercio_id' => $comercio->id,
-                'saldo' => $saldoInicial,
-                'descricao' => $descricao,
-            ]);
+            // ✅ Só cria conta fiada se necessário
+            if ($deveCriarContaFiada) {
+                $contaFiada = ContaFiada::create([
+                    'cliente_id' => $cliente->id,
+                    'comercio_id' => $comercio->id,
+                    'saldo' => $saldoInicial,
+                    'descricao' => $descricao,
+                ]);
+            }
 
             DB::commit();
             $cliente->load('contaFiada');
@@ -234,18 +243,25 @@ class ClienteService
             // Atualiza conta fiada
             $contaFiada = $cliente->contaFiada;
             if ($contaFiada) {
-                $contaFiada->saldo = isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' ? floatval($data['saldo_inicial']) : 0.00;
-                $contaFiada->descricao = isset($data['descricao']) ? trim($data['descricao']) : '';
+                // Atualiza conta fiada existente
+                if (isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' && is_numeric($data['saldo_inicial'])) {
+                    $contaFiada->saldo = floatval($data['saldo_inicial']);
+                }
+                
+                if (isset($data['descricao'])) {
+                    $contaFiada->descricao = trim($data['descricao']);
+                }
+                
                 $contaFiada->save();
             } else if (
-                (isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' && floatval($data['saldo_inicial']) != 0)
+                (isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' && is_numeric($data['saldo_inicial']) && floatval($data['saldo_inicial']) != 0)
                 || (isset($data['descricao']) && trim($data['descricao']) !== '')
             ) {
-                // Cria nova conta fiada se algum campo for preenchido
+                // ✅ Cria nova conta fiada apenas se houver dados relevantes
                 \App\Models\ContaFiada::create([
                     'cliente_id' => $cliente->id,
                     'comercio_id' => $comercio->id,
-                    'saldo' => isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' ? floatval($data['saldo_inicial']) : 0.00,
+                    'saldo' => isset($data['saldo_inicial']) && $data['saldo_inicial'] !== '' && is_numeric($data['saldo_inicial']) ? floatval($data['saldo_inicial']) : 0.00,
                     'descricao' => isset($data['descricao']) ? trim($data['descricao']) : '',
                 ]);
             }
@@ -267,5 +283,27 @@ class ClienteService
                 'reason' => 'system_error'
             ];
         }
+    }
+
+    /**
+     * ✅ Formatar telefone para exibição
+     */
+    private function formatarTelefone($telefone)
+    {
+        if (!$telefone) return '';
+        
+        // Remove tudo que não é número
+        $numeros = preg_replace('/\D/', '', $telefone);
+        
+        // Formata baseado na quantidade de dígitos
+        if (strlen($numeros) == 11) {
+            // Celular: (XX) 9XXXX-XXXX
+            return preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', $numeros);
+        } elseif (strlen($numeros) == 10) {
+            // Fixo: (XX) XXXX-XXXX
+            return preg_replace('/(\d{2})(\d{4})(\d{4})/', '($1) $2-$3', $numeros);
+        }
+        
+        return $telefone; // Retorna original se não conseguir formatar
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react'; // ✅ Adicionar useState
 import { useForm } from '@inertiajs/react';
 import { formatarTelefone, formatarMoeda } from '../utils/formatters';
 import type { Cliente } from '../pages/gerenciamento/Clientes';
@@ -7,10 +7,11 @@ interface ClienteFormProps {
   cliente?: Cliente;
   modo: 'create' | 'edit';
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (cliente?: Cliente) => void;
+  carrinhoItens?: any[]; // ✅ Novo prop para receber itens do carrinho
 }
 
-export default function ClienteForm({ cliente, modo, onClose, onSuccess }: ClienteFormProps) {
+export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinhoItens = [] }: ClienteFormProps) {
   const { data, setData, post, put, processing, errors, reset } = useForm({
     nome: cliente?.nome || '',
     email: cliente?.email || '',
@@ -19,6 +20,23 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess }: Clien
     descricao: '',
   });
 
+  // ✅ Estado adicional para loading customizado
+  const [isLoading, setIsLoading] = useState(false);
+
+  // ✅ Função para gerar descrição automaticamente baseada nos itens do carrinho
+  const gerarDescricaoAutomatica = () => {
+    if (!carrinhoItens || carrinhoItens.length === 0) {
+      return 'Produtos da compra: venda sem itens';
+    }
+
+    const itensDescricao = carrinhoItens.map(item => {
+      const precoTotal = (item.quantidade * item.preco_unitario).toFixed(2).replace('.', ',');
+      return `${item.produto.nome} (${item.quantidade}x) = R$ ${precoTotal}`;
+    }).join(', ');
+
+    return `Produtos da compra: ${itensDescricao}`;
+  };
+
   useEffect(() => {
     if (modo === 'edit' && cliente) {
       setData({
@@ -26,13 +44,16 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess }: Clien
         email: cliente.email,
         telefone: cliente.telefone_formatado || '',
         saldo_inicial: String(cliente.conta_fiada?.saldo ?? ''),
-        descricao: '',
+        descricao: cliente.conta_fiada?.descricao || '',
       });
     } else if (modo === 'create') {
+      // ✅ Para criação, gera descrição automaticamente
+      const descricaoAutomatica = gerarDescricaoAutomatica();
       reset();
+      setData('descricao', descricaoAutomatica);
     }
     // eslint-disable-next-line
-  }, [cliente, modo]);
+  }, [cliente, modo, carrinhoItens]); // ✅ Adicionar carrinhoItens às dependências
 
   function normalizarMoeda(valor: string) {
     if (!valor) return '';
@@ -45,42 +66,89 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess }: Clien
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Normaliza o saldo antes de enviar
-    let saldoNormalizado = '';
-    if (modo === 'create' && data.saldo_inicial && data.saldo_inicial.trim() !== '') {
-      saldoNormalizado = normalizarMoeda(data.saldo_inicial);
-    } else if (modo === 'edit' && data.saldo_inicial && data.saldo_inicial.trim() !== '') {
-      saldoNormalizado = normalizarMoeda(data.saldo_inicial);
-    }
-
-    // Monta os dados para envio, garantindo saldo normalizado
-    const dataToSend = {
-      ...data,
-      saldo_inicial: saldoNormalizado,
-    };
+    setIsLoading(true); // ✅ Ativar loading
 
     if (modo === 'create') {
-      post('/gerenciamento/clientes', {
-        ...dataToSend,
-        onSuccess: () => {
-          reset();
-          onSuccess();
+      // ✅ Preparar dados sem saldo_inicial para criação
+      const dadosParaEnvio = {
+        nome: data.nome,
+        email: data.email,
+        telefone: data.telefone,
+        descricao: data.descricao,
+      };
+
+      // ✅ Fazer requisição direta com fetch para garantir JSON
+      fetch('/gerenciamento/clientes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
         },
-        onError: () => {
-          // Não fecha o modal, apenas exibe os erros
+        body: JSON.stringify(dadosParaEnvio)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Resposta do servidor:', data);
+        
+        if (data.success && data.cliente) {
+          reset();
+          onSuccess(data.cliente);
+        } else {
+          console.error('Erro na resposta:', data);
+          alert(data.message || 'Erro ao criar cliente');
         }
+      })
+      .catch(error => {
+        console.error('Erro na requisição:', error);
+        alert('Erro ao criar cliente. Tente novamente.');
+      })
+      .finally(() => {
+        setIsLoading(false); // ✅ Desativar loading
       });
-    } else if (cliente) {
-      put(`/gerenciamento/clientes/${cliente.id}`, {
-        ...dataToSend,
-        onSuccess: () => {
-          reset();
-          onSuccess();
+
+    } else {
+      // ✅ Para edição, usar fetch também para consistência
+      const dadosParaEnvio: any = {
+        nome: data.nome,
+        email: data.email,
+        telefone: data.telefone,
+        descricao: data.descricao,
+      };
+
+      if (data.saldo_inicial && data.saldo_inicial.trim() !== '') {
+        dadosParaEnvio.saldo_inicial = normalizarMoeda(data.saldo_inicial);
+      }
+
+      fetch(`/gerenciamento/clientes/${cliente?.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
         },
-        onError: () => {
-          // Não fecha o modal, apenas exibe os erros
+        body: JSON.stringify(dadosParaEnvio)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Resposta da edição:', data);
+        
+        if (data.success) {
+          reset();
+          onSuccess(cliente);
+        } else {
+          console.error('Erro na edição:', data);
+          alert(data.message || 'Erro ao editar cliente');
         }
+      })
+      .catch(error => {
+        console.error('Erro na requisição de edição:', error);
+        alert('Erro ao editar cliente. Tente novamente.');
+      })
+      .finally(() => {
+        setIsLoading(false); // ✅ Desativar loading
       });
     }
   };
@@ -154,26 +222,24 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess }: Clien
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label htmlFor="telefone" className="form-label">
-                      Telefone 
-                      <small className="text-muted ms-1">(máx. 11 dígitos)</small>
-                    </label>
+                    <label htmlFor="telefone" className="form-label">Telefone</label>
                     <input
                       id="telefone"
-                      type="tel"
+                      type="text"
                       className={`form-control ${errors.telefone ? 'is-invalid' : ''}`}
                       value={data.telefone}
                       onChange={handleTelefoneChange}
-                      placeholder="(00) 00000-0000"
-                      maxLength={15} // ✅ Limite de caracteres formatados: (00) 00000-0000
-                      disabled={processing}
+                      placeholder="(11) 99999-9999"
+                      maxLength={15}
+                      disabled={processing || isLoading} // ✅ Desabilitar durante loading
                     />
                     {errors.telefone && <div className="invalid-feedback">{errors.telefone}</div>}
                   </div>
-                  {modo === 'create' && (
+                  {/* ✅ REMOVIDO: Campo saldo inicial para modo create */}
+                  {modo === 'edit' && (
                     <div className="col-md-6 mb-3">
                       <label htmlFor="saldo_inicial" className="form-label">
-                        Saldo Inicial (opcional)
+                        Saldo da Conta Fiada
                       </label>
                       <div className="input-group">
                         <span className="input-group-text">R$</span>
@@ -194,53 +260,57 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess }: Clien
                     </div>
                   )}
                 </div>
-                {modo === 'create' && (
-                  <div className="row">
-                    <div className="col-12">
-                      <label htmlFor="descricao" className="form-label">
-                        Descrição da Conta (opcional)
-                      </label>
-                      <textarea
-                        className={`form-control ${errors.descricao ? 'is-invalid' : ''}`}
-                        id="descricao"
-                        rows={3}
-                        value={data.descricao}
-                        onChange={(e) => setData('descricao', e.target.value)}
-                        placeholder="Ex: Compras do mês, Produtos diversos, etc..."
-                        maxLength={500}
-                      />
-                      <div className="form-text">
-                        <small className="text-muted">
-                          Descreva o que foi comprado ou o motivo do saldo inicial.
-                        </small>
-                      </div>
-                      {errors.descricao && (
-                        <div className="invalid-feedback d-block">
-                          {errors.descricao}
-                        </div>
-                      )}
+                {/* ✅ Campo descrição sempre presente, mas readonly para create */}
+                <div className="row">
+                  <div className="col-12">
+                    <label htmlFor="descricao" className="form-label">
+                      {modo === 'create' ? 'Descrição da Compra' : 'Descrição da Conta (opcional)'}
+                    </label>
+                    <textarea
+                      className={`form-control ${errors.descricao ? 'is-invalid' : ''}`}
+                      id="descricao"
+                      rows={3}
+                      value={data.descricao}
+                      onChange={(e) => modo === 'edit' ? setData('descricao', e.target.value) : null}
+                      placeholder={modo === 'create' ? 'Descrição gerada automaticamente com base nos produtos' : 'Ex: Compras do mês, Produtos diversos, etc...'}
+                      maxLength={500}
+                      readOnly={modo === 'create'}
+                      disabled={processing || isLoading} // ✅ Desabilitar durante loading
+                      style={modo === 'create' ? { backgroundColor: '#f8f9fa' } : {}}
+                    />
+                    <div className="form-text">
+                      <small className="text-muted">
+                        {modo === 'create' 
+                          ? 'Esta descrição foi gerada automaticamente com base nos produtos do carrinho'
+                          : 'Descreva o que foi comprado ou o motivo do saldo inicial.'}
+                      </small>
                     </div>
+                    {errors.descricao && (
+                      <div className="invalid-feedback d-block">
+                        {errors.descricao}
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
               <div className="modal-footer">
                 <button
                   type="button"
                   className="btn btn-secondary"
                   onClick={() => { reset(); onClose(); }}
-                  disabled={processing}
+                  disabled={processing || isLoading} // ✅ Desabilitar durante loading
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={processing}
+                  disabled={processing || isLoading} // ✅ Desabilitar durante loading
                 >
-                  {processing ? (
+                  {(processing || isLoading) ? (
                     <>
-                      <span className="spinner-border spinner-border-sm me-2"></span>
-                      Salvando...
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      {modo === 'create' ? 'Criando...' : 'Atualizando...'}
                     </>
                   ) : (
                     <>

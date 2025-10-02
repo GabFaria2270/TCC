@@ -1,13 +1,15 @@
 import React from 'react';
 import ClienteForm from './ClienteForm';
+import type { Cliente } from '../pages/gerenciamento/Clientes';
 
 interface ClienteCreateModalProps {
   show: boolean;
   onClose: () => void;
-  onSuccess: (cliente?: any) => void; // ✅ CORRIGIDO
+  onSuccess: (cliente?: Cliente) => void; // ✅ Tornar cliente opcional para compatibilidade
+  carrinhoItens?: any[];
 }
 
-export default function ClienteCreateModal({ show, onClose, onSuccess }: ClienteCreateModalProps) {
+export default function ClienteCreateModal({ show, onClose, onSuccess, carrinhoItens = [] }: ClienteCreateModalProps) {
   if (!show) return null;
   
   return (
@@ -26,8 +28,8 @@ export default function ClienteCreateModal({ show, onClose, onSuccess }: Cliente
             <ClienteForm
               modo="create"
               onClose={onClose}
-              onSuccess={onSuccess} // ✅ Repassa o callback com parâmetro
-              show={show}
+              onSuccess={onSuccess} // ✅ Agora é compatível
+              carrinhoItens={carrinhoItens}
             />
           </div>
         </div>

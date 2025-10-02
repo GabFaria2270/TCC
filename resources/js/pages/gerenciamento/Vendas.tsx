@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
+import ClienteCreateModal from '../../components/ClienteCreateModal';
+import type { Cliente } from './Clientes';
 
 // ✅ Interfaces baseadas nas suas tabelas
 interface Produto {
@@ -13,13 +15,7 @@ interface Produto {
   preco_formatado: string;
 }
 
-interface Cliente {
-  id: number;
-  nome: string;
-  email: string;
-  telefone_formatado?: string;
-  conta_fiada?: { saldo: number; saldo_formatado: string };
-}
+
 
 interface ItemVenda {
   produto_id: number;
@@ -72,7 +68,34 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   // Estado do loading para venda
   const [loadingVenda, setLoadingVenda] = useState(false);
 
+  // Estados para modal de cliente
+  const [showClienteModal, setShowClienteModal] = useState(false);
+  const [clientesAtualizados, setClientesAtualizados] = useState(clientes);
+
   const { data, setData, post, processing } = useForm({});
+
+  // Funções para modal de cliente
+  const abrirModalCliente = () => {
+    setShowClienteModal(true);
+  };
+
+  const fecharModalCliente = () => {
+    setShowClienteModal(false);
+  };
+
+  const onClienteCriado = (novoCliente?: Cliente) => {
+    // ✅ Verificar se o cliente foi passado
+    if (novoCliente) {
+      // Atualiza a lista de clientes com o novo cliente
+      const novosClientes = [...clientesAtualizados, novoCliente];
+      setClientesAtualizados(novosClientes);
+      
+      // Seleciona automaticamente o cliente recém-criado
+      setClienteSelecionado(novoCliente);
+    }
+    
+    fecharModalCliente();
+  };
 
   // 🔍 Filtrar produtos em tempo real
   useEffect(() => {
@@ -698,21 +721,31 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                         {formaPagamento === 'conta_fiada' && (
                           <div className="col-12 mb-3">
                             <label className="form-label small">Cliente</label>
-                            <select
-                              className="form-select form-select-sm"
-                              value={clienteSelecionado?.id || ''}
-                              onChange={(e) => {
-                                const cliente = clientes.find(c => c.id === parseInt(e.target.value));
-                                setClienteSelecionado(cliente || null);
-                              }}
-                            >
-                              <option value="">Selecionar cliente...</option>
-                              {clientes.map(cliente => (
-                                <option key={cliente.id} value={cliente.id}>
-                                  {cliente.nome} - {cliente.email}
-                                </option>
-                              ))}
-                            </select>
+                            <div className="input-group input-group-sm">
+                              <select
+                                className="form-select"
+                                value={clienteSelecionado?.id || ''}
+                                onChange={(e) => {
+                                  const cliente = clientesAtualizados.find(c => c.id === parseInt(e.target.value));
+                                  setClienteSelecionado(cliente || null);
+                                }}
+                              >
+                                <option value="">Selecionar cliente...</option>
+                                {clientesAtualizados.map(cliente => (
+                                  <option key={cliente.id} value={cliente.id}>
+                                    {cliente.nome} - {cliente.email}
+                                  </option>
+                                ))}
+                              </select>
+                              <button
+                                type="button"
+                                className="btn btn-outline-primary"
+                                onClick={abrirModalCliente}
+                                title="Cadastrar novo cliente"
+                              >
+                                <i className="bi bi-plus"></i>
+                              </button>
+                            </div>
                             
                             {!clienteSelecionado && (
                               <div className="alert alert-warning alert-sm mt-2 mb-0">
@@ -907,6 +940,14 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
           </div>
         </>
       )}
+
+      {/* Modal de Cadastro de Cliente */}
+      <ClienteCreateModal
+        show={showClienteModal}
+        onClose={fecharModalCliente}
+        onSuccess={onClienteCriado}
+        carrinhoItens={carrinho} // ✅ Passa os itens do carrinho
+      />
 
     </GerenciamentoLayout>
   );
