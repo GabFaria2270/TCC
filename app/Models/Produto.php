@@ -6,6 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Modelo Produto
+ *
+ * Propriedades expostas via atributos do Eloquent (acessadas magicamente),
+ * declaradas aqui para ajudar o analisador estático (Intelephense/PHP LS)
+ * e evitar avisos de propriedades indefinidas em outros arquivos.
+ *
+ * @property int $id
+ * @property string $nome
+ * @property float|string $preco
+ * @property int|null $quantidade_estoque
+ * @property int|null $estoque_minimo
+ * @property int $categoria_id
+ * @property int $comercio_id
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Categoria|null $categoria
+ * @property-read \App\Models\Estoque|null $estoque
+ * @mixin \Eloquent
+ */
 class Produto extends Model
 {
     use HasFactory, SoftDeletes;
@@ -62,6 +81,7 @@ class Produto extends Model
      */
     public function getAtivoAttribute(): bool
     {
-        return is_null($this->deleted_at);
+        // Evita acessar atributo mágico diretamente (melhor para analisadores estáticos)
+        return !$this->trashed();
     }
 }
