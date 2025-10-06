@@ -315,12 +315,16 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setSortBy('nome');
         setSortDir('asc');
         setOnlyLow(false);
-        router.post('/gerenciamento/produtos/filtros', {}, {
-            preserveScroll: true,
-            replace: true,
-            preserveState: true,
-            onSuccess: () => hideFiltersInUrl(),
-        });
+        router.post(
+            '/gerenciamento/produtos/filtros',
+            {},
+            {
+                preserveScroll: true,
+                replace: true,
+                preserveState: true,
+                onSuccess: () => hideFiltersInUrl(),
+            },
+        );
     };
 
     // =========================================================
@@ -410,10 +414,14 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModalEstoque();
-                        router.get('/gerenciamento/produtos', {}, {
-                            preserveScroll: true,
-                            onSuccess: () => hideFiltersInUrl(),
-                        });
+                        router.get(
+                            '/gerenciamento/produtos',
+                            {},
+                            {
+                                preserveScroll: true,
+                                onSuccess: () => hideFiltersInUrl(),
+                            },
+                        );
                     },
                 },
             );
@@ -425,10 +433,14 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModalEstoque();
-                        router.get('/gerenciamento/produtos', {}, {
-                            preserveScroll: true,
-                            onSuccess: () => hideFiltersInUrl(),
-                        });
+                        router.get(
+                            '/gerenciamento/produtos',
+                            {},
+                            {
+                                preserveScroll: true,
+                                onSuccess: () => hideFiltersInUrl(),
+                            },
+                        );
                     },
                 },
             );
@@ -440,10 +452,14 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModalEstoque();
-                        router.get('/gerenciamento/produtos', {}, {
-                            preserveScroll: true,
-                            onSuccess: () => hideFiltersInUrl(),
-                        });
+                        router.get(
+                            '/gerenciamento/produtos',
+                            {},
+                            {
+                                preserveScroll: true,
+                                onSuccess: () => hideFiltersInUrl(),
+                            },
+                        );
                     },
                 },
             );
@@ -485,10 +501,14 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 preserveScroll: true,
                 onSuccess: () => {
                     fecharModal();
-                    router.get('/gerenciamento/produtos', {}, {
-                        preserveScroll: true,
-                        onSuccess: () => hideFiltersInUrl(),
-                    });
+                    router.get(
+                        '/gerenciamento/produtos',
+                        {},
+                        {
+                            preserveScroll: true,
+                            onSuccess: () => hideFiltersInUrl(),
+                        },
+                    );
                 },
             });
         } else if (modalMode === 'edit' && produtoSelecionado) {
@@ -499,10 +519,14 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModal();
-                        router.get('/gerenciamento/produtos', {}, {
-                            preserveScroll: true,
-                            onSuccess: () => hideFiltersInUrl(),
-                        });
+                        router.get(
+                            '/gerenciamento/produtos',
+                            {},
+                            {
+                                preserveScroll: true,
+                                onSuccess: () => hideFiltersInUrl(),
+                            },
+                        );
                     },
                 },
             );
@@ -520,7 +544,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Cabeçalho / Ações principais                         */}
                 {/* ===================================================== */}
-                <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 rounded-3 p-3 bg-body-tertiary border">
+                <div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3">
                     <div>
                         <h1 className="h3 m-0">Gestão de Produtos</h1>
                         <p className="text-secondary mb-0">Cadastre e acompanhe os itens da sua mercearia.</p>
@@ -553,7 +577,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Filtros e controles                                   */}
                 {/* ===================================================== */}
-                <div className="card mb-4 shadow-sm border-0">
+                <div className="card filtros-card fade-in mb-4 border-0 shadow-sm">
                     <div className="card-body row g-3">
                         <div className="col-md-6 col-12">
                             <label htmlFor="filtro-busca" className="form-label">
@@ -646,13 +670,13 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Tabela de produtos                                    */}
                 {/* ===================================================== */}
-                <div className="card shadow-sm border-0">
+                <div className="card fade-in border-0 shadow-sm">
                     <div className="card-header d-flex justify-content-between align-items-center bg-body-tertiary border-0">
                         <strong>Produtos cadastrados</strong>
                         <div className="small text-secondary">Atualizados em tempo real conforme cadastros</div>
                     </div>
-                    <div className="table-responsive">
-                        <table className="mb-0 table table-hover table-striped align-middle">
+                    <div className="table-responsive scroll-shadow">
+                        <table className="table-hover table-striped data-table mb-0 table align-middle">
                             <thead>
                                 <tr>
                                     <th role="button" onClick={() => toggleSort('nome')} className="user-select-none">
@@ -673,7 +697,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                             <tbody>
                                 {produtosArray.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="text-secondary py-4 text-center">
+                                        <td colSpan={5} className="estado-vazio">
+                                            <i className="bi bi-box-seam display-6 d-block mb-2"></i>
                                             Nenhum produto encontrado.{' '}
                                             {produtosArray.length === 0 ? (
                                                 <button className="btn btn-link p-0" type="button" onClick={abrirModalCriar}>
@@ -696,9 +721,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 </td>
                                                 <td>
                                                     {produto.categoria?.nome ? (
-                                                        <span className="badge text-bg-secondary">
-                                                            {produto.categoria.nome}
-                                                        </span>
+                                                        <span className="badge text-bg-secondary">{produto.categoria.nome}</span>
                                                     ) : (
                                                         '—'
                                                     )}
@@ -714,7 +737,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                         <div className="d-flex ms-3 flex-wrap gap-2">
                                                             <button
                                                                 type="button"
-                                            className="btn btn-outline-secondary btn-sm px-3"
+                                                                className="btn btn-outline-secondary btn-sm px-3"
                                                                 title="Editar"
                                                                 onClick={() => abrirModalEditar(produto)}
                                                             >
@@ -722,7 +745,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                             </button>
                                                             <button
                                                                 type="button"
-                                            className="btn btn-outline-primary btn-sm px-3"
+                                                                className="btn btn-outline-primary btn-sm px-3"
                                                                 title="Movimentar estoque"
                                                                 onClick={() => abrirModalEstoque(produto)}
                                                             >
@@ -730,7 +753,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                             </button>
                                                             <button
                                                                 type="button"
-                                            className="btn btn-outline-info btn-sm px-3"
+                                                                className="btn btn-outline-info btn-sm px-3"
                                                                 title="Histórico de estoque"
                                                                 onClick={() =>
                                                                     router.get(
@@ -744,7 +767,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                             </button>
                                                             <button
                                                                 type="button"
-                                            className="btn btn-outline-danger btn-sm px-3"
+                                                                className="btn btn-outline-danger btn-sm px-3"
                                                                 title="Excluir"
                                                                 onClick={() => {
                                                                     setProdutoSelecionado(produto);
@@ -996,17 +1019,21 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                     </button>
                                     <button
                                         type="button"
-                                        className="btn btn-danger"  
+                                        className="btn btn-danger"
                                         onClick={() => {
                                             router.delete(`/gerenciamento/produtos/${produtoSelecionado.id}`, {
                                                 preserveScroll: true,
                                                 onSuccess: () => {
                                                     setShowDeleteConfirm(false);
                                                     setProdutoSelecionado(null);
-                                                    router.get('/gerenciamento/produtos', {}, {
-                                                        preserveScroll: true,
-                                                        onSuccess: () => hideFiltersInUrl(),
-                                                    });
+                                                    router.get(
+                                                        '/gerenciamento/produtos',
+                                                        {},
+                                                        {
+                                                            preserveScroll: true,
+                                                            onSuccess: () => hideFiltersInUrl(),
+                                                        },
+                                                    );
                                                 },
                                             });
                                         }}

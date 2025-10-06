@@ -1,27 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title inertia>Gerenciamento</title>
     @viteReactRefresh
-    @vite([
-        'resources/css/app.css',
-        'resources/js/set.tsx',
-    ])
+    @vite(['resources/css/app.css', 'resources/js/set.tsx'])
     @inertiaHead
-    <style>
-        .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    </style>
-    </head>
+    <script>
+        // Aplicação antecipada do tema para evitar flicker
+        (function() {
+            try {
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var saved = localStorage.getItem('appearance');
+                var mode = saved || 'system';
+                var isDark = mode === 'dark' || (mode === 'system' && prefersDark);
+                var html = document.documentElement;
+                html.classList.toggle('dark', isDark);
+                html.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+                html.style.colorScheme = isDark ? 'dark' : 'light';
+            } catch (e) {
+                /* noop */
+            }
+        })();
+    </script>
+    <script>
+        // Aplicação antecipada do tema para evitar flicker
+        (function() {
+            try {
+                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var saved = localStorage.getItem('appearance');
+                var mode = saved || 'system';
+                var isDark = mode === 'dark' || (mode === 'system' && prefersDark);
+                var html = document.documentElement;
+                html.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+                html.style.colorScheme = isDark ? 'dark' : 'light';
+            } catch (e) {
+                /* noop */ }
+        })();
+    </script>
+
 <body class="bg-body-tertiary">
     <noscript>
         <div style="margin:1rem; padding:0.75rem; border:1px solid #ccc; background:#fff; color:#333;">
-            O aplicativo requer JavaScript para funcionar. Verifique se o Vite está rodando e se o navegador permite scripts.
+            O aplicativo requer JavaScript para funcionar. Verifique se o Vite está rodando e se o navegador permite
+            scripts.
         </div>
-      
+
     </noscript>
     @inertia
 </body>
+
 </html>

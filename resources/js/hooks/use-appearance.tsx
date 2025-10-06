@@ -22,7 +22,11 @@ const setCookie = (name: string, value: string, days = 365) => {
 const applyTheme = (appearance: Appearance) => {
     const isDark = appearance === 'dark' || (appearance === 'system' && prefersDark());
 
-    document.documentElement.classList.toggle('dark', isDark);
+    const html = document.documentElement;
+    // Bootstrap 5.3 (color modes)
+    html.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+    // Melhora aparência de inputs/scrollbars
+    (html.style as any).colorScheme = isDark ? 'dark' : 'light';
 };
 
 const mediaQuery = () => {

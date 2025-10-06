@@ -1,5 +1,5 @@
 // JS específico da página de Gerenciamento
-(function(){
+(function () {
     const sidebar = document.getElementById('sidebar');
     const toggle = document.getElementById('sidebarToggle');
     const closeBtn = document.getElementById('sidebarClose');
@@ -29,7 +29,8 @@
 
     const toggleSidebar = () => {
         const isHidden = sidebar.classList.contains(HIDDEN_CLASS);
-        if (isHidden) openSidebar(); else closeSidebar();
+        if (isHidden) openSidebar();
+        else closeSidebar();
     };
 
     let outsideHandler;
@@ -86,32 +87,36 @@
     handleResize();
 })();
 
-// Controles de acessibilidade (A+, A-, Alto contraste)
-(function(){
+// Controles de acessibilidade (A+, A-)
+(function () {
     const BTN_INC = document.getElementById('a11y-font-inc');
     const BTN_DEC = document.getElementById('a11y-font-dec');
-    const BTN_CONTRAST = document.getElementById('a11y-contrast');
 
     const BASE_SIZE = 18; // 1.125rem ~ 18px
     const MIN = 16;
     const MAX = 22;
 
     const load = (k, d) => {
-        try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; }
+        try {
+            const v = localStorage.getItem(k);
+            return v ? JSON.parse(v) : d;
+        } catch {
+            return d;
+        }
     };
-    const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+    const save = (k, v) => {
+        try {
+            localStorage.setItem(k, JSON.stringify(v));
+        } catch {}
+    };
 
     let fontSize = load('a11y.fontSize', BASE_SIZE);
-    let highContrast = load('a11y.highContrast', false);
 
-    const applyFont = () => { document.documentElement.style.fontSize = fontSize + 'px'; };
-    const applyContrast = () => {
-        document.body.classList.toggle('high-contrast', !!highContrast);
-        if (BTN_CONTRAST) BTN_CONTRAST.setAttribute('aria-pressed', String(!!highContrast));
+    const applyFont = () => {
+        document.documentElement.style.fontSize = fontSize + 'px';
     };
 
     applyFont();
-    applyContrast();
 
     BTN_INC?.addEventListener('click', () => {
         fontSize = Math.min(MAX, fontSize + 1);
@@ -122,10 +127,5 @@
         fontSize = Math.max(MIN, fontSize - 1);
         applyFont();
         save('a11y.fontSize', fontSize);
-    });
-    BTN_CONTRAST?.addEventListener('click', () => {
-        highContrast = !highContrast;
-        applyContrast();
-        save('a11y.highContrast', highContrast);
     });
 })();
