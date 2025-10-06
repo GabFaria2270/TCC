@@ -133,21 +133,30 @@ class ProdutoController extends Controller
     public function historico(Request $request, \App\Models\Produto $produto)
     {
         $this->authorize('view', $produto);
-        $usuario = $request->user();
-        $comercioId = optional($usuario?->comercio)->id;
-
-        $movs = MovimentoEstoque::where('produto_id', $produto->id)
-            ->where('comercio_id', $comercioId)
+        // Busca movimentos do produto (tabela movimentos_estoque)
+        $paginator = MovimentoEstoque::where('produto_id', $produto->id)
             ->orderByDesc('created_at')
             ->paginate(20)
             ->withQueryString();
+
+        // Transforma para o shape esperado pelo front-end (quantidade, saldo_apos)
+        $mapped = $paginator->through(function ($m) {
+            return [
+                'id' => $m->id,
+                'tipo' => $m->tipo,
+                'quantidade' => (int) $m->quantidade_movimentada,
+                'saldo_apos' => (int) $m->quantidade_atual,
+                'motivo' => $m->motivo,
+                'created_at' => $m->created_at?->toISOString(),
+            ];
+        });
 
         return Inertia::render('gerenciamento/ProdutoHistorico', [
             'produto' => [
                 'id' => $produto->id,
                 'nome' => $produto->nome,
             ],
-            'movimentos' => $movs,
+            'movimentos' => $mapped,
         ]);
     }
 }

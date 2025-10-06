@@ -24,7 +24,7 @@ class EstoqueService
         return ['ok' => true, 'comercio' => $comercio, 'usuario' => $usuario];
     }
 
-    private function setSaldo(Produto $produto, int $novoSaldo, ?string $motivo, string $tipo, int $movQuantidade): array
+    private function setSaldo(Produto $produto, int $novoSaldo, ?string $motivo, string $tipo, int $movQuantidade, int $quantidadeAnterior): array
     {
         $check = $this->assertMesmoComercio($produto);
         if (!$check['ok']) return ['success' => false, 'errors' => ['system' => $check['error']], 'reason' => $check['reason']];
@@ -55,15 +55,18 @@ class EstoqueService
                 $produto->save();
             }
 
-            // Registra movimento (quantidade do movimento pode ser negativa para saída)
+            // Registra movimento conforme estrutura da tabela movimentos_estoque
             MovimentoEstoque::create([
                 'produto_id' => $produto->id,
-                'comercio_id' => $comercio->id,
+                'usuario_id' => $usuario?->id,
+                // 'venda_id' pode ser nula em movimentos manuais
+                'venda_id' => null,
                 'tipo' => $tipo,
-                'quantidade' => $movQuantidade,
-                'saldo_apos' => $novoSaldo,
+                'quantidade_anterior' => $quantidadeAnterior,
+                'quantidade_movimentada' => $movQuantidade,
+                'quantidade_atual' => $novoSaldo,
                 'motivo' => $motivo,
-                'user_id' => $usuario?->id,
+                'observacoes' => null,
             ]);
 
             DB::commit();
@@ -81,9 +84,9 @@ class EstoqueService
 
         $comercio = $check['comercio'];
         $estoqueAtual = Estoque::where('produto_id', $produto->id)->where('comercio_id', $comercio->id)->value('quantidade') ?? 0;
-    $q = max(0, $quantidade);
-    $novoSaldo = $estoqueAtual + $q;
-    return $this->setSaldo($produto, $novoSaldo, $motivo, 'entrada', $q);
+        $q = max(0, $quantidade);
+        $novoSaldo = $estoqueAtual + $q;
+        return $this->setSaldo($produto, $novoSaldo, $motivo, 'entrada', $q, $estoqueAtual);
     }
 
     public function saida(Produto $produto, int $quantidade, ?string $motivo = null): array
@@ -98,7 +101,7 @@ class EstoqueService
         if ($novoSaldo < 0) {
             return ['success' => false, 'errors' => ['quantidade' => 'Saldo insuficiente.'], 'reason' => 'saldo_negativo'];
         }
-        return $this->setSaldo($produto, $novoSaldo, $motivo, 'saida', -$q);
+        return $this->setSaldo($produto, $novoSaldo, $motivo, 'saida', -$q, $estoqueAtual);
     }
 
     public function ajuste(Produto $produto, int $novoSaldo, ?string $motivo = null): array
@@ -108,6 +111,6 @@ class EstoqueService
         $comercio = $check['comercio'];
         $estoqueAtual = Estoque::where('produto_id', $produto->id)->where('comercio_id', $comercio->id)->value('quantidade') ?? 0;
         $delta = $novoSaldo - $estoqueAtual;
-        return $this->setSaldo($produto, $novoSaldo, $motivo, 'ajuste', $delta);
+        return $this->setSaldo($produto, $novoSaldo, $motivo, 'ajuste', $delta, $estoqueAtual);
     }
 }
