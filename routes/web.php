@@ -58,6 +58,10 @@ Route::middleware(['require.token'])->group(function () {
         Route::get('produtos', [ProdutoController::class, 'index'])
             ->name('produtos.index');
 
+        // Aplicar filtros via POST para não expor parâmetros na URL
+        Route::post('produtos/filtros', [ProdutoController::class, 'setFilters'])
+            ->name('produtos.filtros');
+
         Route::post('produtos', [ProdutoController::class, 'store'])
             ->name('produtos.store');
 

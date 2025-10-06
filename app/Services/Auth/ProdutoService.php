@@ -30,12 +30,15 @@ class ProdutoService
                 ->byComercio($comercio->id);
 
             // Filtros/Ordenação/Paginação do servidor
-            $q = trim((string) ($request?->query('q', '') ?? ''));
-            $categoriaId = $request?->query('categoriaId');
-            $sort = $request?->query('sort', 'nome');
-            $dir = strtolower((string) ($request?->query('dir', 'asc')));
-            $perPage = (int) ($request?->query('perPage', 10));
-            $onlyLow = (bool) ($request?->query('onlyLow', false));
+            // Lê de query string ou, se ausente, da sessão persistida por POST
+            $saved = session('produtos.filters', []);
+            $q = trim((string) ($request?->query('q', $saved['q'] ?? '') ?? ''));
+            $categoriaId = $request?->query('categoriaId', $saved['categoriaId'] ?? null);
+            $sort = $request?->query('sort', $saved['sort'] ?? 'nome');
+            $dir = strtolower((string) ($request?->query('dir', $saved['dir'] ?? 'asc')));
+            $perPage = (int) ($request?->query('perPage', $saved['perPage'] ?? 10));
+            $onlyLow = (bool) ($request?->query('onlyLow', $saved['onlyLow'] ?? false));
+            $page = (int) ($request?->query('page', $saved['page'] ?? 1));
 
             if ($q !== '') {
                 $query->where(function ($qb) use ($q) {
@@ -59,11 +62,13 @@ class ProdutoService
             $dir = $dir === 'desc' ? 'desc' : 'asc';
             $query->orderBy($sort, $dir);
 
-            $produtos = $query->paginate(max(1, min($perPage, 100)))->withQueryString();
+            $prodPerPage = max(1, min($perPage, 100));
+            $currentPage = max(1, $page);
+            $produtos = $query->paginate($prodPerPage, ['*'], 'page', $currentPage)->withQueryString();
 
             $categorias = Categoria::byComercio($comercio->id)->orderByNome()->get();
 
-            return [
+            $filtersOut = [
                 'success' => true,
                 'data' => [
                     'produtos' => $produtos,
@@ -73,11 +78,15 @@ class ProdutoService
                         'categoriaId' => $categoriaId,
                         'sort' => $sort,
                         'dir' => $dir,
-                        'perPage' => $perPage,
+                        'perPage' => $prodPerPage,
                         'onlyLow' => $onlyLow,
+                        'page' => $produtos->currentPage(),
                     ],
                 ],
             ];
+            // Atualiza sessão com os filtros efetivos
+            session(['produtos.filters' => $filtersOut['data']['filters']]);
+            return $filtersOut;
         } catch (\Exception $e) {
             Log::channel('security')->error('Erro ao listar produtos', [
                 'error' => $e->getMessage(),

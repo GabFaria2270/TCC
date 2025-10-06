@@ -1,6 +1,11 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
+import { formatarMoeda } from '../../utils/formatters';
+
+// =============================================================
+// Tipos e interfaces
+// =============================================================
 
 interface Categoria {
     id: number;
@@ -51,13 +56,46 @@ type ProdutoFormData = {
     estoque_minimo?: string;
 };
 
+// =============================================================
+// Formatadores e utilidades
+// =============================================================
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
 });
 
+// Garante string numérica não-negativa (ou vazia)
+function clampNonNegativeString(value: string): string {
+    if (value === '') return '';
+    const n = Number(value);
+    if (Number.isNaN(n)) return '';
+    return String(Math.max(0, Math.trunc(n)));
+}
+
+// Converte string BR (ex: 1.234,56) para número em string com ponto decimal (ex: 1234.56)
+function normalizarMoedaBR(valor: string): string {
+    if (!valor) return '';
+    let v = valor.replace(/\./g, ''); // remove separador de milhar
+    v = v.replace(',', '.'); // vírgula decimal -> ponto
+    return v;
+}
+
+// Remove parâmetros de query da URL atual, mantendo o estado do Inertia
+function hideFiltersInUrl() {
+    try {
+        const { state } = window.history;
+        const clean = window.location.pathname + (window.location.hash || '');
+        window.history.replaceState(state, '', clean);
+    } catch {
+        // silencioso, sem quebrar UX
+    }
+}
+
 export default function Produtos({ produtos = [], categorias = [], error, filters }: Props) {
     const h1Ref = useRef<HTMLHeadingElement>(null);
+    // =========================================================
+    // Definições locais (tipos e mapeamentos de ordenação)
+    // =========================================================
     // Campos de ordenação exibidos na UI
     type SortField = 'nome' | 'categoria' | 'preco' | 'quantidade' | 'updated_at';
 
@@ -87,10 +125,13 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 return 'nome';
         }
     }
-    // Detecta paginação vinda do servidor ou array simples
+    // Util: detecta paginação vinda do servidor ou array simples
     const isPaginated = (p: any): p is Paginacao<Produto> =>
         p && typeof p === 'object' && Array.isArray(p.data) && typeof p.current_page === 'number';
 
+    // =========================================================
+    // Estado inicial derivado de filtros do servidor
+    // =========================================================
     const initialQ = filters?.q ?? '';
     const initialCategoria = filters?.categoriaId ? String(filters.categoriaId) : '';
     const initialSort: SortField = fromServerSort(filters?.sort ?? 'nome');
@@ -98,6 +139,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     const initialPerPage = typeof filters?.perPage === 'number' ? String(filters!.perPage) : '10';
     const initialOnlyLow = Boolean(filters?.onlyLow ?? false);
 
+    // =========================================================
+    // Estados (filtros, UI/modais e ordenação)
+    // =========================================================
     const [searchTerm, setSearchTerm] = useState(initialQ);
     const [categoriaFiltro, setCategoriaFiltro] = useState(initialCategoria);
     const [loading, setLoading] = useState(false);
@@ -118,19 +162,30 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     const [sortBy, setSortBy] = useState<SortField>(initialSort);
     const [sortDir, setSortDir] = useState<'asc' | 'desc'>(initialDir);
 
-    const { data, setData, post, processing, errors, reset } = useForm<ProdutoFormData>({
+    // =========================================================
+    // Formulário (create/update)
+    // =========================================================
+    const { data, setData, post, processing, errors, reset, transform } = useForm<ProdutoFormData>({
         nome: '',
         preco: '',
-        quantidade: '0',
+        quantidade: '',
         categoria_id: '',
         nova_categoria_nome: '',
-        estoque_minimo: '0',
+        estoque_minimo: '',
     });
 
+    // =========================================================
+    // Efeitos de montagem/UX
+    // =========================================================
     useEffect(() => {
         h1Ref.current?.focus();
+        // Limpa qualquer query string inicial
+        hideFiltersInUrl();
     }, []);
 
+    // =========================================================
+    // Derivados (useMemo): normalização e ordenação local
+    // =========================================================
     const produtosArray: Produto[] = useMemo(() => (isPaginated(produtos) ? produtos.data : produtos), [produtos]);
 
     const produtosOrdenados = useMemo(() => {
@@ -174,6 +229,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         return arr;
     }, [produtos, produtosArray, sortBy, sortDir]);
 
+    // =========================================================
+    // Ordenação (UI -> servidor)
+    // =========================================================
     const toggleSort = (field: SortField) => {
         if (sortBy === field) {
             const newDir = sortDir === 'asc' ? 'desc' : 'asc';
@@ -191,7 +249,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         return sortDir === 'asc' ? <i className="bi bi-caret-up-fill ms-1" /> : <i className="bi bi-caret-down-fill ms-1" />;
     };
 
-    // Debounce para busca: aplica filtro no servidor após digitação (suave)
+    // =========================================================
+    // Busca com debounce: aplica filtro no servidor após digitação
+    // =========================================================
     const immediateNavRef = React.useRef(false);
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -221,6 +281,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         }
     };
 
+    // =========================================================
+    // Navegação com filtros/paginação
+    // =========================================================
     const navegarComFiltros = (overrides?: Partial<ServerFilters & { page: number }>) => {
         const payload = {
             q: searchTerm || undefined,
@@ -231,7 +294,12 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             onlyLow: onlyLow || undefined,
             ...(overrides ?? {}),
         };
-        router.get('/gerenciamento/produtos', payload, { preserveScroll: true, replace: true, preserveState: true });
+        router.post('/gerenciamento/produtos/filtros', payload, {
+            preserveScroll: true,
+            replace: true,
+            preserveState: true,
+            onSuccess: () => hideFiltersInUrl(),
+        });
     };
 
     const handleRefresh = () => {
@@ -247,16 +315,24 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setSortBy('nome');
         setSortDir('asc');
         setOnlyLow(false);
-        router.get('/gerenciamento/produtos', {}, { preserveScroll: true, replace: true, preserveState: true });
+        router.post('/gerenciamento/produtos/filtros', {}, {
+            preserveScroll: true,
+            replace: true,
+            preserveState: true,
+            onSuccess: () => hideFiltersInUrl(),
+        });
     };
 
+    // =========================================================
+    // Abertura/fechamento de modal de produto (create/edit)
+    // =========================================================
     const abrirModalCriar = () => {
         setModalMode('create');
         setProdutoSelecionado(null);
         setShowModal(true);
         reset();
-        setData('quantidade', '0');
-        setData('estoque_minimo', '0');
+        setData('quantidade', '');
+        setData('estoque_minimo', '');
         setTimeout(() => {
             document.getElementById('produto-nome')?.focus();
         }, 100);
@@ -269,7 +345,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         reset();
         setData({
             nome: produto.nome,
-            preco: String(produto.preco ?? ''),
+            preco: formatarMoeda(String(produto.preco ?? '')),
             quantidade: String(produto.quantidade_estoque ?? '0'),
             categoria_id: produto.categoria ? String(produto.categoria.id) : '',
             nova_categoria_nome: '',
@@ -293,6 +369,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setTimeout(() => abrirModalEstoque(prod, 'ajuste'), 120);
     };
 
+    // =========================================================
+    // Modal de movimentos de estoque (entrada/saída/ajuste)
+    // =========================================================
     const abrirModalEstoque = (produto: Produto, modo?: 'entrada' | 'saida' | 'ajuste') => {
         setProdutoSelecionado(produto);
         const m = modo ?? 'entrada';
@@ -318,6 +397,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setEstoqueMotivo('');
     };
 
+    // Submissão do movimento de estoque
     const submitMovimentoEstoque = (event: React.FormEvent) => {
         event.preventDefault();
         if (!produtoSelecionado) return;
@@ -330,7 +410,10 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModalEstoque();
-                        router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                        router.get('/gerenciamento/produtos', {}, {
+                            preserveScroll: true,
+                            onSuccess: () => hideFiltersInUrl(),
+                        });
                     },
                 },
             );
@@ -342,7 +425,10 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModalEstoque();
-                        router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                        router.get('/gerenciamento/produtos', {}, {
+                            preserveScroll: true,
+                            onSuccess: () => hideFiltersInUrl(),
+                        });
                     },
                 },
             );
@@ -354,13 +440,19 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModalEstoque();
-                        router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                        router.get('/gerenciamento/produtos', {}, {
+                            preserveScroll: true,
+                            onSuccess: () => hideFiltersInUrl(),
+                        });
                     },
                 },
             );
         }
     };
 
+    // =========================================================
+    // UX: fechar modal com ESC e bloquear scroll de fundo
+    // =========================================================
     useEffect(() => {
         const handleEsc = (event: KeyboardEvent) => {
             if (event.key === 'Escape' && showModal) {
@@ -381,25 +473,36 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         };
     }, [showModal]);
 
+    // =========================================================
+    // Submissão de formulário (create/update)
+    // =========================================================
     const submit = (event: React.FormEvent) => {
         event.preventDefault();
         if (modalMode === 'create') {
+            // normaliza preço para padrão numérico antes do envio
+            transform((formData) => ({ ...formData, preco: normalizarMoedaBR(formData.preco) }));
             post('/gerenciamento/produtos', {
                 preserveScroll: true,
                 onSuccess: () => {
                     fecharModal();
-                    router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                    router.get('/gerenciamento/produtos', {}, {
+                        preserveScroll: true,
+                        onSuccess: () => hideFiltersInUrl(),
+                    });
                 },
             });
         } else if (modalMode === 'edit' && produtoSelecionado) {
             router.put(
                 `/gerenciamento/produtos/${produtoSelecionado.id}`,
-                { ...data },
+                { ...data, preco: normalizarMoedaBR(data.preco) },
                 {
                     preserveScroll: true,
                     onSuccess: () => {
                         fecharModal();
-                        router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                        router.get('/gerenciamento/produtos', {}, {
+                            preserveScroll: true,
+                            onSuccess: () => hideFiltersInUrl(),
+                        });
                     },
                 },
             );
@@ -414,7 +517,10 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             </h2>
 
             <div className="container-fluid">
-                <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                {/* ===================================================== */}
+                {/* Cabeçalho / Ações principais                         */}
+                {/* ===================================================== */}
+                <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 rounded-3 p-3 bg-body-tertiary border">
                     <div>
                         <h1 className="h3 m-0">Gestão de Produtos</h1>
                         <p className="text-secondary mb-0">Cadastre e acompanhe os itens da sua mercearia.</p>
@@ -434,6 +540,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     </div>
                 </div>
 
+                {/* ===================================================== */}
+                {/* Alerta de erro                                        */}
+                {/* ===================================================== */}
                 {error && (
                     <div className="alert alert-danger d-flex align-items-center" role="alert">
                         <i className="bi bi-exclamation-triangle-fill me-2" />
@@ -441,7 +550,10 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     </div>
                 )}
 
-                <div className="card mb-4 shadow-sm">
+                {/* ===================================================== */}
+                {/* Filtros e controles                                   */}
+                {/* ===================================================== */}
+                <div className="card mb-4 shadow-sm border-0">
                     <div className="card-body row g-3">
                         <div className="col-md-6 col-12">
                             <label htmlFor="filtro-busca" className="form-label">
@@ -531,14 +643,17 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     </div>
                 </div>
 
-                <div className="card shadow-sm">
-                    <div className="card-header d-flex justify-content-between align-items-center bg-white">
+                {/* ===================================================== */}
+                {/* Tabela de produtos                                    */}
+                {/* ===================================================== */}
+                <div className="card shadow-sm border-0">
+                    <div className="card-header d-flex justify-content-between align-items-center bg-body-tertiary border-0">
                         <strong>Produtos cadastrados</strong>
                         <div className="small text-secondary">Atualizados em tempo real conforme cadastros</div>
                     </div>
                     <div className="table-responsive">
-                        <table className="mb-0 table align-middle">
-                            <thead className="table-light">
+                        <table className="mb-0 table table-hover table-striped align-middle">
+                            <thead>
                                 <tr>
                                     <th role="button" onClick={() => toggleSort('nome')} className="user-select-none">
                                         Produto {renderSortIcon('nome')}
@@ -579,7 +694,15 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                     <div className="fw-semibold">{produto.nome}</div>
                                                     <small className="text-secondary">ID: {produto.id}</small>
                                                 </td>
-                                                <td>{produto.categoria?.nome ?? '—'}</td>
+                                                <td>
+                                                    {produto.categoria?.nome ? (
+                                                        <span className="badge text-bg-secondary">
+                                                            {produto.categoria.nome}
+                                                        </span>
+                                                    ) : (
+                                                        '—'
+                                                    )}
+                                                </td>
                                                 <td className="text-end">{currencyFormatter.format(Number(produto.preco ?? 0))}</td>
                                                 <td className="text-end">
                                                     {produto.quantidade_estoque}
@@ -591,7 +714,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                         <div className="d-flex ms-3 flex-wrap gap-2">
                                                             <button
                                                                 type="button"
-                                                                className="btn btn-outline-secondary btn-sm px-3"
+                                            className="btn btn-outline-secondary btn-sm px-3"
                                                                 title="Editar"
                                                                 onClick={() => abrirModalEditar(produto)}
                                                             >
@@ -599,7 +722,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                className="btn btn-outline-primary btn-sm px-3"
+                                            className="btn btn-outline-primary btn-sm px-3"
                                                                 title="Movimentar estoque"
                                                                 onClick={() => abrirModalEstoque(produto)}
                                                             >
@@ -607,7 +730,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                className="btn btn-outline-info btn-sm px-3"
+                                            className="btn btn-outline-info btn-sm px-3"
                                                                 title="Histórico de estoque"
                                                                 onClick={() =>
                                                                     router.get(
@@ -621,7 +744,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                className="btn btn-outline-danger btn-sm px-3"
+                                            className="btn btn-outline-danger btn-sm px-3"
                                                                 title="Excluir"
                                                                 onClick={() => {
                                                                     setProdutoSelecionado(produto);
@@ -642,7 +765,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     </div>
                 </div>
 
-                {/* Paginação */}
+                {/* ===================================================== */}
+                {/* Paginação                                              */}
+                {/* ===================================================== */}
                 {isPaginated(produtos) && (
                     <div className="d-flex justify-content-between align-items-center mt-3">
                         <div className="small text-secondary">
@@ -671,12 +796,15 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 )}
             </div>
 
+            {/* ========================================================= */}
+            {/* Modal: Criar/Editar produto                               */}
+            {/* ========================================================= */}
             {showModal && (
                 <>
                     <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
-                        <div className="modal-dialog modal-lg">
+                        <div className="modal-dialog modal-lg modal-dialog-centered">
                             <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header border-0">
                                     <h5 className="modal-title">{modalMode === 'create' ? 'Novo produto' : 'Editar produto'}</h5>
                                     <button type="button" className="btn-close" aria-label="Fechar" onClick={fecharModal} />
                                 </div>
@@ -692,7 +820,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                     type="text"
                                                     className={`form-control ${errors.nome ? 'is-invalid' : ''}`}
                                                     value={data.nome}
-                                                    onChange={(event) => setData('nome', event.target.value)}
+                                                    onChange={(e) => setData('nome', e.target.value)}
                                                     required
                                                     disabled={processing}
                                                 />
@@ -703,18 +831,21 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 <label htmlFor="produto-preco" className="form-label">
                                                     Preço (R$)*
                                                 </label>
-                                                <input
-                                                    id="produto-preco"
-                                                    type="number"
-                                                    min="0"
-                                                    step="0.01"
-                                                    className={`form-control ${errors.preco ? 'is-invalid' : ''}`}
-                                                    value={data.preco}
-                                                    onChange={(event) => setData('preco', event.target.value)}
-                                                    required
-                                                    disabled={processing}
-                                                />
-                                                {errors.preco && <div className="invalid-feedback">{errors.preco}</div>}
+                                                <div className="input-group">
+                                                    <span className="input-group-text">R$</span>
+                                                    <input
+                                                        id="produto-preco"
+                                                        type="text"
+                                                        className={`form-control ${errors.preco ? 'is-invalid' : ''}`}
+                                                        value={data.preco}
+                                                        onChange={(e) => setData('preco', formatarMoeda(e.target.value))}
+                                                        placeholder="0,00"
+                                                        inputMode="numeric"
+                                                        disabled={processing}
+                                                        required
+                                                    />
+                                                    {errors.preco && <div className="invalid-feedback">{errors.preco}</div>}
+                                                </div>
                                             </div>
 
                                             {modalMode === 'create' ? (
@@ -725,11 +856,19 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                     <input
                                                         id="produto-quantidade"
                                                         type="number"
-                                                        min="0"
+                                                        min={0}
                                                         step="1"
                                                         className={`form-control ${errors.quantidade ? 'is-invalid' : ''}`}
                                                         value={data.quantidade}
-                                                        onChange={(event) => setData('quantidade', event.target.value)}
+                                                        onChange={(event) => setData('quantidade', clampNonNegativeString(event.target.value))}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
+                                                                e.preventDefault();
+                                                            }
+                                                        }}
+                                                        inputMode="numeric"
+                                                        pattern="[0-9]*"
+                                                        placeholder=""
                                                         required
                                                         disabled={processing}
                                                     />
@@ -785,8 +924,16 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                     min={0}
                                                     step={1}
                                                     className={`form-control ${errors.estoque_minimo ? 'is-invalid' : ''}`}
-                                                    value={data.estoque_minimo ?? '0'}
-                                                    onChange={(e) => setData('estoque_minimo', e.target.value)}
+                                                    value={data.estoque_minimo ?? ''}
+                                                    onChange={(e) => setData('estoque_minimo', clampNonNegativeString(e.target.value))}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
+                                                            e.preventDefault();
+                                                        }
+                                                    }}
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
+                                                    placeholder=""
                                                     disabled={processing}
                                                 />
                                                 {errors.estoque_minimo && <div className="invalid-feedback">{errors.estoque_minimo}</div>}
@@ -813,7 +960,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="modal-footer d-flex justify-content-between">
+                                    <div className="modal-footer d-flex justify-content-between border-0">
                                         <button type="button" className="btn btn-outline-secondary" onClick={fecharModal}>
                                             Cancelar
                                         </button>
@@ -828,32 +975,38 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 </>
             )}
 
+            {/* ========================================================= */}
+            {/* Modal: Confirmar exclusão                                 */}
+            {/* ========================================================= */}
             {showDeleteConfirm && produtoSelecionado && (
                 <>
                     <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
                         <div className="modal-dialog">
                             <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header border-0">
                                     <h5 className="modal-title">Remover produto</h5>
                                     <button type="button" className="btn-close" aria-label="Fechar" onClick={() => setShowDeleteConfirm(false)} />
                                 </div>
                                 <div className="modal-body">
                                     Tem certeza que deseja remover o produto "{produtoSelecionado.nome}"? Esta ação não pode ser desfeita.
                                 </div>
-                                <div className="modal-footer d-flex justify-content-between">
+                                <div className="modal-footer d-flex justify-content-between border-0">
                                     <button type="button" className="btn btn-outline-secondary" onClick={() => setShowDeleteConfirm(false)}>
                                         Cancelar
                                     </button>
                                     <button
                                         type="button"
-                                        className="btn btn-danger"
+                                        className="btn btn-danger"  
                                         onClick={() => {
                                             router.delete(`/gerenciamento/produtos/${produtoSelecionado.id}`, {
                                                 preserveScroll: true,
                                                 onSuccess: () => {
                                                     setShowDeleteConfirm(false);
                                                     setProdutoSelecionado(null);
-                                                    router.get('/gerenciamento/produtos', {}, { preserveScroll: true });
+                                                    router.get('/gerenciamento/produtos', {}, {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => hideFiltersInUrl(),
+                                                    });
                                                 },
                                             });
                                         }}
@@ -867,12 +1020,15 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 </>
             )}
 
+            {/* ========================================================= */}
+            {/* Modal: Movimentos de estoque                              */}
+            {/* ========================================================= */}
             {showStockModal && produtoSelecionado && (
                 <>
                     <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
                         <div className="modal-dialog">
                             <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header border-0">
                                     <h5 className="modal-title">
                                         {stockMode === 'entrada' && 'Entrada de estoque'}
                                         {stockMode === 'saida' && 'Saída de estoque'}
@@ -945,7 +1101,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                             />
                                         </div>
                                     </div>
-                                    <div className="modal-footer d-flex justify-content-between">
+                                    <div className="modal-footer d-flex justify-content-between border-0">
                                         <button type="button" className="btn btn-outline-secondary" onClick={fecharModalEstoque}>
                                             Cancelar
                                         </button>

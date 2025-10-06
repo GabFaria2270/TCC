@@ -38,6 +38,17 @@ class ProdutoController extends Controller
         ]);
     }
 
+    /**
+     * Recebe filtros via POST, armazena-os na sessão e redireciona sem query string
+     */
+    public function setFilters(Request $request)
+    {
+        $this->authorize('viewAny', \App\Models\Produto::class);
+        $filters = $request->only(['q','categoriaId','sort','dir','perPage','onlyLow','page']);
+        session(['produtos.filters' => $filters]);
+        return redirect()->route('produtos.index');
+    }
+
     public function store(ProdutoRequest $request)
     {
         $this->authorize('create', \App\Models\Produto::class);

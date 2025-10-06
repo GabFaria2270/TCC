@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import React from 'react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 
@@ -28,7 +28,18 @@ export default function ProdutoHistorico({ produto, movimentos }: Props) {
     <GerenciamentoLayout title={`Histórico de ${produto.nome}`}>
       <Head title={`Histórico — ${produto.nome}`} />
       <div className="container-fluid">
-        <h1 className="h4 mb-3">Histórico de estoque — {produto.nome}</h1>
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <h1 className="h4 m-0">Histórico de estoque — {produto.nome}</h1>
+          <div>
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => router.get('/gerenciamento/produtos', {}, { preserveScroll: true })}
+            >
+              <i className="bi bi-arrow-left me-1" /> Voltar para produtos
+            </button>
+          </div>
+        </div>
         <div className="card">
           <div className="table-responsive">
             <table className="table mb-0 align-middle">
