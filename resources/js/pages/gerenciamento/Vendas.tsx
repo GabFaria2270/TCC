@@ -332,7 +332,8 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     };
 
     try {
-      await router.post('/vendas', dadosVenda, {
+      await router.post('/gerenciamento/vendas', dadosVenda, {
+        preserveScroll: true,
         onSuccess: () => {
           addNotification({
             type: 'success',
@@ -357,15 +358,13 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
               message: Array.isArray(error) ? error[0] : error as string
             });
           });
+        },
+        onFinish: () => {
+          setLoadingVenda(false);
         }
       });
     } catch (error) {
-      addNotification({
-        type: 'error',
-        title: 'Erro Interno',
-        message: 'Erro ao processar venda. Tente novamente.'
-      });
-    } finally {
+      console.error('💥 Erro crítico:', error);
       setLoadingVenda(false);
     }
   };
