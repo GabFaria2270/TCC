@@ -773,7 +773,117 @@
 }
 
 /* ------------------------------------------------------------------
-   🎨 CORES PERSONALIZADAS DOS ÍCONES NO HOVER
+   🔔 SISTEMA DE NOTIFICAÇÕES MODERNAS
+   ------------------------------------------------------------------ */
+
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 400px;
+}
+
+.notification-modern {
+  border-left: 4px solid currentColor !important;
+  border-radius: 12px !important;
+  animation: slideInRight 0.4s ease-out;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+.notification-modern:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.notification-modern .btn-close {
+  background: none;
+  border: none;
+  opacity: 0.6;
+  font-size: 0.8rem;
+}
+
+.notification-modern .btn-close:hover {
+  opacity: 1;
+}
+
+/* Animações das notificações */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.notification-enter {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.notification-exit {
+  animation: slideOutRight 0.3s ease-in;
+}
+
+/* Cores específicas para cada tipo de notificação */
+.alert-success.notification-modern {
+  background: linear-gradient(135deg, #d1f2eb 0%, #a3e9d0 100%) !important;
+  border-left-color: #28a745 !important;
+}
+
+.alert-danger.notification-modern {
+  background: linear-gradient(135deg, #f8d7da 0%, #f1aeb5 100%) !important;
+  border-left-color: #dc3545 !important;
+}
+
+.alert-warning.notification-modern {
+  background: linear-gradient(135deg, #fff3cd 0%, #fce4a6 100%) !important;
+  border-left-color: #ffc107 !important;
+}
+
+.alert-info.notification-modern {
+  background: linear-gradient(135deg, #d1ecf1 0%, #abdde5 100%) !important;
+  border-left-color: #17a2b8 !important;
+}
+
+/* Responsividade das notificações */
+@media (max-width: 576px) {
+  .notification-container {
+    max-width: 90vw;
+    right: 5vw;
+  }
+  
+  .notification-modern {
+    font-size: 0.875rem;
+  }
+  
+  .notification-modern .fw-bold {
+    font-size: 0.9rem;
+  }
+  
+  .notification-modern .small {
+    font-size: 0.8rem;
+  }
+}
+
+/* ------------------------------------------------------------------
+   🎨 CORES PERSONALIZADAS DOS ÍCONS NO HOVER
    ------------------------------------------------------------------ */
 
 /* Cores dos ícones no HOVER (mouse por cima) */

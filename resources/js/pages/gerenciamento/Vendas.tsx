@@ -10,12 +10,10 @@ interface Produto {
   nome: string;
   preco: number;
   categoria?: { nome: string };
-  estoque?: { quantidade: number };
+  quantidade_estoque: number;
   codigo_barras?: string;
   preco_formatado: string;
 }
-
-
 
 interface ItemVenda {
   produto_id: number;
@@ -45,6 +43,74 @@ interface Props {
   error?: string;
 }
 
+interface Notification {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  message: string;
+  duration?: number;
+}
+
+// ✅ Componente de Notificações Inline (SEM CSS INLINE)
+const NotificationContainer = ({ 
+  notifications, 
+  onRemove 
+}: { 
+  notifications: Notification[]; 
+  onRemove: (id: string) => void 
+}) => {
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'success': return 'bi-check-circle-fill text-success';
+      case 'error': return 'bi-x-circle-fill text-danger';
+      case 'warning': return 'bi-exclamation-triangle-fill text-warning';
+      case 'info': return 'bi-info-circle-fill text-info';
+      default: return 'bi-info-circle-fill text-info';
+    }
+  };
+
+  const getAlertClass = (type: string) => {
+    switch (type) {
+      case 'success': return 'alert-success border-success';
+      case 'error': return 'alert-danger border-danger';
+      case 'warning': return 'alert-warning border-warning';
+      case 'info': return 'alert-info border-info';
+      default: return 'alert-info border-info';
+    }
+  };
+
+  if (notifications.length === 0) return null;
+
+  return (
+    <div 
+      className="notification-container position-fixed top-0 end-0 p-3" 
+      style={{ zIndex: 9999, maxWidth: '400px' }}
+    >
+      {notifications.map((notification) => (
+        <div
+          key={notification.id}
+          className={`alert ${getAlertClass(notification.type)} alert-dismissible fade show mb-2 shadow-sm notification-modern`}
+          role="alert"
+        >
+          <div className="d-flex align-items-start">
+            <i className={`bi ${getIcon(notification.type)} me-2 mt-1 fs-5`}></i>
+            <div className="flex-grow-1">
+              <div className="fw-bold mb-1">{notification.title}</div>
+              <div className="small">{notification.message}</div>
+            </div>
+            <button
+              type="button"
+              className="btn-close btn-sm ms-2"
+              onClick={() => onRemove(notification.id)}
+              style={{ fontSize: '0.8rem' }}
+            ></button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export default function Vendas({ vendas = [], produtos = [], clientes = [], error }: Props) {
   // Estados para controlar as abas
   const [abaAtiva, setAbaAtiva] = useState<'lista' | 'nova'>('lista');
@@ -72,6 +138,9 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   const [showClienteModal, setShowClienteModal] = useState(false);
   const [clientesAtualizados, setClientesAtualizados] = useState(clientes);
 
+  // Estado para notificações
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
   const { data, setData, post, processing } = useForm({});
 
   // Funções para modal de cliente
@@ -84,16 +153,11 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   };
 
   const onClienteCriado = (novoCliente?: Cliente) => {
-    // ✅ Verificar se o cliente foi passado
     if (novoCliente) {
-      // Atualiza a lista de clientes com o novo cliente
       const novosClientes = [...clientesAtualizados, novoCliente];
       setClientesAtualizados(novosClientes);
-      
-      // Seleciona automaticamente o cliente recém-criado
       setClienteSelecionado(novoCliente);
     }
-    
     fecharModalCliente();
   };
 
@@ -107,11 +171,32 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     setProdutosFiltrados(filtrados);
   }, [busca, produtos]);
 
-  // ➕ Adicionar produto ao carrinho
+  // ✅ Função para adicionar notificação com mensagens centralizadas
+  const addNotification = (notification: Omit<Notification, 'id'>) => {
+    const id = Date.now().toString();
+    const newNotification = { ...notification, id };
+    
+    setNotifications(prev => [...prev, newNotification]);
+
+    setTimeout(() => {
+      removeNotification(id);
+    }, notification.duration || 5000);
+  };
+
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  // ➕ Adicionar produto ao carrinho com validações usando mensagens centralizadas
   const adicionarAoCarrinho = (produto: Produto, quantidade: number = 1) => {
-    // Verificar estoque
-    if (produto.estoque && produto.estoque.quantidade < quantidade) {
-      alert(`Estoque insuficiente! Disponível: ${produto.estoque.quantidade}`);
+    const disponivel = Number(produto.quantidade_estoque ?? 0);
+    
+    if (disponivel < quantidade) {
+      addNotification({
+        type: 'error',
+        title: 'Estoque Insuficiente',
+        message: `Disponível: ${disponivel} unidades para ${produto.nome}`,
+      });
       return;
     }
 
@@ -119,18 +204,21 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     
     if (itemExistente) {
       const novaQuantidade = itemExistente.quantidade + quantidade;
-      if (produto.estoque && produto.estoque.quantidade < novaQuantidade) {
-        alert(`Estoque insuficiente! Máximo: ${produto.estoque.quantidade}`);
+      if (disponivel < novaQuantidade) {
+        addNotification({
+          type: 'warning',
+          title: 'Limite de Estoque',
+          message: `Máximo disponível: ${disponivel} unidades`,
+        });
         return;
       }
-      
-      setCarrinho(carrinho.map(item => 
+      setCarrinho(carrinho.map(item =>
         item.produto_id === produto.id
           ? {
               ...item,
               quantidade: novaQuantidade,
-              preco_unitario: Number(item.preco_unitario), // ✅ GARANTIR NÚMERO
-              subtotal: novaQuantidade * Number(item.preco_unitario) // ✅ GARANTIR NÚMERO
+              preco_unitario: Number(item.preco_unitario),
+              subtotal: novaQuantidade * Number(item.preco_unitario)
             }
           : item
       ));
@@ -139,36 +227,42 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         produto_id: produto.id,
         produto,
         quantidade,
-        preco_unitario: Number(produto.preco), // ✅ GARANTIR NÚMERO
-        subtotal: quantidade * Number(produto.preco), // ✅ GARANTIR NÚMERO
+        preco_unitario: Number(produto.preco),
+        subtotal: quantidade * Number(produto.preco),
       };
       setCarrinho([...carrinho, novoItem]);
+      
+      addNotification({
+        type: 'success',
+        title: 'Produto Adicionado',
+        message: `${produto.nome} adicionado ao carrinho`,
+        duration: 2000
+      });
     }
-    
     setBusca('');
   };
 
   // ✏️ Editar quantidade no carrinho
   const editarQuantidade = (produtoId: number, novaQuantidade: number) => {
-    if (novaQuantidade <= 0) {
-      removerDoCarrinho(produtoId);
-      return;
-    }
-
     const item = carrinho.find(item => item.produto_id === produtoId);
     if (!item) return;
-
-    if (item.produto.estoque && item.produto.estoque.quantidade < novaQuantidade) {
-      alert(`Estoque insuficiente! Máximo: ${item.produto.estoque.quantidade}`);
+    
+    const disponivel = Number(item.produto.quantidade_estoque ?? 0);
+    if (disponivel < novaQuantidade) {
+      addNotification({
+        type: 'warning',
+        title: 'Estoque Insuficiente',
+        message: `Máximo disponível: ${disponivel} unidades`,
+      });
       return;
     }
-
-    setCarrinho(carrinho.map(item => 
+    
+    setCarrinho(carrinho.map(item =>
       item.produto_id === produtoId
         ? {
             ...item,
             quantidade: novaQuantidade,
-            subtotal: novaQuantidade * item.preco_unitario
+            subtotal: novaQuantidade * Number(item.preco_unitario)
           }
         : item
     ));
@@ -177,6 +271,13 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   // ❌ Remover item do carrinho
   const removerDoCarrinho = (produtoId: number) => {
     setCarrinho(carrinho.filter(item => item.produto_id !== produtoId));
+    
+    addNotification({
+      type: 'success', // ← Mudança: usar 'success' em vez de 'info'
+      title: 'Produto Removido',
+      message: 'Item removido do carrinho',
+      duration: 2000
+    });
   };
 
   // 💰 Cálculos
@@ -184,26 +285,37 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   const calcularTotal = () => calcularSubtotal() - desconto;
   const calcularTroco = () => valorRecebido ? Math.max(0, valorRecebido - calcularTotal()) : 0;
 
-  // Finalizar venda
+  // ✅ Finalizar venda com mensagens centralizadas
   const finalizarVenda = async () => {
     if (carrinho.length === 0) {
-      alert('Adicione pelo menos um produto à venda!');
+      addNotification({
+        type: 'warning',
+        title: 'Carrinho Vazio',
+        message: 'Adicione pelo menos um produto à venda!'
+      });
       return;
     }
 
     const total = calcularTotal();
     
     if (formaPagamento === 'dinheiro' && (!valorRecebido || valorRecebido < total)) {
-      alert('Valor recebido insuficiente!');
+      addNotification({
+        type: 'error',
+        title: 'Valor Insuficiente',
+        message: 'O valor recebido é menor que o total da venda!'
+      });
       return;
     }
 
     if (formaPagamento === 'conta_fiada' && !clienteSelecionado) {
-      alert('Selecione um cliente para venda fiada!');
+      addNotification({
+        type: 'warning',
+        title: 'Cliente Obrigatório',
+        message: 'Selecione um cliente para venda fiada!'
+      });
       return;
     }
 
-    // Ativar loading
     setLoadingVenda(true);
 
     const dadosVenda = {
@@ -220,38 +332,40 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     };
 
     try {
-      // Usar router.post do Inertia sem fetch customizado
-      router.post('/gerenciamento/vendas', dadosVenda, {
+      await router.post('/vendas', dadosVenda, {
         onSuccess: () => {
-          // Aguardar um pouco para mostrar o sucesso
-          setTimeout(() => {
-            // Limpar formulário
-            setCarrinho([]);
-            setClienteSelecionado(null);
-            setFormaPagamento('dinheiro');
-            setDesconto(0);
-            setObservacoes('');
-            setValorRecebido(0);
-            setBusca('');
-            
-            // Mudar para aba de histórico
-            setAbaAtiva('lista');
-            setLoadingVenda(false);
-            
-            // Recarregar dados das vendas
-            router.reload({ only: ['vendas'] });
-          }, 1500);
+          addNotification({
+            type: 'success',
+            title: 'Venda Realizada',
+            message: '✅ Venda processada com sucesso!'
+          });
+          
+          // Limpar formulário
+          setCarrinho([]);
+          setClienteSelecionado(null);
+          setDesconto(0);
+          setObservacoes('');
+          setValorRecebido(0);
+          setAbaAtiva('lista');
         },
         onError: (errors) => {
-          console.error('Erro ao finalizar venda:', errors);
-          alert('Erro ao processar venda. Tente novamente.');
-          setLoadingVenda(false);
+          // Processar erros do backend
+          Object.values(errors).forEach((error) => {
+            addNotification({
+              type: 'error',
+              title: 'Erro na Venda',
+              message: Array.isArray(error) ? error[0] : error as string
+            });
+          });
         }
       });
-      
     } catch (error) {
-      console.error('Erro ao finalizar venda:', error);
-      alert('Erro ao conectar com o servidor.');
+      addNotification({
+        type: 'error',
+        title: 'Erro Interno',
+        message: 'Erro ao processar venda. Tente novamente.'
+      });
+    } finally {
       setLoadingVenda(false);
     }
   };
@@ -271,6 +385,12 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
   return (
     <GerenciamentoLayout>
       <Head title="Vendas" />
+      
+      {/* ✅ Sistema de Notificações Inline */}
+      <NotificationContainer 
+        notifications={notifications} 
+        onRemove={removeNotification}
+      />
       
       <div className="container-fluid py-4">
         {error && (
@@ -537,10 +657,10 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                                     {produto.preco_formatado}
                                   </strong>
                                   <small className={`badge ${
-                                    (produto.estoque?.quantidade || 0) > 5 ? 'bg-success' :
-                                    (produto.estoque?.quantidade || 0) > 0 ? 'bg-warning' : 'bg-danger'
+                                    (Number(produto.quantidade_estoque) || 0) > 5 ? 'bg-success' :
+                                    (Number(produto.quantidade_estoque) || 0) > 0 ? 'bg-warning' : 'bg-danger'
                                   }`}>
-                                    Est: {produto.estoque?.quantidade || 0}
+                                    Est: {Number(produto.quantidade_estoque) || 0}
                                   </small>
                                 </div>
                               </div>
@@ -858,95 +978,12 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         )}
       </div>
 
-      {/* Modal de Detalhes da Venda */}
-      {showDetalhes && vendaSelecionada && (
-        <>
-          <div className="modal-backdrop fade show" onClick={() => setShowDetalhes(false)}></div>
-          <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
-            <div className="modal-dialog modal-lg">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">
-                    <i className="bi bi-receipt me-2"></i>
-                    Detalhes da Venda #{vendaSelecionada.id}
-                  </h5>
-                  <button 
-                    type="button" 
-                    className="btn-close" 
-                    onClick={() => setShowDetalhes(false)}
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  <div className="row mb-3">
-                    <div className="col-md-6">
-                      <strong>Data:</strong> {new Date(vendaSelecionada.created_at).toLocaleString('pt-BR')}
-                    </div>
-                    <div className="col-md-6">
-                      <strong>Total:</strong> <span className="text-success">{vendaSelecionada.total_formatado}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="row mb-3">
-                    <div className="col-md-6">
-                      <strong>Cliente:</strong> {vendaSelecionada.cliente?.nome || 'Venda avulsa'}
-                    </div>
-                    <div className="col-md-6">
-                      <strong>Pagamento:</strong> {vendaSelecionada.forma_pagamento}
-                    </div>
-                  </div>
-
-                  <h6>Itens da Venda:</h6>
-                  <div className="table-responsive">
-                    <table className="table table-sm">
-                      <thead>
-                        <tr>
-                          <th>Produto</th>
-                          <th>Qtd</th>
-                          <th>Preço Unit.</th>
-                          <th>Subtotal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {vendaSelecionada.itens.map((item, index) => (
-                          <tr key={index}>
-                            <td>{item.produto.nome}</td>
-                            <td>{item.quantidade}</td>
-                            <td>R$ {Number(item.preco_unitario).toFixed(2).replace('.', ',')}</td>
-                            <td>R$ {Number(item.subtotal).toFixed(2).replace('.', ',')}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {vendaSelecionada.observacoes && (
-                    <div className="mt-3">
-                      <strong>Observações:</strong>
-                      <p className="text-muted">{vendaSelecionada.observacoes}</p>
-                    </div>
-                  )}
-                </div>
-                <div className="modal-footer">
-                  <button 
-                    type="button" 
-                    className="btn btn-secondary" 
-                    onClick={() => setShowDetalhes(false)}
-                  >
-                    Fechar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
       {/* Modal de Cadastro de Cliente */}
       <ClienteCreateModal
         show={showClienteModal}
         onClose={fecharModalCliente}
         onSuccess={onClienteCriado}
-        carrinhoItens={carrinho} // ✅ Passa os itens do carrinho
+        carrinhoItens={carrinho}
       />
 
     </GerenciamentoLayout>

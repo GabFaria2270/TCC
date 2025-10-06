@@ -192,6 +192,64 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | ✅ MENSAGENS CENTRALIZADAS - PDV/VENDAS
+    |--------------------------------------------------------------------------
+    */
+    
+    // Mensagens específicas do PDV
+    'pdv_carrinho_vazio' => 'Adicione pelo menos um produto à venda!',
+    'pdv_valor_insuficiente' => 'Valor recebido insuficiente para finalizar a venda!',
+    'pdv_cliente_obrigatorio' => 'Selecione um cliente para venda fiada!',
+    'pdv_estoque_insuficiente' => 'Estoque insuficiente! Disponível: :disponivel unidades',
+    'pdv_estoque_maximo' => 'Estoque insuficiente! Máximo: :maximo unidades',
+    'pdv_produto_inativo' => 'Produto inativo: :produto',
+    'pdv_produto_nao_encontrado' => 'Produto não encontrado',
+    'pdv_venda_processada' => '✅ Venda realizada com sucesso!',
+    'pdv_venda_cancelada' => '✅ Venda cancelada com sucesso!',
+    'pdv_erro_processar' => 'Erro ao processar venda. Tente novamente.',
+    'pdv_erro_cancelar' => 'Erro ao cancelar venda. Tente novamente.',
+    'pdv_venda_nao_encontrada' => 'Venda não encontrada.',
+    'pdv_venda_ja_cancelada' => 'Esta venda já foi cancelada.',
+    
+    'custom' => [
+        // ✅ MENSAGENS ESPECÍFICAS DE VENDA
+        'itens' => [
+            'required' => 'Adicione pelo menos um produto à venda.',
+            'array' => 'Formato de itens inválido.',
+            'min' => 'Adicione pelo menos um produto à venda.',
+        ],
+        
+        'itens.*.produto_id' => [
+            'required' => 'Produto obrigatório.',
+            'integer' => 'ID do produto inválido.',
+            'exists' => 'Produto não encontrado.',
+        ],
+        
+        'itens.*.quantidade' => [
+            'required' => 'Quantidade obrigatória.',
+            'integer' => 'Quantidade deve ser um número inteiro.',
+            'min' => 'Quantidade deve ser maior que zero.',
+        ],
+        
+        'forma_pagamento' => [
+            'required' => 'Selecione uma forma de pagamento.',
+            'in' => 'Forma de pagamento inválida.',
+        ],
+        
+        'cliente_id' => [
+            'required_if' => 'Cliente obrigatório para venda fiada.',
+            'exists' => 'Cliente não encontrado.',
+        ],
+        
+        'valor_recebido' => [
+            'required_if' => 'Valor recebido obrigatório para pagamento em dinheiro.',
+            'numeric' => 'Valor recebido deve ser um número.',
+            'min' => 'Valor recebido deve ser maior que zero.',
+        ],
+    ],
+
     // ✅ Mensagens de erro de sistema
     'database_error' => 'Erro de conexão com o banco de dados. Tente novamente.',
     'system_error' => 'Erro interno do sistema. Contate o suporte.',

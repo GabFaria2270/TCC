@@ -53,22 +53,20 @@ class VendaService
                 });
 
             // Buscar produtos do comércio (CORRIGIDO)
-            $produtos = Produto::with(['categoria', 'estoque'])
+            $produtos = Produto::with(['categoria'])
                 ->where('comercio_id', $comercio->id)
                 ->get()
                 ->map(function ($produto) {
                     return [
                         'id' => $produto->id,
                         'nome' => $produto->nome,
-                        'preco' => (float) $produto->preco, // ✅ GARANTIR FLOAT
+                        'preco' => (float) $produto->preco,
                         'preco_formatado' => 'R$ ' . number_format((float) $produto->preco, 2, ',', '.'), // ✅ GARANTIR FORMATAÇÃO
                         'codigo_barras' => $produto->codigo_barras ?? '',
                         'categoria' => $produto->categoria ? [
                             'nome' => $produto->categoria->nome
                         ] : null,
-                        'estoque' => $produto->estoque ? [
-                            'quantidade' => (int) $produto->estoque->quantidade // ✅ GARANTIR INT
-                        ] : ['quantidade' => 0],
+                        'quantidade_estoque' => (int) ($produto->quantidade_estoque ?? 0),
                     ];
                 });
 
@@ -234,24 +232,25 @@ class VendaService
         $erros = [];
 
         foreach ($itens as $index => $item) {
-            $produto = Produto::with('estoque')
-                ->where('id', $item['produto_id'])
-                ->where('comercio_id', $comercioId) // ✅ CORRIGIDO
+            $produto = Produto::where('id', $item['produto_id'])
+                ->where('comercio_id', $comercioId)
                 ->first();
 
             if (!$produto) {
-                $erros["itens.{$index}"] = "Produto não encontrado";
+                $erros["itens.{$index}"] = __('validation.pdv_produto_nao_encontrado');
                 continue;
             }
 
             if (!$produto->ativo) {
-                $erros["itens.{$index}"] = "Produto inativo: {$produto->nome}";
+                $erros["itens.{$index}"] = __('validation.pdv_produto_inativo', ['produto' => $produto->nome]);
                 continue;
             }
 
-            $estoqueAtual = $produto->estoque ? $produto->estoque->quantidade : 0;
+            $estoqueAtual = (int) ($produto->quantidade_estoque ?? 0);
             if ($estoqueAtual < $item['quantidade']) {
-                $erros["itens.{$index}"] = "Estoque insuficiente para {$produto->nome}. Disponível: {$estoqueAtual}";
+                $erros["itens.{$index}"] = __('validation.pdv_estoque_insuficiente', [
+                    'disponivel' => $estoqueAtual
+                ]) . " para {$produto->nome}";
             }
         }
 
@@ -260,20 +259,20 @@ class VendaService
 
     private function atualizarEstoque(Produto $produto, int $quantidade, Venda $venda, $usuario)
     {
-        $estoque = $produto->estoque;
-        
-        if (!$estoque) {
-            throw new Exception("Produto {$produto->nome} não possui controle de estoque");
-        }
-
-        $quantidadeAnterior = $estoque->quantidade;
+        $quantidadeAnterior = (int) ($produto->quantidade_estoque ?? 0);
         $quantidadeAtual = $quantidadeAnterior - $quantidade;
 
-        // Atualizar estoque
-        $estoque->update(['quantidade' => $quantidadeAtual]);
+        if ($quantidadeAtual < 0) {
+            throw new \Exception(__('validation.pdv_estoque_insuficiente', [
+                'disponivel' => $quantidadeAnterior
+            ]) . " para {$produto->nome}");
+        }
 
-        // Registrar movimento de estoque
-        MovimentoEstoque::create([
+        // Atualiza diretamente na tabela produto
+        $produto->update(['quantidade_estoque' => $quantidadeAtual]);
+
+        // Mantém o registro do movimento (auditoria)
+        \App\Models\MovimentoEstoque::create([
             'produto_id' => $produto->id,
             'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,
@@ -395,20 +394,14 @@ class VendaService
 
     private function reverterEstoque(Produto $produto, int $quantidade, Venda $venda, $usuario)
     {
-        $estoque = $produto->estoque;
-        
-        if (!$estoque) {
-            return; // Se não tem estoque, não precisa reverter
-        }
-
-        $quantidadeAnterior = $estoque->quantidade;
+        $quantidadeAnterior = (int) ($produto->quantidade_estoque ?? 0);
         $quantidadeAtual = $quantidadeAnterior + $quantidade;
 
-        // Atualizar estoque
-        $estoque->update(['quantidade' => $quantidadeAtual]);
+        // Atualiza diretamente a coluna do produto
+        $produto->update(['quantidade_estoque' => $quantidadeAtual]);
 
-        // Registrar movimento de estoque
-        MovimentoEstoque::create([
+        // Registra movimento de entrada por cancelamento
+        \App\Models\MovimentoEstoque::create([
             'produto_id' => $produto->id,
             'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,
