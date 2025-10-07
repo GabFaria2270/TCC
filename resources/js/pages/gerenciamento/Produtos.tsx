@@ -729,7 +729,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 <td className="text-end">{currencyFormatter.format(Number(produto.preco ?? 0))}</td>
                                                 <td className="text-end">
                                                     {produto.quantidade_estoque}
-                                                    {isLow && <span className="badge text-bg-danger ms-2">Baixo</span>}
+                                                    {isLow && <span className="badge text-bg-warning ms-2">Baixo</span>}
                                                 </td>
                                                 <td>
                                                     <div className="d-flex align-items-center justify-content-between">
@@ -737,7 +737,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                         <div className="d-flex ms-3 flex-wrap gap-2">
                                                             <button
                                                                 type="button"
-                                                                className="btn btn-outline-secondary btn-sm px-3"
+                                                                className="btn btn-secondary btn-sm px-3"
                                                                 title="Editar"
                                                                 onClick={() => abrirModalEditar(produto)}
                                                             >

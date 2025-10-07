@@ -188,42 +188,141 @@ body {
     background-color: var(--bs-table-hover-bg);
 }
 [data-bs-theme='dark'] .btn-outline-secondary {
-    color: #fff;
-    border-color: #aaa;
+    color: var(--theme-text);
+    border-color: #b5b5b5;
 }
 [data-bs-theme='dark'] .btn-outline-primary {
-    color: #fff;
-    border-color: #4ea1ff;
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
 }
 [data-bs-theme='dark'] .btn-outline-danger {
-    color: #fff;
-    border-color: #ff6b6b;
+    color: var(--bs-danger);
+    border-color: var(--bs-danger);
 }
 [data-bs-theme='dark'] .btn-outline-info {
-    color: #fff;
-    border-color: #4dd0e1;
+    color: var(--bs-info);
+    border-color: var(--bs-info);
+}
+[data-bs-theme='dark'] .btn-outline-success {
+    color: var(--bs-success);
+    border-color: var(--bs-success);
+}
+[data-bs-theme='dark'] .btn-outline-warning {
+    color: var(--bs-warning);
+    border-color: var(--bs-warning);
 }
 [data-bs-theme='dark'] .btn-outline-secondary:hover {
     background-color: #2a2f3a;
-    border-color: #c8c8c8;
+    border-color: #d0d0d0;
+    color: var(--theme-text);
 }
 [data-bs-theme='dark'] .btn-outline-primary:hover {
-    background-color: rgba(78, 161, 255, 0.15);
-    border-color: #82c2ff;
+    background-color: rgba(var(--bs-primary-rgb), 0.15);
+    border-color: var(--bs-primary);
+    color: #fff;
 }
 [data-bs-theme='dark'] .btn-outline-danger:hover {
-    background-color: rgba(220, 53, 69, 0.15);
-    border-color: #ff8a8a;
+    background-color: rgba(var(--bs-danger-rgb), 0.15);
+    border-color: var(--bs-danger);
+    color: #fff;
 }
 [data-bs-theme='dark'] .btn-outline-info:hover {
-    background-color: rgba(77, 208, 225, 0.15);
-    border-color: #7de3ee;
+    background-color: rgba(var(--bs-info-rgb), 0.15);
+    border-color: var(--bs-info);
+    color: #fff;
+}
+[data-bs-theme='dark'] .btn-outline-success:hover {
+    background-color: rgba(var(--bs-success-rgb), 0.15);
+    border-color: var(--bs-success);
+    color: #fff;
+}
+[data-bs-theme='dark'] .btn-outline-warning:hover {
+    background-color: rgba(var(--bs-warning-rgb), 0.18);
+    border-color: var(--bs-warning);
+    color: #1a1a1a;
+}
+
+/* Foco visível com anel na cor do acento */
+[data-bs-theme='dark'] .btn-outline-primary:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-danger:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-info:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-info-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-success:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-success-rgb), 0.3);
+}
+[data-bs-theme='dark'] .btn-outline-warning:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-warning-rgb), 0.35);
+}
+[data-bs-theme='dark'] .btn-outline-secondary:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(200, 200, 200, 0.25);
+}
+
+/* Estado disabled mantém contraste do contorno, mas desatura a cor do texto */
+[data-bs-theme='dark'] .btn-outline-primary:disabled,
+[data-bs-theme='dark'] .btn-outline-danger:disabled,
+[data-bs-theme='dark'] .btn-outline-info:disabled,
+[data-bs-theme='dark'] .btn-outline-success:disabled,
+[data-bs-theme='dark'] .btn-outline-warning:disabled,
+[data-bs-theme='dark'] .btn-outline-secondary:disabled {
+    color: #9aa0a6 !important;
+    opacity: 0.7;
+}
+
+/* Ajuste robusto via CSS variables do Bootstrap para o btn-outline-secondary no dark */
+[data-bs-theme='dark'] .btn-outline-secondary {
+    /* Estado padrão */
+    --bs-btn-color: var(--theme-text);
+    --bs-btn-border-color: #d0d0d0;
+    /* Hover */
+    --bs-btn-hover-color: var(--theme-text);
+    --bs-btn-hover-bg: #2a2f3a;
+    --bs-btn-hover-border-color: #e0e0e0;
+    /* Focus ring */
+    --bs-btn-focus-shadow-rgb: 200, 200, 200;
+    /* Disabled */
+    --bs-btn-disabled-color: #9aa0a6;
+    --bs-btn-disabled-border-color: #9aa0a6;
 }
 
 /* Botão do modo escuro mais visível no dark mode */
 [data-bs-theme='dark'] #a11y-contrast.btn {
     color: #fff;
     border-color: #c8c8c8;
+}
+
+/* Tema claro: reforço de contraste para btn-outline-secondary dentro de linhas de aviso */
+[data-bs-theme='light'] .table-warning .btn-outline-secondary {
+    /* Estado padrão com leve preenchimento para contraste na linha amarela */
+    --bs-btn-color: #343a40; /* texto mais escuro */
+    --bs-btn-border-color: #6c757d; /* borda secundaria padrão */
+    --bs-btn-bg: rgba(108, 117, 125, 0.08); /* leve preenchimento */
+    color: #343a40 !important;
+    border-color: #6c757d !important;
+    background-color: rgba(108, 117, 125, 0.08) !important;
+    /* Hover/Focus */
+    --bs-btn-hover-color: #212529;
+    --bs-btn-hover-bg: rgba(108, 117, 125, 0.16);
+    --bs-btn-hover-border-color: #545b62;
+    --bs-btn-focus-shadow-rgb: 108, 117, 125;
+    &:hover {
+        color: #212529 !important;
+        background-color: rgba(108, 117, 125, 0.16) !important;
+        border-color: #545b62 !important;
+    }
+    /* Active */
+    --bs-btn-active-color: #212529;
+    --bs-btn-active-bg: rgba(108, 117, 125, 0.2);
+    --bs-btn-active-border-color: #545b62;
+    &:active {
+        color: #212529 !important;
+        background-color: rgba(108, 117, 125, 0.2) !important;
+        border-color: #545b62 !important;
+    }
 }
 [data-bs-theme='dark'] #a11y-contrast.btn:hover {
     background-color: #2a2f3a;
@@ -301,6 +400,11 @@ body {
     background-color: #dc3545 !important;
     color: #fff !important;
 }
+/* Badge warning no dark: fundo âmbar mais escuro e texto escuro ou preto conforme contraste */
+[data-bs-theme='dark'] .badge.text-bg-warning {
+    background-color: #8a6d1d !important; /* âmbar escuro */
+    color: #fff !important; /* branco para legibilidade */
+}
 
 /* Primário mais escuro/roxo no modo escuro */
 [data-bs-theme='dark'] {
@@ -377,17 +481,17 @@ body {
 /* Ajuste de contraste para linhas de aviso (estoque baixo) no dark */
 [data-bs-theme='dark'] .table-warning > td,
 [data-bs-theme='dark'] .table-warning > th {
-    background-color: #3b3218 !important; /* marrom/âmbar escuro */
-    color: #f6e7c1 !important; /* texto âmbar claro */
-    border-color: #6b5a2a !important;
+    background-color: #2f2a1a !important; /* mais escuro para reduzir o amarelado forte */
+    color: #f4e6b6 !important; /* texto âmbar claro */
+    border-color: #5e5228 !important;
 }
 [data-bs-theme='dark'] .table-hover > tbody > tr.table-warning:hover > * {
-    background-color: #4a3c1e !important;
+    background-color: #433a1e !important;
 }
 [data-bs-theme='dark'] .table-warning .fw-semibold,
 [data-bs-theme='dark'] .table-warning .text-secondary,
 [data-bs-theme='dark'] .table-warning small {
-    color: #f6e7c1 !important;
+    color: #f4e6b6 !important;
 }
 [data-bs-theme='dark'] .data-table .fw-semibold,
 [data-bs-theme='dark'] .data-table small,

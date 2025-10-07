@@ -420,6 +420,8 @@
     max-height: 300px;
     overflow-y: auto;
     padding-right: 0.25rem;
+    padding-top: 0.25rem; /* evita corte do hover/contorno na primeira fileira */
+    padding-bottom: 0.25rem; /* evita corte do hover/contorno na última fileira  */
 }
 
 .carrinho-lista::-webkit-scrollbar {
@@ -473,7 +475,7 @@
 
 /* Controles de quantidade */
 .quantidade-controles {
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--bs-border-color);
     border-radius: 0.4rem;
     overflow: hidden;
 }
@@ -483,11 +485,12 @@
     padding: 0.25rem 0.5rem;
     font-weight: 600;
     transition: all 0.2s ease;
+    color: var(--bs-body-color);
 }
 
 .quantidade-controles .btn:hover {
-    background-color: #0d6efd;
-    color: white;
+    background-color: var(--bs-primary);
+    color: #fff;
 }
 
 .quantidade-controles .form-control {
@@ -495,12 +498,26 @@
     padding: 0.25rem;
     text-align: center;
     font-weight: 600;
-    background: #f8f9fa;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
 }
 
 .quantidade-controles .form-control:focus {
     box-shadow: none;
-    background: white;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+/* Remover spinners do input numérico (já temos botões +/-) */
+.quantidade-controles input[type='number']::-webkit-outer-spin-button,
+.quantidade-controles input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantidade-controles input[type='number'] {
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield;
 }
 
 /* ------------------------------------------------------------------
@@ -985,6 +1002,42 @@
     opacity: 1;
 }
 
+/* Tema escuro para notificações */
+[data-bs-theme='dark'] .notification-modern {
+    background: var(--theme-surface-1) !important; /* remove o branco translúcido */
+    color: var(--theme-text);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    border-color: var(--theme-border) !important;
+}
+[data-bs-theme='dark'] .notification-modern .fw-bold {
+    color: var(--theme-text);
+}
+[data-bs-theme='dark'] .notification-modern .small {
+    color: var(--theme-text-secondary);
+}
+[data-bs-theme='dark'] .notification-modern .btn-close {
+    filter: invert(1) brightness(0.9);
+    opacity: 0.7;
+}
+
+/* Acento por variante (mantém borda/ícone temáticos sem afetar o fundo) */
+.notification-modern {
+    border-left-color: var(--notif-accent, currentColor) !important;
+}
+.notification-modern i {
+    color: var(--notif-accent, currentColor) !important;
+}
+.notification-modern.alert-success {
+    --notif-accent: var(--bs-success);
+}
+.notification-modern.alert-danger {
+    --notif-accent: var(--bs-danger);
+}
+.notification-modern.alert-info,
+.notification-modern.alert-primary {
+    --notif-accent: var(--bs-primary);
+}
+
 /* Animações das notificações */
 @keyframes slideInRight {
     from {
@@ -1035,6 +1088,28 @@
 .alert-info.notification-modern {
     background: linear-gradient(135deg, #d1ecf1 0%, #abdde5 100%) !important;
     border-left-color: #17a2b8 !important;
+}
+
+/* Overrides finais para modo escuro: neutraliza fundos claros das variantes */
+[data-bs-theme='dark'] .alert-success.notification-modern,
+[data-bs-theme='dark'] .alert-danger.notification-modern,
+[data-bs-theme='dark'] .alert-warning.notification-modern,
+[data-bs-theme='dark'] .alert-info.notification-modern {
+    background: var(--theme-surface-1) !important;
+    color: var(--theme-text) !important;
+    border-color: var(--theme-border) !important;
+}
+[data-bs-theme='dark'] .alert-success.notification-modern {
+    border-left-color: var(--bs-success) !important;
+}
+[data-bs-theme='dark'] .alert-danger.notification-modern {
+    border-left-color: var(--bs-danger) !important;
+}
+[data-bs-theme='dark'] .alert-warning.notification-modern {
+    border-left-color: var(--bs-warning) !important;
+}
+[data-bs-theme='dark'] .alert-info.notification-modern {
+    border-left-color: var(--bs-info) !important;
 }
 
 /* Responsividade das notificações */
