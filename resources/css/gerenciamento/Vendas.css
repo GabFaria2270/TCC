@@ -210,6 +210,19 @@
     border-color: #d6d6d6;
 }
 
+/* Garantir contraste no textarea de descrição do modal Novo Cliente */
+[data-bs-theme='dark'] textarea.descricao-compra {
+    color: var(--bs-body-color) !important; /* texto padrão claro */
+    background-color: var(--theme-surface-1, #151922) !important; /* fundo escuro coerente */
+    border-color: var(--bs-border-color) !important;
+}
+/* Quando readonly (modo create), mostramos visual de campo desabilitado mas com contraste */
+[data-bs-theme='dark'] textarea.descricao-compra[readonly] {
+    background-color: #1f2430 !important;
+    color: #e9ecef !important;
+    opacity: 1 !important; /* evita clarear demais no bootstrap */
+}
+
 [data-bs-theme='dark'] .vendas-table th,
 [data-bs-theme='dark'] .data-table th {
     background-color: var(--theme-surface-2) !important;

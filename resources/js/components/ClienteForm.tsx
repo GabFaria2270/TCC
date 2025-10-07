@@ -267,7 +267,7 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                       {modo === 'create' ? 'Descrição da Compra' : 'Descrição da Conta (opcional)'}
                     </label>
                     <textarea
-                      className={`form-control ${errors.descricao ? 'is-invalid' : ''}`}
+                      className={`form-control descricao-compra ${modo === 'create' ? 'bg-light text-dark' : ''} ${errors.descricao ? 'is-invalid' : ''}`}
                       id="descricao"
                       rows={3}
                       value={data.descricao}
@@ -276,7 +276,8 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                       maxLength={500}
                       readOnly={modo === 'create'}
                       disabled={processing || isLoading} // ✅ Desabilitar durante loading
-                      style={modo === 'create' ? { backgroundColor: '#f8f9fa' } : {}}
+                      // Mantemos o estilo padrão; contraste no dark é garantido por CSS com !important
+                      style={{}}
                     />
                     <div className="form-text">
                       <small className="text-muted">
