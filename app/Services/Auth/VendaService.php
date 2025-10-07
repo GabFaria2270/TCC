@@ -203,7 +203,7 @@ class VendaService
             if ($dados['forma_pagamento'] === 'conta_fiada' && isset($dados['cliente_id']) && $dados['cliente_id']) {
                 try {
                     DB::beginTransaction();
-                    $this->atualizarContaFiada((int) $dados['cliente_id'], $total);
+                    $this->atualizarContaFiada((int) $dados['cliente_id'], $total, $venda->id); // ✅ CORRIGIDO: Passa ID da venda
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollBack();
@@ -222,7 +222,7 @@ class VendaService
             DB::rollBack();
             return [
                 'success' => false,
-                'errors' => ['system' => 'Erro ao processar venda']
+                'errors' => ['system' => __('validation.pdv_erro_processar')]
             ];
         }
     }
@@ -284,7 +284,7 @@ class VendaService
         ]);
     }
 
-    private function atualizarContaFiada(int $clienteId, float $valor)
+    private function atualizarContaFiada(int $clienteId, float $valor, ?int $vendaId = null)
     {
         $cliente = Cliente::with('contaFiada')->find($clienteId);
         
@@ -292,17 +292,51 @@ class VendaService
             throw new Exception("Cliente não encontrado para ID: {$clienteId}");
         }
 
+        // ✅ BUSCAR OS PRODUTOS DA VENDA PARA A DESCRIÇÃO
+        $produtosDescricao = '';
+        if ($vendaId) {
+            $venda = Venda::with('itens.produto')->find($vendaId);
+            if ($venda && $venda->itens->count() > 0) {
+                $produtos = [];
+                foreach ($venda->itens as $item) {
+                    // Formato mais bonito: "2x Coca-Cola (R$ 5,00 cada)"
+                    $precoUnitario = number_format($item->preco_unitario, 2, ',', '.');
+                    $produtos[] = $item->quantidade . 'x ' . $item->produto->nome . ' (R$ ' . $precoUnitario . ' cada)';
+                }
+                $produtosDescricao = implode(' + ', $produtos);
+            }
+        }
+
+        // ✅ MONTAR DESCRIÇÃO BONITA E INTUITIVA
+        $dataFormatada = now()->format('d/m/Y \à\s H:i');
+        $valorFormatado = 'R$ ' . number_format($valor, 2, ',', '.');
+        
+        if ($produtosDescricao) {
+            // Formato: "🛒 Compra: 2x Coca-Cola (R$ 3,50 cada) + 1x Pão de Açúcar (R$ 2,00 cada) | Total: R$ 9,00 | 07/10/2025 às 14:30"
+            $descricaoVenda = "🛒 Compra: {$produtosDescricao} | Total: {$valorFormatado} | {$dataFormatada}";
+        } else {
+            $descricaoVenda = "🛒 Venda fiada: {$valorFormatado} | {$dataFormatada}";
+        }
+
         if ($cliente->contaFiada) {
             $contaFiada = $cliente->contaFiada;
             $saldoAnterior = (float) $contaFiada->saldo;
             $novoSaldo = $saldoAnterior + $valor;
-            $contaFiada->update(['saldo' => $novoSaldo]);
+            
+            // ✅ CORRIGIDO: Atualiza com descrição bonita dos produtos
+            $contaFiada->update([
+                'saldo' => $novoSaldo,
+                'descricao' => $descricaoVenda
+            ]);
         } else {
+            // Para primeira compra, adiciona explicação
+            $descricaoVenda .= ' | 📝 Primeira compra na conta fiada';
+            
             ContaFiada::create([
                 'cliente_id' => $cliente->id,
                 'comercio_id' => $cliente->comercio_id,
                 'saldo' => $valor,
-                'descricao' => 'Conta criada automaticamente na primeira venda fiada'
+                'descricao' => $descricaoVenda
             ]);
         }
     }

@@ -7,6 +7,7 @@ use App\Services\Auth\VendaService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Http\Requests\Auth\VendaRequest;
 
 class VendasController extends Controller
 {
@@ -26,6 +27,22 @@ class VendasController extends Controller
                 'vendas' => $resultado['data']['vendas'],
                 'produtos' => $resultado['data']['produtos'],
                 'clientes' => $resultado['data']['clientes'],
+                // Adicione as mensagens do validation.php:
+                'messages' => [
+                    'produto_adicionado' => __('validation.pdv_produto_adicionado'),
+                    'produto_removido' => __('validation.pdv_produto_removido'),
+                    'quantidade_atualizada' => __('validation.pdv_quantidade_atualizada'),
+                    'estoque_insuficiente' => __('validation.pdv_estoque_insuficiente'),
+                    'produto_indisponivel' => __('validation.pdv_js_produto_indisponivel'),
+                    'erro_adicionar' => __('validation.pdv_js_erro_adicionar'),
+                    'erro_remover' => __('validation.pdv_js_erro_remover'),
+                    'erro_finalizar' => __('validation.pdv_js_erro_finalizar'),
+                    'venda_processada' => __('validation.pdv_venda_processada'),
+                    'carrinho_vazio' => __('validation.pdv_carrinho_vazio'),
+                    'valor_insuficiente' => __('validation.pdv_valor_insuficiente'),
+                    'produto_ja_no_carrinho' => __('validation.pdv_produto_ja_no_carrinho'),
+                    'cliente_obrigatorio' => __('validation.pdv_cliente_obrigatorio'),
+                ],
             ]);
         }
 
@@ -34,32 +51,36 @@ class VendasController extends Controller
             'produtos' => [],
             'clientes' => [],
             'error' => $resultado['errors']['system'] ?? 'Erro ao carregar vendas.',
+            // Adicionar mensagens também no caso de erro
+            'messages' => [
+                'produto_adicionado' => __('validation.pdv_produto_adicionado'),
+                'produto_removido' => __('validation.pdv_produto_removido'),
+                'quantidade_atualizada' => __('validation.pdv_quantidade_atualizada'),
+                'estoque_insuficiente' => __('validation.pdv_estoque_insuficiente'),
+                'produto_indisponivel' => __('validation.pdv_js_produto_indisponivel'),
+                'erro_adicionar' => __('validation.pdv_js_erro_adicionar'),
+                'erro_remover' => __('validation.pdv_js_erro_remover'),
+                'erro_finalizar' => __('validation.pdv_js_erro_finalizar'),
+                'venda_processada' => __('validation.pdv_venda_processada'),
+                'carrinho_vazio' => __('validation.pdv_carrinho_vazio'),
+                'valor_insuficiente' => __('validation.pdv_valor_insuficiente'),
+                'produto_ja_no_carrinho' => __('validation.pdv_produto_ja_no_carrinho'),
+                'cliente_obrigatorio' => __('validation.pdv_cliente_obrigatorio'),
+            ],
         ]);
     }
 
     /**
      * Store a newly created venda in storage.
      */
-    public function store(Request $request)
+    public function store(VendaRequest $request)
     {
-        $validated = $request->validate([
-            'itens' => 'required|array|min:1',
-            'itens.*.produto_id' => 'required|integer|exists:produto,id',
-            'itens.*.quantidade' => 'required|integer|min:1',
-            'itens.*.preco_unitario' => 'required|numeric|min:0',
-            'forma_pagamento' => 'required|string|in:dinheiro,pix,cartao_debito,cartao_credito,conta_fiada',
-            'cliente_id' => 'nullable|integer|exists:cliente,id',
-            'desconto' => 'nullable|numeric|min:0',
-            'observacoes' => 'nullable|string|max:1000',
-            'valor_recebido' => 'nullable|numeric|min:0',
-        ]);
+        $validated = $request->validated();
 
         $resultado = $this->vendaService->criar($validated, $request);
 
         if ($resultado['success']) {
-            return redirect()
-                ->route('vendas.index')
-                ->with('success', 'Venda realizada com sucesso!');
+            return redirect()->back()->with('success', __('validation.pdv_venda_processada'));
         }
 
         return back()
@@ -80,9 +101,7 @@ class VendasController extends Controller
             ]);
         }
 
-        return redirect()
-            ->route('vendas.index')
-            ->with('error', $resultado['errors']['venda'] ?? 'Venda não encontrada');
+        return redirect()->back()->with('error', __('validation.pdv_venda_nao_encontrada'));
     }
 
     /**
@@ -93,9 +112,7 @@ class VendasController extends Controller
         $resultado = $this->vendaService->cancelar($id, $request);
 
         if ($resultado['success']) {
-            return redirect()
-                ->route('vendas.index')
-                ->with('success', 'Venda cancelada com sucesso!');
+            return redirect()->back()->with('success', __('validation.pdv_venda_cancelada'));
         }
 
         return back()
