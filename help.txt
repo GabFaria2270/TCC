@@ -1,38 +1,40 @@
 # Guia Rápido do Projeto
 
-## 1. Instalar dependências do projeto
-composer install
-npm install
-npm run build
+## 1) Instalar dependências
+- Backend (PHP):
+  - composer install
+- Frontend (Node):
+  - npm install
+  - npm run build (ou npm run dev para ambiente de desenvolvimento)
 
-## 2. Gerar a chave da aplicação
-php artisan key:generate
+## 2) Preparar a aplicação
+- Gerar chave da aplicação:
+  - php artisan key:generate
+- Rodar servidor embutido do Laravel:
+  - php artisan serve
 
-## 3. Rodar o servidor embutido do Laravel
-php artisan serve
+## 3) Banco de Dados
+- Migrar estrutura:
+  - php artisan migrate
+- Popular dados básicos com o seeder (AutoPopulateSeeder):
+  - php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
+- Resetar e popular tudo de uma vez (opcional):
+  - php artisan migrate:fresh --seed
 
-## 4. Rodar as migrações do banco de dados
-php artisan migrate
-
----
-
-### Observações
-- Caminho relativo das classes do Bootstrap:
-  'node_modules/bootstrap/dist/css/bootstrap.css'
-
-- Comandos úteis para o frontend:
-  npm run dev
-
-- Lembrete: As animações devem ser em escala adequada em certos casos.
-- Tema para VS Code: Synthesis
+Observação: O seeder cria 1 usuário admin na tabela `usuario`, 1 comércio, 10 categorias, 30 clientes, 100 produtos e seus estoques. Vendas e contas fiadas não são criadas automaticamente.
 
 ---
 
-## Dica: Composer install mais rápido
+## 4) Observações úteis
+- Caminho das classes do Bootstrap: `node_modules/bootstrap/dist/css/bootstrap.css`
+- Comandos frontend: `npm run dev`
+- Animações: manter escalas adequadas conforme a UI
+- Tema VS Code sugerido: Synthesis
 
-1. Vá até o arquivo:
+---
+
+## 5) Dica: Composer mais rápido (Windows/Laragon)
+1. Abra o arquivo:
    C:\laragon\bin\php\php-8.3.4-Win32-vs16-x64\php.ini
-   
-2. Remova o ponto e vírgula (;) do início da linha para ativar:
+2. Ative a extensão ZIP removendo o `;` do início da linha:
    ;extension=zip => extension=zip
-   dsfsdfsdf
