@@ -27,6 +27,22 @@
         })();
     </script>
     <script>
+        // Aplicação antecipada do tamanho de fonte (acessibilidade) para evitar flicker ao trocar de página
+        (function() {
+            try {
+                var stored = localStorage.getItem('a11y.fontSize');
+                if (stored) {
+                    var size = parseInt(stored, 10);
+                    // Validar numa faixa próxima aos controles do layout (16–22) com alguma folga
+                    if (!isNaN(size) && size >= 14 && size <= 26) {
+                        document.documentElement.style.fontSize = size + 'px';
+                    }
+                }
+            } catch (e) {
+                /* noop */ }
+        })();
+    </script>
+    <script>
         // Aplicação antecipada do tema para evitar flicker
         (function() {
             try {
@@ -38,7 +54,8 @@
                 html.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
                 html.style.colorScheme = isDark ? 'dark' : 'light';
             } catch (e) {
-                /* noop */ }
+                /* noop */
+            }
         })();
     </script>
 

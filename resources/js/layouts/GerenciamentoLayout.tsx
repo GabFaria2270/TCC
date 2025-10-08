@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import Toast from '../components/Toast';
 import { useAppearance, type Appearance } from '../hooks/use-appearance';
 import type { SharedProps } from '../types/inertia';
@@ -7,27 +7,32 @@ import type { SharedProps } from '../types/inertia';
 export default function GerenciamentoLayout({ children, title }: { children: React.ReactNode; title?: string }) {
     const { props } = usePage<SharedProps>();
     const user = props.auth?.user;
+    // Notificações removidas conforme solicitação
     const flash: any = (usePage() as any).props.flash || {};
     const fontDefaults = useMemo(() => ({ base: 18, min: 16, max: 22 }), []);
-    const [fontSize, setFontSize] = useState<number>(fontDefaults.base);
+    const getInitialFontSize = () => {
+        if (typeof window === 'undefined' || typeof document === 'undefined') return fontDefaults.base;
+        try {
+            const storedStr = localStorage.getItem('a11y.fontSize');
+            const stored = storedStr ? Number(storedStr) : NaN;
+            if (!Number.isNaN(stored) && stored >= fontDefaults.min && stored <= fontDefaults.max) {
+                return stored;
+            }
+            const current = parseFloat(getComputedStyle(document.documentElement).fontSize);
+            if (!Number.isNaN(current)) {
+                return Math.round(current);
+            }
+        } catch {}
+        return fontDefaults.base;
+    };
+    const [fontSize, setFontSize] = useState<number>(() => getInitialFontSize());
     const { appearance, updateAppearance } = useAppearance();
     const [isDesktop, setIsDesktop] = useState<boolean>(true);
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
+    // Estado inicial já carregado acima (evita salto visual)
 
-        try {
-            const storedFont = Number(localStorage.getItem('a11y.fontSize'));
-            if (!Number.isNaN(storedFont) && storedFont >= fontDefaults.min && storedFont <= fontDefaults.max) {
-                setFontSize(storedFont);
-            }
-        } catch (error) {
-            console.error('Falha ao carregar preferências de acessibilidade', error);
-        }
-    }, [fontDefaults.max, fontDefaults.min]);
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (typeof document === 'undefined') return;
         document.documentElement.style.fontSize = `${fontSize}px`;
 
@@ -36,10 +41,6 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         } catch (error) {
             console.error('Falha ao salvar tamanho de fonte', error);
         }
-
-        return () => {
-            document.documentElement.style.fontSize = '';
-        };
     }, [fontSize]);
 
     // Nada aqui: o hook useAppearance já aplica data-bs-theme e colorScheme, early applied no Blade evita flicker
@@ -107,16 +108,24 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 )}
             </div>
             <div className="list-group list-group-flush">
-                <Link href={'/gerenciamento'} className="list-group-item list-group-item-action d-flex align-items-center" onClick={closeSidebar}>
-                    <span className="large-icon me-2">🏠</span> Início
+                <Link
+                    href={'/gerenciamento'}
+                    className="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
+                    onClick={closeSidebar}
+                >
+                    <span>
+                        <span className="large-icon me-2">🏠</span> Início
+                    </span>
                 </Link>
                 {/* ✅ ADICIONANDO O BOTÃO DE VENDAS */}
                 <Link
                     href={'/gerenciamento/vendas'}
-                    className="list-group-item list-group-item-action d-flex align-items-center"
+                    className="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
                     onClick={closeSidebar}
                 >
-                    <span className="large-icon me-2">🧾</span> Vendas
+                    <span>
+                        <span className="large-icon me-2">🧾</span> Vendas
+                    </span>
                 </Link>
                 <Link
                     href={'/gerenciamento/clientes'}

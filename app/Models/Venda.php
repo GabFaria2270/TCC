@@ -15,6 +15,7 @@ class Venda extends Model
     protected $table = 'vendas';
 
     protected $fillable = [
+        'comercio_id',
         'usuario_id',
         'cliente_id',
         'subtotal',
@@ -28,6 +29,7 @@ class Venda extends Model
     ];
 
     protected $casts = [
+        'comercio_id' => 'integer',
         'subtotal' => 'decimal:2',
         'desconto' => 'decimal:2',
         'total' => 'decimal:2',
@@ -41,6 +43,11 @@ class Venda extends Model
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(Usuario::class);
+    }
+
+    public function comercio(): BelongsTo
+    {
+        return $this->belongsTo(Comercio::class, 'comercio_id');
     }
 
     public function cliente(): BelongsTo
@@ -61,17 +68,17 @@ class Venda extends Model
     // Accessors para formatação
     public function getTotalFormatadoAttribute(): string
     {
-        return 'R$ ' . number_format($this->total, 2, ',', '.');
+        return 'R$ ' . number_format((float) $this->total, 2, ',', '.');
     }
 
     public function getSubtotalFormatadoAttribute(): string
     {
-        return 'R$ ' . number_format($this->subtotal, 2, ',', '.');
+        return 'R$ ' . number_format((float) $this->subtotal, 2, ',', '.');
     }
 
     public function getDescontoFormatadoAttribute(): string
     {
-        return 'R$ ' . number_format($this->desconto, 2, ',', '.');
+        return 'R$ ' . number_format((float) $this->desconto, 2, ',', '.');
     }
 
     public function getTrocoFormatadoAttribute(): string

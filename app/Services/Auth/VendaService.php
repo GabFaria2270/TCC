@@ -29,23 +29,27 @@ class VendaService
                     'errors' => ['system' => 'Comércio não encontrado para o usuário']
                 ];
             }
-            
-            // Buscar vendas do usuário
+
+            // Buscar vendas do comércio (todas as vendas do estabelecimento)
             $vendas = Venda::with(['cliente', 'itens.produto', 'usuario'])
-                ->where('usuario_id', $user->id) // ✅ VERIFICAR SE É 'id' ou 'ID'
+                ->where('comercio_id', $comercio->id)
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($venda) {
                     return [
                         'id' => $venda->id,
                         'total' => $venda->total,
-                        'total_formatado' => number_format($venda->total, 2, ',', '.'),
+                        'total_formatado' => number_format((float) $venda->total, 2, ',', '.'),
                         'desconto' => $venda->desconto,
                         'forma_pagamento' => $venda->forma_pagamento,
                         'status' => $venda->status,
                         'cliente' => $venda->cliente ? [
                             'nome' => $venda->cliente->nome,
                             'email' => $venda->cliente->email,
+                        ] : null,
+                        'usuario' => $venda->usuario ? [
+                            'id' => $venda->usuario->id,
+                            'nome' => $venda->usuario->NOME ?? ($venda->usuario->name ?? 'Usuário'),
                         ] : null,
                         'created_at' => $venda->created_at->format('d/m/Y H:i'),
                         'observacoes' => $venda->observacoes,
@@ -83,7 +87,7 @@ class VendaService
                         'telefone' => $cliente->telefone,
                         'conta_fiada' => $cliente->contaFiada ? [
                             'saldo' => (float) $cliente->contaFiada->saldo,
-                            'saldo_formatado' => 'R$ ' . number_format($cliente->contaFiada->saldo, 2, ',', '.'),
+                            'saldo_formatado' => 'R$ ' . number_format((float) $cliente->contaFiada->saldo, 2, ',', '.'),
                         ] : null,
                     ];
                 });
@@ -108,7 +112,7 @@ class VendaService
     public function criar(array $dados, $request)
     {
         DB::beginTransaction();
-        
+
         try {
             $user = $request->user();
             $comercio = $user->comercio;
@@ -165,8 +169,9 @@ class VendaService
             // Determinar status da venda
             $status = $dados['forma_pagamento'] === 'conta_fiada' ? 'conta_fiada' : 'concluida';
 
-            // Criar a venda
+            // Criar a venda (sempre com comercio_id e usuario_id)
             $venda = Venda::create([
+                'comercio_id' => $comercio->id,
                 'usuario_id' => $user->id,
                 'cliente_id' => $dados['cliente_id'] ?? null,
                 'subtotal' => $subtotal,
@@ -287,7 +292,7 @@ class VendaService
     private function atualizarContaFiada(int $clienteId, float $valor, ?int $vendaId = null)
     {
         $cliente = Cliente::with('contaFiada')->find($clienteId);
-        
+
         if (!$cliente) {
             throw new Exception("Cliente não encontrado para ID: {$clienteId}");
         }
@@ -310,7 +315,7 @@ class VendaService
         // ✅ MONTAR DESCRIÇÃO BONITA E INTUITIVA
         $dataFormatada = now()->format('d/m/Y \à\s H:i');
         $valorFormatado = 'R$ ' . number_format($valor, 2, ',', '.');
-        
+
         if ($produtosDescricao) {
             // Formato: "🛒 Compra: 2x Coca-Cola (R$ 3,50 cada) + 1x Pão de Açúcar (R$ 2,00 cada) | Total: R$ 9,00 | 07/10/2025 às 14:30"
             $descricaoVenda = "🛒 Compra: {$produtosDescricao} | Total: {$valorFormatado} | {$dataFormatada}";
@@ -322,7 +327,7 @@ class VendaService
             $contaFiada = $cliente->contaFiada;
             $saldoAnterior = (float) $contaFiada->saldo;
             $novoSaldo = $saldoAnterior + $valor;
-            
+
             // ✅ CORRIGIDO: Atualiza com descrição bonita dos produtos
             $contaFiada->update([
                 'saldo' => $novoSaldo,
@@ -331,7 +336,7 @@ class VendaService
         } else {
             // Para primeira compra, adiciona explicação
             $descricaoVenda .= ' | 📝 Primeira compra na conta fiada';
-            
+
             ContaFiada::create([
                 'cliente_id' => $cliente->id,
                 'comercio_id' => $cliente->comercio_id,
@@ -345,7 +350,7 @@ class VendaService
     {
         try {
             $user = $request->user();
-            
+
             $venda = Venda::with(['cliente', 'itens.produto', 'usuario'])
                 ->where('id', $id)
                 ->where('usuario_id', $user->id)
@@ -374,10 +379,10 @@ class VendaService
     public function cancelar(int $id, $request)
     {
         DB::beginTransaction();
-        
+
         try {
             $user = $request->user();
-            
+
             $venda = Venda::with(['itens.produto'])
                 ->where('id', $id)
                 ->where('usuario_id', $user->id)
@@ -404,7 +409,7 @@ class VendaService
 
             // Reverter conta fiada se necessário
             if ($venda->forma_pagamento === 'conta_fiada' && $venda->cliente_id) {
-                $this->reverterContaFiada($venda->cliente_id, $venda->total);
+                $this->reverterContaFiada($venda->cliente_id, (float) $venda->total);
             }
 
             // Atualizar status da venda
@@ -451,7 +456,7 @@ class VendaService
     {
         // ✅ CORRIGIDO: Usar relacionamento correto (camelCase)
         $cliente = Cliente::with('contaFiada')->find($clienteId);
-        
+
         if (!$cliente) {
             return;
         }

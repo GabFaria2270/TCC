@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,6 +12,8 @@ return new class extends Migration
     {
         Schema::create('vendas', function (Blueprint $table) {
             $table->id();
+            // Comércio da venda (facilita filtros/relatórios por comércio)
+            $table->foreignId('comercio_id')->constrained('comercio')->onDelete('cascade');
             $table->foreignId('usuario_id')->constrained('usuario')->onDelete('cascade');
             $table->foreignId('cliente_id')->nullable()->constrained('cliente')->onDelete('set null');
             $table->decimal('subtotal', 10, 2);
@@ -24,8 +25,10 @@ return new class extends Migration
             $table->enum('status', ['pendente', 'concluida', 'cancelada', 'conta_fiada'])->default('pendente');
             $table->text('observacoes')->nullable();
             $table->timestamps();
-            
+
             // Índices para performance
+            $table->index(['comercio_id', 'created_at']);
+            $table->index(['comercio_id', 'status', 'created_at']);
             $table->index(['usuario_id', 'status']);
             $table->index(['cliente_id']);
             $table->index(['created_at']);

@@ -101,3 +101,48 @@ export interface PdvMessages {
         categoria: string;
     };
 }
+
+// ==========================
+// Tipos de navegação e layout
+// (espelhando index.d.ts para evitar erros TS com '@/types')
+// ==========================
+export interface BreadcrumbItem {
+    title: string;
+    href: string;
+}
+
+export interface NavItem {
+    title: string;
+    href: string;
+    icon?: any | null; // usar 'any' aqui para evitar dependência de lucide types em runtime
+    isActive?: boolean;
+}
+
+export interface NavGroup {
+    title: string;
+    items: NavItem[];
+}
+
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    avatar?: string;
+    email_verified_at: string | null;
+    created_at: string;
+    updated_at: string;
+    [key: string]: unknown;
+}
+
+export interface Auth {
+    user: User;
+}
+
+export interface SharedData {
+    name: string;
+    quote: { message: string; author: string };
+    auth: Auth;
+    ziggy: any;
+    sidebarOpen: boolean;
+    [key: string]: unknown;
+}
