@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import ClienteCreateModal from '../../components/ClienteCreateModal';
 import ClienteDetalhesModal from '../../components/ClienteDetalhesModal';
@@ -176,17 +176,11 @@ export default function Clientes({ clientes = [], error }: Props) {
             {clientesArray.length === 0 ? (
                 <div className="clientes-empty-state">
                     <i className="bi bi-people clientes-empty-icon"></i>
-                    <h3>Nenhum cliente cadastrado</h3>
-                    <p>Cadastre seu primeiro cliente para começar a gerenciar contas fiadas.</p>
-                    <button className="btn btn-primary" onClick={() => abrirModal('create')}>
-                        <i className="bi bi-plus-lg"></i> Cadastrar Primeiro Cliente
-                    </button>
-                </div>
-            ) : clientesFiltrados.length === 0 ? (
-                <div className="clientes-empty-state">
-                    <i className="bi bi-search clientes-empty-icon"></i>
-                    <h3>Nenhum resultado encontrado</h3>
-                    <p>Não encontramos clientes com esse nome ou e-mail.</p>
+                    <h3>Cadastre um cliente durante uma venda</h3>
+                    <p>Abra sua Aba de vendas e crie o cliente no metodo Conta Fiada.</p>
+                    <Link href="/gerenciamento/vendas" className="btn btn-primary">
+                        <i className="bi bi-cash-register"></i> Ir para Vendas
+                    </Link>
                 </div>
             ) : (
                 <ClienteTabela

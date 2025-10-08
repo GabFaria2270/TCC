@@ -29,12 +29,14 @@ class Venda extends Model
     ];
 
     protected $casts = [
-        'comercio_id' => 'integer',
-        'subtotal' => 'decimal:2',
-        'desconto' => 'decimal:2',
-        'total' => 'decimal:2',
-        'valor_recebido' => 'decimal:2',
-        'troco' => 'decimal:2',
+        'comercio_id' => 'int',
+        'usuario_id' => 'int',
+        'cliente_id' => 'int',
+        'subtotal' => 'float',
+        'desconto' => 'float',
+        'total' => 'float',
+        'valor_recebido' => 'float',
+        'troco' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

@@ -96,6 +96,13 @@ class VendasController extends Controller
         $resultado = $this->vendaService->buscar($id, $request);
 
         if ($resultado['success']) {
+            // ✅ Se for AJAX/JSON, retorna JSON (usado pelo modal)
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'venda' => $resultado['data']['venda'],
+                ]);
+            }
+
             return Inertia::render('gerenciamento/vendas/Show', [
                 'venda' => $resultado['data']['venda']
             ]);

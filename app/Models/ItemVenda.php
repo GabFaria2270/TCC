@@ -22,9 +22,13 @@ class ItemVenda extends Model
     ];
 
     protected $casts = [
-        'quantidade' => 'integer',
-        'preco_unitario' => 'decimal:2',
-        'subtotal' => 'decimal:2',
+        'venda_id' => 'int',
+        'produto_id' => 'int',
+        'quantidade' => 'int',
+        'preco_unitario' => 'float',
+        'subtotal' => 'float',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // Relacionamentos

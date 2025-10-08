@@ -11,6 +11,7 @@ import { useFinalizarVenda } from '../../hooks/useFinalizarVenda';
 import VendasList from '../../components/VendasList';
 import CarrinhoVenda from '../../components/CarrinhoVenda';
 import ProdutosList from '../../components/ProdutosList';
+import VendaDetalhesModal from '@/components/VendaDetalhesModal';
 import type { Produto, ItemVenda, Cliente } from '../../types';
 
 // ✅ Interface para Venda com itens
@@ -74,6 +75,11 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     const [showClienteModal, setShowClienteModal] = useState(false);
     const [clientesAtualizados, setClientesAtualizados] = useState(clientes);
 
+    // Estados para modal de detalhes da venda
+    const [showVendaModal, setShowVendaModal] = useState(false);
+    const [vendaDetalhes, setVendaDetalhes] = useState<any | null>(null);
+    const [loadingDetalhes, setLoadingDetalhes] = useState(false);
+
     // Hooks para funcionalidades
     const { notifications, addNotification, removeNotification } = useNotifications();
     const { finalizarVenda: executarFinalizacao } = useFinalizarVenda();
@@ -134,6 +140,33 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         messages,
     });
 
+    // Funções para modal de detalhes da venda
+    const abrirDetalhesVenda = async (vendaBasica: any) => {
+        setShowVendaModal(true);
+        setLoadingDetalhes(true);
+        setVendaDetalhes({ id: vendaBasica.id }); // placeholder
+
+        try {
+            const resp = await fetch(`/gerenciamento/vendas/${vendaBasica.id}`, {
+                headers: { Accept: 'application/json' },
+                credentials: 'same-origin',
+            });
+            if (!resp.ok) throw new Error('Erro ao carregar detalhes');
+            const json = await resp.json();
+            setVendaDetalhes(json.venda);
+        } catch (e) {
+            // fallback: mostra dados básicos enquanto isso
+            setVendaDetalhes(vendaBasica);
+        } finally {
+            setLoadingDetalhes(false);
+        }
+    };
+
+    const fecharDetalhesVenda = () => {
+        setShowVendaModal(false);
+        setVendaDetalhes(null);
+    };
+
     return (
         <GerenciamentoLayout>
             <Head title="Vendas" />
@@ -184,7 +217,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                         setFiltroStatus={setFiltroStatus}
                         setFiltroCliente={setFiltroCliente}
                         vendasFiltradas={vendasFiltradas}
-                        abrirDetalhes={abrirDetalhes}
+                        abrirDetalhes={abrirDetalhesVenda}  // ✅ usa nosso handler
                         limparFiltros={limparFiltros}
                     />
                 ) : (
@@ -230,6 +263,14 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
 
             {/* Modal de Cadastro de Cliente */}
             <ClienteCreateModal show={showClienteModal} onClose={fecharModalCliente} onSuccess={onClienteCriado} carrinhoItens={carrinho} />
+
+            {/* Modal de Detalhes da Venda */}
+            <VendaDetalhesModal
+                show={showVendaModal}
+                venda={vendaDetalhes}
+                loading={loadingDetalhes}
+                fechar={fecharDetalhesVenda}
+            />
         </GerenciamentoLayout>
     );
 }

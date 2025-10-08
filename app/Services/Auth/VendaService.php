@@ -166,6 +166,9 @@ class VendaService
                 $troco = max(0, $dados['valor_recebido'] - $total);
             }
 
+            // ✅ NOVO: montar observações a partir dos itens (mesmo padrão do fiado)
+            $observacoesAuto = $this->montarObservacoesDaVenda($itensProcessados, $total, $desconto);
+
             // Determinar status da venda
             $status = $dados['forma_pagamento'] === 'conta_fiada' ? 'conta_fiada' : 'concluida';
 
@@ -181,7 +184,10 @@ class VendaService
                 'valor_recebido' => $dados['valor_recebido'] ?? null,
                 'troco' => $troco,
                 'status' => $status,
-                'observacoes' => $dados['observacoes'] ?? null,
+                // ✅ se veio observação do usuário, preserva e adiciona a descrição dos itens ao final
+                'observacoes' => isset($dados['observacoes']) && trim((string)$dados['observacoes']) !== ''
+                    ? (trim((string)$dados['observacoes']) . ' | ' . $observacoesAuto)
+                    : $observacoesAuto,
             ]);
 
             // Criar itens da venda e atualizar estoque
@@ -350,10 +356,9 @@ class VendaService
     {
         try {
             $user = $request->user();
-
-            $venda = Venda::with(['cliente', 'itens.produto', 'usuario'])
+            $venda = \App\Models\Venda::with(['itens.produto','cliente','usuario'])
+                ->where('comercio_id', $user->comercio->id)
                 ->where('id', $id)
-                ->where('usuario_id', $user->id)
                 ->first();
 
             if (!$venda) {
@@ -466,6 +471,29 @@ class VendaService
             $novoSaldo = max(0, $saldoAtual - $valor);
             $cliente->contaFiada->update(['saldo' => $novoSaldo]);
         }
+    }
+
+    private function montarObservacoesDaVenda(array $itensProcessados, float $total, float $desconto): string
+    {
+        // Montar observações no padrão "Produto A (Qnt: 2, Subtotal: R$ 10,00) + Produto B (Qnt: 1, Subtotal: R$ 5,00)"
+        $observacoes = [];
+        foreach ($itensProcessados as $item) {
+            $nomeProduto = $item['produto']->nome;
+            $quantidade = $item['quantidade'];
+            $subtotal = $item['subtotal'];
+
+            $observacoes[] = "{$nomeProduto} (Qnt: {$quantidade}, Subtotal: R$ " . number_format($subtotal, 2, ',', '.') . ")";
+        }
+
+        $observacaoFinal = implode(' + ', $observacoes);
+
+        // Adicionar total e desconto, se houver
+        $observacaoFinal .= " | Total: R$ " . number_format($total, 2, ',', '.');
+        if ($desconto > 0) {
+            $observacaoFinal .= " | Desconto: R$ " . number_format($desconto, 2, ',', '.');
+        }
+
+        return $observacaoFinal;
     }
 
 
