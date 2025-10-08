@@ -18,7 +18,8 @@ class ContaFiada extends Model
         'cliente_id',
         'comercio_id',
         'saldo',
-        'descricao', // ✅ CAMPO DESCRIÇÃO
+        'descricao',
+        'status', // ✅ novo
     ];
 
     protected $casts = [
@@ -26,12 +27,15 @@ class ContaFiada extends Model
         'cliente_id' => 'integer',
         'comercio_id' => 'integer',
         'descricao' => 'string',
+        'status' => 'string', // ✅ novo
     ];
 
-    // ✅ ADICIONAR CAMPOS NO RETORNO JSON
+    // ✅ Ajuste dos appends: não exponha mais "status" calculado
     protected $appends = [
         'saldo_formatado',
-        'status'
+        // 'status' REMOVIDO para não conflitar com a coluna
+        // Se quiser expor a situação do saldo (positivo/zero/negativo), use um novo accessor:
+        'saldo_situacao',
     ];
 
     /**
@@ -55,15 +59,15 @@ class ContaFiada extends Model
         return 'R$ ' . number_format($this->saldo, 2, ',', '.');
     }
 
-    public function getStatusAttribute()
+    // ❌ Remover este accessor antigo (conflitava com a coluna 'status')
+    // public function getStatusAttribute() { ... }
+
+    // ✅ Novo accessor apenas para situação do saldo (opcional no front)
+    public function getSaldoSituacaoAttribute()
     {
-        if ($this->saldo > 0) {
-            return 'positivo';
-        } elseif ($this->saldo < 0) {
-            return 'negativo';
-        } else {
-            return 'zero';
-        }
+        if ($this->saldo > 0) return 'positivo';
+        if ($this->saldo < 0) return 'negativo';
+        return 'zero';
     }
 
     /**

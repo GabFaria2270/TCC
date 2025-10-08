@@ -8,14 +8,20 @@ export interface Notification {
     duration?: number;
 }
 
+const MAX_ACTIVE = 3; // ✅ limite máximo na tela
+
 export const useNotifications = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
     const addNotification = (notification: Omit<Notification, 'id'>) => {
-        const id = Date.now().toString();
+        const id = `${Date.now()}-${Math.random()}`;
         const newNotification = { ...notification, id };
 
-        setNotifications(prev => [...prev, newNotification]);
+        setNotifications(prev => {
+            // mantém somente as últimas MAX_ACTIVE
+            const next = [...prev, newNotification];
+            return next.length > MAX_ACTIVE ? next.slice(next.length - MAX_ACTIVE) : next;
+        });
 
         setTimeout(() => {
             removeNotification(id);

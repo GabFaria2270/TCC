@@ -1,5 +1,6 @@
 import React from 'react';
-import type { Cliente } from '../types';
+import type { Cliente } from '../../types';
+import ClienteCombobox from '@/components/PDVcomponents/ClienteCombobox';
 
 interface Venda {
     id: number;
@@ -14,23 +15,27 @@ interface Venda {
     observacoes?: string;
 }
 
-interface VendasListProps {
-    clientes: Cliente[];
+type VendasListProps = {
+    clientes: { id: number; nome: string; email?: string }[];
     filtroStatus: string;
     filtroCliente: string;
-    setFiltroStatus: (status: string) => void;
-    setFiltroCliente: (cliente: string) => void;
-    vendasFiltradas: Venda[];
-    abrirDetalhes: (venda: Venda) => void;
+    filtroClienteTexto: string; // <- novo
+    setFiltroStatus: (v: string) => void;
+    setFiltroCliente: (v: string) => void;
+    setFiltroClienteTexto: (v: string) => void; // <- novo
+    vendasFiltradas: any[];
+    abrirDetalhes: (venda: any) => void;
     limparFiltros: () => void;
-}
+};
 
 export default function VendasList({
     clientes,
     filtroStatus,
     filtroCliente,
+    filtroClienteTexto,
     setFiltroStatus,
     setFiltroCliente,
+    setFiltroClienteTexto,
     vendasFiltradas,
     abrirDetalhes,
     limparFiltros,
@@ -38,7 +43,6 @@ export default function VendasList({
     return (
         <div className="row fade-in">
             <div className="col-12">
-                {/* Filtros */}
                 <div className="card filtros-card mb-3">
                     <div className="card-body">
                         <div className="row g-3">
@@ -51,22 +55,22 @@ export default function VendasList({
                                     <option value="cancelada">❌ Cancelada</option>
                                 </select>
                             </div>
-                            <div className="col-md-4">
-                                <label className="form-label">Cliente</label>
-                                <select className="form-select" value={filtroCliente} onChange={(e) => setFiltroCliente(e.target.value)}>
-                                    <option value="">Todos os clientes</option>
-                                    {clientes.map((cliente) => (
-                                        <option key={cliente.id} value={cliente.id}>
-                                            {cliente.nome}
-                                        </option>
-                                    ))}
-                                </select>
+
+                            <div className="col-md-5">
+                                {/* ✅ Combobox único (pesquisa + seleção) */}
+                                <ClienteCombobox
+                                    clientes={clientes}
+                                    valueId={filtroCliente}
+                                    query={filtroClienteTexto}
+                                    setValueId={setFiltroCliente}
+                                    setQuery={setFiltroClienteTexto}
+                                    label="Cliente (digite e selecione)"
+                                    placeholder="Ex.: Maria Silva ou maria@email.com"
+                                />
                             </div>
-                            <div className="col-md-4 d-flex align-items-end">
-                                <button
-                                    className="btn btn-outline-secondary btn-limpar-filtros me-2"
-                                    onClick={limparFiltros}
-                                >
+
+                            <div className="col-md-3 d-flex align-items-end">
+                                <button className="btn btn-outline-secondary btn-limpar-filtros me-2" onClick={limparFiltros}>
                                     <i className="bi bi-arrow-clockwise me-2"></i>
                                     Limpar Filtros
                                 </button>

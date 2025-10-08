@@ -289,13 +289,11 @@ class ClienteController extends Controller
             $user = Auth::user();
             $result = $this->clienteService->pagarContaFiada($clienteId, $user);
             if ($result['success']) {
-                // Retorne um redirect Inertia para a tela de clientes
-                return redirect()->route('clientes.index')->with('success', 'Conta fiada paga/deletada com sucesso!');
+                return redirect()->route('clientes.index')->with('success', 'Conta fiada quitada com sucesso!');
             }
-            return redirect()->route('clientes.index')->with('error', $result['error'] ?? 'Erro ao pagar conta fiada.');
+            return back()->with('error', $result['error'] ?? 'Falha ao quitar conta fiada.');
         } catch (\Exception $e) {
-            Log::error('Erro ao pagar conta fiada', ['error' => $e->getMessage()]);
-            return redirect()->route('clientes.index')->with('error', 'Erro interno ao pagar conta fiada.');
+            return back()->with('error', 'Erro interno ao quitar conta fiada.');
         }
     }
 }

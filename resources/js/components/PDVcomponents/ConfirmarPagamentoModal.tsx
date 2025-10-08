@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Cliente } from '../pages/gerenciamento/Clientes';
+import type { Cliente } from '../../pages/gerenciamento/Clientes';
 
 interface Props {
   cliente: Cliente;

@@ -1,6 +1,6 @@
 import React from 'react';
-import type { ItemVenda, Cliente } from '../types';
-import { formatarMoeda } from '../utils/formatters';
+import type { ItemVenda, Cliente } from '../../types';
+import { formatarMoeda } from '../../utils/formatters';
 
 // Primeiro, vou corrigir a interface para aceitar valorRecebido como string
 interface CarrinhoVendaProps {

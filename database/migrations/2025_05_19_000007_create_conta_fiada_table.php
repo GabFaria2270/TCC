@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -17,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('comercio_id');
             $table->decimal('saldo', 10, 2)->default(0);
             $table->text('descricao')->nullable(); // ✅ ADICIONADO AQUI
+            $table->enum('status', ['ativa', 'quitada'])->default('ativa');
             $table->timestamps();
 
             // Foreign keys
@@ -30,6 +32,9 @@ return new class extends Migration
             // ✅ CONSTRAINT: Um cliente só pode ter uma conta fiada por comércio
             $table->unique(['cliente_id', 'comercio_id']);
         });
+
+        // Inicializa status conforme saldo (não tem linhas ainda, mas mantém por segurança)
+        DB::statement("UPDATE conta_fiada SET status = CASE WHEN saldo > 0 THEN 'ativa' ELSE 'quitada' END");
     }
 
     /**

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'; // ✅ Adicionar useState
 import { useForm } from '@inertiajs/react';
-import { formatarTelefone, formatarMoeda } from '../utils/formatters';
-import type { Cliente } from '../pages/gerenciamento/Clientes';
+import { formatarTelefone, formatarMoeda } from '../../utils/formatters';
+import type { Cliente } from '../../pages/gerenciamento/Clientes';
 
 interface ClienteFormProps {
   cliente?: Cliente;

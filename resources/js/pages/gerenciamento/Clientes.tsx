@@ -1,11 +1,11 @@
 import { Head, router, Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
-import ClienteCreateModal from '../../components/ClienteCreateModal';
-import ClienteDetalhesModal from '../../components/ClienteDetalhesModal';
-import ClienteEditModal from '../../components/ClienteEditModal';
-import ClienteTabela from '../../components/ClienteTabela';
-import ConfirmarPagamentoModal from '../../components/ConfirmarPagamentoModal';
-import HistoricoContaFiada from '../../components/HistoricoContaFiada';
+import ClienteCreateModal from '../../components/PDVcomponents/ClienteCreateModal';
+import ClienteDetalhesModal from '../../components/PDVcomponents/ClienteDetalhesModal';
+import ClienteEditModal from '../../components/PDVcomponents/ClienteEditModal';
+import ClienteTabela from '../../components/PDVcomponents/ClienteTabela';
+import ConfirmarPagamentoModal from '../../components/PDVcomponents/ConfirmarPagamentoModal';
+import HistoricoContaFiada from '../../components/PDVcomponents/HistoricoContaFiada';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 
 export interface Cliente {

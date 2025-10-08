@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\ClienteController;
 use App\Http\Controllers\Auth\ProdutoController;
 use App\Http\Controllers\Auth\VendasController; // ✅ ADICIONAR IMPORT
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\FiadoController;
 
 // ✅ ROTAS PÚBLICAS - SEM MIDDLEWARE
 Route::get('/', function () {
@@ -65,23 +66,22 @@ Route::middleware(['require.token'])->group(function () {
         // ✅ ROTAS DE VENDAS (IGUAL AOS CLIENTES)
         Route::get('vendas', [VendasController::class, 'index'])
             ->name('vendas.index');
-
         Route::post('vendas', [VendasController::class, 'store'])
             ->name('vendas.store');
-
         Route::get('vendas/{venda}', [VendasController::class, 'show'])
             ->name('vendas.show');
-
         Route::get('vendas/{venda}/edit', [VendasController::class, 'edit'])
             ->name('vendas.edit');
-
         Route::put('vendas/{venda}', [VendasController::class, 'update'])
             ->name('vendas.update');
-
         Route::delete('vendas/{venda}', [VendasController::class, 'destroy'])
             ->name('vendas.destroy');
+        Route::get('fiado/historico', [FiadoController::class, 'historico'])
+            ->name('fiado.historico');
     });
 });
+
+
 
 
 

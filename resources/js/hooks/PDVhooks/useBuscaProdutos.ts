@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { Produto } from '../types';
+import type { Produto } from '../../types';
 
 interface UseBuscaProdutosReturn {
     // Estado da busca

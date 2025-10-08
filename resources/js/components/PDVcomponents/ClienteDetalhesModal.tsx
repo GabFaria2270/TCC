@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Importe a interface Cliente do local correto
-import type { Cliente } from '../pages/gerenciamento/Clientes';
+import type { Cliente } from '../../pages/gerenciamento/Clientes';
 
 interface Props {
   cliente: Cliente;

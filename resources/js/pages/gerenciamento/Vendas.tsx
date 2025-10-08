@@ -1,17 +1,17 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import ClienteCreateModal from '../../components/ClienteCreateModal';
+import ClienteCreateModal from '../../components/PDVcomponents/ClienteCreateModal';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-import NotificationContainer from '../../components/NotificationContainer';
-import { useNotifications } from '../../hooks/useNotifications';
-import useCarrinho from '../../hooks/useCarrinho'; // ✅ CORRIGIDO: default import
-import { useFiltros } from '../../hooks/useFiltros';
-import { useBuscaProdutos } from '../../hooks/useBuscaProdutos';
-import { useFinalizarVenda } from '../../hooks/useFinalizarVenda';
-import VendasList from '../../components/VendasList';
-import CarrinhoVenda from '../../components/CarrinhoVenda';
+import NotificationContainer from '../../components/PDVcomponents/NotificationContainer';
+import { useNotifications } from '../../hooks/PDVhooks/useNotifications';
+import useCarrinho from '../../hooks/PDVhooks/useCarrinho'; // ✅ CORRIGIDO: default import
+import { useFiltros } from '../../hooks/PDVhooks/useFiltros';
+import { useBuscaProdutos } from '../../hooks/PDVhooks/useBuscaProdutos';
+import { useFinalizarVenda } from '../../hooks/PDVhooks/useFinalizarVenda';
+import VendasList from '../../components/PDVcomponents/VendasList';
+import CarrinhoVenda from '../../components/PDVcomponents/CarrinhoVenda';
 import ProdutosList from '../../components/ProdutosList';
-import VendaDetalhesModal from '@/components/VendaDetalhesModal';
+import VendaDetalhesModal from '@/components/PDVcomponents/VendaDetalhesModal';
 import type { Produto, ItemVenda, Cliente } from '../../types';
 
 // ✅ Interface para Venda com itens
@@ -61,15 +61,17 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     const {
         filtroStatus,
         filtroCliente,
+        filtroClienteTexto,                // <- novo
         vendaSelecionada,
         showDetalhes,
         setFiltroStatus,
         setFiltroCliente,
+        setFiltroClienteTexto,            // <- novo
         vendasFiltradas,
         abrirDetalhes,
         fecharDetalhes,
         limparFiltros,
-    } = useFiltros(vendas);
+    } = useFiltros(vendas, clientes);     // <- passa clientes aqui
 
     // Estados para modal de cliente
     const [showClienteModal, setShowClienteModal] = useState(false);
@@ -214,10 +216,12 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                         clientes={clientes}
                         filtroStatus={filtroStatus}
                         filtroCliente={filtroCliente}
+                        filtroClienteTexto={filtroClienteTexto}        // <- novo
                         setFiltroStatus={setFiltroStatus}
                         setFiltroCliente={setFiltroCliente}
+                        setFiltroClienteTexto={setFiltroClienteTexto}  // <- novo
                         vendasFiltradas={vendasFiltradas}
-                        abrirDetalhes={abrirDetalhesVenda}  // ✅ usa nosso handler
+                        abrirDetalhes={abrirDetalhesVenda}
                         limparFiltros={limparFiltros}
                     />
                 ) : (

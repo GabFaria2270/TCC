@@ -1,53 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface HistoricoContaFiadaProps {
     className?: string;
 }
 
-interface VendaFiada {
+type VendaFiada = {
     id: number;
     cliente: string;
     valor: number;
-    data: string;
+    data: string;        // ISO
     status: 'pendente' | 'pago';
-}
-
-// Mock data - posteriormente será substituído por dados reais do backend
-const vendasFiadas: VendaFiada[] = [
-    {
-        id: 1,
-        cliente: 'João Silva',
-        valor: 150.5,
-        data: '2024-01-15',
-        status: 'pendente',
-    },
-    {
-        id: 2,
-        cliente: 'Maria Santos',
-        valor: 89.9,
-        data: '2024-01-14',
-        status: 'pago',
-    },
-    {
-        id: 3,
-        cliente: 'Pedro Oliveira',
-        valor: 245.0,
-        data: '2024-01-13',
-        status: 'pendente',
-    },
-];
+};
 
 export default function HistoricoContaFiada({ className = '' }: HistoricoContaFiadaProps) {
     const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [vendasFiadas, setVendasFiadas] = useState<VendaFiada[]>([]);
 
-    const totalPendente = vendasFiadas.filter((venda) => venda.status === 'pendente').reduce((total, venda) => total + venda.valor, 0);
+    const formatarMoeda = (valor: number) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
-    const formatarMoeda = (valor: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(valor);
-    };
+    const totalPendente = vendasFiadas
+        .filter((v) => v.status === 'pendente')
+        .reduce((total, v) => total + (v.valor || 0), 0);
+
+    useEffect(() => {
+        if (!showModal) return;
+        let abort = false;
+
+        const carregar = async () => {
+            try {
+                setLoading(true);
+                const resp = await fetch('/gerenciamento/fiado/historico', {
+                    headers: { Accept: 'application/json' },
+                    credentials: 'same-origin',
+                });
+                if (!resp.ok) throw new Error('Falha ao carregar histórico');
+                const json = await resp.json();
+                if (abort) return;
+                setVendasFiadas(json.vendas_fiadas || []);
+            } catch {
+                if (!abort) setVendasFiadas([]);
+            } finally {
+                if (!abort) setLoading(false);
+            }
+        };
+
+        carregar();
+        return () => {
+            abort = true;
+        };
+    }, [showModal]);
 
     return (
         <>
@@ -57,7 +60,6 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                 <span className="badge-total">{formatarMoeda(totalPendente)}</span>
             </button>
 
-            {/* Modal de Histórico */}
             {showModal && (
                 <>
                     <div className="modal-backdrop fade show" onClick={() => setShowModal(false)}></div>
@@ -71,7 +73,15 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                     </h5>
                                     <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
                                 </div>
+
                                 <div className="modal-body">
+                                    {loading && (
+                                        <div className="d-flex align-items-center mb-3">
+                                            <div className="spinner-border me-2" role="status" />
+                                            Carregando…
+                                        </div>
+                                    )}
+
                                     {/* Resumo */}
                                     <div className="row mb-4">
                                         <div className="col-md-6">
@@ -99,7 +109,7 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                                         {formatarMoeda(
                                                             vendasFiadas
                                                                 .filter((v) => v.status === 'pago')
-                                                                .reduce((total, venda) => total + venda.valor, 0),
+                                                                .reduce((tot, v) => tot + v.valor, 0),
                                                         )}
                                                     </h4>
                                                     <small className="text-muted">
@@ -110,7 +120,7 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                         </div>
                                     </div>
 
-                                    {/* Lista de Vendas */}
+                                    {/* Lista */}
                                     <div className="table-responsive">
                                         <table className="table-hover table">
                                             <thead>
@@ -125,8 +135,7 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                             <tbody>
                                                 {vendasFiadas.length === 0 ? (
                                                     <tr>
-                                                        <td colSpan={5} className="py-4 text-center">
-                                                            <i className="bi bi-wallet2 display-6 d-block text-muted mb-2"></i>
+                                                        <td colSpan={5} className="py-4 text-center text-muted">
                                                             Nenhuma venda fiada encontrada
                                                         </td>
                                                     </tr>
@@ -136,30 +145,12 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                                             <td>
                                                                 <span className="badge bg-secondary">#{venda.id}</span>
                                                             </td>
+                                                            <td><strong>{venda.cliente}</strong></td>
+                                                            <td><strong className="text-success">{formatarMoeda(venda.valor)}</strong></td>
+                                                            <td>{new Date(venda.data).toLocaleString('pt-BR')}</td>
                                                             <td>
-                                                                <strong>{venda.cliente}</strong>
-                                                            </td>
-                                                            <td>
-                                                                <strong className="text-success">{formatarMoeda(venda.valor)}</strong>
-                                                            </td>
-                                                            <td>{new Date(venda.data).toLocaleDateString('pt-BR')}</td>
-                                                            <td>
-                                                                <span
-                                                                    className={`badge ${
-                                                                        venda.status === 'pendente' ? 'text-bg-warning' : 'text-bg-success'
-                                                                    }`}
-                                                                >
-                                                                    {venda.status === 'pendente' ? (
-                                                                        <>
-                                                                            <i className="bi bi-clock me-1"></i>
-                                                                            Pendente
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <i className="bi bi-check-circle me-1"></i>
-                                                                            Pago
-                                                                        </>
-                                                                    )}
+                                                                <span className={`badge ${venda.status === 'pendente' ? 'text-bg-warning' : 'text-bg-success'}`}>
+                                                                    {venda.status === 'pendente' ? 'Pendente' : 'Pago'}
                                                                 </span>
                                                             </td>
                                                         </tr>
@@ -169,6 +160,7 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                         </table>
                                     </div>
                                 </div>
+
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
                                         Fechar

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ItemVenda, Produto, Cliente } from '../types';
+import { ItemVenda, Produto, Cliente } from '../../types';
 
 interface UseCarrinhoReturn {
     // Estado do carrinho
@@ -147,12 +147,7 @@ export default function useCarrinho(messages?: any): UseCarrinhoReturn { // ✅ 
             return item;
         }));
 
-        if (onNotification && messages?.quantidade_atualizada) {
-            onNotification({
-                type: 'info',
-                message: messages.quantidade_atualizada,
-            });
-        }
+      
     };
 
     const removerDoCarrinho = (produtoId: number, onNotification?: (notification: any) => void) => {

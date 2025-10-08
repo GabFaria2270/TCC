@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { formatarTelefone, formatarMoeda } from '../utils/formatters';
-import { useInertiaPut } from './useInertiaPut';
+import { formatarTelefone, formatarMoeda } from '../../utils/formatters';
+import { useInertiaPut } from '../useInertiaPut';
 
 interface ClienteEditModalProps {
   show: boolean;

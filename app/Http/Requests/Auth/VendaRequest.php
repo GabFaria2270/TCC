@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class VendaRequest extends FormRequest
 {
@@ -18,7 +19,11 @@ class VendaRequest extends FormRequest
             'itens.*.produto_id' => 'required|integer|exists:produto,id',
             'itens.*.quantidade' => 'required|integer|min:1',
             'itens.*.preco_unitario' => 'required|numeric|min:0',
-            'forma_pagamento' => 'required|in:dinheiro,pix,debito,credito,conta_fiada', // ✅ CORRIGIDO: fiado → conta_fiada
+            'forma_pagamento' => [
+                'required',
+                // aceitar dinheiro, pix, conta_fiada, debito/credito e sinônimos de cartão
+                Rule::in(['dinheiro','pix','conta_fiada','debito','credito','cartao_debito','cartao_credito']),
+            ],
             'cliente_id' => 'nullable|required_if:forma_pagamento,conta_fiada|integer|exists:cliente,id', // ✅ CORRIGIDO: nullable primeiro
             'valor_recebido' => 'required_if:forma_pagamento,dinheiro|numeric|min:0',
             'desconto' => 'nullable|numeric|min:0',

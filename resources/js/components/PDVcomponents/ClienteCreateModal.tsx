@@ -1,6 +1,6 @@
 import React from 'react';
 import ClienteForm from './ClienteForm';
-import type { Cliente } from '../pages/gerenciamento/Clientes';
+import type { Cliente } from '../../pages/gerenciamento/Clientes';
 
 interface ClienteCreateModalProps {
   show: boolean;

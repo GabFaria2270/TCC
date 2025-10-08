@@ -176,10 +176,29 @@ class ClienteService
                 return ['success' => false, 'error' => 'Conta fiada não encontrada.'];
             }
 
-            $contaFiada->delete();
+            \DB::beginTransaction();
+
+            // ✅ Zera saldo, marca como quitada e registra observação
+            $contaFiada->saldo = 0.00;
+            $contaFiada->status = 'quitada';
+            $marcacao = '✅ Conta fiada quitada em ' . now()->format('d/m/Y H:i');
+            $contaFiada->descricao = trim($contaFiada->descricao ?? '') !== ''
+                ? ($contaFiada->descricao . ' | ' . $marcacao)
+                : $marcacao;
+            $contaFiada->save();
+
+            // ✅ Atualiza vendas fiadas pendentes para concluída (reflete no histórico de vendas)
+            \App\Models\Venda::where('cliente_id', $cliente->id)
+                ->where('comercio_id', $usuario->comercio->id)
+                ->where('forma_pagamento', 'conta_fiada')
+                ->where('status', 'conta_fiada')
+                ->update(['status' => 'concluida']);
+
+            \DB::commit();
 
             return ['success' => true];
         } catch (\Exception $e) {
+            \DB::rollBack();
             return ['success' => false, 'error' => 'Erro interno ao pagar conta fiada.'];
         }
     }
