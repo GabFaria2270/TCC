@@ -31,9 +31,9 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 60), // Reduz de 120 para 1 minuto
+    'lifetime' => env('SESSION_LIFETIME', 60), // 1 hora
 
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', true), // Muda para true
+    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false), // ✅ MUDA PARA false
 
     /*
     |--------------------------------------------------------------------------

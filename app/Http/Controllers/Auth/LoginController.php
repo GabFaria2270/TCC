@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\LoginService;
+use App\Services\Auth\CacheTokenService; // ✅ ADICIONAR
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\JsonResponse; // ✅ ADICIONAR
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -17,11 +18,13 @@ use Illuminate\Validation\ValidationException;
  */
 class LoginController extends Controller
 {
-    protected $loginService;
+    protected LoginService $loginService;
+    protected CacheTokenService $tokenService; // ✅ ADICIONAR
 
-    public function __construct(LoginService $loginService)
+    public function __construct(LoginService $loginService, CacheTokenService $tokenService) // ✅ INJETAR
     {
         $this->loginService = $loginService;
+        $this->tokenService = $tokenService; // ✅ ATRIBUIR
     }
 
     /**
@@ -34,7 +37,6 @@ class LoginController extends Controller
 
     /**
      * Processa o login
-     * ✅ CORRIGIDO: Pode retornar RedirectResponse OU JsonResponse
      */
     public function login(LoginRequest $request): RedirectResponse|JsonResponse
     {
@@ -50,27 +52,37 @@ class LoginController extends Controller
             if ($result['success']) {
                 $usuario = $result['user'];
                 
-                // ✅ SÓ PEGA TOKEN SE IMPLEMENTOU O SERVICE
-                $tokenData = $result['token_data'] ?? null;
-
-                // ✅ ORDEM CORRIGIDA
+                // ✅ REUTILIZA SESSÃO EXISTENTE
+                $sessionId = $request->session()->getId();
+                if (!$request->session()->isStarted()) {
+                    $request->session()->start();
+                    $sessionId = $request->session()->getId();
+                }
                 
-                // PASSO 1: Regenera sessão
-                $request->session()->regenerate();
-                $request->session()->save();
+                // ✅ REGENERA TOKEN DA SESSÃO (segurança) MAS MANTÉM ID
+                $request->session()->regenerateToken();
+                
+                // ✅ VINCULA SESSÃO EXISTENTE AO USUÁRIO (não cria nova)
+                $this->vincularSessaoExistente($request, $usuario, $sessionId);
 
-                // PASSO 2: Vincula sessão ao usuário
-                $this->vincularSessaoAoUsuario($request, $usuario);
-
-                // PASSO 3: Limpa rate limiting
+                // ✅ GARANTE SESSÃO ÚNICA POR USUÁRIO
+                $this->encerrarOutrasSessoes($usuario->id, $sessionId);
+                
+                // ✅ NÃO GERAR TOKEN DE NOVO: usar o retornado do service
+                $tokenData = $result['token_data'] ?? $this->tokenService->getTokenData($usuario);
+                
+                // Define cookie do token
+                cookie()->queue(
+                    cookie('auth_token', $tokenData['token'], 1440, '/', null, false, true, false, 'Lax')
+                );
+                
+                // Limpa rate limiting
                 \App\Http\Middleware\LoginRateLimiting::clearRateLimit($request);
-
-                // LOG DE SUCESSO
                 $this->logLoginSuccess($usuario, $request);
 
-                // ✅ RESPOSTA AJAX COM TOKEN (se implementado)
+                // RESPOSTA AJAX
                 if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
-                    $response = [
+                    return response()->json([
                         'success' => true,
                         'message' => 'Login realizado com sucesso!',
                         'user' => [
@@ -78,41 +90,14 @@ class LoginController extends Controller
                             'nome' => $usuario->NOME,
                             'email' => $usuario->EMAIL,
                             'perfil' => $usuario->PERFIL,
-                        ]
-                    ];
-                    
-                    // Adiciona token só se foi implementado
-                    if ($tokenData) {
-                        $response['auth'] = $tokenData;
-                    }
-                    
-                    return response()->json($response);
+                        ],
+                        'auth' => $tokenData
+                    ]);
                 }
 
-                // RESPOSTA WEB NORMAL
-                $redirect = redirect()->intended(route('gerenciamento'))
+                // RESPOSTA WEB
+                return redirect()->intended(route('gerenciamento'))
                     ->with('success', 'Login realizado com sucesso!');
-
-                if ($tokenData) {
-                    // Guarda também em sessão se quiser
-                    $redirect->with('auth_token', $tokenData);
-                    // Define cookie HttpOnly SameSite=Lax
-                    cookie()->queue(
-                        cookie(
-                            'auth_token',
-                            $tokenData['token'],
-                          1440, // 24 horas
-                            '/',
-                            null,
-                            false,
-                            true,
-                            false,
-                            'Lax'
-                        )
-                    );
-                }
-
-                return $redirect;
             }
 
             // LOGIN FALHOU
@@ -121,17 +106,13 @@ class LoginController extends Controller
                 ->withInput($request->except('SENHA_HASH'));
 
         } catch (ValidationException $e) {
-            // RATE LIMITING OU VALIDAÇÃO
             $this->logValidationError($e, $request);
-            
             return back()
                 ->withErrors($e->errors())
                 ->withInput($request->except('SENHA_HASH'));
 
         } catch (\Exception $e) {
-            // ERRO INTERNO
             $this->logSystemError($e, $request);
-            
             return back()
                 ->with('error', 'Erro interno. Tente novamente.')
                 ->withInput($request->except('SENHA_HASH'));
@@ -139,35 +120,57 @@ class LoginController extends Controller
     }
 
     /**
-     * ✅ MÉTODO PARA VINCULAR SESSÃO AO USUÁRIO
+     * ✅ VINCULA SESSÃO EXISTENTE AO INVÉS DE CRIAR NOVA
      */
-    private function vincularSessaoAoUsuario($request, $usuario): void
+    private function vincularSessaoExistente(Request $request, $usuario, string $sessionId): void
     {
         try {
-            if (!$usuario || !$request->session()->getId()) {
-                Log::channel('security')->error('Dados insuficientes para vinculação');
-                return;
-            }
-
-            $success = $usuario->linkCurrentSession($request);
-
-            Log::channel('security')->{$success ? 'info' : 'error'}(
-                $success ? '✅ Sessão vinculada com sucesso' : '❌ Falha na vinculação',
-                [
-                    'session_id' => $request->session()->getId(),
+            // Atualiza a sessão existente com o user_id
+            DB::table('sessions')
+                ->where('id', $sessionId)
+                ->update([
                     'user_id' => $usuario->id,
-                    'user_email' => $usuario->EMAIL,
-                ]
-            );
+                    'last_activity' => now()->timestamp
+                ]);
+
+            Log::channel('security')->info('✅ Sessão existente vinculada ao usuário', [
+                'session_id' => $sessionId,
+                'user_id' => $usuario->id,
+                'user_email' => $usuario->EMAIL,
+            ]);
+
         } catch (\Exception $e) {
-            Log::channel('security')->error('Erro ao vincular sessão', [
+            Log::channel('security')->error('❌ Erro ao vincular sessão existente', [
                 'error' => $e->getMessage(),
+                'session_id' => $sessionId,
                 'user_id' => $usuario->id ?? 'N/A',
             ]);
         }
     }
 
-    // ...existing code... (métodos de log permanecem iguais)
+    /**
+     * ✅ Remove outras sessões do mesmo usuário para manter 1 sessão ativa
+     */
+    private function encerrarOutrasSessoes(int $userId, string $currentSessionId): void
+    {
+        try {
+            DB::table('sessions')
+                ->where('user_id', $userId)
+                ->where('id', '!=', $currentSessionId)
+                ->delete();
+
+            Log::channel('security')->info('🧹 Outras sessões encerradas para manter sessão única', [
+                'user_id' => $userId,
+                'current_session' => $currentSessionId
+            ]);
+        } catch (\Exception $e) {
+            Log::channel('security')->warning('⚠️ Falha ao encerrar outras sessões', [
+                'user_id' => $userId,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
     private function logLoginAttempt(Request $request): void
     {
         Log::channel('security')->info('Tentativa de login', [
