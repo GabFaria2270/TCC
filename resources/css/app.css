@@ -10,3 +10,8 @@
 @import './home/animacoes.css';
 @import './gerenciamento/clientes.css';
 @import'./gerenciamento/Vendas.css';
+
+/* Reserve o espaço da barra de rolagem para evitar "salto" de layout quando ela aparece/desaparece */
+html {
+	scrollbar-gutter: stable;
+}
