@@ -1,5 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import ModalPortal from '../../components/common/ModalPortal';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 import { formatarMoeda } from '../../utils/formatters';
 
@@ -715,23 +716,25 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                         const isLow = qtd <= min;
                                         return (
                                             <tr key={produto.id} className={isLow ? 'table-warning' : ''}>
-                                                <td>
+                                                <td data-label="Produto">
                                                     <div className="fw-semibold">{produto.nome}</div>
                                                     <small className="text-secondary">ID: {produto.id}</small>
                                                 </td>
-                                                <td>
+                                                <td data-label="Categoria">
                                                     {produto.categoria?.nome ? (
                                                         <span className="badge text-bg-secondary">{produto.categoria.nome}</span>
                                                     ) : (
                                                         '—'
                                                     )}
                                                 </td>
-                                                <td className="text-end">{currencyFormatter.format(Number(produto.preco ?? 0))}</td>
-                                                <td className="text-end">
+                                                <td className="text-end" data-label="Preço">
+                                                    {currencyFormatter.format(Number(produto.preco ?? 0))}
+                                                </td>
+                                                <td className="text-end" data-label="Estoque">
                                                     {produto.quantidade_estoque}
                                                     {isLow && <span className="badge text-bg-warning ms-2">Baixo</span>}
                                                 </td>
-                                                <td>
+                                                <td data-label="Atualizado em">
                                                     <div className="d-flex align-items-center justify-content-between">
                                                         <span>{new Date(produto.updated_at).toLocaleString('pt-BR')}</span>
                                                         <div className="d-flex ms-3 flex-wrap gap-2">
@@ -739,22 +742,27 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                                 type="button"
                                                                 className="btn btn-secondary btn-sm px-3"
                                                                 title="Editar"
+                                                                aria-label="Editar produto"
                                                                 onClick={() => abrirModalEditar(produto)}
                                                             >
-                                                                <i className="bi bi-pencil me-1" /> Editar
+                                                                <i className="bi bi-pencil"></i>
+                                                                <span className="d-none d-sm-inline ms-2">Editar</span>
                                                             </button>
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-outline-primary btn-sm px-3"
                                                                 title="Movimentar estoque"
+                                                                aria-label="Movimentar estoque do produto"
                                                                 onClick={() => abrirModalEstoque(produto)}
                                                             >
-                                                                <i className="bi bi-box-arrow-in-down-up me-1" /> Movimentar
+                                                                <i className="bi bi-box-arrow-in-down-up"></i>
+                                                                <span className="d-none d-sm-inline ms-2">Movimentar</span>
                                                             </button>
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-outline-info btn-sm px-3"
                                                                 title="Histórico de estoque"
+                                                                aria-label="Ver histórico de estoque"
                                                                 onClick={() =>
                                                                     router.get(
                                                                         `/gerenciamento/produtos/${produto.id}/historico`,
@@ -763,18 +771,21 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                                     )
                                                                 }
                                                             >
-                                                                <i className="bi bi-clock-history me-1" /> Histórico
+                                                                <i className="bi bi-clock-history"></i>
+                                                                <span className="d-none d-sm-inline ms-2">Histórico</span>
                                                             </button>
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-outline-danger btn-sm px-3"
                                                                 title="Excluir"
+                                                                aria-label="Excluir produto"
                                                                 onClick={() => {
                                                                     setProdutoSelecionado(produto);
                                                                     setShowDeleteConfirm(true);
                                                                 }}
                                                             >
-                                                                <i className="bi bi-trash me-1" /> Excluir
+                                                                <i className="bi bi-trash"></i>
+                                                                <span className="d-none d-sm-inline ms-2">Excluir</span>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -823,7 +834,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             {/* Modal: Criar/Editar produto                               */}
             {/* ========================================================= */}
             {showModal && (
-                <>
+                <ModalPortal>
+                    <div className="modal-backdrop fade show" onClick={fecharModal}></div>
                     <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
                         <div className="modal-dialog modal-lg modal-dialog-centered">
                             <div className="modal-content">
@@ -995,16 +1007,17 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                             </div>
                         </div>
                     </div>
-                </>
+                </ModalPortal>
             )}
 
             {/* ========================================================= */}
             {/* Modal: Confirmar exclusão                                 */}
             {/* ========================================================= */}
             {showDeleteConfirm && produtoSelecionado && (
-                <>
+                <ModalPortal>
+                    <div className="modal-backdrop fade show" onClick={() => setShowDeleteConfirm(false)}></div>
                     <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
-                        <div className="modal-dialog">
+                        <div className="modal-dialog modal-dialog-centered">
                             <div className="modal-content">
                                 <div className="modal-header border-0">
                                     <h5 className="modal-title">Remover produto</h5>
@@ -1044,16 +1057,17 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                             </div>
                         </div>
                     </div>
-                </>
+                </ModalPortal>
             )}
 
             {/* ========================================================= */}
             {/* Modal: Movimentos de estoque                              */}
             {/* ========================================================= */}
             {showStockModal && produtoSelecionado && (
-                <>
+                <ModalPortal>
+                    <div className="modal-backdrop fade show" onClick={fecharModalEstoque}></div>
                     <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
-                        <div className="modal-dialog">
+                        <div className="modal-dialog modal-dialog-centered">
                             <div className="modal-content">
                                 <div className="modal-header border-0">
                                     <h5 className="modal-title">
@@ -1140,7 +1154,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                             </div>
                         </div>
                     </div>
-                </>
+                </ModalPortal>
             )}
         </GerenciamentoLayout>
     );

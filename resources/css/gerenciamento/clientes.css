@@ -107,7 +107,9 @@
     filter: invert(1) grayscale(100%);
     opacity: 0.8;
 }
-[data-bs-theme='dark'] .modal .btn-close:hover { opacity: 1; }
+[data-bs-theme='dark'] .modal .btn-close:hover {
+    opacity: 1;
+}
 
 /* Caixas de valores e rótulos na lista de detalhes */
 [data-bs-theme='dark'] .cliente-detalhes-label {
@@ -293,6 +295,45 @@
     transition: border-color 0.3s ease;
 }
 
+/* =========================
+   Refinos Mobile (Clientes)
+   ========================= */
+@media (max-width: 768px) {
+    .clientes-header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+    .clientes-title-section {
+        margin-bottom: 0.25rem;
+    }
+    .clientes-actions {
+        justify-content: space-between;
+    }
+    .clientes-actions .btn-refresh {
+        flex: 1 1 auto;
+    }
+    .search-input-group {
+        max-width: none !important;
+    }
+    .clientes-counter {
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .clientes-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .clientes-actions > * {
+        width: 100%;
+    }
+    .search-input {
+        font-size: 0.95rem;
+    }
+}
+
 .search-input:focus {
     outline: none;
     border-color: #0d6efd;
@@ -336,7 +377,7 @@
 
 /* Tabela de clientes */
 .clientes-table-container {
-    overflow-x: auto;
+    overflow-x: auto; /* desktop mantém rolagem horizontal se necessário */
 }
 
 .clientes-table {
@@ -459,6 +500,79 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* =========================
+   Responsividade tabela -> cartões (mobile/tablet)
+   ========================= */
+@media (max-width: 768px) {
+    /* Oculta cabeçalho e transforma cada linha em um bloco */
+    .clientes-table thead {
+        display: none;
+    }
+    .clientes-table,
+    .clientes-table tbody,
+    .clientes-table tr,
+    .clientes-table td {
+        display: block;
+        width: 100%;
+    }
+    .clientes-table tr {
+        margin-bottom: 0.75rem;
+        border: 1px solid #e9ecef;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background: #fff;
+    }
+    [data-bs-theme='dark'] .clientes-table tr {
+        background: var(--theme-surface-1);
+        border-color: var(--theme-border);
+    }
+    .clientes-table td {
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+        position: relative;
+        padding-left: 45%;
+        min-height: 48px;
+        word-wrap: anywhere; /* evita corte de e-mails longos */
+    }
+    [data-bs-theme='dark'] .clientes-table td {
+        border-bottom-color: var(--theme-border);
+    }
+    .clientes-table td:last-child {
+        border-bottom: none;
+    }
+    /* Rótulo da célula vindo do atributo data-label */
+    .clientes-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 600;
+        color: #6c757d;
+        max-width: 40%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    [data-bs-theme='dark'] .clientes-table td::before {
+        color: var(--theme-text-secondary);
+    }
+    /* Ajustes de conteúdo específicos */
+    .cliente-actions {
+        display: flex;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .cliente-email {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .clientes-table-container {
+        overflow-x: visible; /* em mobile o layout já é em blocos */
+    }
 }
 
 .btn-view {

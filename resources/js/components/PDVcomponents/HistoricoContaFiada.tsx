@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import ModalPortal from '../common/ModalPortal';
 
 interface HistoricoContaFiadaProps {
     className?: string;
@@ -9,7 +10,7 @@ type VendaFiada = {
     id: number;
     cliente: string;
     valor: number;
-    data: string;        // ISO
+    data: string; // ISO
     status: 'pendente' | 'pago';
 };
 
@@ -46,15 +47,14 @@ export default function HistoricoContaFiada({ className = '', initialData = [] }
             }
         })();
 
-        return () => { abort = true; };
+        return () => {
+            abort = true;
+        };
     }, [showModal, vendasFiadas.length]);
 
-    const formatarMoeda = (valor: number) =>
-        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    const formatarMoeda = (valor: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
-    const totalPendente = vendasFiadas
-        .filter((v) => v.status === 'pendente')
-        .reduce((total, v) => total + (v.valor || 0), 0);
+    const totalPendente = vendasFiadas.filter((v) => v.status === 'pendente').reduce((total, v) => total + (v.valor || 0), 0);
 
     return (
         <>
@@ -65,10 +65,10 @@ export default function HistoricoContaFiada({ className = '', initialData = [] }
             </button>
 
             {showModal && (
-                <>
+                <ModalPortal>
                     <div className="modal-backdrop fade show" onClick={() => setShowModal(false)}></div>
                     <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
-                        <div className="modal-dialog modal-lg">
+                        <div className="modal-dialog modal-lg modal-dialog-centered">
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title">
@@ -111,9 +111,7 @@ export default function HistoricoContaFiada({ className = '', initialData = [] }
                                                     </h6>
                                                     <h4 className="text-success mb-0">
                                                         {formatarMoeda(
-                                                            vendasFiadas
-                                                                .filter((v) => v.status === 'pago')
-                                                                .reduce((tot, v) => tot + v.valor, 0),
+                                                            vendasFiadas.filter((v) => v.status === 'pago').reduce((tot, v) => tot + v.valor, 0),
                                                         )}
                                                     </h4>
                                                     <small className="text-muted">
@@ -138,18 +136,24 @@ export default function HistoricoContaFiada({ className = '', initialData = [] }
                                             <tbody>
                                                 {vendasFiadas.length === 0 ? (
                                                     <tr>
-                                                        <td colSpan={4} className="py-4 text-center text-muted">
+                                                        <td colSpan={4} className="text-muted py-4 text-center">
                                                             Nenhuma venda fiada encontrada
                                                         </td>
                                                     </tr>
                                                 ) : (
                                                     vendasFiadas.map((venda) => (
                                                         <tr key={venda.id}>
-                                                            <td><strong>{venda.cliente}</strong></td>
-                                                            <td><strong className="text-success">{formatarMoeda(venda.valor)}</strong></td>
+                                                            <td>
+                                                                <strong>{venda.cliente}</strong>
+                                                            </td>
+                                                            <td>
+                                                                <strong className="text-success">{formatarMoeda(venda.valor)}</strong>
+                                                            </td>
                                                             <td>{new Date(venda.data).toLocaleString('pt-BR')}</td>
                                                             <td>
-                                                                <span className={`badge ${venda.status === 'pendente' ? 'text-bg-warning' : 'text-bg-success'}`}>
+                                                                <span
+                                                                    className={`badge ${venda.status === 'pendente' ? 'text-bg-warning' : 'text-bg-success'}`}
+                                                                >
                                                                     {venda.status === 'pendente' ? 'Pendente' : 'Pago'}
                                                                 </span>
                                                             </td>
@@ -169,7 +173,7 @@ export default function HistoricoContaFiada({ className = '', initialData = [] }
                             </div>
                         </div>
                     </div>
-                </>
+                </ModalPortal>
             )}
         </>
     );

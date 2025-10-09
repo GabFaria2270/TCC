@@ -1,6 +1,5 @@
-import React from 'react';
-import type { Cliente } from '../../types';
 import ClienteCombobox from '@/components/PDVcomponents/ClienteCombobox';
+import type { Cliente } from '../../types';
 
 interface Venda {
     id: number;
@@ -89,7 +88,7 @@ export default function VendasList({
                     </div>
                     <div className="card-body p-0">
                         <div className="table-responsive scroll-shadow">
-                            <table className="table-hover vendas-table mb-0 table">
+                            <table className="table-hover vendas-table data-table mb-0 table">
                                 <thead>
                                     <tr>
                                         <th>Data/Hora</th>
@@ -112,20 +111,29 @@ export default function VendasList({
                                         vendasFiltradas.map((venda) => {
                                             // Normaliza: 'conta_fiada' => 'pendente'
                                             const status = venda.status === 'conta_fiada' ? 'pendente' : venda.status;
+                                            const isCritical = status === 'pendente' || status === 'cancelada';
 
                                             const badgeClass =
-                                                status === 'concluida' ? 'bg-success' :
-                                                status === 'pendente'  ? 'bg-warning' :
-                                                status === 'cancelada' ? 'bg-danger' : 'bg-info';
+                                                status === 'concluida'
+                                                    ? 'bg-success'
+                                                    : status === 'pendente'
+                                                      ? 'bg-warning'
+                                                      : status === 'cancelada'
+                                                        ? 'bg-danger'
+                                                        : 'bg-info';
 
                                             const statusLabel =
-                                                status === 'concluida' ? '✅ Concluída' :
-                                                status === 'pendente'  ? '⏳ Pendente' :
-                                                status === 'cancelada' ? '❌ Cancelada' : (status || '—');
+                                                status === 'concluida'
+                                                    ? '✅ Concluída'
+                                                    : status === 'pendente'
+                                                      ? '⏳ Pendente'
+                                                      : status === 'cancelada'
+                                                        ? '❌ Cancelada'
+                                                        : status || '—';
 
                                             return (
                                                 <tr key={venda.id}>
-                                                    <td>
+                                                    <td data-label="Data/Hora">
                                                         {new Date(venda.created_at).toLocaleString('pt-BR', {
                                                             day: '2-digit',
                                                             month: '2-digit',
@@ -134,7 +142,7 @@ export default function VendasList({
                                                             minute: '2-digit',
                                                         })}
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Cliente">
                                                         {venda.cliente ? (
                                                             <div className="cliente-info">
                                                                 <div className="cliente-nome">{venda.cliente.nome}</div>
@@ -144,7 +152,7 @@ export default function VendasList({
                                                             <span className="text-muted">Venda avulsa</span>
                                                         )}
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Total">
                                                         <strong className="text-success">{venda.total_formatado}</strong>
                                                         {venda.desconto > 0 && (
                                                             <small className="d-block text-muted">
@@ -153,7 +161,7 @@ export default function VendasList({
                                                         )}
                                                     </td>
                                                     {/* Coluna Forma de Pagamento */}
-                                                    <td>
+                                                    <td data-label="Pagamento">
                                                         {(() => {
                                                             switch (venda.forma_pagamento) {
                                                                 case 'dinheiro':
@@ -204,16 +212,17 @@ export default function VendasList({
                                                             }
                                                         })()}
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Status">
                                                         <span className={`badge ${badgeClass}`}>{statusLabel}</span>
                                                     </td>
-                                                    <td className="text-center">
+                                                    <td className="text-center" data-label="Ações">
                                                         <button
                                                             className="btn btn-sm btn-outline-primary"
                                                             onClick={() => abrirDetalhes(venda)}
                                                             title="Ver detalhes"
                                                         >
                                                             <i className="bi bi-eye"></i>
+                                                            <span className="ms-2">Abrir</span>
                                                         </button>
                                                     </td>
                                                 </tr>

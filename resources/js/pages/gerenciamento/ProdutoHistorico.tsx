@@ -64,14 +64,16 @@ export default function ProdutoHistorico({ produto, movimentos }: Props) {
                                 ) : (
                                     movimentos.data.map((m) => (
                                         <tr key={m.id}>
-                                            <td>{new Date(m.created_at).toLocaleString('pt-BR')}</td>
-                                            <td>{m.tipo === 'entrada' ? 'Entrada' : m.tipo === 'saida' ? 'Saída' : 'Ajuste'}</td>
-                                            <td className="text-end">
+                                            <td data-label="Quando">{new Date(m.created_at).toLocaleString('pt-BR')}</td>
+                                            <td data-label="Tipo">{m.tipo === 'entrada' ? 'Entrada' : m.tipo === 'saida' ? 'Saída' : 'Ajuste'}</td>
+                                            <td className="text-end" data-label="Quantidade">
                                                 {m.tipo === 'saida' ? '-' : '+'}
                                                 {Math.abs(m.quantidade)}
                                             </td>
-                                            <td className="text-end">{m.saldo_apos}</td>
-                                            <td>{m.motivo ?? '—'}</td>
+                                            <td className="text-end" data-label="Saldo após">
+                                                {m.saldo_apos}
+                                            </td>
+                                            <td data-label="Motivo">{m.motivo ?? '—'}</td>
                                         </tr>
                                     ))
                                 )}

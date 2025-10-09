@@ -9,8 +9,8 @@ interface Props {
 
 export default function ClienteTabela({ clientes, abrirDetalhes, abrirConfirmarPagamento, abrirModal }: Props) {
     return (
-        <div className="clientes-table-container scroll-shadow fade-in">
-            <table className="clientes-table data-table">
+        <div className="clientes-table-container table-responsive scroll-shadow fade-in">
+            <table className="table-hover data-table clientes-table mb-0 table align-middle">
                 <thead className="clientes-table-header">
                     <tr>
                         <th>Cliente</th>
@@ -31,12 +31,12 @@ export default function ClienteTabela({ clientes, abrirDetalhes, abrirConfirmarP
                     ) : (
                         clientes.map((cliente) => (
                             <tr key={cliente.id} className="cliente-row">
-                                <td>
+                                <td data-label="Cliente">
                                     <div className="cliente-info">
                                         <strong className="cliente-nome">{cliente.nome}</strong>
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Contato">
                                     <div className="cliente-contato">
                                         <div className="cliente-email">{cliente.email}</div>
                                         <small className="cliente-telefone">
@@ -44,7 +44,7 @@ export default function ClienteTabela({ clientes, abrirDetalhes, abrirConfirmarP
                                         </small>
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Conta Fiada">
                                     <div className="conta-fiada-info">
                                         {cliente.conta_fiada ? (
                                             <span
@@ -63,10 +63,10 @@ export default function ClienteTabela({ clientes, abrirDetalhes, abrirConfirmarP
                                         )}
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Cadastrado">
                                     <small className="data-cadastro">{new Date(cliente.created_at).toLocaleDateString('pt-BR')}</small>
                                 </td>
-                                <td>
+                                <td data-label="Ações">
                                     <div className="cliente-actions">
                                         <button className="btn-action btn-view" title="Ver detalhes" onClick={() => abrirDetalhes(cliente)}>
                                             <i className="bi bi-eye"></i>
