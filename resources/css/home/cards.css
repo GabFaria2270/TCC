@@ -14,12 +14,12 @@
 .section-card {
     margin: 7rem 0;
     padding: 0 1rem;
-
 }
 
 .col {
     display: flex;
     flex-direction: column;
+    min-width: 0; /* evita overflow em telas estreitas */
 }
 
 .card {
@@ -40,16 +40,10 @@
     animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
 }
 
-.h-100 {
-    height: 100% !important;
-}
+.h-100 { height: 100% !important; }
 
 .card.h-100,
-.card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
+.card { height: 100%; display: flex; flex-direction: column; }
 
 /* Imagem do card normal */
 .card-img-top {
@@ -61,10 +55,7 @@
     transition: filter 0.3s;
 }
 
-.card:hover .card-img-top {
-    filter: brightness(0.92) contrast(1.08);
- 
-}
+.card:hover .card-img-top { filter: brightness(0.92) contrast(1.08); }
 
 /* Corpo do card normal */
 .card-body {
@@ -76,16 +67,8 @@
     display: flex;
 }
 
-.card-title {
-    margin-bottom: 0.65rem;
-    font-weight: bold;
-    font-size: 1.25rem;
-    letter-spacing: 1px;
-}
-
-.card-text:last-child {
-    margin-bottom: 0;
-}
+.card-title { margin-bottom: 0.65rem; font-weight: bold; font-size: 1.25rem; letter-spacing: 1px; }
+.card-text:last-child { margin-bottom: 0; }
 
 /* Rodapé do card normal */
 .card-footer {
@@ -99,97 +82,96 @@
 }
 
 /* Animação */
-@keyframes card-hover {
-    0% {
-        box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
-    }
-    100% {
-        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
-    }
-}
+@keyframes card-hover { 0% { box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);} 100% { box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);} }
 
 /* =========================
    CARD COM ESCRITA LATERAL (mb-3)
    ========================= */
 .card.mb-3 {
-    display: flex; /* Garante que imagem e texto fiquem lado a lado */
+    display: flex; /* imagem e texto lado a lado */
     flex-direction: row;
     border-radius: 1.5rem;
     box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
     overflow: hidden;
-    transition:
-        box-shadow 0.3s,
-        transform 0.3s;
+    transition: box-shadow 0.3s, transform 0.3s;
     background: #fff;
     width: 97.8%;
     margin-left: 15.5px;
-    
 }
 
-.card.mb-3:hover {
-    box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
-    transform: translateY(-6px) scale(1.02);
-    animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-}
+.card.mb-3:hover { box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18); transform: translateY(-6px) scale(1.02); animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both; }
 
 .card.mb-3 > .col-md-4,
-.card.mb-3 > .row.g-0 {
-    flex: 1;
-}
+.card.mb-3 > .row.g-0 { flex: 1; }
 
-.card .row.g-0 {
-    flex-wrap: nowrap;
-    margin: 0;
-}
+.card .row.g-0 { display: grid; grid-template-columns: 1fr; margin: 0; }
 
-.card .col-md-4 {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; /* Mantém a imagem próxima ao texto */
-    max-width: 260px; /* Reduz largura máxima para evitar espaço extra */
-    min-width: 120px;
-    padding: 0;
-}
+.card .col-md-4 { display: flex; align-items: center; justify-content: flex-end; max-width: 260px; min-width: 120px; padding: 0; }
 
 .card .img-fluid {
-    width: 90%; /* Ajusta para não ocupar todo o espaço da coluna */
-    height: auto;
-    max-height: 180px; /* Altura mais elegante */
-    border-top-left-radius: 1.5rem;
-    border-bottom-left-radius: 1.5rem;
-    transition: filter 0.3s;
-    display: block;
-    margin-left: 0.5rem; /* Espaço sutil entre imagem e texto */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04); /* Sombra leve para destacar */
+    width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 0; display: block; margin-left: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.card .col-md-8 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 1.2rem 0.7rem 1.2rem 1.2rem; /* Padding menor e mais equilibrado */
-    background: #f8faff;
+.card .col-md-8 { display: flex; flex-direction: column; justify-content: center; padding: 1rem; background: #f8faff; }
+
+.card-body { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+
+.card-title { font-weight: bold; font-size: 1.25rem; margin-bottom: 0.65rem; letter-spacing: 1px; }
+.card-text:last-child { margin-bottom: 0; }
+.text-body-secondary { color: #6c757d; font-size: 0.95rem; }
+
+@media (max-width: 900px) {
+  .card.mb-3 { width: 100%; margin-left: 0; border-radius: 16px; }
+  .card .row.g-0 { flex-wrap: wrap; }
+  .card .col-md-4 { max-width: 100%; justify-content: center; }
+  .card .img-fluid { width: 100%; max-height: 200px; margin-left: 0; border-radius: 0; }
+  .card .col-md-8 { padding: 1rem; }
 }
 
-.card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
+@media (min-width: 992px) {
+  .card .row.g-0 { grid-template-columns: 360px 1fr; }
+  .card .img-fluid { height: 100%; aspect-ratio: auto; object-fit: cover; }
 }
 
-.card-title {
-    font-weight: bold;
-    font-size: 1.25rem;
-    margin-bottom: 0.65rem;
-    letter-spacing: 1px;
+/* Layout responsivo para a seção de cards sem quebrar Bootstrap */
+.section-card .row {
+  justify-content: center;
 }
 
-.card-text:last-child {
-    margin-bottom: 0;
+/* Coluna ocupa 100% no mobile */
+.section-card .col {
+  flex: 1 1 100%;
+  max-width: 100%;
 }
 
-.text-body-secondary {
-    color: #6c757d;
-    font-size: 0.95rem;
+/* Duas colunas em telas ≥ 576px */
+@media (min-width: 576px) {
+  .section-card .col {
+    flex: 0 1 48%;
+    max-width: 48%;
+  }
+}
+
+/* Três colunas em telas ≥ 992px */
+@media (min-width: 992px) {
+  .section-card .col {
+    flex: 0 1 31.5%;
+    max-width: 31.5%;
+  }
+}
+
+/* Evita overflow lateral em telas muito estreitas */
+@media (max-width: 600px) {
+  .section-card .row {
+    margin-right: 0;
+    margin-left: 0;
+    padding: 0.5rem;
+  }
+}
+
+/* Imagens proporcionais nos cards */
+.card-img-top {
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }

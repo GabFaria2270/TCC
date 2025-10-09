@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-lg ">
+<nav class="navbar navbar-expand-lg navbar-dark" role="navigation" aria-label="Navegação principal">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">60+conectado</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">

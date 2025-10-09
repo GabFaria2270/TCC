@@ -1,51 +1,56 @@
 /* Carrossel Bootstrap customizado - Banner Full Width Moderno */
 .carousel {
-    width: 100vw;
-    height: 80vh;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
+    /* Altura controlada pelo conteúdo (imagens) para evitar overflow em telas pequenas */
+    height: auto;
     min-height: 300px;
     margin: 0 auto 2.5rem auto;
-    border-radius: 0 0 2.5rem 2.5rem;
+    border-radius: 0 0 2rem 2rem;
     overflow: hidden;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
     position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
 }
+
 .carousel-item img {
-    width: 100vw;
-    height: 80vh;
+    width: 100%;
+    height: auto;
+    /* Mantém proporção e cobre bem em telas grandes */
+    aspect-ratio: 16 / 9;
+    max-height: clamp(280px, 70vh, 820px);
     object-fit: cover;
     filter: brightness(0.92) contrast(1.08);
     display: block;
 }
+
 .carousel-caption {
     background: transparent;
-    border-radius: 0 0 2.5rem 2.5rem;
-    padding: 2.5rem 3rem 2rem 3rem;
+    border-radius: 0 0 2rem 2rem;
+    padding: clamp(1rem, 2.5vw, 2.5rem) clamp(1rem, 3vw, 3rem) clamp(0.75rem, 2vw, 2rem);
     color: #fff;
     font-weight: 600;
     text-shadow: 2px 2px 12px #000;
     left: 0;
     right: 0;
     bottom: 0;
-    letter-spacing: 1px;
-    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    font-size: clamp(0.95rem, 1.8vw, 1.25rem);
 }
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-    width: 3.2rem;
-    height: 3.2rem;
+    width: 3rem;
+    height: 3rem;
 }
+
 .carousel-control-prev,
 .carousel-control-next {
     background: none;
     box-shadow: none;
 }
+
 .carousel-control-prev:focus,
 .carousel-control-next:focus,
 .carousel-control-prev:hover,
@@ -57,8 +62,8 @@
 .btn-cadastro-carrossel,
 .btn-login-carrossel {
     display: inline-block;
-    min-width: 200px; /* largura mínima igual para ambos */
-    min-height: 48px; /* altura mínima igual para ambos */
+    min-width: clamp(140px, 22vw, 200px);
+    min-height: 48px;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: bold;
@@ -69,10 +74,7 @@
     border: none;
     border-radius: 0.5rem;
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-    transition:
-        background 0.3s ease,
-        transform 0.2s ease,
-        box-shadow 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
@@ -90,27 +92,52 @@
 }
 
 .botoes-carrossel {
-    display: flex; /* Define o layout como flexbox */
-    justify-content: center; /* Centraliza os botões horizontalmente */
-    align-items: center; /* Alinha os botões verticalmente */
-    gap: 1.5rem; /* Define o espaçamento uniforme entre os botões */
-    margin-top: 1.5rem; /* Adiciona um espaçamento superior */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    margin-top: 1rem;
+    flex-wrap: wrap; /* Evita quebra feia em telas pequenas */
 }
-.img_Carrossel_1 {
-    display: block;
-    width: 100%;
-    height: auto;
-    padding: auto;
-}
-.img_Carrossel_2 {
-    display: block;
-    width: 100%;
-    height: auto;
-    padding: auto;
-}
+
+.img_Carrossel_1,
+.img_Carrossel_2,
 .img_Carrossel_3 {
     display: block;
     width: 100%;
     height: auto;
-    padding: auto;
+}
+
+/* Telas médias: reduz bordas e garante largura total sem overflow */
+@media (max-width: 900px) {
+  .carousel {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 16px !important;
+  }
+  .carousel-item img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9;
+    max-height: 420px;
+    object-fit: cover;
+  }
+}
+
+/* Telas pequenas: caption mais compacta e botões em coluna quando necessário */
+@media (max-width: 600px) {
+  .carousel { margin-bottom: 24px !important; }
+  .carousel-caption {
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.55) 100%) !important;
+    padding: 0.75rem 1rem 1rem 1rem;
+    font-size: 0.98rem;
+  }
+  .carousel-caption h5 { font-size: 1.1rem; margin-bottom: 0.4rem; }
+  .carousel-caption p { font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .botoes-carrossel { gap: 0.75rem; }
+  .btn-cadastro-carrossel,
+  .btn-login-carrossel {
+    width: min(100%, 260px);
+    min-width: 140px;
+  }
 }

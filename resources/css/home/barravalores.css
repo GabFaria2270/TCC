@@ -1,24 +1,25 @@
 .containervalor {
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 120px;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: clamp(0.75rem, 3vw, 2rem);
     padding: 1rem;
-    flex-wrap: wrap;
-    
 }
+
+.valor1 { grid-column: span 12; }
+@media (min-width: 640px) { .valor1 { grid-column: span 6; } }
+@media (min-width: 992px) { .valor1 { grid-column: span 4; } }
 
 .valor1 {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 1rem;
-    width: 300px;
+    padding: clamp(0.75rem, 2vw, 1rem);
+    width: 100%;
     max-width: 100%;
     min-height: 140px;
-    border-radius: 1.5rem;
+    border-radius: 1.25rem;
     text-align: center;
     overflow: hidden;
     word-wrap: break-word;
@@ -45,27 +46,23 @@
     }
 }
 
-.icon-medium {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
+.icon-medium { font-size: clamp(1.4rem, 2.5vw, 2rem); margin-bottom: 0.35rem; }
 .icon-color {
     color: #050505;
 }
 
 .titulov {
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
     color: #333;
 }
 
 .subtituloV {
-    font-size: 1rem;
+    font-size: clamp(0.95rem, 2vw, 1rem);
     color: #666;
-    margin-top: 0.5rem;
-    line-height: 1.5;
+    margin-top: 0.25rem;
+    line-height: 1.55;
     text-align: center;
     overflow-wrap: break-word;
     word-break: break-word;

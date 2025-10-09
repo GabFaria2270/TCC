@@ -2,12 +2,13 @@
    NAVBAR SOBRESCREVENDO BOOTSTRAP
    ========================= */
 .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030; /* acima do conteúdo */
     background: #000000;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     border-bottom: 4px solid #007bff;
     padding: 0.5rem 0;
-    top: 0;
-    z-index: 100;
 }
 
 .navbar .container-fluid {
@@ -18,8 +19,8 @@
 .navbar-brand {
     color: #007bff;
     font-size: 3rem;
-    font-weight: bold;
-    letter-spacing: 2px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
     text-shadow: 0 2px 8px #000000;
     transition: color 0.2s;
     cursor: pointer;
@@ -49,7 +50,8 @@
     margin: 0 8px;
     border-radius: 10px;
     text-decoration: none;
-    padding: 10px 22px;
+    padding: 0.5rem 0.75rem;
+    line-height: 1.4;
     font-size: 1.08rem;
     font-weight: 500;
     letter-spacing: 1px;
@@ -104,4 +106,55 @@
 
 .navbar-toggler-icon {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,123,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Navbar geral responsiva */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030; /* acima do conteúdo */
+}
+
+.navbar .navbar-brand {
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+
+/* Links mais acessíveis */
+.navbar .nav-link {
+  padding: .5rem .75rem;
+  line-height: 1.4;
+}
+
+.navbar .nav-link:focus,
+.navbar .nav-link:hover {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Corrige o container colapsado no mobile para ocupar 100% e empilhar itens */
+@media (max-width: 991.98px) {
+  .navbar .navbar-collapse {
+    background: rgba(0, 0, 0, 0.9); /* combina com navbar-dark */
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    margin-top: .5rem;
+  }
+
+  .navbar .navbar-nav {
+    gap: .25rem;
+  }
+
+  .navbar .nav-link {
+    width: 100%;
+  }
+}
+
+/* Preferência do usuário por tema escuro (ajuste leve) */
+@media (prefers-color-scheme: dark) {
+  .navbar.navbar-dark .navbar-brand,
+  .navbar.navbar-dark .nav-link {
+    color: rgba(255, 255, 255, .9);
+  }
 }
