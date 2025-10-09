@@ -52,6 +52,21 @@ export default function ClienteCombobox({
     if (!text) setValueId('');
   };
 
+  // ✅ Sincroniza o texto exibido quando o valueId mudar externamente (ex: após criar cliente)
+  useEffect(() => {
+    if (valueId) {
+      const found = clientes.find((c) => String(c.id) === String(valueId));
+      if (found) {
+        const lbl = labelFor(found);
+        if (query !== lbl) setQuery(lbl);
+      }
+    } else {
+      // Se valor foi limpo externamente, limpa o texto também
+      if (query !== '') setQuery('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valueId, clientes]);
+
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       if (!wrapRef.current) return;
@@ -103,8 +118,16 @@ export default function ClienteCombobox({
         {open && (
           <div
             id="clientes-combobox-menu"
-            className="dropdown-menu show w-100 mt-1"
-            style={{ maxHeight: 260, overflowY: 'auto' }}
+            className="dropdown-menu show w-100"
+            style={{
+              position: 'absolute',
+              top: 'calc(100% + 0.25rem)', // ✅ sempre abaixo do input
+              left: 0,
+              right: 0,
+              maxHeight: 260,
+              overflowY: 'auto',
+              zIndex: 1080, // acima do card
+            }}
           >
             {options.length === 0 ? (
               <div className="dropdown-item text-muted">Nenhum cliente encontrado</div>
@@ -113,9 +136,7 @@ export default function ClienteCombobox({
                 <button
                   type="button"
                   key={c.id}
-                  className={`dropdown-item d-flex justify-content-between align-items-center ${
-                    idx === highlight ? 'active' : ''
-                  }`}
+                  className={`dropdown-item d-flex justify-content-between align-items-center ${idx === highlight ? 'active' : ''}`}
                   onMouseEnter={() => setHighlight(idx)}
                   onClick={() => selectByIndex(idx)}
                 >
@@ -127,12 +148,6 @@ export default function ClienteCombobox({
           </div>
         )}
       </div>
-      {/* Hint do estado selecionado (opcional) */}
-      {valueId && (
-        <small className="text-muted">
-          Selecionado: ID {valueId}. Apague o texto para limpar o filtro.
-        </small>
-      )}
     </div>
   );
 }

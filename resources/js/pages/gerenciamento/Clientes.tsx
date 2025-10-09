@@ -23,12 +23,13 @@ export interface Cliente {
     created_at: string;
 }
 
-interface Props {
-    clientes?: Cliente[];
-    error?: string;
-}
+type Props = {
+  clientes: any[];
+  error?: string | null;
+  fiadoHistorico?: Array<{ id: number; cliente: string; valor: number; data: string; status: 'pendente'|'pago'; }>;
+};
 
-export default function Clientes({ clientes = [], error }: Props) {
+export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: Props) {
     const h1Ref = useRef<HTMLHeadingElement>(null);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
@@ -148,7 +149,7 @@ export default function Clientes({ clientes = [], error }: Props) {
                             {loading ? <span className="spinner-loading" /> : <i className="bi bi-arrow-clockwise"></i>}
                             Atualizar
                         </button>
-                        <HistoricoContaFiada />
+                        <HistoricoContaFiada initialData={fiadoHistorico} />
                     </div>
                 </div>
                 {/* Barra de busca */}

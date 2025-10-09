@@ -75,7 +75,6 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
 
     // Estados para modal de cliente
     const [showClienteModal, setShowClienteModal] = useState(false);
-    const [clientesAtualizados, setClientesAtualizados] = useState(clientes);
 
     // Estados para modal de detalhes da venda
     const [showVendaModal, setShowVendaModal] = useState(false);
@@ -109,6 +108,14 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         getDadosVenda,
     } = useCarrinho(messages);
 
+    // Lista de clientes usada no carrinho (atualiza após criar novo cliente)
+    const [clientesAtualizados, setClientesAtualizados] = useState<typeof clientes>(clientes);
+
+    // Sincroniza quando o prop 'clientes' mudar
+    useEffect(() => {
+        setClientesAtualizados(clientes);
+    }, [clientes]);
+
     // Funções para modal de cliente
     const abrirModalCliente = () => {
         setShowClienteModal(true);
@@ -118,13 +125,33 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         setShowClienteModal(false);
     };
 
-    const onClienteCriado = (novoCliente?: Cliente) => {
-        if (novoCliente) {
-            const novosClientes = [...clientesAtualizados, novoCliente];
-            setClientesAtualizados(novosClientes);
-            setClienteSelecionado(novoCliente);
+    // ✅ Quando criar, adiciona à lista e seleciona automaticamente no carrinho
+    const onClienteCriado = (novoCliente?: any) => {
+        if (!novoCliente) {
+            fecharModalCliente();
+            return;
         }
+
+        setClientesAtualizados((prev) => {
+            // evita duplicar se já existir
+            const exists = prev.some((c: any) => String(c.id) === String(novoCliente.id));
+            return exists ? prev : [...prev, novoCliente];
+        });
+
+        // Seleciona no carrinho
+        setClienteSelecionado(novoCliente);
+
+        // Fecha o modal
         fecharModalCliente();
+
+        // (opcional) feedback
+        if (addNotification) {
+            addNotification({
+                type: 'success',
+                title: 'Cliente',
+                message: 'Cliente cadastrado e selecionado no carrinho.',
+            });
+        }
     };
 
     // Função de finalizar venda usando hook

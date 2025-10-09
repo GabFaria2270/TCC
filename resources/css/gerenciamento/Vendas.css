@@ -138,14 +138,6 @@
     z-index: 1;
 }
 
-/* Badge ID da venda */
-.venda-id {
-    font-family: 'Courier New', monospace;
-    font-weight: 600;
-    padding: 0.4rem 0.6rem;
-    border-radius: 0.4rem;
-}
-
 /* Informações do cliente */
 .cliente-info {
     line-height: 1.2;

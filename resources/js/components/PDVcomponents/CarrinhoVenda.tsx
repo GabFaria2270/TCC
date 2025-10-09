@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { ItemVenda, Cliente } from '../../types';
 import { formatarMoeda } from '../../utils/formatters';
+import ClienteCombobox from '@/components/PDVcomponents/ClienteCombobox';
 
 // Primeiro, vou corrigir a interface para aceitar valorRecebido como string
 interface CarrinhoVendaProps {
@@ -27,29 +28,44 @@ interface CarrinhoVendaProps {
     addNotification: (notification: any) => void;
 }
 
-export default function CarrinhoVenda({
-    carrinho,
-    clienteSelecionado,
-    clientesAtualizados,
-    desconto,
-    formaPagamento,
-    valorRecebido,
-    observacoes,
-    loadingVenda,
-    setClienteSelecionado,
-    setDesconto,
-    setFormaPagamento,
-    setValorRecebido,
-    setObservacoes,
-    editarQuantidade,
-    removerDoCarrinho,
-    limparCarrinho,
-    calcularSubtotal,
-    calcularTotal,
-    finalizarVenda,
-    abrirModalCliente,
-    addNotification,
-}: CarrinhoVendaProps) {
+export default function CarrinhoVenda(props: any) {
+    const {
+        carrinho,
+        clientesAtualizados,
+        clienteSelecionado,
+        setClienteSelecionado,
+        formaPagamento,
+        setFormaPagamento,
+        abrirModalCliente,
+        desconto,
+        valorRecebido,
+        loadingVenda,
+        setDesconto,
+        setValorRecebido,
+        editarQuantidade,
+        removerDoCarrinho,
+        limparCarrinho,
+        calcularSubtotal,
+        calcularTotal,
+        finalizarVenda,
+        addNotification,
+    } = props;
+    
+    // ✅ estado de texto do combobox (campo de busca/seleção)
+    const [clienteQuery, setClienteQuery] = useState<string>('');
+
+    // ✅ Sincroniza o texto do combobox quando o cliente selecionado muda externamente (ex: após criar cliente)
+    useEffect(() => {
+        if (clienteSelecionado) {
+            const lbl = clienteSelecionado.email
+                ? `${clienteSelecionado.nome} - ${clienteSelecionado.email}`
+                : clienteSelecionado.nome;
+            setClienteQuery(lbl);
+        } else {
+            setClienteQuery('');
+        }
+    }, [clienteSelecionado]);
+
     // Adicionar função para converter moeda formatada para número
     const converterMoedaParaNumero = (valorFormatado: string): number => {
         if (!valorFormatado || valorFormatado === '') return 0;
@@ -108,7 +124,7 @@ export default function CarrinhoVenda({
                                 Carrinho vazio
                             </div>
                         ) : (
-                            carrinho.map((item) => (
+                            carrinho.map((item: ItemVenda) => (
                                 <div key={item.produto_id} className="card carrinho-item mb-2">
                                     <div className="card-body p-2">
                                         <div className="d-flex justify-content-between align-items-start mb-2">
@@ -266,43 +282,48 @@ export default function CarrinhoVenda({
 
                                 {/* Cliente só aparece quando for conta fiada */}
                                 {formaPagamento === 'conta_fiada' && (
-                                    <div className="col-12 mb-3">
-                                        <label className="form-label small">Cliente</label>
-                                        <div className="input-group input-group-sm">
-                                            <select
-                                                className="form-select"
-                                                value={clienteSelecionado?.id || ''}
-                                                onChange={(e) => {
-                                                    const cliente = clientesAtualizados.find(
-                                                        (c) => c.id === parseInt(e.target.value),
-                                                    );
-                                                    setClienteSelecionado(cliente || null);
-                                                }}
-                                            >
-                                                <option value="">Selecionar cliente...</option>
-                                                {clientesAtualizados.map((cliente) => (
-                                                    <option key={cliente.id} value={cliente.id}>
-                                                        {cliente.nome} - {cliente.email}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-primary"
-                                                onClick={abrirModalCliente}
-                                                title="Cadastrar novo cliente"
-                                            >
-                                                <i className="bi bi-plus"></i>
-                                            </button>
-                                        </div>
+                                  <div className="col-12 mb-3">
+                                    <label className="form-label small d-block">Cliente</label>
 
-                                        {!clienteSelecionado && (
-                                            <div className="alert alert-warning alert-sm mt-2 mb-0">
-                                                <i className="bi bi-exclamation-triangle me-1"></i>
-                                                <small>Selecione um cliente para venda fiada</small>
-                                            </div>
-                                        )}
+                                    {/* Campo de seleção com botão + ao lado */}
+                                    <div className="row g-2 align-items-end">
+                                      <div className="col">
+                                        <ClienteCombobox
+                                          clientes={clientesAtualizados}
+                                          valueId={clienteSelecionado?.id ? String(clienteSelecionado.id) : ''}
+                                          query={clienteQuery}
+                                          setValueId={(id: string) => {
+                                            if (!id) {
+                                              setClienteSelecionado(null);
+                                              return;
+                                            }
+                                            const c = clientesAtualizados.find((x: any) => String(x.id) === String(id));
+                                            setClienteSelecionado(c || null);
+                                          }}
+                                          setQuery={setClienteQuery}
+                                          label=""
+                                          placeholder="Nome ou e-mail do cliente"
+                                        />
+                                      </div>
+                                      <div className="col-auto">
+                                        <button
+                                          type="button"
+                                          className="btn btn-outline-primary"
+                                          onClick={abrirModalCliente}
+                                          title="Cadastrar novo cliente"
+                                        >
+                                          <i className="bi bi-plus-lg"></i>
+                                        </button>
+                                      </div>
                                     </div>
+
+                                    {!clienteSelecionado && (
+                                      <div className="alert alert-warning alert-sm mt-2 mb-0">
+                                        <i className="bi bi-exclamation-triangle me-1"></i>
+                                        <small>Selecione um cliente para venda fiada</small>
+                                      </div>
+                                    )}
+                                  </div>
                                 )}
                             </div>
 

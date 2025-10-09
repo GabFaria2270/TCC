@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use App\Models\Venda; // adicionar
 
 class ClienteController extends Controller
 {
@@ -24,27 +25,42 @@ class ClienteController extends Controller
     /**
      * ✅ LISTA CLIENTES
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
             $user = Auth::user();
-            
-            Log::channel('security')->info('Acessando lista de clientes', [
-                'user_id' => $user->ID,
-                'email' => $user->EMAIL,
-            ]);
-            
-            $result = $this->clienteService->listarClientes();
-            
-            if ($result['success']) {
+            $resultado = $this->clienteService->listarClientes();
+
+            // ✅ Pré-carrega histórico de fiado do comércio
+            $comercio = $user->comercio;
+            $fiadoHistorico = Venda::with(['cliente:id,nome'])
+                ->where('comercio_id', $comercio->id)
+                ->where('forma_pagamento', 'conta_fiada')
+                ->orderByDesc('created_at')
+                ->limit(200)
+                ->get()
+                ->map(function (Venda $v) {
+                    return [
+                        'id' => $v->id,
+                        'cliente' => $v->cliente?->nome ?? 'Cliente avulso',
+                        'valor' => (float) $v->total,
+                        'data' => optional($v->created_at)?->toISOString(),
+                        // venda concluida => pago, conta_fiada => pendente
+                        'status' => $v->status === 'concluida' ? 'pago' : 'pendente',
+                    ];
+                });
+
+            if ($resultado['success']) {
                 return Inertia::render('gerenciamento/Clientes', [
-                    'clientes' => $result['clientes'],
+                    'clientes' => $resultado['clientes'],
+                    'fiadoHistorico' => $fiadoHistorico, // ✅ envia ao front
                 ]);
             }
 
             return Inertia::render('gerenciamento/Clientes', [
                 'clientes' => [],
-                'error' => $result['errors']['system'] ?? 'Erro ao carregar clientes.',
+                'fiadoHistorico' => $fiadoHistorico, // ✅ também no fallback
+                'error' => $resultado['errors']['system'] ?? 'Erro ao carregar clientes.',
             ]);
 
         } catch (\Exception $e) {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 interface HistoricoContaFiadaProps {
     className?: string;
+    initialData?: VendaFiada[]; // ✅ recebe pré-carregado
 }
 
 type VendaFiada = {
@@ -12,23 +13,23 @@ type VendaFiada = {
     status: 'pendente' | 'pago';
 };
 
-export default function HistoricoContaFiada({ className = '' }: HistoricoContaFiadaProps) {
+export default function HistoricoContaFiada({ className = '', initialData = [] }: HistoricoContaFiadaProps) {
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [vendasFiadas, setVendasFiadas] = useState<VendaFiada[]>([]);
+    const [vendasFiadas, setVendasFiadas] = useState<VendaFiada[]>(initialData);
 
-    const formatarMoeda = (valor: number) =>
-        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+    // ✅ atualiza quando a página já envia os dados
+    useEffect(() => {
+        setVendasFiadas(initialData || []);
+    }, [initialData]);
 
-    const totalPendente = vendasFiadas
-        .filter((v) => v.status === 'pendente')
-        .reduce((total, v) => total + (v.valor || 0), 0);
-
+    // (opcional) atualizar do backend quando abrir, se não houver dados
     useEffect(() => {
         if (!showModal) return;
-        let abort = false;
+        if (vendasFiadas.length > 0) return; // já tem dados
 
-        const carregar = async () => {
+        let abort = false;
+        (async () => {
             try {
                 setLoading(true);
                 const resp = await fetch('/gerenciamento/fiado/historico', {
@@ -37,20 +38,23 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                 });
                 if (!resp.ok) throw new Error('Falha ao carregar histórico');
                 const json = await resp.json();
-                if (abort) return;
-                setVendasFiadas(json.vendas_fiadas || []);
+                if (!abort) setVendasFiadas(json.vendas_fiadas || []);
             } catch {
                 if (!abort) setVendasFiadas([]);
             } finally {
                 if (!abort) setLoading(false);
             }
-        };
+        })();
 
-        carregar();
-        return () => {
-            abort = true;
-        };
-    }, [showModal]);
+        return () => { abort = true; };
+    }, [showModal, vendasFiadas.length]);
+
+    const formatarMoeda = (valor: number) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+
+    const totalPendente = vendasFiadas
+        .filter((v) => v.status === 'pendente')
+        .reduce((total, v) => total + (v.valor || 0), 0);
 
     return (
         <>
@@ -125,7 +129,6 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                         <table className="table-hover table">
                                             <thead>
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Cliente</th>
                                                     <th>Valor</th>
                                                     <th>Data</th>
@@ -135,16 +138,13 @@ export default function HistoricoContaFiada({ className = '' }: HistoricoContaFi
                                             <tbody>
                                                 {vendasFiadas.length === 0 ? (
                                                     <tr>
-                                                        <td colSpan={5} className="py-4 text-center text-muted">
+                                                        <td colSpan={4} className="py-4 text-center text-muted">
                                                             Nenhuma venda fiada encontrada
                                                         </td>
                                                     </tr>
                                                 ) : (
                                                     vendasFiadas.map((venda) => (
                                                         <tr key={venda.id}>
-                                                            <td>
-                                                                <span className="badge bg-secondary">#{venda.id}</span>
-                                                            </td>
                                                             <td><strong>{venda.cliente}</strong></td>
                                                             <td><strong className="text-success">{formatarMoeda(venda.valor)}</strong></td>
                                                             <td>{new Date(venda.data).toLocaleString('pt-BR')}</td>

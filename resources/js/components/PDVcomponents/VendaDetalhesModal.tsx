@@ -51,6 +51,18 @@ export default function VendaDetalhesModal({
     return Number.isFinite(n) ? n.toFixed(2).replace('.', ',') : '—';
   };
 
+  const formatStatus = (s?: string | null) => (s === 'conta_fiada' ? 'pendente' : (s ?? '—'));
+  const formatPagamento = (p?: string | null) => {
+    switch (p) {
+      case 'conta_fiada': return 'fiado';
+      case 'dinheiro': return 'dinheiro';
+      case 'pix': return 'pix';
+      case 'debito': return 'débito';
+      case 'credito': return 'crédito';
+      default: return p ?? '—';
+    }
+  };
+
   const nomeUsuario = venda?.usuario?.NOME || venda?.usuario?.nome || '—';
   const nomeCliente = venda?.cliente ? (venda.cliente as any).nome ?? '—' : '—';
   const data = venda?.created_at
@@ -90,10 +102,10 @@ export default function VendaDetalhesModal({
                 <dd className="col-sm-9">{nomeCliente}</dd>
 
                 <dt className="col-sm-3">Status</dt>
-                <dd className="col-sm-9">{venda?.status ?? '—'}</dd>
+                <dd className="col-sm-9">{formatStatus(venda?.status)}</dd>
 
                 <dt className="col-sm-3">Pagamento</dt>
-                <dd className="col-sm-9">{venda?.forma_pagamento ?? '—'}</dd>
+                <dd className="col-sm-9">{formatPagamento(venda?.forma_pagamento)}</dd>
 
                 <dt className="col-sm-3">Subtotal</dt>
                 <dd className="col-sm-9">R$ {fmt(venda?.subtotal)}</dd>
