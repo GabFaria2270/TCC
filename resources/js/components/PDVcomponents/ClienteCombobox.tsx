@@ -52,7 +52,7 @@ export default function ClienteCombobox({
     if (!text) setValueId('');
   };
 
-  // ✅ Sincroniza o texto exibido quando o valueId mudar externamente (ex: após criar cliente)
+  
   useEffect(() => {
     if (valueId) {
       const found = clientes.find((c) => String(c.id) === String(valueId));
@@ -61,10 +61,10 @@ export default function ClienteCombobox({
         if (query !== lbl) setQuery(lbl);
       }
     } else {
-      // Se valor foi limpo externamente, limpa o texto também
+  
       if (query !== '') setQuery('');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [valueId, clientes]);
 
   useEffect(() => {

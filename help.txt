@@ -20,6 +20,7 @@
   - php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
 - Resetar e popular tudo de uma vez (opcional):
   - php artisan migrate:fresh --seed
+  --possivel local para hospedagem -- AlwaysData 
 
 Observação: O seeder cria 1 usuário admin na tabela `usuario`, 1 comércio, 10 categorias, 30 clientes, 100 produtos e seus estoques. Vendas e contas fiadas não são criadas automaticamente.
 
