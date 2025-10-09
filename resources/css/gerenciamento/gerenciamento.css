@@ -39,6 +39,100 @@ body {
     vertical-align: text-bottom;
 }
 
+/* =========================
+   Acessibilidade: transições suaves ao alterar o tamanho da fonte
+   - Escopo apenas no layout de Gerenciamento (main.flex-grow-1 e sidebar)
+   - Evita impacto em telas públicas como login/home
+   ========================= */
+:root {
+    --a11y-font-transition: 160ms cubic-bezier(.2,.7,.2,1);
+    --a11y-page-transition: 220ms cubic-bezier(.2,.7,.2,1);
+    --theme-switch-duration: 500ms cubic-bezier(.2,.7,.2,1);
+}
+
+/* Respeita usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --a11y-font-transition: 0ms;
+        --theme-switch-duration: 0ms;
+    }
+}
+
+/* Transição no próprio root ajuda a suavizar a mudança global */
+html {
+    transition: font-size var(--a11y-font-transition);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Escopo principal do Gerenciamento */
+/* Evitar custo alto de layout em tabelas e listas pesadas */
+.data-table, .data-table *,
+table, table * {
+    transition: none !important;
+}
+
+/* =========================
+   Transição suave entre páginas do Gerenciamento
+   ========================= */
+@keyframes page-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+        filter: saturate(0.98) contrast(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: none;
+    }
+}
+
+/* =========================
+   Transição de tema (dark/light) suave
+   ========================= */
+html.theme-transition,
+html.theme-transition body,
+html.theme-transition .card,
+html.theme-transition header,
+html.theme-transition footer,
+html.theme-transition .bg-body,
+html.theme-transition .bg-body-tertiary,
+html.theme-transition .list-group-item,
+html.theme-transition .dropdown-menu,
+html.theme-transition .offcanvas,
+html.theme-transition .modal-content,
+html.theme-transition .table,
+html.theme-transition .table thead th,
+html.theme-transition .data-table,
+html.theme-transition .data-table thead th,
+html.theme-transition .form-control,
+html.theme-transition .form-select,
+html.theme-transition .input-group-text,
+html.theme-transition .badge,
+html.theme-transition .btn {
+    transition:
+        background-color var(--theme-switch-duration),
+        color var(--theme-switch-duration),
+        border-color var(--theme-switch-duration),
+        box-shadow var(--theme-switch-duration);
+}
+
+.page-view {
+    will-change: opacity, transform;
+}
+
+.page-view.is-entering {
+    animation: page-fade-in var(--a11y-page-transition) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-view.is-entering {
+        animation: none;
+    }
+}
+
 /* KPIs */
 .kpi .kpi-label {
     font-size: 0.95rem;

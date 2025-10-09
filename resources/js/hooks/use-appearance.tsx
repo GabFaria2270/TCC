@@ -19,14 +19,32 @@ const setCookie = (name: string, value: string, days = 365) => {
     document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
 };
 
-const applyTheme = (appearance: Appearance) => {
+const applyTheme = (appearance: Appearance, withTransition = false) => {
     const isDark = appearance === 'dark' || (appearance === 'system' && prefersDark());
 
     const html = document.documentElement;
+    if (withTransition) {
+        html.classList.add('theme-transition');
+    }
     // Bootstrap 5.3 (color modes)
     html.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
     // Melhora aparência de inputs/scrollbars
     (html.style as any).colorScheme = isDark ? 'dark' : 'light';
+
+    if (withTransition) {
+        const durationVar = getComputedStyle(document.documentElement).getPropertyValue('--theme-switch-duration') || '260ms';
+        // Extrair apenas o tempo em ms
+        let timeout = 260;
+        try {
+            const match = durationVar.trim().match(/(\d+(?:\.\d+)?)(ms|s)/);
+            if (match) {
+                const value = parseFloat(match[1]);
+                const unit = match[2];
+                timeout = unit === 's' ? Math.round(value * 1000) : Math.round(value);
+            }
+        } catch {}
+        window.setTimeout(() => html.classList.remove('theme-transition'), timeout);
+    }
 };
 
 const mediaQuery = () => {
@@ -63,12 +81,13 @@ export function useAppearance() {
         // Store in cookie for SSR...
         setCookie('appearance', mode);
 
-        applyTheme(mode);
+        applyTheme(mode, true);
     }, []);
 
     useEffect(() => {
         const savedAppearance = localStorage.getItem('appearance') as Appearance | null;
-        updateAppearance(savedAppearance || 'system');
+        // aplicação inicial sem transição
+        applyTheme(savedAppearance || 'system', false);
 
         return () => mediaQuery()?.removeEventListener('change', handleSystemThemeChange);
     }, [updateAppearance]);

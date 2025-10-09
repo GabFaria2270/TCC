@@ -152,6 +152,14 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         }
     };
 
+    // Detectar mudança de rota para acionar animação de entrada
+    const page = usePage();
+    const [enterKey, setEnterKey] = useState<string>('');
+    useEffect(() => {
+        const url = (page as any).url as string;
+        setEnterKey(url);
+    }, [page]);
+
     return (
         <>
             <Head title={title ?? 'Gerenciamento'} />
@@ -185,7 +193,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                         </div>
                     </header>
 
-                    <section className="container-fluid p-4">
+                    <section key={enterKey} className="container-fluid p-4 page-view is-entering">
                         <div className="d-flex align-items-center mb-3 flex-wrap gap-2" role="region" aria-label="Acessibilidade">
                             <span className="text-secondary">Acessibilidade:</span>
                             <button

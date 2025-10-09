@@ -107,19 +107,14 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
             if (e.key === 'Escape') {
                 if (showDetailsModal) fecharDetalhesConta();
                 else if (showModal) fecharModal();
+                else if (showConfirmModal) fecharConfirmarPagamento();
             }
         };
-        if (showModal || showDetailsModal) {
-            document.addEventListener('keydown', handleEsc);
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
+        document.addEventListener('keydown', handleEsc);
         return () => {
             document.removeEventListener('keydown', handleEsc);
-            document.body.style.overflow = 'unset';
         };
-    }, [showModal, showDetailsModal]);
+    }, [showModal, showDetailsModal, showConfirmModal]);
 
     const clienteComContaFiada = (cliente?: Cliente) => {
         if (!cliente) return undefined;

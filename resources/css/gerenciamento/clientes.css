@@ -8,6 +8,22 @@
 [data-bs-theme='dark'] .clientes-subtitle {
     color: var(--theme-text-secondary) !important;
 }
+[data-bs-theme='dark'] .search-input {
+    background: var(--theme-surface-2, #1f2937);
+    border-color: var(--theme-border, #3a3f47);
+    color: var(--theme-text, #e5e7eb) !important;
+}
+[data-bs-theme='dark'] .search-input::placeholder {
+    color: var(--theme-text-secondary, #9ca3af);
+    opacity: 1;
+}
+[data-bs-theme='dark'] .search-input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.35);
+}
+[data-bs-theme='dark'] .search-icon {
+    color: var(--theme-text-secondary, #9ca3af);
+}
 [data-bs-theme='dark'] .btn-refresh {
     border-color: #c8c8c8;
     color: #eaeaea;
@@ -70,6 +86,40 @@
     background: #2a2f3a;
     color: #cfd3da;
     border-color: #3a3f47;
+}
+
+/* ---------- Modal: Detalhes do Cliente (Dark Mode) ---------- */
+[data-bs-theme='dark'] .modal-content {
+    background: var(--theme-surface-1, #0f172a);
+    color: var(--theme-text, #e5e7eb);
+    border-color: var(--theme-border, #334155);
+}
+[data-bs-theme='dark'] .modal-header,
+[data-bs-theme='dark'] .modal-footer {
+    background: var(--theme-surface-2, #111827);
+    border-color: var(--theme-border, #334155);
+    color: var(--theme-text, #e5e7eb);
+}
+[data-bs-theme='dark'] .modal-title {
+    color: var(--theme-text, #e5e7eb);
+}
+[data-bs-theme='dark'] .modal .btn-close {
+    filter: invert(1) grayscale(100%);
+    opacity: 0.8;
+}
+[data-bs-theme='dark'] .modal .btn-close:hover { opacity: 1; }
+
+/* Caixas de valores e rótulos na lista de detalhes */
+[data-bs-theme='dark'] .cliente-detalhes-label {
+    color: var(--theme-text-secondary, #9ca3af);
+}
+[data-bs-theme='dark'] .cliente-detalhes-value {
+    background: var(--theme-surface-2, #111827);
+    color: var(--theme-text, #e5e7eb);
+    border-color: var(--theme-border, #334155);
+}
+[data-bs-theme='dark'] .cliente-detalhes-descricao::-webkit-scrollbar-thumb {
+    background: #475569;
 }
 
 /* Telefones e textos pequenos dentro da tabela no dark */
