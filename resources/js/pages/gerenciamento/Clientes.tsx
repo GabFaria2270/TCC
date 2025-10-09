@@ -32,6 +32,7 @@ type Props = {
 export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: Props) {
     const h1Ref = useRef<HTMLHeadingElement>(null);
     const [search, setSearch] = useState('');
+    const [filtroStatus, setFiltroStatus] = useState(''); // Novo estado para filtro de status
     const [loading, setLoading] = useState(false);
 
     const [showModal, setShowModal] = useState(false);
@@ -47,9 +48,25 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
     }, []);
 
     const clientesArray = Array.isArray(clientes) ? clientes : [];
-    const clientesFiltrados = clientesArray.filter(
-        (cliente) => cliente.nome.toLowerCase().includes(search.toLowerCase()) || cliente.email.toLowerCase().includes(search.toLowerCase()),
-    );
+    
+    // Filtros combinados: busca por nome/email + status da conta fiada
+    const clientesFiltrados = clientesArray.filter((cliente) => {
+        // Filtro de busca por nome ou e-mail
+        const matchSearch = cliente.nome.toLowerCase().includes(search.toLowerCase()) || 
+                           cliente.email.toLowerCase().includes(search.toLowerCase());
+        
+        // Filtro por status da conta fiada
+        let matchStatus = true;
+        if (filtroStatus) {
+            if (filtroStatus === 'pendente') {
+                matchStatus = cliente.conta_fiada && cliente.conta_fiada.saldo > 0;
+            } else if (filtroStatus === 'quitada') {
+                matchStatus = !cliente.conta_fiada || cliente.conta_fiada.saldo <= 0;
+            }
+        }
+        
+        return matchSearch && matchStatus;
+    });
 
     const handleRefresh = () => {
         setLoading(true);
@@ -60,6 +77,11 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                 onFinish: () => setLoading(false),
             },
         );
+    };
+
+    const limparFiltros = () => {
+        setSearch('');
+        setFiltroStatus('');
     };
 
     const abrirModal = (modo: 'create' | 'edit', cliente?: Cliente) => {
@@ -152,9 +174,10 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                         <HistoricoContaFiada initialData={fiadoHistorico} />
                     </div>
                 </div>
-                {/* Barra de busca */}
-                <div className="clientes-search-container">
-                    <div className="search-input-group">
+                
+                {/* Filtros: Barra de busca + Status */}
+                <div className="d-flex align-items-center gap-3 mb-3">
+                    <div className="search-input-group flex-grow-1" style={{ maxWidth: '400px' }}>
                         <i className="bi bi-search search-icon" aria-hidden="true"></i>
                         <input
                             type="text"
@@ -166,10 +189,33 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                             aria-label="Buscar clientes"
                         />
                     </div>
+                    <select 
+                        className="form-select" 
+                        style={{ width: '200px', flexShrink: 0 }}
+                        value={filtroStatus} 
+                        onChange={(e) => setFiltroStatus(e.target.value)}
+                    >
+                        <option value="">Todas as contas</option>
+                        <option value="pendente">📋 Conta Pendente</option>
+                        <option value="quitada">✅ Conta Quitada</option>
+                    </select>
+                    <button 
+                        className="btn btn-outline-secondary flex-shrink-0" 
+                        onClick={limparFiltros}
+                        title="Limpar filtros"
+                    >
+                        <i className="bi bi-arrow-clockwise"></i>
+                    </button>
                 </div>
-                {/* Adicione o contador aqui */}
+                
+                {/* Contador */}
                 <div className="clientes-counter">
                     {clientesFiltrados.length} de {clientesArray.length} clientes
+                    {(search || filtroStatus) && (
+                        <small className="text-muted ms-2">
+                            (filtros aplicados)
+                        </small>
+                    )}
                 </div>
             </div>
 
