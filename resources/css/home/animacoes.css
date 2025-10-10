@@ -1,6 +1,6 @@
-/* =========================
-   ANIMAÇÕES
-   ========================= */
+/* ===================================================================
+   ANIMAÇÕES MODERNIZADAS - SEM ANIMAÇÕES DE ESCRITA
+   =================================================================== */
 
 @-webkit-keyframes botoes-navbar {
     0% {
@@ -62,7 +62,7 @@
     100% {
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
-        opacity: 50;
+        opacity: 1;
     }
 }
 
@@ -78,18 +78,21 @@
     }
 }
 
-/* =========================
+/* ===================================================================
    ANIMAÇÕES DE ENTRADA DE CARDS
-   ========================= */
+   =================================================================== */
+
 @-webkit-keyframes cards-right {
     0% {
         -webkit-transform: translateX(-120%);
         transform: translateX(-120%);
+        opacity: 0;
     }
 
     100% {
         -webkit-transform: translateX(0);
         transform: translateX(0);
+        opacity: 1;
     }
 }
 
@@ -105,9 +108,10 @@
     }
 }
 
-/* =========================
+/* ===================================================================
    ANIMAÇÕES DE ENTRADA DO SOBRE
-   ========================= */
+   =================================================================== */
+
 @-webkit-keyframes focus-in-expand-fwd {
     0% {
         -webkit-transform: translateZ(-800px);
@@ -154,9 +158,76 @@
     }
 }
 
-/* =========================
+/* ===================================================================
+   NOVAS ANIMAÇÕES PARA CARDS MODERNIZADOS
+   =================================================================== */
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideRight {
+    0% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(102, 126, 234, 0.6);
+    }
+}
+
+/* ===================================================================
+   CLASSES DE ANIMAÇÃO APLICADAS VIA JS
+   =================================================================== */
+
+.animate-fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.8s ease-out forwards;
+}
+
+.animate-slide-right {
+    animation: slideRight 0.6s ease-out forwards;
+}
+
+.animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* ===================================================================
    UTILITÁRIOS DE ANIMAÇÃO
-   ========================= */
+   =================================================================== */
+
 .girar-animado {
     animation: girar 0.8s linear infinite;
     display: inline-block;
@@ -171,34 +242,36 @@
 }
 
 .animate-cards-right {
-    animation: cards-right 3s ease-out forwards;
+    animation: cards-right 1.2s ease-out forwards;
 }
 
 .focus-in-expand-fwd {
-    animation: focus-in-expand-fwd 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    animation: focus-in-expand-fwd 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
-.texto-animado {
-    animation:
-        escrever 2s steps(22, end) forwards,
-        mark 0.2s step-end infinite;
-}
+/* ===================================================================
+   ESTADOS DE HOVER E FOCUS APRIMORADOS
+   =================================================================== */
 
-@keyframes escrever {
-    from {
-        width: 0;
+/* Removido o pulseGlow do hover para evitar conflito com transform do CSS principal */
+
+/* ===================================================================
+   SUPORTE A PREFERS-REDUCED-MOTION
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-slide-up,
+    .animate-slide-right,
+    .animate-pulse-glow,
+    .card-principal:hover,
+    .vantagem-card:hover {
+        animation: none;
+        transition: none;
     }
-
-    to {
-        width: 18ch;
-        /* Define o comprimento do texto */
+    
+    .card-principal,
+    .vantagem-card {
+        transform: none !important;
     }
-}
-
-@keyframes mark {
-    50% {
-        border-right-color: transparent;
-        /* Faz o marcador piscar */
-    }
-
 }

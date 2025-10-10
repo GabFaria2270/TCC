@@ -1,3 +1,7 @@
+/* ===================================================================
+   📍 BOTÃO DE NAVEGAÇÃO MODERNO
+   =================================================================== */
+
 .botãonavegação {
     color: #fff;
     border: solid 6px #6f7274; 
@@ -8,48 +12,219 @@
     border-radius: 500px;
     perspective: 1000px;
 }
+
 .btndenavegação {
     position: fixed;
-    top: 50%; 
-    right: 20px; 
-    transform: translateY(-50%); 
-    background-color: #6f7274;
-    color: #fff;
-    border: solid 6px #6f7274;
-    padding: 10px 20px;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: #ffffff;
+    border: none;
+    padding: 0;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.2rem;
     width: 60px;
     height: 60px;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s ease, background-color 0.3s ease, opacity 0.3s ease; 
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     z-index: 1000;
-    display: none; 
-    opacity: 1; 
+    opacity: 0.9;
+    backdrop-filter: blur(10px);
 }
 
 .btndenavegação:hover {
-    background-color: #4b4b4b;
+    background: linear-gradient(135deg, #0056b3 0%, #003f7f 100%);
     transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 12px 35px rgba(0, 123, 255, 0.4);
+    opacity: 1;
 }
 
+.btndenavegação:active {
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+}
+
+.btndenavegação i {
+    font-size: 1.4rem;
+    transition: transform 0.3s ease;
+}
+
+.btndenavegação:hover i {
+    transform: scale(1.1);
+}
+
+/* Animação de flip quando muda direção */
 .btndenavegação.flip {
-    -webkit-animation: botão-flip-horizontal 0.6s ease-in-out;
-    animation: botão-flip-horizontal 0.6s ease-in-out;
+    animation: btnFlip 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@media (max-width: 900px) {
-  .btndenavegação {
-    top: auto;
-    bottom: 16px;
-    right: 12px;
-    transform: none;
-    width: 48px;
-    height: 48px;
-    font-size: 1rem;
-    padding: 0;
-  }
+@keyframes btnFlip {
+    0% {
+        transform: translateY(-50%) rotateY(0deg);
+    }
+    50% {
+        transform: translateY(-50%) rotateY(90deg) scale(0.8);
+    }
+    100% {
+        transform: translateY(-50%) rotateY(0deg);
+    }
+}
+
+/* Pulso sutil para chamar atenção */
+.btndenavegação.pulse {
+    animation: btnPulse 2s infinite;
+}
+
+@keyframes btnPulse {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5), 0 0 0 10px rgba(0, 123, 255, 0.1);
+    }
+}
+
+/* ===================================================================
+   📱 RESPONSIVIDADE
+   =================================================================== */
+
+@media (max-width: 992px) {
+    .btndenavegação {
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+    
+    .btndenavegação i {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .btndenavegação {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        transform: none;
+        width: 48px;
+        height: 48px;
+        font-size: 0.9rem;
+    }
+    
+    .btndenavegação:hover {
+        transform: scale(1.1);
+    }
+    
+    .btndenavegação:active {
+        transform: scale(1.05);
+    }
+    
+    .btndenavegação i {
+        font-size: 1.1rem;
+    }
+    
+    @keyframes btnFlip {
+        0% {
+            transform: rotateY(0deg);
+        }
+        50% {
+            transform: rotateY(90deg) scale(0.8);
+        }
+        100% {
+            transform: rotateY(0deg);
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .btndenavegação {
+        bottom: 15px;
+        right: 15px;
+        width: 44px;
+        height: 44px;
+        font-size: 0.8rem;
+    }
+    
+    .btndenavegação i {
+        font-size: 1rem;
+    }
+}
+
+/* ===================================================================
+   ♿ ACESSIBILIDADE
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .btndenavegação {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    .btndenavegação:hover {
+        transform: translateY(-50%) !important;
+    }
+    
+    .btndenavegação.flip {
+        animation: none !important;
+    }
+    
+    .btndenavegação.pulse {
+        animation: none !important;
+    }
+    
+    @media (max-width: 768px) {
+        .btndenavegação:hover {
+            transform: none !important;
+        }
+    }
+}
+
+/* Focus visível para navegação por teclado */
+.btndenavegação:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 3px;
+}
+
+/* ===================================================================
+   🌙 TEMA ESCURO
+   =================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .btndenavegação {
+        background: linear-gradient(135deg, #4ea1ff 0%, #2563eb 100%);
+        box-shadow: 0 8px 25px rgba(78, 161, 255, 0.3);
+    }
+    
+    .btndenavegação:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 12px 35px rgba(78, 161, 255, 0.4);
+    }
+    
+    @keyframes btnPulse {
+        0%, 100% {
+            box-shadow: 0 8px 25px rgba(78, 161, 255, 0.3);
+        }
+        50% {
+            box-shadow: 0 8px 25px rgba(78, 161, 255, 0.5), 0 0 0 10px rgba(78, 161, 255, 0.1);
+        }
+    }
+}
+
+/* Variação de estilo adicional para combinação com o design */
+.btndenavegação.variant-glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #007bff;
+}
+
+.btndenavegação.variant-glass:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #0056b3;
 }

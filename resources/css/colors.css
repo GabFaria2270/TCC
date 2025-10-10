@@ -1,11 +1,44 @@
 :root {
-    /* Cores principais */
+    /* Cores principais do sistema */
     --color-black: #000;
     --color-white: #fff;
     --color-offwhite: #ede7d7;
     --color-gray: #4b4b4b;
-
-    /* Exemplos de variações, adicione se precisar */
     --color-offwhite-dark: #e0d6c3;
     --color-offwhite-light: #f5e9d7;
+    
+    /* Paleta moderna da home page */
+    --primary-blue: #667eea;
+    --primary-purple: #764ba2;
+    --primary-pink: #f093fb;
+    --secondary-blue: #3b82f6;
+    --secondary-purple: #8b5cf6;
+    --secondary-pink: #ec4899;
+    --accent-green: #22c55e;
+    --accent-orange: #fb923c;
+    --accent-yellow: #fbbf24;
+    
+    /* Cores de texto */
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --text-muted: #2d3748;
+    
+    /* Cores de fundo */
+    --bg-light: #f8fafc;
+    --bg-gradient-1: rgba(238, 174, 202, 0.1);
+    --bg-gradient-2: rgba(148, 187, 233, 0.1);
+    --bg-gradient-3: rgba(99, 102, 241, 0.05);
+    --bg-gradient-4: rgba(168, 85, 247, 0.05);
+    
+    /* Cores de borda e sombra */
+    --border-light: #e2e8f0;
+    --border-white: rgba(255, 255, 255, 0.2);
+    --shadow-sm: 0 1px 8px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
+    
+    /* Gradientes principais */
+    --gradient-primary: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 50%, var(--primary-pink) 100%);
+    --gradient-secondary: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-purple) 50%, var(--secondary-pink) 100%);
+    --gradient-background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 25%, #fce7f3 50%, #fef3c7 75%, #f0f9ff 100%);
 }

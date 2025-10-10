@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
-    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js'])
+    @vite(['resources/css/home/home.css', 'resources/js/home/carrossel.js', 'resources/js/geralJS.js'])
 </head>
 
 <body>
@@ -17,13 +17,20 @@
     <!-- Conteúdo do carousel  -->
     <section class="section-home main-content">
         <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+            <!-- Indicadores -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            
             <div class="carousel-inner">
 
                 <!-- Primeiro Slide -->
                 <div class="carousel-item active">
                     <img src="{{ asset('img/C1.jpg') }}" class="img_Carrossel_1" alt="...">
                     <div class="carousel-caption d-md-block">
-                        <div class="caption-text mb-2">
+                        <div class="caption-text">
                             <h5>Primeiro Slide</h5>
                             <p>Conteúdo de exemplo para o primeiro slide.</p>
                         </div>
@@ -39,7 +46,7 @@
                     <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}" class="img_Carrossel_2"
                         alt="...">
                     <div class="carousel-caption d-md-block">
-                        <div class="caption-text mb-2">
+                        <div class="caption-text">
                             <h5>Segundo Slide</h5>
                             <p>Conteúdo de exemplo para o segundo slide.</p>
                         </div>
@@ -54,7 +61,7 @@
                 <div class="carousel-item">
                     <img src="{{ asset('img/carrossel_IMG3.jpg') }}" class="img_Carrossel_3" alt="...">
                     <div class="carousel-caption d-md-block">
-                        <div class="caption-text mb-2">
+                        <div class="caption-text">
                             <h5>Terceiro Slide</h5>
                             <p>Conteúdo de exemplo para o terceiro slide.</p>
                         </div>
@@ -79,177 +86,177 @@
     </section>
 
 
-    <!-- Seção dos Cards -->
-    <section class="section-card">
+    <!-- Seção dos Cards Principais -->
+    <section class="section-cards-principais" id="principais">
         <div class="container-escrita">
-            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
+            <span class="escrita">Sobre nossa empresa</span>
         </div>
-        <div class="row g-4">
-            <div class="col">
-                <div class="card h-100">
-                    <img src="{{ asset('img/cadr1.jpg') }}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                            tempor incididunt ut labore
-                            et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                            ut
-                            aliquip
-                            ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                            dolore eu
-                            fugiat
-                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                            deserunt
-                            mollit
-                            anim id est laborum.</p>
-                    </div>
+        <div class="cards-principais-grid">
+            <article class="card-principal">
+                <div class="card-image">
+                    <img src="{{ asset('img/cadr1.jpg') }}" alt="Nossa Missão" loading="lazy">
                 </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <img src="{{ asset('img/mulher da tela inicial.png') }}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                            tempor incididunt ut labore
-                            et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                            ut
-                            aliquip
-                            ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                            dolore eu
-                            fugiat
-                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                            deserunt
-                            mollit
-                            anim id est laborum.</p>
-                    </div>
+                <div class="card-content">
+                    <h3 class="card-title">Nossa Missão</h3>
+                    <p class="card-description">
+                        Oferecer produtos de qualidade excepcional com atendimento personalizado, 
+                        construindo relacionamentos duradouros baseados na confiança e satisfação 
+                        de nossos clientes.
+                    </p>
                 </div>
-            </div>
-            <div class="col">
-                <div class="card h-100">
-                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
-                            additional content. This card has even longer content than the first to show that equal
-                            height action.</p>
-                    </div>
+                <div class="card-footer">
+                    <span class="card-badge">Compromisso</span>
                 </div>
-            </div>
-        </div>
-    </section>
-    <!-- Seção de Cards -->
+            </article>
 
-    <!-- Seção de Cards com escrita -->
-    <section id="vantagens" class="section-home">
-        <div class="container-escrita">
-            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
-        </div>
-        <div class="card mb-3">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{{ asset('img/testedeimg.jpeg') }}" class="img-fluid rounded-start" alt="...">
+            <article class="card-principal">
+                <div class="card-image">
+                    <img src="{{ asset('img/mulher da tela inicial.png') }}" alt="Nossa Visão" loading="lazy">
                 </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-                            tempor incididunt ut labore
-                            et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
-                            ut
-                            aliquip
-                            ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                            dolore eu
-                            fugiat
-                            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                            deserunt
-                            mollit
-                            anim id est laborum ..</p>
-                        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
-                    </div>
+                <div class="card-content">
+                    <h3 class="card-title">Nossa Visão</h3>
+                    <p class="card-description">
+                        Ser reconhecido como o melhor estabelecimento comercial da região, 
+                        inovando constantemente para atender às necessidades de nossa comunidade 
+                        com excelência e modernidade.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge">Inovação</span>
+                </div>
+            </article>
+
+            <article class="card-principal">
+                <div class="card-image">
+                    <img src="{{ asset('img/testedeimg.jpeg') }}" alt="Nossos Valores" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Nossos Valores</h3>
+                    <p class="card-description">
+                        Integridade, qualidade, respeito e transparência são os pilares que 
+                        sustentam nossa empresa e orientam todas as nossas decisões e ações 
+                        no dia a dia.
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-badge">Valores</span>
+                </div>
+            </article>
+        </div>
+    </section>
+    <!-- Seção dos Cards Principais -->
+
+    <!-- Seção de Vantagens -->
+    <section id="vantagens" class="section-vantagens section-home">
+        <div class="container-escrita">
+            <span class="escrita">Por que nos escolher?</span>
+        </div>
+        <div class="vantagem-card">
+            <div class="vantagem-image">
+                <img src="{{ asset('img/testedeimg.jpeg') }}" alt="Nossos Diferenciais" loading="lazy">
+            </div>
+            <div class="vantagem-content">
+                <h2 class="vantagem-titulo">Experiência e Confiabilidade</h2>
+                <p class="vantagem-descricao">
+                    Com mais de uma década no mercado, oferecemos produtos selecionados com 
+                    rigoroso controle de qualidade. Nossa equipe especializada garante que 
+                    você tenha sempre a melhor experiência de compra, seja presencialmente 
+                    ou através da nossa plataforma digital moderna e intuitiva.
+                </p>
+                <div class="vantagem-destaque">
+                    <ul class="vantagem-lista">
+                        <li><i class="bi bi-check-circle-fill"></i>Produtos sempre frescos e de qualidade</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Atendimento personalizado e humanizado</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Sistema de crédito seguro e transparente</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Preços competitivos e ofertas exclusivas</li>
+                    </ul>
+                </div>
+                <div class="vantagem-footer">
+                    <span class="vantagem-tempo">Atualizado recentemente</span>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Seção de Cards com escrita -->
+    <!-- Seção de Vantagens -->
 
     <!-- Seção de Cards com img a direita -->
-    <section id="sobre" class="section-sobre">
+    <section id="sobre" class="container-sobre section-home">
         <div class="container-escrita">
-            <span class="escrita" id="textoAnimado">Sobre nossa empresa</span>
+            <span class="escrita">Sobre Nossa Empresa</span>
         </div>
-        <div class="container-sobre">
-            <div class="containescrita">
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
-                    et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip
-                    ex ea
-                    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat
-                    nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                    mollit
-                    anim id est laborum.
-
-                </p>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
-                    et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip
-                    ex ea
-                    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat
-                    nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                    mollit
-                    anim id est laborum.
-                </p>
-            </div>
-            <div class="containerimg">
-                <img src="{{ asset('img/testedeimg.jpeg') }}" class="img-fluid rounded-start" alt="...">
-
+        <div class="sobre-empresa">
+            <div class="sobre-content">
+                <div class="sobre-image">
+                    <img src="{{ asset('img/testedeimg.jpeg') }}" alt="Nossa empresa" loading="lazy">
+                </div>
+                <div class="sobre-text">
+                    <h2 class="sobre-titulo">Tradição e Qualidade</h2>
+                    <p class="sobre-descricao">
+                        Há mais de uma década servindo a comunidade com produtos frescos e de qualidade. 
+                        Nossa empresa se dedica a oferecer o melhor atendimento e as melhores opções para 
+                        sua família, sempre com preços justos e um sistema de crédito confiável.
+                    </p>
+                    <div class="sobre-destaque">
+                        <p><i class="bi bi-star-fill me-2"></i>Compromisso com a excelência em cada produto e serviço oferecido.</p>
+                    </div>
+                    <div class="sobre-stats">
+                        <div class="stat-mini">
+                            <span class="stat-mini-number">12</span>
+                            <span class="stat-mini-label">Anos</span>
+                        </div>
+                        <div class="stat-mini">
+                            <span class="stat-mini-number">5000</span>
+                            <span class="stat-mini-label">Clientes</span>
+                        </div>
+                        <div class="stat-mini">
+                            <span class="stat-mini-number">98</span>
+                            <span class="stat-mini-label">% Satisfação</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
     <!-- Seção de Cards com img a direita -->
 
     <!-- Seção dos valores -->
-    <section class="section-cardv" id="valores">
-        <div class="container-escrita">
-            <span class="escrita" id="textoAnimado">Nossas Conquistas</span>
+    <section id="valores" class="section-cardv section-home">
+        <div class="container-escrita-valores">
+            <span class="escrita">Nossas Conquistas</span>
         </div>
-        <div class="containervalor">
-            <div class="valor1">
-                <i class="bi bi-cart icon-medium icon-color"></i>
-                <div class="cardv">
-                    <h2 class="titulov">Vendas</h2>
-                    <p class="subtituloV">R$ 1.000,00 hfkhdfhskdhfdshkfhsdkjhfksdhfkhsdkfhkdshf</p>
-
+        <div class="valores-container">
+            <div class="valores-grid">
+                <div class="valor1">
+                    <div class="valor-icon">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                    <h4 class="valor-titulo">Qualidade Premium</h4>
+                    <p class="valor-descricao">Produtos selecionados com o mais alto padrão de qualidade para sua família.</p>
                 </div>
-            </div>
-            <div class="valor1">
-                <i class="bi bi-people icon-medium icon-color"></i>
-                <div class="cardv">
-                    <h2 class="titulov">Vendas</h2>
-                    <p class="subtituloV">R$ 1.000,00 fdfsdhfksdhfkhdskfhksdhfkdshfkshkdfhsdf</p>
-
+                
+                <div class="valor1">
+                    <div class="valor-icon">
+                        <i class="bi bi-heart-fill"></i>
+                    </div>
+                    <h4 class="valor-titulo">Atendimento Humanizado</h4>
+                    <p class="valor-descricao">Cada cliente é único e merece um atendimento personalizado e acolhedor.</p>
                 </div>
-            </div>
-            <div class="valor1">
-                <i class="bi bi-graph-up icon-medium icon-color"></i>
-                <div class="cardv">
-                    <h2 class="titulov">Vendas</h2>
-                    <p class="subtituloV">R$ 1.000,00 sdkfkjsdhfjkdskfjsdkfkjdsfhksdsdfsdfsdfdsf</p>
-
+                
+                <div class="valor1">
+                    <div class="valor-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4 class="valor-titulo">Confiança e Segurança</h4>
+                    <p class="valor-descricao">Sistema de crédito seguro e transparente, construído na base da confiança mútua.</p>
                 </div>
-
+                
+                <div class="valor1">
+                    <div class="valor-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h4 class="valor-titulo">Tradição Familiar</h4>
+                    <p class="valor-descricao">Décadas de experiência servindo gerações de famílias em nossa comunidade.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -260,6 +267,196 @@
         <i class="bi bi-arrow-up"></i> <!-- Ícone inicial -->
     </button>
     <!-- Seção de Botão de Navegação -->
+
+    <!-- Nova Seção: Estatísticas/Números -->
+    <section class="section-stats" id="estatisticas">
+        <div class="container-escrita">
+            <span class="escrita">Nossos Números</span>
+        </div>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-number" data-count="5000">0</div>
+                <div class="stat-label">Clientes Ativos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div class="stat-number" data-count="50000">0</div>
+                <div class="stat-label">Produtos Vendidos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div class="stat-number" data-count="12">0</div>
+                <div class="stat-label">Anos no Mercado</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="stat-number" data-count="4.8">0</div>
+                <div class="stat-label">Avaliação Média</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nova Seção: Depoimentos -->
+    <section class="section-testimonials" id="depoimentos">
+        <div class="container-escrita">
+            <span class="escrita">O que nossos clientes dizem</span>
+        </div>
+        <div class="testimonials-container">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Excelente atendimento e produtos sempre frescos. A plataforma digital facilitou muito minhas compras!"</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="author-info">
+                        <h5>Maria Silva</h5>
+                        <span>Cliente há 3 anos</span>
+                    </div>
+                </div>
+                <div class="testimonial-rating">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Preços justos e variedade incrível. O sistema de crédito facilitou muito minha vida financeira."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="author-info">
+                        <h5>João Santos</h5>
+                        <span>Cliente há 5 anos</span>
+                    </div>
+                </div>
+                <div class="testimonial-rating">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Equipe sempre prestativa e produtos de qualidade. Recomendo para toda a família!"</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div class="author-info">
+                        <h5>Ana Costa</h5>
+                        <span>Cliente há 2 anos</span>
+                    </div>
+                </div>
+                <div class="testimonial-rating">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nova Seção: Serviços/Funcionalidades -->
+    <section class="section-services" id="servicos">
+        <div class="container-escrita">
+            <span class="escrita">Nossos Serviços</span>
+        </div>
+        <div class="services-grid">
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="bi bi-credit-card"></i>
+                </div>
+                <h4>Sistema de Crédito</h4>
+                <p>Compre agora e pague depois com nosso sistema de crédito confiável e seguro.</p>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <h4>Entrega Rápida</h4>
+                <p>Entrega em domicílio rápida e segura para sua comodidade.</p>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h4>Produtos de Qualidade</h4>
+                <p>Garantimos a qualidade e procedência de todos os nossos produtos.</p>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <h4>Horário Estendido</h4>
+                <p>Funcionamos em horário estendido para melhor atender você.</p>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="bi bi-phone"></i>
+                </div>
+                <h4>Suporte 24h</h4>
+                <p>Nossa equipe está sempre pronta para ajudar você.</p>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-icon">
+                    <i class="bi bi-percent"></i>
+                </div>
+                <h4>Ofertas Especiais</h4>
+                <p>Promoções exclusivas e descontos especiais para nossos clientes.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nova Seção: Call to Action -->
+    <section class="section-cta" id="cta">
+        <div class="cta-container">
+            <div class="cta-content">
+                <h2>Pronto para começar?</h2>
+                <p>Junte-se a milhares de clientes satisfeitos e experimente nossos serviços hoje mesmo!</p>
+                <div class="cta-buttons">
+                    <a href="{{ route('cadastro') }}" class="btn-cta primary">
+                        <i class="bi bi-person-plus me-2"></i>
+                        Criar Conta
+                    </a>
+                    <a href="{{ route('login') }}" class="btn-cta secondary">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Fazer Login
+                    </a>
+                </div>
+            </div>
+            <div class="cta-image">
+                <i class="bi bi-cart-check-fill"></i>
+            </div>
+        </div>
+    </section>
 
     <section id="footer">
         @include('components.footer')

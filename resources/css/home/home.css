@@ -1,10 +1,35 @@
+/* =========================
+   HOME PAGE - SISTEMA MODERNO (SEM BOOTSTRAP)
+   
+   Arquivos CSS incluídos:
+   - base.css: estilos fundamentais e background
+   - carrossel.css: carrossel customizado sem Bootstrap
+   - cards.css: cards principais e vantagens
+   - sobre.css: seção sobre empresa
+   - barravalores.css: seção valores/conquistas  
+   - novassecoes.css: estatísticas, depoimentos, serviços, CTA
+   - animacoes.css: animações de entrada e hover
+   - btnrolagem.css: botão de navegação flutuante
+   - responsivo.css: media queries para todos os breakpoints
+   
+   Funcionalidades JavaScript:
+   - Carrossel customizado com touch/swipe
+   - Animações de entrada baseadas em scroll
+   - Contadores animados para estatísticas
+   - Navegação suave entre seções
+   - Botão inteligente de scroll
+   ========================= */
+
 @import '../app.css';
-@import 'animacoes.css';
+@import '../geral/navbar.css';
 @import 'base.css';
+@import 'animacoes.css';
+@import 'carrossel.css';
 @import 'banner.css';
 @import 'cards.css';
-@import 'responsivo.css';
-@import 'btnrolagem.css';
-@import 'barravalores.css';
 @import 'sobre.css';
+@import 'barravalores.css';
+@import 'novassecoes.css';
+@import 'btnrolagem.css';
+@import 'responsivo.css';
 /* CSS de páginas (login/cadastro) não deve ser importado aqui para evitar vazamento de estilos */

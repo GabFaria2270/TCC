@@ -9,11 +9,18 @@
     padding: 0 16px;
     margin-top: 16px;
 }
-.section-home-false, .section-card-false, .section-cardV-false {
+.section-home-false, 
+.section-cards-principais-false, 
+.section-vantagens-false, 
+.section-cardV-false {
     opacity: 0;
     transition: opacity 0.6s ease-in-out;
 }
-.section-home-true, .section-card-true, .section-cardV-true {
+
+.section-home-true, 
+.section-cards-principais-true, 
+.section-vantagens-true, 
+.section-cardV-true {
     opacity: 1;
     transition: opacity 0.6s ease-in-out;
 }

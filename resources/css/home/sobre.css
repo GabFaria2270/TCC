@@ -1,9 +1,14 @@
+/* ===================================================================
+   📖 SEÇÃO SOBRE - MODERNIZADA
+   =================================================================== */
+
 .container-sobre {
     display: grid;
     grid-template-columns: 1fr;
     gap: clamp(16px, 4vw, 40px);
-    padding: clamp(12px, 3vw, 20px);
-    margin-bottom: clamp(16px, 4vw, 30px);
+    padding: 4rem 0;
+    margin: 3rem 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
 @media (min-width: 992px) {
@@ -15,3 +20,263 @@
 
 .containerimg { display: flex; justify-content: center; align-items: center; }
 .containerimg img { max-width: 100%; height: auto; border-radius: 8px; object-fit: cover; }
+
+.sobre-empresa {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.sobre-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.sobre-image {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.sobre-image:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+}
+
+.sobre-image img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+}
+
+.sobre-text {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.sobre-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.sobre-text:hover::before {
+    transform: scaleX(1);
+}
+
+.sobre-titulo {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    position: relative;
+}
+
+.sobre-titulo::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    border-radius: 2px;
+}
+
+.sobre-descricao {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #5a6c7d;
+    margin-bottom: 2rem;
+}
+
+.sobre-destaque {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.sobre-destaque::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.sobre-destaque:hover::before {
+    left: 100%;
+}
+
+.sobre-destaque p {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.sobre-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.stat-mini {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(0, 123, 255, 0.08);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-mini:hover {
+    background: rgba(0, 123, 255, 0.12);
+    transform: translateY(-5px);
+}
+
+.stat-mini-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stat-mini-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* ===================================================================
+   📱 RESPONSIVIDADE
+   =================================================================== */
+
+@media (max-width: 992px) {
+    .sobre-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .sobre-text {
+        padding: 2rem;
+    }
+    
+    .sobre-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-sobre {
+        padding: 3rem 0;
+        margin: 2rem 0;
+    }
+    
+    .sobre-empresa {
+        padding: 0 1rem;
+    }
+    
+    .sobre-text {
+        padding: 1.5rem;
+    }
+    
+    .sobre-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-mini {
+        padding: 1rem;
+    }
+    
+    .stat-mini-number {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sobre-text {
+        padding: 1rem;
+    }
+    
+    .sobre-destaque {
+        padding: 1rem;
+    }
+}
+
+/* ===================================================================
+   ♿ ACESSIBILIDADE
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .sobre-image,
+    .sobre-text,
+    .stat-mini {
+        transition: none !important;
+    }
+    
+    .sobre-image:hover,
+    .stat-mini:hover {
+        transform: none !important;
+    }
+    
+    .sobre-destaque::before {
+        display: none;
+    }
+}
+
+/* ===================================================================
+   🌙 TEMA ESCURO
+   =================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .container-sobre {
+        background: linear-gradient(135deg, #1a1d23 0%, #2d3748 100%);
+    }
+    
+    .sobre-text {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .sobre-titulo {
+        color: #f7fafc;
+    }
+    
+    .sobre-descricao {
+        color: #cbd5e1;
+    }
+    
+    .stat-mini {
+        background: rgba(79, 172, 254, 0.1);
+    }
+    
+    .stat-mini-label {
+        color: #a0aec0;
+    }
+}

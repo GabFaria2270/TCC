@@ -1,143 +1,403 @@
-/* Carrossel Bootstrap customizado - Banner Full Width Moderno */
+/* ===================================================================
+   🎠 CARROSSEL MODERNO - TEXTOS CORRIGIDOS
+   =================================================================== */
+
 .carousel {
     width: 100%;
-    max-width: 100%;
-    /* Altura controlada pelo conteúdo (imagens) para evitar overflow em telas pequenas */
-    height: auto;
-    min-height: 300px;
-    margin: 0 auto 2.5rem auto;
-    border-radius: 0 0 2rem 2rem;
+    height: 55vh;
+    min-height: 400px;
+    max-height: 550px;
+    margin: 1rem auto 3rem auto;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
     position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.carousel-inner,
+.carousel-item {
+    height: 100%;
+}
+
+.carousel-item {
+    position: relative;
+    transition: transform 0.6s ease-in-out;
 }
 
 .carousel-item img {
     width: 100%;
-    height: auto;
-    /* Mantém proporção e cobre bem em telas grandes */
-    aspect-ratio: 16 / 9;
-    max-height: clamp(280px, 70vh, 820px);
+    height: 100%;
     object-fit: cover;
-    filter: brightness(0.92) contrast(1.08);
     display: block;
 }
 
-.carousel-caption {
-    background: transparent;
-    border-radius: 0 0 2rem 2rem;
-    padding: clamp(1rem, 2.5vw, 2.5rem) clamp(1rem, 3vw, 3rem) clamp(0.75rem, 2vw, 2rem);
-    color: #fff;
-    font-weight: 600;
-    text-shadow: 2px 2px 12px #000;
+/* Overlay para melhor legibilidade */
+.carousel-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    letter-spacing: 0.5px;
-    font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+    background: linear-gradient(
+        135deg, 
+        rgba(0, 0, 0, 0.4) 0%, 
+        rgba(0, 0, 0, 0.6) 50%, 
+        rgba(0, 0, 0, 0.4) 100%
+    );
+    z-index: 1;
+}
+
+/* ===================================================================
+   📝 TEXTOS DO CARROSSEL - CORRIGIDOS
+   =================================================================== */
+
+.carousel-caption {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    width: 85%;
+    max-width: 600px;
+    background: none;
+    border: none;
+    padding: 1.5rem;
+    /* Fixes para evitar bug dos textos */
+    will-change: auto;
+    backface-visibility: visible;
+}
+
+.carousel-caption h5 {
+    font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    line-height: 1.2;
+    letter-spacing: normal;
+    /* Fixes para renderização */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.carousel-caption p {
+    font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 1.8rem;
+    text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.8);
+    line-height: 1.4;
+    font-weight: 400;
+    /* Fixes para renderização */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* ===================================================================
+   🎮 CONTROLES SIMPLES
+   =================================================================== */
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    z-index: 3;
+}
+
+.carousel-control-prev {
+    left: 15px;
+}
+
+.carousel-control-next {
+    right: 15px;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background: rgba(255, 255, 255, 0.25);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* ===================================================================
+   🔴 INDICADORES SIMPLES
+   =================================================================== */
+
+.carousel-indicators {
+    bottom: 15px;
+    margin: 0;
+    z-index: 3;
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-    width: 3rem;
-    height: 3rem;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    background: transparent;
+    opacity: 0.7;
+    margin: 0 4px;
+    transition: all 0.3s ease;
 }
 
-.carousel-control-prev,
-.carousel-control-next {
-    background: none;
-    box-shadow: none;
+.carousel-indicators .active {
+    background: #ffffff;
+    opacity: 1;
+    transform: scale(1.1);
 }
 
-.carousel-control-prev:focus,
-.carousel-control-next:focus,
-.carousel-control-prev:hover,
-.carousel-control-next:hover {
-    background: none;
-    box-shadow: none;
+.carousel-indicators [data-bs-target]:hover {
+    background: rgba(255, 255, 255, 0.8);
+    opacity: 1;
 }
 
-.btn-cadastro-carrossel,
-.btn-login-carrossel {
-    display: inline-block;
-    min-width: clamp(140px, 22vw, 200px);
-    min-height: 48px;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    color: #fff;
-    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
-    border: none;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-}
-
-.btn-cadastro-carrossel:hover,
-.btn-login-carrossel:hover {
-    background: linear-gradient(90deg, #0056b3 0%, #003f7f 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
-}
-
-.btn-cadastro-carrossel:active,
-.btn-login-carrossel:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
-}
+/* ===================================================================
+   🔘 BOTÕES DO CARROSSEL
+   =================================================================== */
 
 .botoes-carrossel {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: clamp(0.75rem, 2vw, 1.5rem);
-    margin-top: 1rem;
-    flex-wrap: wrap; /* Evita quebra feia em telas pequenas */
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+    z-index: 2;
+    position: relative;
 }
 
-.img_Carrossel_1,
-.img_Carrossel_2,
-.img_Carrossel_3 {
-    display: block;
-    width: 100%;
-    height: auto;
+.btn-cadastro-carrossel,
+.btn-login-carrossel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.9rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 160px;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
-/* Telas médias: reduz bordas e garante largura total sem overflow */
-@media (max-width: 900px) {
-  .carousel {
-    width: 100% !important;
-    height: auto !important;
-    border-radius: 16px !important;
-  }
-  .carousel-item img {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 16 / 9;
-    max-height: 420px;
-    object-fit: cover;
-  }
+.btn-cadastro-carrossel {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
 }
 
-/* Telas pequenas: caption mais compacta e botões em coluna quando necessário */
-@media (max-width: 600px) {
-  .carousel { margin-bottom: 24px !important; }
-  .carousel-caption {
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.55) 100%) !important;
-    padding: 0.75rem 1rem 1rem 1rem;
-    font-size: 0.98rem;
-  }
-  .carousel-caption h5 { font-size: 1.1rem; margin-bottom: 0.4rem; }
-  .carousel-caption p { font-size: 0.95rem; margin-bottom: 0.5rem; }
-  .botoes-carrossel { gap: 0.75rem; }
-  .btn-cadastro-carrossel,
-  .btn-login-carrossel {
-    width: min(100%, 260px);
-    min-width: 140px;
-  }
+.btn-login-carrossel {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.btn-cadastro-carrossel:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #003f7f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.btn-login-carrossel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: #ffffff;
+}
+
+/* ===================================================================
+   📱 RESPONSIVIDADE
+   =================================================================== */
+
+@media (max-width: 992px) {
+    .carousel {
+        height: 45vh;
+        min-height: 350px;
+        margin: 0.5rem auto 2rem auto;
+        border-radius: 10px;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .carousel-control-prev {
+        left: 12px;
+    }
+    
+    .carousel-control-next {
+        right: 12px;
+    }
+    
+    .carousel-caption {
+        width: 90%;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel {
+        height: 40vh;
+        min-height: 320px;
+        border-radius: 8px;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .carousel-control-prev {
+        left: 10px;
+    }
+    
+    .carousel-control-next {
+        right: 10px;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .carousel-caption {
+        width: 95%;
+        padding: 0.75rem;
+    }
+    
+    .carousel-caption h5 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .carousel-caption p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .botoes-carrossel {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .btn-cadastro-carrossel,
+    .btn-login-carrossel {
+        width: 100%;
+        max-width: 220px;
+        padding: 0.8rem 1.5rem;
+        min-width: auto;
+    }
+    
+    .carousel-indicators {
+        bottom: 12px;
+    }
+    
+    .carousel-indicators [data-bs-target] {
+        width: 8px;
+        height: 8px;
+        margin: 0 3px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel {
+        height: 35vh;
+        min-height: 280px;
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 36px;
+        height: 36px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .carousel-control-prev {
+        left: 8px;
+    }
+    
+    .carousel-control-next {
+        right: 8px;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .carousel-caption {
+        padding: 0.5rem;
+    }
+    
+    .carousel-indicators {
+        bottom: 10px;
+    }
+}
+
+/* ===================================================================
+   ♿ ACESSIBILIDADE E PERFORMANCE
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .carousel-item {
+        transition: none;
+    }
+    
+    .carousel-caption h5,
+    .carousel-caption p {
+        animation: none !important;
+    }
+}
+
+/* Focus visível */
+.carousel-control-prev:focus-visible,
+.carousel-control-next:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.carousel-indicators [data-bs-target]:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.btn-cadastro-carrossel:focus-visible,
+.btn-login-carrossel:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Performance otimizada */
+.carousel-item img {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+.carousel-caption {
+    transform: translate(-50%, -50%) translateZ(0);
+    -webkit-transform: translate(-50%, -50%) translateZ(0);
 }

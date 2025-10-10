@@ -1,70 +1,303 @@
-.containervalor {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: clamp(0.75rem, 3vw, 2rem);
-    padding: 1rem;
+/* ===================================================================
+   📊 SEÇÃO DE VALORES/MÉTRICAS - CORRIGIDA
+   =================================================================== */
+
+.section-cardv {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 3rem 0;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
 }
 
-.valor1 { grid-column: span 12; }
-@media (min-width: 640px) { .valor1 { grid-column: span 6; } }
-@media (min-width: 992px) { .valor1 { grid-column: span 4; } }
+.section-cardv::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="2"/></g></svg>');
+    z-index: 1;
+}
+
+.valores-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.container-escrita-valores {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.container-escrita-valores .escrita {
+    color: #ffffff;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+.container-escrita-valores .escrita::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+}
+
+/* GRID CORRIGIDO - CARDS LADO A LADO */
+.valores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+}
 
 .valor1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: clamp(0.75rem, 2vw, 1rem);
-    width: 100%;
-    max-width: 100%;
-    min-height: 140px;
-    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2.5rem;
     text-align: center;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
     overflow: hidden;
-    word-wrap: break-word;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.valor1:not(.animating) {
-    transition:
-        transform 0.35s cubic-bezier(0.39, 0.575, 0.565, 1),
-        box-shadow 0.35s cubic-bezier(0.39, 0.575, 0.565, 1);
+.valor1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
 }
 
-.valor1:not(.animating):hover {
-    transform: translateY(-9px) scale(1.09);
-    box-shadow: 0 16px 32px rgba(0, 123, 255, 0.18);
+.valor1:hover::before {
+    transform: scaleX(1);
 }
 
-/* Animação personalizada para o hover */
-@keyframes valor1-hover {
-    0% {
-        box-shadow: 0 40px 50px rgba(0, 123, 255, 0.1);
-    }
-    100% {
-        box-shadow: 0 40px 50px rgba(0, 123, 255, 0.18);
-    }
+.valor1:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
 }
 
-.icon-medium { font-size: clamp(1.4rem, 2.5vw, 2rem); margin-bottom: 0.35rem; }
-.icon-color {
-    color: #050505;
+.valor-icon {
+    font-size: 3.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    transition: all 0.3s ease;
 }
 
-.titulov {
-    font-size: clamp(1rem, 2vw, 1.25rem);
+.valor1:hover .valor-icon {
+    transform: scale(1.1);
+    color: #ffffff;
+}
+
+.valor-titulo {
+    font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 0.4rem;
-    color: #333;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    text-align: center;
 }
 
-.subtituloV {
-    font-size: clamp(0.95rem, 2vw, 1rem);
-    color: #666;
-    margin-top: 0.25rem;
-    line-height: 1.55;
+.valor-descricao {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
     text-align: center;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    white-space: normal;
+    flex: 1;
+}
+
+/* Cores específicas para cada ícone */
+.valor1:nth-child(1) .valor-icon {
+    color: #ffd700;
+}
+
+.valor1:nth-child(2) .valor-icon {
+    color: #ff69b4;
+}
+
+.valor1:nth-child(3) .valor-icon {
+    color: #00ff7f;
+}
+
+.valor1:nth-child(4) .valor-icon {
+    color: #87ceeb;
+}
+
+/* ===================================================================
+   📱 RESPONSIVIDADE CORRIGIDA
+   =================================================================== */
+
+@media (max-width: 992px) {
+    .section-cardv {
+        padding: 3rem 0;
+        margin: 2rem 0;
+    }
+    
+    .valores-container {
+        padding: 0 1.5rem;
+    }
+    
+    .valores-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .valor1 {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .valores-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .valor1 {
+        padding: 1.5rem;
+        min-height: 280px;
+    }
+    
+    .valor-icon {
+        font-size: 3rem;
+    }
+    
+    .valor-titulo {
+        font-size: 1.2rem;
+    }
+    
+    .valor-descricao {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .valores-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .valor1 {
+        padding: 1.5rem;
+        min-height: auto;
+    }
+    
+    .valor-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .valor-titulo {
+        font-size: 1.1rem;
+    }
+    
+    .valor-descricao {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===================================================================
+   🎨 ANIMAÇÕES ESPECIAIS
+   =================================================================== */
+
+@keyframes valorFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-cards-right {
+    animation: valorFadeIn 0.8s ease-out forwards;
+}
+
+/* ===================================================================
+   ♿ ACESSIBILIDADE
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .valor1 {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    .valor1:hover {
+        transform: none !important;
+    }
+    
+    .valor-icon {
+        transition: none !important;
+    }
+    
+    .valor1:hover .valor-icon {
+        transform: none !important;
+    }
+    
+    .valor1::before {
+        display: none;
+    }
+}
+
+/* Focus visível */
+.valor1:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 4px;
+}
+
+/* ===================================================================
+   🌙 TEMA ESCURO
+   =================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .section-cardv {
+        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+    
+    .valor1 {
+        background: rgba(45, 55, 72, 0.8);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .valor1:hover {
+        background: rgba(45, 55, 72, 0.9);
+    }
+}
+
+/* IMPORTANTE: Remover conflitos com outros estilos */
+.section-cardv .valor1 {
+    box-sizing: border-box !important;
+    float: none !important;
+    clear: none !important;
 }

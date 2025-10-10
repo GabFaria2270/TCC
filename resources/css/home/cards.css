@@ -1,177 +1,514 @@
 /* =========================
-   CARD NORMAL (SEM ESCRITA LATERAL)
+   CARDS PRINCIPAIS (SEM BOOTSTRAP)
    ========================= */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    margin-right: calc(-1 * var(--bs-gutter-x, 0.75rem));
-    margin-left: calc(-1 * var(--bs-gutter-x, 0.75rem));
-    padding: 1rem;
+.section-cards-principais {
+    padding: 5rem 2rem;
+    background: linear-gradient(135deg, 
+        rgba(238, 174, 202, 0.1) 0%, 
+        rgba(148, 187, 233, 0.1) 50%, 
+        rgba(238, 174, 202, 0.1) 100%);
+    position: relative;
 }
 
-.section-card {
-    margin: 7rem 0;
-    padding: 0 1rem;
+.section-cards-principais::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="%23f0f0f0" stroke-width="1" opacity="0.3"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+    pointer-events: none;
 }
 
-.col {
-    display: flex;
-    flex-direction: column;
-    min-width: 0; /* evita overflow em telas estreitas */
+.cards-principais-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
-.card {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 1.5rem;
-    box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
-    transition:
-        transform 0.3s,
-        box-shadow 0.3s;
+.card-principal {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        0 1px 8px rgba(0, 0, 0, 0.06);
     overflow: hidden;
-}
-
-.card:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
-    animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-}
-
-.h-100 { height: 100% !important; }
-
-.card.h-100,
-.card { height: 100%; display: flex; flex-direction: column; }
-
-/* Imagem do card normal */
-.card-img-top {
-    width: 100%;
-    height: 220px; /* Altura mais elegante */
-    object-fit: cover;
-    border-top-left-radius: 1.5rem;
-    border-top-right-radius: 1.5rem;
-    transition: filter 0.3s;
-}
-
-.card:hover .card-img-top { filter: brightness(0.92) contrast(1.08); }
-
-/* Corpo do card normal */
-.card-body {
-    flex: 1 1 auto;
-    padding: 1.5rem;
-    color: #212529;
-    background: #f8faff;
-    transition: background 0.3s;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    height: 100%;
     display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.card-title { margin-bottom: 0.65rem; font-weight: bold; font-size: 1.25rem; letter-spacing: 1px; }
-.card-text:last-child { margin-bottom: 0; }
-
-/* Rodapé do card normal */
-.card-footer {
-    padding: 0.75rem 1rem;
-    color: #6c757d;
-    background-color: #e9f2fb;
-    border-top: 1px solid #b6d4fe;
-    font-size: 0.95rem;
-    border-bottom-left-radius: 1.5rem;
-    border-bottom-right-radius: 1.5rem;
+.card-principal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        #667eea 0%, 
+        #764ba2 25%, 
+        #f093fb 50%, 
+        #f5576c 75%, 
+        #4facfe 100%);
+    transition: height 0.3s ease;
 }
-
-/* Animação */
-@keyframes card-hover { 0% { box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);} 100% { box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);} }
 
 /* =========================
-   CARD COM ESCRITA LATERAL (mb-3)
+   EFEITOS HOVER DOS CARDS PRINCIPAIS
    ========================= */
-.card.mb-3 {
-    display: flex; /* imagem e texto lado a lado */
-    flex-direction: row;
-    border-radius: 1.5rem;
-    box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
+.card-principal {
+    cursor: pointer;
+    will-change: transform, box-shadow;
+}
+
+.card-principal:hover {
+    transform: translateY(-12px) scale(1.03) !important;
+    box-shadow: 
+        0 25px 50px rgba(102, 126, 234, 0.2),
+        0 15px 30px rgba(0, 0, 0, 0.15) !important;
+    z-index: 10 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.card-principal:hover::before {
+    height: 6px;
+}
+
+/* Animação suave para imagem no hover */
+.card-principal:hover .card-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-principal:hover .card-image::after {
+    opacity: 1;
+}
+
+/* Efeito no badge durante hover */
+.card-principal:hover .card-badge {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+/* Transições específicas sem conflito com animações */
+.card-principal:not(.animate-fade-in) {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-principal.animate-fade-in {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+               box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+               z-index 0s;
+}
+
+/* Estado focado para acessibilidade */
+.card-principal:focus-visible {
+    outline: 3px solid rgba(102, 126, 234, 0.6);
+    outline-offset: 4px;
+    transform: translateY(-8px) scale(1.02);
+}
+
+/* Regra removida - consolidada acima */
+
+.card-image {
+    position: relative;
     overflow: hidden;
-    transition: box-shadow 0.3s, transform 0.3s;
-    background: #fff;
-    width: 97.8%;
-    margin-left: 15.5px;
+    height: 240px;
 }
 
-.card.mb-3:hover { box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18); transform: translateY(-6px) scale(1.02); animation: card-hover 0.4s cubic-bezier(0.39, 0.575, 0.565, 1) both; }
-
-.card.mb-3 > .col-md-4,
-.card.mb-3 > .row.g-0 { flex: 1; }
-
-.card .row.g-0 { display: grid; grid-template-columns: 1fr; margin: 0; }
-
-.card .col-md-4 { display: flex; align-items: center; justify-content: flex-end; max-width: 260px; min-width: 120px; padding: 0; }
-
-.card .img-fluid {
-    width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border-radius: 0; display: block; margin-left: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease, filter 0.3s ease;
 }
 
-.card .col-md-8 { display: flex; flex-direction: column; justify-content: center; padding: 1rem; background: #f8faff; }
-
-.card-body { display: flex; flex-direction: column; justify-content: center; height: 100%; }
-
-.card-title { font-weight: bold; font-size: 1.25rem; margin-bottom: 0.65rem; letter-spacing: 1px; }
-.card-text:last-child { margin-bottom: 0; }
-.text-body-secondary { color: #6c757d; font-size: 0.95rem; }
-
-@media (max-width: 900px) {
-  .card.mb-3 { width: 100%; margin-left: 0; border-radius: 16px; }
-  .card .row.g-0 { flex-wrap: wrap; }
-  .card .col-md-4 { max-width: 100%; justify-content: center; }
-  .card .img-fluid { width: 100%; max-height: 200px; margin-left: 0; border-radius: 0; }
-  .card .col-md-8 { padding: 1rem; }
+.card-principal:hover .card-image img {
+    transform: scale(1.05);
+    filter: brightness(1.1) contrast(1.05);
 }
 
-@media (min-width: 992px) {
-  .card .row.g-0 { grid-template-columns: 360px 1fr; }
-  .card .img-fluid { height: 100%; aspect-ratio: auto; object-fit: cover; }
+.card-content {
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Layout responsivo para a seção de cards sem quebrar Bootstrap */
-.section-card .row {
-  justify-content: center;
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
 }
 
-/* Coluna ocupa 100% no mobile */
-.section-card .col {
-  flex: 1 1 100%;
-  max-width: 100%;
+.card-description {
+    color: #4a5568;
+    line-height: 1.6;
+    flex: 1;
+    font-size: 1rem;
 }
 
-/* Duas colunas em telas ≥ 576px */
-@media (min-width: 576px) {
-  .section-card .col {
-    flex: 0 1 48%;
-    max-width: 48%;
-  }
+.card-footer {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: center;
 }
 
-/* Três colunas em telas ≥ 992px */
-@media (min-width: 992px) {
-  .section-card .col {
-    flex: 0 1 31.5%;
-    max-width: 31.5%;
-  }
+.card-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* Evita overflow lateral em telas muito estreitas */
-@media (max-width: 600px) {
-  .section-card .row {
-    margin-right: 0;
-    margin-left: 0;
-    padding: 0.5rem;
-  }
+/* Animações de entrada iniciais */
+.card-principal {
+    opacity: 0;
+    transform: translateY(30px);
 }
 
-/* Imagens proporcionais nos cards */
-.card-img-top {
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
+.card-principal.animate-fade-in {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.card-principal:nth-child(1).animate-fade-in { animation-delay: 0.1s; }
+.card-principal:nth-child(2).animate-fade-in { animation-delay: 0.2s; }
+.card-principal:nth-child(3).animate-fade-in { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   ESTADOS FINAIS GARANTIDOS DOS CARDS
+   ========================= */
+
+/* Garantir que cards carregados tenham o estado correto */
+.card-principal.animate-fade-in {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    visibility: visible !important;
+}
+
+/* Estado padrão após carregamento */
+.cards-principais-grid .card-principal {
+    opacity: 1;
+    visibility: visible;
+    position: relative;
+}
+
+/* Transições suaves para todos os elementos dos cards */
+.card-principal,
+.card-principal *,
+.card-principal::before,
+.card-principal::after {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevenir que animações interferem no hover */
+.card-principal.animate-fade-in:hover {
+    animation: none !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .section-cards-principais {
+        padding: 3rem 1rem;
+    }
+    
+    .cards-principais-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .card-content {
+        padding: 1.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.25rem;
+    }
+    
+    .card-image {
+        height: 200px;
+    }
+}
+
+/* =========================
+   SEÇÃO DE VANTAGENS (SEM BOOTSTRAP)
+   ========================= */
+.section-vantagens {
+    padding: 5rem 2rem;
+    background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.05) 0%, 
+        rgba(168, 85, 247, 0.05) 50%, 
+        rgba(236, 72, 153, 0.05) 100%);
+    position: relative;
+}
+
+.section-vantagens::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.vantagem-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 3rem;
+    align-items: center;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 
+        0 16px 40px rgba(0, 0, 0, 0.1),
+        0 8px 16px rgba(0, 0, 0, 0.06);
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+}
+
+.vantagem-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 24px 50px rgba(0, 0, 0, 0.15),
+        0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.vantagem-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.vantagem-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.vantagem-card:hover .vantagem-image img {
+    transform: scale(1.05);
+    filter: brightness(1.1) contrast(1.05);
+}
+
+.vantagem-content {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.vantagem-titulo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.vantagem-descricao {
+    color: #4a5568;
+    line-height: 1.7;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.vantagem-destaque {
+    margin: 1rem 0;
+}
+
+.vantagem-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.vantagem-lista li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #2d3748;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.vantagem-lista li:hover {
+    transform: translateX(8px);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.vantagem-lista li i {
+    color: #48bb78;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.vantagem-lista li:hover i {
+    color: #ffffff;
+}
+
+.vantagem-footer {
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.vantagem-tempo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsividade */
+@media (max-width: 968px) {
+    .vantagem-card {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    
+    .vantagem-image {
+        order: -1;
+    }
+    
+    .vantagem-image img {
+        height: 300px;
+    }
+    
+    .vantagem-content {
+        padding: 2rem;
+    }
+    
+    .vantagem-titulo {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-vantagens {
+        padding: 3rem 1rem;
+    }
+    
+    .vantagem-content {
+        padding: 1.5rem;
+    }
+    
+    .vantagem-titulo {
+        font-size: 1.5rem;
+    }
+    
+    .vantagem-descricao {
+        font-size: 1rem;
+    }
+    
+    .vantagem-lista li {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* =========================
+   ANIMAÇÕES E EFEITOS GLOBAIS
+   ========================= */
+@keyframes card-hover {
+    0% { 
+        box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
+    } 
+    100% { 
+        box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
+    }
+}
+
+/* Transições suaves para todos os cards */
+.card-principal,
+.vantagem-card {
+    will-change: transform, box-shadow;
+}
+
+/* Estados de foco para acessibilidade */
+.card-principal:focus,
+.vantagem-card:focus {
+    outline: 3px solid rgba(102, 126, 234, 0.5);
+    outline-offset: 2px;
+}
+
+/* Suporte para prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .card-principal,
+    .vantagem-card,
+    .card-image img,
+    .vantagem-image img,
+    .vantagem-lista li {
+        transition: none;
+        animation: none;
+    }
+    
+    .card-principal:hover,
+    .vantagem-card:hover {
+        transform: none;
+    }
 }

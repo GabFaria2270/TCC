@@ -1,22 +1,25 @@
-<nav class="navbar navbar-expand-lg navbar-dark" role="navigation" aria-label="Navegação principal">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">60+conectado</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Início</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#sobre">Sobre</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#valores">Contato</a>
-                </li>
-            </ul>
+<nav class="modern-navbar" role="navigation" aria-label="Navegação principal">
+    <div class="navbar-container">
+        <!-- Logo apenas com ícone -->
+        <div class="navbar-brand">
+            <a href="/" aria-label="Página inicial">
+                <i class="bi bi-shop-window"></i>
+            </a>
         </div>
+        
+        <!-- Menu centralizado -->
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="/" class="nav-link active">Início</a>
+            <a href="#funcionalidades" class="nav-link">Funcionalidades</a>
+            <a href="#sobre" class="nav-link">Sobre</a>
+            <a href="#valores" class="nav-link">Métricas</a>
+        </div>
+        
+        <!-- Botão mobile -->
+        <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </div>
 </nav>
