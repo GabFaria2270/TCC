@@ -3,8 +3,8 @@
    =================================================================== */
 
 .botãonavegação {
-    color: #fff;
-    border: solid 6px #6f7274; 
+    color: var(--color-white);
+    border: solid 6px #6f7274;
     padding: 10px 20px;
     border-radius: 4px;
     display: flex;
@@ -18,8 +18,8 @@
     top: 50%;
     right: 30px;
     transform: translateY(-50%);
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-blue-dark) 100%);
+    color: var(--color-white);
     border: none;
     padding: 0;
     border-radius: 50%;
@@ -30,7 +30,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     z-index: 1000;
     opacity: 0.9;
@@ -38,15 +38,15 @@
 }
 
 .btndenavegação:hover {
-    background: linear-gradient(135deg, #0056b3 0%, #003f7f 100%);
+    background: linear-gradient(135deg, var(--secondary-blue-dark) 0%, #003f7f 100%);
     transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 12px 35px rgba(0, 123, 255, 0.4);
+    box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
     opacity: 1;
 }
 
 .btndenavegação:active {
     transform: translateY(-50%) scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
 }
 
 .btndenavegação i {
@@ -81,11 +81,14 @@
 }
 
 @keyframes btnPulse {
-    0%, 100% {
-        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+    0%,
+    100% {
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
     }
     50% {
-        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5), 0 0 0 10px rgba(0, 123, 255, 0.1);
+        box-shadow:
+            0 8px 25px rgba(59, 130, 246, 0.5),
+            0 0 0 10px rgba(59, 130, 246, 0.1);
     }
 }
 
@@ -100,7 +103,7 @@
         height: 50px;
         font-size: 1rem;
     }
-    
+
     .btndenavegação i {
         font-size: 1.2rem;
     }
@@ -116,19 +119,19 @@
         height: 48px;
         font-size: 0.9rem;
     }
-    
+
     .btndenavegação:hover {
         transform: scale(1.1);
     }
-    
+
     .btndenavegação:active {
         transform: scale(1.05);
     }
-    
+
     .btndenavegação i {
         font-size: 1.1rem;
     }
-    
+
     @keyframes btnFlip {
         0% {
             transform: rotateY(0deg);
@@ -150,7 +153,7 @@
         height: 44px;
         font-size: 0.8rem;
     }
-    
+
     .btndenavegação i {
         font-size: 1rem;
     }
@@ -165,19 +168,19 @@
         transition: none !important;
         animation: none !important;
     }
-    
+
     .btndenavegação:hover {
         transform: translateY(-50%) !important;
     }
-    
+
     .btndenavegação.flip {
         animation: none !important;
     }
-    
+
     .btndenavegação.pulse {
         animation: none !important;
     }
-    
+
     @media (max-width: 768px) {
         .btndenavegação:hover {
             transform: none !important;
@@ -187,7 +190,7 @@
 
 /* Focus visível para navegação por teclado */
 .btndenavegação:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline: 2px solid var(--white-80);
     outline-offset: 3px;
 }
 
@@ -197,21 +200,24 @@
 
 @media (prefers-color-scheme: dark) {
     .btndenavegação {
-        background: linear-gradient(135deg, #4ea1ff 0%, #2563eb 100%);
-        box-shadow: 0 8px 25px rgba(78, 161, 255, 0.3);
+        background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-blue-dark) 100%);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
     }
-    
+
     .btndenavegação:hover {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        box-shadow: 0 12px 35px rgba(78, 161, 255, 0.4);
+        background: linear-gradient(135deg, var(--secondary-blue-dark) 0%, #1d4ed8 100%);
+        box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
     }
-    
+
     @keyframes btnPulse {
-        0%, 100% {
-            box-shadow: 0 8px 25px rgba(78, 161, 255, 0.3);
+        0%,
+        100% {
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
         50% {
-            box-shadow: 0 8px 25px rgba(78, 161, 255, 0.5), 0 0 0 10px rgba(78, 161, 255, 0.1);
+            box-shadow:
+                0 8px 25px rgba(59, 130, 246, 0.5),
+                0 0 0 10px rgba(59, 130, 246, 0.1);
         }
     }
 }
@@ -221,10 +227,10 @@
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #007bff;
+    color: var(--secondary-blue);
 }
 
 .btndenavegação.variant-glass:hover {
     background: rgba(255, 255, 255, 0.2);
-    color: #0056b3;
+    color: var(--secondary-blue-dark);
 }

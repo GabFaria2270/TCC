@@ -6,37 +6,43 @@
     --color-gray: #4b4b4b;
     --color-offwhite-dark: #e0d6c3;
     --color-offwhite-light: #f5e9d7;
-    
+
     /* Paleta moderna da home page */
     --primary-blue: #667eea;
     --primary-purple: #764ba2;
     --primary-pink: #f093fb;
     --secondary-blue: #3b82f6;
+    --secondary-blue-dark: #1e40af; /* equivalente aproximado ao antigo #0056b3 */
     --secondary-purple: #8b5cf6;
     --secondary-pink: #ec4899;
     --accent-green: #22c55e;
     --accent-orange: #fb923c;
     --accent-yellow: #fbbf24;
-    
+
     /* Cores de texto */
     --text-primary: #1a202c;
     --text-secondary: #4a5568;
     --text-muted: #2d3748;
-    
+
     /* Cores de fundo */
     --bg-light: #f8fafc;
+    --bg-dark-1: #1a1d23; /* base escura usada em gradientes do tema escuro */
     --bg-gradient-1: rgba(238, 174, 202, 0.1);
     --bg-gradient-2: rgba(148, 187, 233, 0.1);
     --bg-gradient-3: rgba(99, 102, 241, 0.05);
     --bg-gradient-4: rgba(168, 85, 247, 0.05);
-    
+
     /* Cores de borda e sombra */
     --border-light: #e2e8f0;
     --border-white: rgba(255, 255, 255, 0.2);
+    --white-90: rgba(255, 255, 255, 0.9);
+    --white-80: rgba(255, 255, 255, 0.8);
+    --white-40: rgba(255, 255, 255, 0.4);
+    --white-30: rgba(255, 255, 255, 0.3);
     --shadow-sm: 0 1px 8px rgba(0, 0, 0, 0.04);
     --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.12);
-    
+
     /* Gradientes principais */
     --gradient-primary: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 50%, var(--primary-pink) 100%);
     --gradient-secondary: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-purple) 50%, var(--secondary-pink) 100%);

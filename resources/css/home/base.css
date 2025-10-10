@@ -7,18 +7,18 @@ html {
 body {
     margin: 0;
     padding: 0;
-    /* No home, a navbar é sobreposta ao carrossel; não precisamos reservar espaço no body */
-    padding-top: 0;
+    /* Espaçamento do body para navbar é tratado globalmente em geral/navbar.css.
+       Não forçar padding-top aqui para evitar conflito em páginas que reutilizam base.css */
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5a96 100%);
+    background: var(--gradient-primary);
     min-height: 100vh;
 }
 
 /* Animação de fundo removida - estava causando travamento */
 h1 {
     text-align: center;
-    color: #1f2937;
+    color: var(--text-primary);
 }
 label {
     font-weight: bold;
@@ -37,10 +37,10 @@ button:hover {
 }
 
 .escrita {
-    display: inline-block; 
-    font-size: 2.5rem; 
+    display: inline-block;
+    font-size: 2.5rem;
     font-weight: 700;
-    color: #2d3748;
+    color: var(--text-muted);
     text-align: center;
     letter-spacing: -0.02em;
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -48,10 +48,10 @@ button:hover {
 }
 .container-escrita {
     margin: 3rem 0 2rem 0;
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    width: 100%; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     min-height: 80px;
     position: relative;
 }
@@ -64,8 +64,6 @@ button:hover {
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background: #007bff;
+    background: var(--secondary-blue);
     border-radius: 2px;
 }
-
-

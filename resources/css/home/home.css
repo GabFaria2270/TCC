@@ -21,15 +21,12 @@
    ========================= */
 
 @import '../app.css';
-@import '../geral/navbar.css';
-@import 'base.css';
-@import 'animacoes.css';
-@import 'carrossel.css';
-@import 'banner.css';
-@import 'cards.css';
-@import 'sobre.css';
-@import 'barravalores.css';
-@import 'novassecoes.css';
-@import 'btnrolagem.css';
-@import 'responsivo.css';
+@import './base.css';
+@import './carrossel.css';
+@import './cards.css';
+@import './sobre.css';
+@import './barravalores.css';
+@import './novassecoes.css';
+@import './btnrolagem.css';
+@import './responsivo.css';
 /* CSS de páginas (login/cadastro) não deve ser importado aqui para evitar vazamento de estilos */

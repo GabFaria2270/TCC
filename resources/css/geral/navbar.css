@@ -27,7 +27,10 @@ body {
     border-bottom: 1px solid transparent;
     backdrop-filter: none;
     z-index: 1000;
-    transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    transition:
+        background 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
     padding: 0;
     box-shadow: none;
 }
@@ -89,8 +92,6 @@ body {
     background: #f8fafc;
 }
 
-
-
 .navbar-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -116,7 +117,7 @@ body {
 }
 
 .navbar-brand a:hover {
-    color: #0056b3;
+    color: var(--secondary-blue-dark);
     background: rgba(0, 123, 255, 0.1);
 }
 
@@ -136,7 +137,9 @@ body {
     position: relative;
     padding: 0.75rem 1.25rem;
     border-radius: 8px;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
 }
 
 .nav-link:hover {
@@ -151,7 +154,7 @@ body {
     transform: translateX(-50%);
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #007bff, #0056b3);
+    background: linear-gradient(90deg, var(--secondary-blue), var(--secondary-blue-dark));
     border-radius: 2px;
     transition: width 0.3s ease;
 }
@@ -207,7 +210,7 @@ body {
     .navbar-container {
         padding: 0 1.5rem;
     }
-    
+
     .navbar-menu {
         position: absolute; /* Mudou para absolute normal */
         top: 100%;
@@ -225,17 +228,17 @@ body {
         visibility: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     .navbar-menu.active {
         transform: translateX(0) translateY(0);
         opacity: 1;
         visibility: visible;
     }
-    
+
     .navbar-toggle {
         display: flex;
     }
-    
+
     .nav-link {
         width: 100%;
         text-align: center;
@@ -253,11 +256,11 @@ body {
         padding: 0 1rem;
         height: var(--nav-height);
     }
-    
+
     .navbar-brand a {
         font-size: 1.5rem;
     }
-    
+
     .navbar-menu {
         padding: 1rem;
     }
@@ -266,10 +269,6 @@ body {
 /* ===================================================================
    🎨 EFEITOS VISUAIS E ANIMAÇÕES
    =================================================================== */
-
-
-
-
 
 /* Foco acessível */
 .nav-link:focus-visible,
@@ -287,25 +286,25 @@ body {
         background: rgba(15, 23, 42, 0.95);
         border-bottom-color: rgba(255, 255, 255, 0.1);
     }
-    
+
     .navbar-toggle span {
         background: #cbd5e1;
     }
-    
+
     .nav-link {
         color: #cbd5e1;
     }
-    
+
     .nav-link:hover,
     .nav-link.active {
         color: #60a5fa;
         background: rgba(96, 165, 250, 0.1);
     }
-    
+
     .navbar-brand a {
         color: #60a5fa;
     }
-    
+
     @media (max-width: 992px) {
         .navbar-menu {
             background: rgba(15, 23, 42, 0.98);

@@ -29,9 +29,9 @@
 }
 
 .card-principal {
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 20px;
-    box-shadow: 
+    box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.1),
         0 1px 8px rgba(0, 0, 0, 0.06);
     overflow: hidden;
@@ -40,7 +40,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-white);
 }
 
 .card-principal::before {
@@ -50,7 +50,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: #007bff;
+    background: var(--secondary-blue);
     transition: height 0.3s ease;
 }
 
@@ -64,7 +64,7 @@
 
 .card-principal:hover {
     transform: translateY(-12px) scale(1.03) !important;
-    box-shadow: 
+    box-shadow:
         0 25px 50px rgba(102, 126, 234, 0.2),
         0 15px 30px rgba(0, 0, 0, 0.15) !important;
     z-index: 10 !important;
@@ -105,9 +105,10 @@
 }
 
 .card-principal.animate-fade-in {
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-               box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-               z-index 0s;
+    transition:
+        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        z-index 0s;
 }
 
 /* Estado focado para acessibilidade */
@@ -129,7 +130,9 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease, filter 0.3s ease;
+    transition:
+        transform 0.4s ease,
+        filter 0.3s ease;
 }
 
 .card-principal:hover .card-image img {
@@ -147,14 +150,14 @@
 .card-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1a202c;
+    color: var(--text-primary);
     margin-bottom: 1rem;
     line-height: 1.3;
     letter-spacing: -0.025em;
 }
 
 .card-description {
-    color: #4a5568;
+    color: var(--text-secondary);
     line-height: 1.6;
     flex: 1;
     font-size: 1rem;
@@ -162,14 +165,14 @@
 
 .card-footer {
     padding: 1rem 2rem;
-    background: #f8f9fa;
-    border-top: 1px solid #e2e8f0;
+    background: var(--bg-light);
+    border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: center;
 }
 
 .card-badge {
-    background: #007bff;
+    background: var(--secondary-blue);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 20px;
@@ -190,9 +193,15 @@
     animation: fadeInUp 0.6s ease forwards;
 }
 
-.card-principal:nth-child(1).animate-fade-in { animation-delay: 0.1s; }
-.card-principal:nth-child(2).animate-fade-in { animation-delay: 0.2s; }
-.card-principal:nth-child(3).animate-fade-in { animation-delay: 0.3s; }
+.card-principal:nth-child(1).animate-fade-in {
+    animation-delay: 0.1s;
+}
+.card-principal:nth-child(2).animate-fade-in {
+    animation-delay: 0.2s;
+}
+.card-principal:nth-child(3).animate-fade-in {
+    animation-delay: 0.3s;
+}
 
 @keyframes fadeInUp {
     0% {
@@ -241,20 +250,20 @@
     .section-cards-principais {
         padding: 3rem 1rem;
     }
-    
+
     .cards-principais-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     .card-content {
         padding: 1.5rem;
     }
-    
+
     .card-title {
         font-size: 1.25rem;
     }
-    
+
     .card-image {
         height: 200px;
     }
@@ -288,22 +297,22 @@
     grid-template-columns: 1fr 1.2fr;
     gap: 2rem;
     align-items: center;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 20px;
     overflow: hidden;
     padding: 2rem;
-    box-shadow: 
+    box-shadow:
         0 10px 25px rgba(0, 0, 0, 0.08),
         0 4px 10px rgba(0, 0, 0, 0.04);
     position: relative;
     z-index: 1;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--border-white);
     transition: all 0.4s ease;
 }
 
 .vantagem-card:hover {
     transform: translateY(-4px);
-    box-shadow: 
+    box-shadow:
         0 24px 50px rgba(0, 0, 0, 0.15),
         0 12px 20px rgba(0, 0, 0, 0.1);
 }
@@ -317,7 +326,9 @@
     width: 100%;
     height: 400px;
     object-fit: cover;
-    transition: transform 0.4s ease, filter 0.3s ease;
+    transition:
+        transform 0.4s ease,
+        filter 0.3s ease;
 }
 
 .vantagem-card:hover .vantagem-image img {
@@ -335,15 +346,15 @@
 .vantagem-titulo {
     font-size: 2rem;
     font-weight: 700;
-    color: #1a202c;
+    color: var(--text-primary);
     line-height: 1.2;
     letter-spacing: -0.025em;
     margin: 0;
-    color: #2d3748;
+    color: var(--text-muted);
 }
 
 .vantagem-descricao {
-    color: #4a5568;
+    color: var(--text-secondary);
     line-height: 1.7;
     font-size: 1.1rem;
     margin: 0;
@@ -366,18 +377,18 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: #2d3748;
+    color: var(--text-muted);
     font-weight: 500;
     padding: 0.75rem 1rem;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 12px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-light);
     transition: all 0.3s ease;
 }
 
 .vantagem-lista li:hover {
     transform: translateX(8px);
-    background: #007bff;
+    background: var(--secondary-blue);
     color: white;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
@@ -394,13 +405,13 @@
 
 .vantagem-footer {
     padding-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: flex-end;
 }
 
 .vantagem-tempo {
-    background: #007bff;
+    background: var(--secondary-blue);
     color: white;
     padding: 0.5rem 1.25rem;
     border-radius: 20px;
@@ -417,19 +428,19 @@
         grid-template-columns: 1fr;
         gap: 0;
     }
-    
+
     .vantagem-image {
         order: -1;
     }
-    
+
     .vantagem-image img {
         height: 300px;
     }
-    
+
     .vantagem-content {
         padding: 2rem;
     }
-    
+
     .vantagem-titulo {
         font-size: 1.75rem;
     }
@@ -439,19 +450,19 @@
     .section-vantagens {
         padding: 3rem 1rem;
     }
-    
+
     .vantagem-content {
         padding: 1.5rem;
     }
-    
+
     .vantagem-titulo {
         font-size: 1.5rem;
     }
-    
+
     .vantagem-descricao {
         font-size: 1rem;
     }
-    
+
     .vantagem-lista li {
         padding: 0.6rem 0.8rem;
         font-size: 0.9rem;
@@ -462,10 +473,10 @@
    ANIMAÇÕES E EFEITOS GLOBAIS
    ========================= */
 @keyframes card-hover {
-    0% { 
+    0% {
         box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
-    } 
-    100% { 
+    }
+    100% {
         box-shadow: 0 12px 32px rgba(0, 123, 255, 0.18);
     }
 }
@@ -493,7 +504,7 @@
         transition: none;
         animation: none;
     }
-    
+
     .card-principal:hover,
     .vantagem-card:hover {
         transform: none;

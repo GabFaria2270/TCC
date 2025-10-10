@@ -234,7 +234,8 @@
 }
 
 @keyframes pulseGlow {
-    0%, 100% {
+    0%,
+    100% {
         box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
     }
     50% {
@@ -301,7 +302,7 @@
 /* Estado padrão dos elementos (visível) */
 .section-home,
 .section-cards-principais,
-.section-vantagens, 
+.section-vantagens,
 .section-cardv,
 .container-sobre,
 .section-stats,
@@ -359,7 +360,7 @@
     display: block !important;
     text-align: center !important;
     padding: 2rem !important;
-    background: #ffffff !important;
+    background: var(--color-white) !important;
     border-radius: 20px !important;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
     position: relative !important;
@@ -377,7 +378,7 @@
     justify-content: center !important;
     align-items: center !important;
     font-size: 2.5rem !important;
-    color: #667eea !important;
+    color: var(--primary-blue) !important;
     margin-bottom: 1rem !important;
 }
 
@@ -385,7 +386,7 @@
     display: block !important;
     font-size: 2.5rem !important;
     font-weight: bold !important;
-    color: #1f2937 !important;
+    color: var(--text-primary) !important;
     margin: 0.5rem 0 !important;
 }
 
@@ -393,7 +394,7 @@
 .section-stats .stat-label {
     display: block !important;
     font-size: 1.1rem !important;
-    color: #374151 !important;
+    color: var(--text-secondary) !important;
     font-weight: 600 !important;
 }
 
@@ -409,7 +410,7 @@
 
 .section-testimonials .testimonial-card {
     display: block !important;
-    background: white !important;
+    background: var(--color-white) !important;
     border-radius: 16px !important;
     padding: 2rem !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
@@ -488,7 +489,7 @@
         animation: none;
         transition: none;
     }
-    
+
     .card-principal,
     .vantagem-card {
         transform: none !important;

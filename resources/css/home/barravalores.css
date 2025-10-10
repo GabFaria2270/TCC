@@ -6,16 +6,16 @@
    │ 🎯 CONTAINER PRINCIPAL - ALTURA AUMENTADA                       │
    └─────────────────────────────────────────────────────────────────┘ */
 .section-cardv {
-    padding: 6rem 4%;          /* Aumentei o padding vertical para 15rem */
+    padding: 6rem 4%; /* Aumentei o padding vertical para 15rem */
     background: transparent;
-    margin: 2rem 4%;            /* Afastamento ajustado para 4% */
-    max-width: 92%;             /* Mantém a largura proporcional */
-    color: #333;
+    margin: 2rem 4%; /* Afastamento ajustado para 4% */
+    max-width: 92%; /* Mantém a largura proporcional */
+    color: var(--text-primary);
     position: relative;
     overflow: hidden;
-    border-radius: 20px;        /* Arredondamento dos cantos */
-    box-sizing: border-box;     /* Garante que padding não afete a largura */
-    min-height: 500px;         /* Aumentei a altura mínima para 1000px */
+    border-radius: 20px; /* Arredondamento dos cantos */
+    box-sizing: border-box; /* Garante que padding não afete a largura */
+    min-height: 500px; /* Aumentei a altura mínima para 1000px */
 }
 
 .section-cardv::before {
@@ -33,9 +33,9 @@
    │ 📦 CONTAINER INTERNO - CENTRALIZAÇÃO                           │
    └─────────────────────────────────────────────────────────────────┘ */
 .valores-container {
-    max-width: 95%;             /* ← Mantém o container proporcional à seção */
-    margin: 0 auto;             /* Centraliza horizontalmente */
-    padding: 0 2rem;            /* Espaçamento interno lateral */
+    max-width: 95%; /* ← Mantém o container proporcional à seção */
+    margin: 0 auto; /* Centraliza horizontalmente */
+    padding: 0 2rem; /* Espaçamento interno lateral */
     position: relative;
     z-index: 2;
 }
@@ -45,7 +45,7 @@
    └─────────────────────────────────────────────────────────────────┘ */
 .container-escrita-valores {
     text-align: center;
-    margin-bottom: 3rem;        /* ← ESPAÇO ABAIXO DO TÍTULO */
+    margin-bottom: 3rem; /* ← ESPAÇO ABAIXO DO TÍTULO */
 }
 
 .container-escrita-valores .escrita {
@@ -65,7 +65,7 @@
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--white-80);
     border-radius: 2px;
 }
 
@@ -75,7 +75,7 @@
 .valores-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* ← LARGURA MÍNIMA DOS CARDS */
-    gap: 1.5rem;                /* ← ESPAÇO ENTRE OS CARDS */
+    gap: 1.5rem; /* ← ESPAÇO ENTRE OS CARDS */
     width: 100%;
     margin: 0 auto;
 }
@@ -84,10 +84,10 @@
    │ 🎴 CARDS INDIVIDUAIS - APARÊNCIA E COMPORTAMENTO               │
    └─────────────────────────────────────────────────────────────────┘ */
 .valor1 {
-    background: #f8f9fa;        /* ← COR DE FUNDO DOS CARDS */
-    border: 1px solid #dee2e6;  /* ← BORDA DOS CARDS */
-    border-radius: 16px;        /* ← ARREDONDAMENTO DOS CARDS */
-    padding: 1.8rem;            /* ← ESPAÇO INTERNO DOS CARDS */
+    background: var(--bg-light); /* ← COR DE FUNDO DOS CARDS */
+    border: 1px solid var(--border-light); /* ← BORDA DOS CARDS */
+    border-radius: 16px; /* ← ARREDONDAMENTO DOS CARDS */
+    padding: 1.8rem; /* ← ESPAÇO INTERNO DOS CARDS */
     text-align: center;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
@@ -97,7 +97,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ← SOMBRA DOS CARDS */
+    box-shadow: var(--shadow-sm); /* ← SOMBRA DOS CARDS */
 }
 
 /* ┌─────────────────────────────────────────────────────────────────┐
@@ -110,7 +110,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+    background: linear-gradient(90deg, var(--white-80), var(--white-40));
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
@@ -129,31 +129,31 @@
    │ 🎨 ELEMENTOS VISUAIS - ÍCONES, TÍTULOS E TEXTOS                │
    └─────────────────────────────────────────────────────────────────┘ */
 .valor-icon {
-    font-size: 3.5rem;          /* ← TAMANHO DOS ÍCONES */
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1.5rem;      /* ← ESPAÇO ABAIXO DOS ÍCONES */
+    font-size: 3.5rem; /* ← TAMANHO DOS ÍCONES */
+    color: var(--white-90);
+    margin-bottom: 1.5rem; /* ← ESPAÇO ABAIXO DOS ÍCONES */
     display: inline-block;
     transition: all 0.3s ease;
 }
 
 .valor1:hover .valor-icon {
     transform: scale(1.1);
-    color: #ffffff;
+    color: var(--color-white);
 }
 
 .valor-titulo {
-    font-size: 1.4rem;          /* ← TAMANHO DO TÍTULO */
+    font-size: 1.4rem; /* ← TAMANHO DO TÍTULO */
     font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 1rem;        /* ← ESPAÇO ABAIXO DO TÍTULO */
+    color: var(--color-white);
+    margin-bottom: 1rem; /* ← ESPAÇO ABAIXO DO TÍTULO */
     line-height: 1.3;
     text-align: center;
 }
 
 .valor-descricao {
-    font-size: 1rem;            /* ← TAMANHO DA DESCRIÇÃO */
+    font-size: 1rem; /* ← TAMANHO DA DESCRIÇÃO */
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--white-90);
     margin: 0;
     text-align: center;
     flex: 1;
@@ -163,19 +163,19 @@
    │ 🌈 CORES ESPECÍFICAS DOS ÍCONES                                 │
    └─────────────────────────────────────────────────────────────────┘ */
 .valor1:nth-child(1) .valor-icon {
-    color: #ffd700;
+    color: var(--accent-yellow);
 }
 
 .valor1:nth-child(2) .valor-icon {
-    color: #ff69b4;
+    color: var(--secondary-pink);
 }
 
 .valor1:nth-child(3) .valor-icon {
-    color: #00ff7f;
+    color: var(--accent-green);
 }
 
 .valor1:nth-child(4) .valor-icon {
-    color: #87ceeb;
+    color: var(--secondary-blue);
 }
 
 /* ===================================================================
@@ -187,21 +187,21 @@
    └─────────────────────────────────────────────────────────────────┘ */
 @media (max-width: 992px) {
     .section-cardv {
-        padding: 3rem 0;        /* ← ESPAÇAMENTO EM TABLET */
-        margin: 2rem 0;         /* ← MARGEM EM TABLET */
+        padding: 3rem 0; /* ← ESPAÇAMENTO EM TABLET */
+        margin: 2rem 0; /* ← MARGEM EM TABLET */
     }
-    
+
     .valores-container {
-        padding: 0 1.5rem;      /* ← PADDING LATERAL EM TABLET */
+        padding: 0 1.5rem; /* ← PADDING LATERAL EM TABLET */
     }
-    
+
     .valores-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;            /* ← ESPAÇO ENTRE CARDS EM TABLET */
+        gap: 1.5rem; /* ← ESPAÇO ENTRE CARDS EM TABLET */
     }
-    
+
     .valor1 {
-        padding: 2rem;          /* ← PADDING DOS CARDS EM TABLET */
+        padding: 2rem; /* ← PADDING DOS CARDS EM TABLET */
     }
 }
 
@@ -211,24 +211,24 @@
 @media (max-width: 768px) {
     .valores-grid {
         grid-template-columns: repeat(2, 1fr); /* ← 2 COLUNAS EM MOBILE */
-        gap: 1rem;              /* ← ESPAÇO REDUZIDO EM MOBILE */
+        gap: 1rem; /* ← ESPAÇO REDUZIDO EM MOBILE */
     }
-    
+
     .valor1 {
-        padding: 1.5rem;        /* ← PADDING REDUZIDO EM MOBILE */
+        padding: 1.5rem; /* ← PADDING REDUZIDO EM MOBILE */
         min-height: 280px;
     }
-    
+
     .valor-icon {
-        font-size: 3rem;        /* ← ÍCONES MENORES EM MOBILE */
+        font-size: 3rem; /* ← ÍCONES MENORES EM MOBILE */
     }
-    
+
     .valor-titulo {
-        font-size: 1.2rem;      /* ← TÍTULOS MENORES EM MOBILE */
+        font-size: 1.2rem; /* ← TÍTULOS MENORES EM MOBILE */
     }
-    
+
     .valor-descricao {
-        font-size: 0.9rem;      /* ← TEXTO MENOR EM MOBILE */
+        font-size: 0.9rem; /* ← TEXTO MENOR EM MOBILE */
     }
 }
 
@@ -240,21 +240,21 @@
         grid-template-columns: 1fr; /* ← 1 COLUNA EM MOBILE PEQUENO */
         gap: 1rem;
     }
-    
+
     .valor1 {
         padding: 1.5rem;
         min-height: auto;
     }
-    
+
     .valor-icon {
         font-size: 2.5rem;
         margin-bottom: 1rem;
     }
-    
+
     .valor-titulo {
         font-size: 1.1rem;
     }
-    
+
     .valor-descricao {
         font-size: 0.9rem;
     }
@@ -288,19 +288,19 @@
         transition: none !important;
         animation: none !important;
     }
-    
+
     .valor1:hover {
         transform: none !important;
     }
-    
+
     .valor-icon {
         transition: none !important;
     }
-    
+
     .valor1:hover .valor-icon {
         transform: none !important;
     }
-    
+
     .valor1::before {
         display: none;
     }
@@ -308,7 +308,7 @@
 
 /* Focus visível */
 .valor1:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline: 2px solid var(--white-80);
     outline-offset: 4px;
 }
 
@@ -318,14 +318,14 @@
 
 @media (prefers-color-scheme: dark) {
     .section-cardv {
-        background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-muted) 100%);
     }
-    
+
     .valor1 {
         background: rgba(45, 55, 72, 0.8);
-        border-color: rgba(255, 255, 255, 0.1);
+        border-color: var(--border-white);
     }
-    
+
     .valor1:hover {
         background: rgba(45, 55, 72, 0.9);
     }
