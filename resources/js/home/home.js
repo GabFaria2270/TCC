@@ -25,32 +25,34 @@ class AnimationManager {
                 entries.forEach((entry) => {
                     const element = entry.target;
                     const isEntering = entry.isIntersecting;
-                    
+
                     const rect = element.getBoundingClientRect();
                     if (rect.top < 100 && element.classList.contains('section-home')) {
                         return;
                     }
-                    
+
                     element.classList.toggle('section-home-true', isEntering);
                     element.classList.toggle('section-home-false', !isEntering);
-                    if (isEntering && element.classList.contains('section-stats') && !element.dataset.animated) {
+
+                    if (
+                        isEntering &&
+                        element.classList.contains('section-stats') &&
+                        !element.dataset.animated
+                    ) {
                         element.dataset.animated = 'true';
                         this.animateNumbers(element.querySelectorAll('.stat-number'));
                     }
                 });
             },
-            { 
+            {
                 threshold: 0.15,
-                rootMargin: '0px 0px -10% 0px'
+                rootMargin: '0px 0px -10% 0px',
             }
         );
 
-        const sections = document.querySelectorAll(`
-            .section-cards-principais, .section-vantagens, 
-            .section-cardv, .container-sobre, .section-stats, 
-            .section-testimonials, .section-services, .section-cta
-        `);
-        
+        const sections = document.querySelectorAll(
+            '.section-cards-principais, .section-vantagens, .section-cardv, .container-sobre, .section-stats, .section-testimonials, .section-services, .section-cta'
+        );
         sections.forEach((section, index) => {
             setTimeout(() => {
                 this.observer.observe(section);
@@ -58,14 +60,16 @@ class AnimationManager {
         });
     }
 
-
     forceVisibility() {
         const criticalSections = [
-            '.section-vantagens', '.section-stats', '.section-testimonials',
-            '.section-services', '.section-cta'
+            '.section-vantagens',
+            '.section-stats',
+            '.section-testimonials',
+            '.section-services',
+            '.section-cta',
         ];
-        
-        criticalSections.forEach(selector => {
+
+        criticalSections.forEach((selector) => {
             const section = document.querySelector(selector);
             if (section) {
                 section.style.cssText = `
@@ -78,20 +82,19 @@ class AnimationManager {
         });
     }
 
-
     animateNumbers(elements) {
         elements.forEach((element) => {
             const finalCount = parseFloat(element.dataset.count || element.textContent);
             const isDecimal = finalCount % 1 !== 0;
             let currentCount = 0;
             const increment = finalCount / 30;
-            
+
             const animate = () => {
                 if (currentCount < finalCount) {
                     currentCount += increment;
-                    const displayCount = isDecimal ? 
-                        Math.min(currentCount, finalCount).toFixed(1) : 
-                        Math.floor(Math.min(currentCount, finalCount));
+                    const displayCount = isDecimal
+                        ? Math.min(currentCount, finalCount).toFixed(1)
+                        : Math.floor(Math.min(currentCount, finalCount));
                     element.textContent = displayCount;
                     requestAnimationFrame(animate);
                 } else {
@@ -102,10 +105,9 @@ class AnimationManager {
         });
     }
 
-
     setupScrollHandler() {
         let ticking = false;
-        
+
         const scrollHandler = () => {
             if (!ticking) {
                 requestAnimationFrame(() => {
@@ -121,9 +123,8 @@ class AnimationManager {
 
     updateScroll() {
         const scrollY = window.scrollY;
-        const navbar = document.querySelector('.modern-navbar');
         const scrollBtn = document.getElementById('scrollToBtn');
-        
+
         const scrollDiff = Math.abs(scrollY - this.lastScrollY);
         if (scrollDiff > 10) {
             if (scrollY > this.lastScrollY && scrollY > 100) {
@@ -133,27 +134,24 @@ class AnimationManager {
             }
             this.lastScrollY = scrollY;
         }
-        
 
-        
         // Scroll button baseado na direção do scroll
         if (scrollBtn) {
             if (scrollY > 300) {
                 scrollBtn.style.display = 'flex';
-                
 
                 if (this.scrollDirection === 'down') {
                     scrollBtn.innerHTML = '<i class="bi bi-arrow-down"></i>';
                     scrollBtn.setAttribute('data-direction', 'down');
                 } else {
                     scrollBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
-                    scrollBtn.setAttribute('data-direction', 'up'); 
+                    scrollBtn.setAttribute('data-direction', 'up');
                 }
-                
+
                 scrollBtn.onclick = () => {
                     const direction = scrollBtn.getAttribute('data-direction');
                     const documentHeight = document.documentElement.scrollHeight;
-                    
+
                     if (direction === 'down') {
                         window.scrollTo({ top: documentHeight, behavior: 'smooth' });
                     } else {
@@ -171,9 +169,8 @@ class AnimationManager {
     }
 }
 
-
 const setupSmoothScroll = () => {
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const target = document.getElementById(link.getAttribute('href').substring(1));
@@ -184,35 +181,29 @@ const setupSmoothScroll = () => {
     });
 };
 
-
 const setupNavbar = () => {
     const toggle = document.getElementById('navbarToggle');
     const menu = document.getElementById('navbarMenu');
-    
+
     if (toggle && menu) {
         toggle.addEventListener('click', () => {
             toggle.classList.toggle('active');
             menu.classList.toggle('active');
         });
-        
 
-        menu.querySelectorAll('.nav-link').forEach(link => {
+        menu.querySelectorAll('.nav-link').forEach((link) => {
             link.addEventListener('click', () => {
                 toggle.classList.remove('active');
                 menu.classList.remove('active');
-                
-
             });
         });
     }
 };
 
-
 document.addEventListener('DOMContentLoaded', () => {
     new AnimationManager();
     setupSmoothScroll();
     setupNavbar();
-    
 
     window.forceVisibility = (selector) => {
         const element = document.querySelector(selector);

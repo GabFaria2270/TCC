@@ -1,6 +1,6 @@
 /* =========================
-   CARROSSEL CUSTOMIZADO (SEM BOOTSTRAP)
-   ========================= */
+    CARROSSEL (APOIADO NO BOOTSTRAP 5)
+    ========================= */
 .carousel {
     position: relative;
     width: 100%;
@@ -14,36 +14,24 @@
     overflow: hidden;
 }
 
+/* Não sobrescrever comportamento estrutural do Bootstrap
+   (display/float/margins). Manter apenas animação e otimizações. */
 .carousel-item {
     position: relative;
-    display: none;
-    float: left;
-    width: 100%;
-    margin-right: -100%;
-    backface-visibility: hidden;
+    /* backface-visibility pode causar sumiço em algumas GPUs durante transform */
     transition: transform 0.6s ease-in-out;
+    will-change: transform;
 }
 
-.carousel-item.active,
+/* O Bootstrap já gerencia display dos itens; evitar override aqui. */
+/* .carousel-item.active,
 .carousel-item-next,
-.carousel-item-prev {
-    display: block;
-}
+.carousel-item-prev { display: block; } */
 
-.carousel-item-next:not(.carousel-item-start),
-.carousel-item.active.carousel-item-end {
-    transform: translateX(100%);
-}
+/* Removido: deixar Bootstrap controlar os transforms das transições
+   (.carousel-item-next/.prev/.start/.end) */
 
-.carousel-item-prev:not(.carousel-item-end),
-.carousel-item.active.carousel-item-start {
-    transform: translateX(-100%);
-}
-
-/* Transições suaves */
-.carousel-item.active {
-    transition: opacity 0.6s ease-in-out;
-}
+/* Removido transition de opacidade para evitar repaints desnecessários durante a troca */
 
 @media (prefers-reduced-motion: reduce) {
     .carousel-item {
@@ -176,7 +164,7 @@
     background: rgba(0, 0, 0, 0.4);
     padding: 1.5rem;
     border-radius: 12px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -247,6 +235,8 @@
         height: 50vh;
         min-height: 400px;
     }
+    /* Evitar custo do blur em mobile */
+    .caption-text { backdrop-filter: none; }
     
     .carousel-control-prev,
     .carousel-control-next {

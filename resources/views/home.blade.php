@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+’<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Sistema</title>
-    @vite(['resources/css/home/home.css', 'resources/js/home/carrossel.js', 'resources/js/geralJS.js'])
+    @vite(['resources/css/home/home.css', 'resources/js/geralJS.js'])
 </head>
 
 <body>
@@ -16,7 +16,7 @@
 
     <!-- Conteúdo do carousel  -->
     <section class="section-home main-content">
-        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true" data-bs-pause="hover" data-bs-interval="5000" aria-roledescription="carousel" aria-label="Destaques">
             <!-- Indicadores -->
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -28,7 +28,7 @@
 
                 <!-- Primeiro Slide -->
                 <div class="carousel-item active">
-                    <img src="{{ asset('img/C1.jpg') }}" class="img_Carrossel_1" alt="...">
+                    <img src="{{ asset('img/C1.jpg') }}" class="img_Carrossel_1 d-block w-100" alt="Banner principal do sistema" fetchpriority="high">
                     <div class="carousel-caption d-md-block">
                         <div class="caption-text">
                             <h5>Primeiro Slide</h5>
@@ -43,8 +43,7 @@
 
                 <!-- Segundo Slide -->
                 <div class="carousel-item">
-                    <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}" class="img_Carrossel_2"
-                        alt="...">
+                    <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}" class="img_Carrossel_2 d-block w-100" alt="Cliente comprando em mercearia">
                     <div class="carousel-caption d-md-block">
                         <div class="caption-text">
                             <h5>Segundo Slide</h5>
@@ -59,7 +58,7 @@
 
                 <!-- Terceiro Slide -->
                 <div class="carousel-item">
-                    <img src="{{ asset('img/carrossel_IMG3.jpg') }}" class="img_Carrossel_3" alt="...">
+                    <img src="{{ asset('img/carrossel_IMG3.jpg') }}" class="img_Carrossel_3 d-block w-100" alt="Ilustração do carrossel">
                     <div class="carousel-caption d-md-block">
                         <div class="caption-text">
                             <h5>Terceiro Slide</h5>
