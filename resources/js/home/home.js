@@ -9,6 +9,10 @@ class AnimationManager {
         this.observer = null;
         this.lastScrollY = 0;
         this.scrollDirection = 'down';
+        this.navbar = document.querySelector('.modern-navbar');
+        this.heroSection = document.querySelector('.section-home.main-content');
+        this.navHeight = 70;
+        this.heroHeight = window.innerHeight;
         this.init();
     }
 
@@ -16,6 +20,12 @@ class AnimationManager {
         this.setupObserver();
         this.setupScrollHandler();
         this.forceVisibility();
+        this.updateMeasurements();
+        this.updateScroll();
+        window.addEventListener('resize', () => {
+            this.updateMeasurements();
+            this.updateScroll();
+        });
     }
 
     // Observer único para todas as seções (exceto carrossel)
@@ -124,6 +134,7 @@ class AnimationManager {
     updateScroll() {
         const scrollY = window.scrollY;
         const scrollBtn = document.getElementById('scrollToBtn');
+        this.toggleNavbarState(scrollY);
 
         const scrollDiff = Math.abs(scrollY - this.lastScrollY);
         if (scrollDiff > 10) {
@@ -161,6 +172,29 @@ class AnimationManager {
             } else {
                 scrollBtn.style.display = 'none';
             }
+        }
+    }
+
+    updateMeasurements() {
+        const rootStyles = getComputedStyle(document.documentElement);
+        const navVar = rootStyles.getPropertyValue('--nav-height');
+        const parsedNavHeight = parseInt(navVar, 10);
+        this.navHeight = Number.isNaN(parsedNavHeight) ? 70 : parsedNavHeight;
+        this.heroHeight = this.heroSection
+            ? Math.max(this.heroSection.getBoundingClientRect().height, window.innerHeight)
+            : window.innerHeight;
+    }
+
+    toggleNavbarState(scrollY) {
+        if (!this.navbar) return;
+
+        const threshold = Math.max(this.heroHeight - this.navHeight, this.navHeight);
+        if (scrollY >= threshold) {
+            this.navbar.classList.remove('navbar-transparent');
+            this.navbar.classList.add('navbar-solid');
+        } else {
+            this.navbar.classList.add('navbar-transparent');
+            this.navbar.classList.remove('navbar-solid');
         }
     }
 

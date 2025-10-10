@@ -1,4 +1,4 @@
-<nav class="modern-navbar" role="navigation" aria-label="Navegação principal">
+<nav class="modern-navbar navbar-transparent" role="navigation" aria-label="Navegação principal">
     <div class="navbar-container">
         <!-- Logo apenas com ícone -->
         <div class="navbar-brand">

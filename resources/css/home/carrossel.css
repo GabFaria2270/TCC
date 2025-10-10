@@ -1,19 +1,36 @@
 /* =========================
    CARROSSEL (APOIADO NO BOOTSTRAP 5)
    ========================= */
+
+.main-content {
+   height: calc(var(--vh, 1vh) * 100);
+   margin-top: 0;
+   overflow: hidden; /* evita 1-2px de rolagem por arredondamento/efeitos internos */
+}
+
+/* Garante que o herói não receba padding/margem de regras responsivas genéricas */
+.section-home.main-content { padding: 0 !important; margin: 0 !important; }
+
+/* O wrapper da navbar no home não deve empurrar o conteúdo */
+section#nav { height: 0; }
+
 .home-carousel {
    position: relative;
    width: 100%;
-   margin: 0 auto 3rem auto;
-   border-radius: 12px;
+   margin: 0;
+   border-radius: 0;
    overflow: hidden;
-   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+   box-shadow: none;
+   height: 100%;
 }
 
 .home-carousel .carousel-inner,
 .home-carousel .carousel-item,
-.home-carousel__item {
-   height: clamp(360px, 55vh, 550px);
+.home-carousel__item,
+.home-carousel__media,
+.home-carousel__image {
+   height: 100%;
+   max-height: 100%;
 }
 
 .home-carousel__item {
@@ -50,14 +67,44 @@
    position: absolute;
    inset: 0;
    z-index: 2;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   padding: clamp(1rem, 3vw, 2.5rem);
-   gap: clamp(1rem, 1.5vw, 2rem);
+   display: grid;
+   place-items: center;
+   padding: clamp(1rem, 2vw, 2rem);
    text-align: center;
    color: #fff;
+}
+
+.home-carousel__glass {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: clamp(1rem, 2vw, 2.5rem);
+   padding: clamp(2rem, 4vw, 3rem);
+   width: min(520px, 90vw);
+   background: rgba(15, 23, 42, 0.52);
+   border-radius: 32px;
+   border: 1px solid rgba(255, 255, 255, 0.18);
+   backdrop-filter: blur(18px);
+   box-shadow: 0 24px 68px rgba(15, 23, 42, 0.35);
+}
+
+.home-carousel__text {
+   display: grid;
+   gap: 1rem;
+}
+
+.home-carousel__text h5 {
+   font-size: clamp(2rem, 4vw, 2.75rem);
+   font-weight: 700;
+   line-height: 1.2;
+   text-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.home-carousel__text p {
+   font-size: clamp(1.1rem, 2.5vw, 1.25rem);
+   line-height: 1.6;
+   color: rgba(255, 255, 255, 0.88);
+   text-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .home-carousel.carousel-fade .carousel-item {
@@ -177,31 +224,6 @@
    color: inherit;
 }
 
-.caption-text {
-   margin-bottom: 1.5rem;
-   background: rgba(0, 0, 0, 0.4);
-   padding: 1.5rem;
-   border-radius: 12px;
-   backdrop-filter: blur(4px);
-   border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.caption-text h5 {
-   font-size: clamp(1.75rem, 3vw, 2.5rem);
-   font-weight: 700;
-   margin-bottom: 1rem;
-   line-height: 1.2;
-   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.caption-text p {
-   font-size: clamp(1rem, 2vw, 1.25rem);
-   margin-bottom: 0;
-   opacity: 0.95;
-   line-height: 1.5;
-   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-}
-
 /* Botões */
 .botoes-carrossel {
    display: flex;
@@ -270,11 +292,23 @@
 
 /* Responsividade */
 @media (max-width: 768px) {
+   .home-carousel .carousel-inner,
+   .home-carousel .carousel-item,
+   .home-carousel__item,
+   .home-carousel__media,
    .home-carousel__image {
-      height: 50vh;
-      min-height: 400px;
+      height: 100%;
    }
 
+
+/* Usa a unidade dvh quando suportada para evitar barras/overlays móveis afetando 100vh */
+@supports (height: 100dvh) {
+   .main-content { height: 100dvh; }
+}
+
+@supports (height: 100svh) {
+   .main-content { height: 100svh; }
+}
    .home-carousel .carousel-control-prev,
    .home-carousel .carousel-control-next {
       width: 50px;
@@ -286,22 +320,12 @@
       height: 1.5rem;
    }
 
-   .caption-text {
-      padding: 1rem;
-      backdrop-filter: none;
-   }
-
    .botoes-carrossel {
       gap: 0.75rem;
    }
 }
 
 @media (max-width: 480px) {
-   .home-carousel__image {
-      height: 40vh;
-      min-height: 300px;
-   }
-
    .home-carousel .carousel-control-prev,
    .home-carousel .carousel-control-next {
       width: 44px;

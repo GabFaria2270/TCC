@@ -7,6 +7,8 @@ html {
 body {
     margin: 0;
     padding: 0;
+    /* No home, a navbar é sobreposta ao carrossel; não precisamos reservar espaço no body */
+    padding-top: 0;
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5a96 100%);

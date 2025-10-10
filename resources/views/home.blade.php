@@ -44,14 +44,16 @@
                             >
                         </picture>
                         <span class="home-carousel__overlay" aria-hidden="true"></span>
-                        <div class="carousel-caption home-carousel__content">
-                            <div class="caption-text">
-                                <h5>Primeiro Slide</h5>
-                                <p>Conteúdo de exemplo para o primeiro slide.</p>
-                            </div>
-                            <div class="botoes-carrossel">
-                                <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
-                                <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                        <div class="home-carousel__content">
+                            <div class="home-carousel__glass">
+                                <div class="home-carousel__text">
+                                    <h5>Gestão simples e poderosa</h5>
+                                    <p>Organize produtos, clientes e vendas em um só lugar, com rapidez e segurança.</p>
+                                </div>
+                                <div class="botoes-carrossel">
+                                    <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                                    <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -68,14 +70,16 @@
                             >
                         </picture>
                         <span class="home-carousel__overlay" aria-hidden="true"></span>
-                        <div class="carousel-caption home-carousel__content">
-                            <div class="caption-text">
-                                <h5>Segundo Slide</h5>
-                                <p>Conteúdo de exemplo para o segundo slide.</p>
-                            </div>
-                            <div class="botoes-carrossel">
-                                <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
-                                <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                        <div class="home-carousel__content">
+                            <div class="home-carousel__glass">
+                                <div class="home-carousel__text">
+                                    <h5>Fiado seguro e transparente</h5>
+                                    <p>Controle de crédito sem dor de cabeça: limites, parcelas e histórico sempre à vista.</p>
+                                </div>
+                                <div class="botoes-carrossel">
+                                    <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                                    <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -92,14 +96,16 @@
                             >
                         </picture>
                         <span class="home-carousel__overlay" aria-hidden="true"></span>
-                        <div class="carousel-caption home-carousel__content">
-                            <div class="caption-text">
-                                <h5>Terceiro Slide</h5>
-                                <p>Conteúdo de exemplo para o terceiro slide.</p>
-                            </div>
-                            <div class="botoes-carrossel">
-                                <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
-                                <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                        <div class="home-carousel__content">
+                            <div class="home-carousel__glass">
+                                <div class="home-carousel__text">
+                                    <h5>Comece hoje, sem complicação</h5>
+                                    <p>Cadastre-se em minutos e experimente uma rotina mais leve no seu comércio.</p>
+                                </div>
+                                <div class="botoes-carrossel">
+                                    <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                                    <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,19 +1,92 @@
 /* ===================================================================
-   🧭 NAVBAR MODERNA E RESPONSIVA (NÃO FIXA)
+   🧭 NAVBAR MODERNA E RESPONSIVA (ESTAMPADA COM ESTADOS)
    =================================================================== */
 
+:root {
+    --nav-height: 70px;
+}
+
+html {
+    scroll-padding-top: calc(var(--nav-height) + 16px);
+}
+
+body {
+    padding-top: var(--nav-height);
+}
+
 .modern-navbar {
-    position: relative; /* Mudou de fixed para relative */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    backdrop-filter: none;
     z-index: 1000;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
     padding: 0;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+}
+
+.modern-navbar.navbar-transparent {
+    background: rgba(15, 23, 42, 0.24);
+    border-bottom-color: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(16px);
+    box-shadow: none;
+}
+
+.modern-navbar.navbar-solid {
+    background: #0b0b0c;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.modern-navbar.navbar-transparent .navbar-brand a {
+    color: #f8fafc;
+    background: transparent;
+}
+
+.modern-navbar.navbar-transparent .navbar-brand a:hover {
+    color: #e0e7ff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.modern-navbar.navbar-transparent .nav-link {
+    color: rgba(248, 250, 252, 0.92);
+}
+
+.modern-navbar.navbar-transparent .nav-link:hover {
+    background: rgba(248, 250, 252, 0.12);
+}
+
+.modern-navbar.navbar-transparent .nav-link::after {
+    background: linear-gradient(90deg, rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.7));
+}
+
+.modern-navbar.navbar-transparent .navbar-toggle span {
+    background: #f8fafc;
+}
+
+/* Estado sólido: texto branco em fundo preto */
+.modern-navbar.navbar-solid .navbar-brand a,
+.modern-navbar.navbar-solid .nav-link {
+    color: #f8fafc;
+}
+
+.modern-navbar.navbar-solid .nav-link:hover {
+    background: rgba(248, 250, 252, 0.08);
+}
+
+.modern-navbar.navbar-solid .nav-link::after {
+    background: linear-gradient(90deg, rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.7));
+}
+
+.modern-navbar.navbar-solid .navbar-toggle span {
+    background: #f8fafc;
 }
 
 
@@ -22,10 +95,11 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    height: 70px;
+    width: 100%;
+    height: var(--nav-height);
 }
 
 /* Logo - apenas ícone */
@@ -51,9 +125,7 @@
     display: flex;
     align-items: center;
     gap: 2rem;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    justify-self: center;
 }
 
 .nav-link {
@@ -64,7 +136,7 @@
     position: relative;
     padding: 0.75rem 1.25rem;
     border-radius: 8px;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .nav-link:hover {
@@ -174,9 +246,12 @@
 }
 
 @media (max-width: 576px) {
+    :root {
+        --nav-height: 60px;
+    }
     .navbar-container {
         padding: 0 1rem;
-        height: 60px;
+        height: var(--nav-height);
     }
     
     .navbar-brand a {
