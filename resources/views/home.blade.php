@@ -182,19 +182,25 @@
     <section id="sobre" class="container-sobre section-home">
         <div class="container-escrita">
             <span class="escrita">Sobre Nossa Empresa</span>
+            <div class="sobre-escrita-box">
+                <p class="sobre-escrita-descricao">
+                    Somos referência em tradição, qualidade e atendimento personalizado para toda a comunidade. Conheça nossa história e valores!
+                </p>
+                <p class="sobre-escrita-detalhe">
+                    Fundada há mais de uma década, nossa empresa nasceu do sonho de oferecer produtos frescos, selecionados e de alta qualidade para famílias da região. Ao longo dos anos, construímos uma reputação baseada na confiança, respeito e transparência, sempre buscando inovar e atender às necessidades dos nossos clientes. Nosso compromisso diário é proporcionar uma experiência de compra diferenciada, com atendimento humanizado e soluções modernas, mantendo sempre o foco na satisfação e no bem-estar de quem nos escolhe. Venha fazer parte dessa história de sucesso e tradição!
+                </p>
+            </div>
         </div>
         <div class="sobre-empresa">
             <div class="sobre-content">
-                <div class="sobre-image">
-                    <img src="{{ asset('img/testedeimg.jpeg') }}" alt="Nossa empresa" loading="lazy">
-                </div>
                 <div class="sobre-text">
-                    <h2 class="sobre-titulo">Tradição e Qualidade</h2>
+                    <h2 class="sobre-titulo">Sobre Nós</h2>
                     <p class="sobre-descricao">
                         Há mais de uma década servindo a comunidade com produtos frescos e de qualidade. 
                         Nossa empresa se dedica a oferecer o melhor atendimento e as melhores opções para 
                         sua família, sempre com preços justos e um sistema de crédito confiável.
                     </p>
+                    <p class="sobre-subtexto">Conheça nossa história, valores e o compromisso diário em oferecer o melhor para a sua comunidade.</p>
                     <div class="sobre-destaque">
                         <p><i class="bi bi-star-fill me-2"></i>Compromisso com a excelência em cada produto e serviço oferecido.</p>
                     </div>

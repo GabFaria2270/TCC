@@ -2,15 +2,20 @@
    📊 SEÇÃO DE VALORES/MÉTRICAS - CORRIGIDA
    =================================================================== */
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 🎯 CONTAINER PRINCIPAL - ALTURA AUMENTADA                       │
+   └─────────────────────────────────────────────────────────────────┘ */
 .section-cardv {
-    padding: 2rem;
+    padding: 6rem 4%;          /* Aumentei o padding vertical para 15rem */
     background: transparent;
-    margin: 2rem auto;
-    max-width: 1000px;
+    margin: 2rem 4%;            /* Afastamento ajustado para 4% */
+    max-width: 92%;             /* Mantém a largura proporcional */
     color: #333;
     position: relative;
     overflow: hidden;
-    border-radius: 20px;
+    border-radius: 20px;        /* Arredondamento dos cantos */
+    box-sizing: border-box;     /* Garante que padding não afete a largura */
+    min-height: 500px;         /* Aumentei a altura mínima para 1000px */
 }
 
 .section-cardv::before {
@@ -24,17 +29,23 @@
     z-index: 1;
 }
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 📦 CONTAINER INTERNO - CENTRALIZAÇÃO                           │
+   └─────────────────────────────────────────────────────────────────┘ */
 .valores-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
+    max-width: 95%;             /* ← Mantém o container proporcional à seção */
+    margin: 0 auto;             /* Centraliza horizontalmente */
+    padding: 0 2rem;            /* Espaçamento interno lateral */
     position: relative;
     z-index: 2;
 }
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 📝 TÍTULO DA SEÇÃO                                              │
+   └─────────────────────────────────────────────────────────────────┘ */
 .container-escrita-valores {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 3rem;        /* ← ESPAÇO ABAIXO DO TÍTULO */
 }
 
 .container-escrita-valores .escrita {
@@ -58,20 +69,25 @@
     border-radius: 2px;
 }
 
-/* GRID CORRIGIDO - CARDS LADO A LADO */
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 🎲 GRID DOS CARDS - LAYOUT E ESPAÇAMENTO                       │
+   └─────────────────────────────────────────────────────────────────┘ */
 .valores-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* ← LARGURA MÍNIMA DOS CARDS */
+    gap: 1.5rem;                /* ← ESPAÇO ENTRE OS CARDS */
     width: 100%;
     margin: 0 auto;
 }
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 🎴 CARDS INDIVIDUAIS - APARÊNCIA E COMPORTAMENTO               │
+   └─────────────────────────────────────────────────────────────────┘ */
 .valor1 {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 16px;
-    padding: 1.8rem;
+    background: #f8f9fa;        /* ← COR DE FUNDO DOS CARDS */
+    border: 1px solid #dee2e6;  /* ← BORDA DOS CARDS */
+    border-radius: 16px;        /* ← ARREDONDAMENTO DOS CARDS */
+    padding: 1.8rem;            /* ← ESPAÇO INTERNO DOS CARDS */
     text-align: center;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
@@ -81,10 +97,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    margin: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ← SOMBRA DOS CARDS */
 }
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ ✨ EFEITOS DE HOVER - ANIMAÇÕES                                 │
+   └─────────────────────────────────────────────────────────────────┘ */
 .valor1::before {
     content: '';
     position: absolute;
@@ -107,10 +125,13 @@
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
 }
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 🎨 ELEMENTOS VISUAIS - ÍCONES, TÍTULOS E TEXTOS                │
+   └─────────────────────────────────────────────────────────────────┘ */
 .valor-icon {
-    font-size: 3.5rem;
+    font-size: 3.5rem;          /* ← TAMANHO DOS ÍCONES */
     color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem;      /* ← ESPAÇO ABAIXO DOS ÍCONES */
     display: inline-block;
     transition: all 0.3s ease;
 }
@@ -121,16 +142,16 @@
 }
 
 .valor-titulo {
-    font-size: 1.4rem;
+    font-size: 1.4rem;          /* ← TAMANHO DO TÍTULO */
     font-weight: 700;
     color: #ffffff;
-    margin-bottom: 1rem;
+    margin-bottom: 1rem;        /* ← ESPAÇO ABAIXO DO TÍTULO */
     line-height: 1.3;
     text-align: center;
 }
 
 .valor-descricao {
-    font-size: 1rem;
+    font-size: 1rem;            /* ← TAMANHO DA DESCRIÇÃO */
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
@@ -138,7 +159,9 @@
     flex: 1;
 }
 
-/* Cores específicas para cada ícone */
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 🌈 CORES ESPECÍFICAS DOS ÍCONES                                 │
+   └─────────────────────────────────────────────────────────────────┘ */
 .valor1:nth-child(1) .valor-icon {
     color: #ffd700;
 }
@@ -159,53 +182,62 @@
    📱 RESPONSIVIDADE CORRIGIDA
    =================================================================== */
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 💻 TABLET (992px e abaixo)                                      │
+   └─────────────────────────────────────────────────────────────────┘ */
 @media (max-width: 992px) {
     .section-cardv {
-        padding: 3rem 0;
-        margin: 2rem 0;
+        padding: 3rem 0;        /* ← ESPAÇAMENTO EM TABLET */
+        margin: 2rem 0;         /* ← MARGEM EM TABLET */
     }
     
     .valores-container {
-        padding: 0 1.5rem;
+        padding: 0 1.5rem;      /* ← PADDING LATERAL EM TABLET */
     }
     
     .valores-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
+        gap: 1.5rem;            /* ← ESPAÇO ENTRE CARDS EM TABLET */
     }
     
     .valor1 {
-        padding: 2rem;
+        padding: 2rem;          /* ← PADDING DOS CARDS EM TABLET */
     }
 }
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 📱 MOBILE GRANDE (768px e abaixo)                               │
+   └─────────────────────────────────────────────────────────────────┘ */
 @media (max-width: 768px) {
     .valores-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr); /* ← 2 COLUNAS EM MOBILE */
+        gap: 1rem;              /* ← ESPAÇO REDUZIDO EM MOBILE */
     }
     
     .valor1 {
-        padding: 1.5rem;
+        padding: 1.5rem;        /* ← PADDING REDUZIDO EM MOBILE */
         min-height: 280px;
     }
     
     .valor-icon {
-        font-size: 3rem;
+        font-size: 3rem;        /* ← ÍCONES MENORES EM MOBILE */
     }
     
     .valor-titulo {
-        font-size: 1.2rem;
+        font-size: 1.2rem;      /* ← TÍTULOS MENORES EM MOBILE */
     }
     
     .valor-descricao {
-        font-size: 0.9rem;
+        font-size: 0.9rem;      /* ← TEXTO MENOR EM MOBILE */
     }
 }
 
+/* ┌─────────────────────────────────────────────────────────────────┐
+   │ 📱 MOBILE PEQUENO (480px e abaixo)                              │
+   └─────────────────────────────────────────────────────────────────┘ */
 @media (max-width: 480px) {
     .valores-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* ← 1 COLUNA EM MOBILE PEQUENO */
         gap: 1rem;
     }
     

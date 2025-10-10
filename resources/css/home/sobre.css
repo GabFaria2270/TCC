@@ -5,10 +5,17 @@
 .container-sobre {
     display: grid;
     grid-template-columns: 1fr;
-    gap: clamp(16px, 4vw, 40px);
-    padding: 4rem 0;
-    margin: 3rem 0;
-    background: transparent;
+    gap: clamp(12px, 3.5vw, 36px);
+    padding: 2rem 3% 3rem 3%;  /* Reduzi o padding-top para 'subir' o conteúdo */
+    background: #000;          /* Fundo preto mantido */
+    margin: 2rem 4%;           /* Afastamento dos cantos ajustado */
+    max-width: 92%;            /* Largura máxima igual à barra valores */
+    color: #fff;               /* Texto branco para contraste */
+    position: relative;
+    overflow: hidden;          /* Esconde conteúdo que ultrapassar */
+    border-radius: 20px;       /* Arredondamento dos cantos */
+    box-sizing: border-box;    /* Inclui padding na largura total */
+    min-height: 500px;         /* Altura mínima ajustada */
 }
 
 @media (min-width: 992px) {
@@ -22,44 +29,34 @@
 .containerimg img { max-width: 100%; height: auto; border-radius: 8px; object-fit: cover; }
 
 .sobre-empresa {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
+    max-width: 1200px;         /* Largura máxima do conteúdo interno */
+    margin: 0 auto;            /* Centraliza horizontalmente */
+    padding: 0 2rem;           /* Espaçamento interno lateral */
+    display: flex;
+    flex-wrap: wrap;           /* Permite quebra de linha em telas menores */
+    gap: 2rem;                 /* Espaçamento entre os elementos */
+    align-items: center;       /* Alinha verticalmente os itens */
+    justify-content: space-between; /* Espaçamento entre os itens */
 }
 
 .sobre-content {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 3rem;
+    grid-template-columns: 1fr; /* Ajuste para uma única coluna */
+    gap: 2rem;                 /* Espaçamento entre os elementos */
     align-items: center;
 }
 
 .sobre-image {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.sobre-image:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
-}
-
-.sobre-image img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4/3;
-    object-fit: cover;
-    display: block;
+    display: none; /* Remove a imagem */
 }
 
 .sobre-text {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    flex: none; /* Remove o comportamento flexível */
+    width: 100%; /* O texto ocupa toda a largura disponível */
+    padding: 1.25rem 1.5rem;   /* Reduzi um pouco o padding para melhor proporção */
+    background: #1a1a1a;       /* Fundo cinza escuro */
+    border-radius: 12px;       /* Arredondamento do texto ajustado */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
 }
@@ -81,12 +78,11 @@
 }
 
 .sobre-titulo {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    color: #2c3e50;
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-    position: relative;
+    font-size: 1.5rem;         /* Tamanho do título */
+    font-weight: 700;          /* Negrito */
+    color: #fff;               /* Texto branco */
+    margin: 0 0 0.75rem 0;     /* Mantém o título mais próximo do parágrafo */
+    display: block;            /* Garante comportamento de bloco */
 }
 
 .sobre-titulo::after {
@@ -101,10 +97,28 @@
 }
 
 .sobre-descricao {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: #5a6c7d;
-    margin-bottom: 2rem;
+    font-size: 1rem;           /* Tamanho do texto */
+    line-height: 1.6;          /* Altura da linha */
+    color: rgba(255, 255, 255, 0.8); /* Texto branco com opacidade */
+    margin-bottom: 0.75rem;    /* Espaçamento reduzido para permitir subtexto */
+}
+
+/* Texto secundário/menor logo abaixo da descrição principal */
+.sobre-subtexto {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+    margin-top: 0.5rem;
+}
+
+.sobre-escrita-descricao {
+    font-size: 1.08rem;
+    color: rgba(255,255,255,0.85);
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
 }
 
 .sobre-destaque {
@@ -115,6 +129,8 @@
     margin-bottom: 2rem;
     position: relative;
     overflow: hidden;
+    font-size: 1rem;
+    color: #555;
 }
 
 .sobre-destaque::before {
@@ -139,9 +155,8 @@
 }
 
 .sobre-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    display: flex;
+    gap: 2rem;                 /* Espaçamento entre as estatísticas */
     margin-top: 2rem;
 }
 
@@ -159,16 +174,16 @@
 }
 
 .stat-mini-number {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #007bff;
+    font-size: 2rem;           /* Tamanho do número */
+    font-weight: 700;          /* Negrito */
+    color: #007bff;            /* Cor azul */
     margin-bottom: 0.5rem;
     display: block;
 }
 
 .stat-mini-label {
-    font-size: 0.9rem;
-    color: #6c757d;
+    font-size: 0.9rem;         /* Tamanho do rótulo */
+    color: #666;               /* Cor cinza */
     font-weight: 500;
 }
 
@@ -279,4 +294,77 @@
     .stat-mini-label {
         color: #a0aec0;
     }
+}
+
+.container-escrita {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Troque para center se quiser centralizado */
+    justify-content: flex-start;
+    text-align: left;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 900px) {
+    .container-escrita {
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* ===================================================================
+   📦 SEÇÃO VANTAGENS
+   =================================================================== */
+
+/* Seção Vantagens com as mesmas margens da seção Sobre */
+.section-vantagens {
+    margin: 2rem 4%;   /* igual ao .container-sobre */
+    max-width: 92%;    /* igual ao .container-sobre */
+    width: 100%;
+    padding: 1rem 0;   /* reduz a altura geral */
+    background: transparent;
+}
+
+/* Card ocupa 100% da largura disponível da seção (alinhado ao preto) */
+.vantagem-card {
+    width: 100%;       /* alinha às bordas definidas pelos 4% de margem */
+    max-width: 100%;
+    margin: 0;         /* remove recuos extras que “apertavam” o card */
+    padding: 1rem;     /* respiro interno */
+    border-radius: 20px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    align-items: center;
+
+    background: #f8f9fa;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04);
+    border: 1px solid rgba(255,255,255,0.2);
+    overflow: hidden;
+}
+
+/* Diminui um pouco a altura total */
+.vantagem-image img {
+    width: 100%;
+    height: 200px;     /* era 220px */
+    object-fit: cover;
+}
+
+.vantagem-content {
+    padding: 1.1rem;   /* levemente mais compacto */
+    gap: 0.75rem;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .vantagem-card {
+        grid-template-columns: 1fr;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0.9rem;
+    }
+    .vantagem-image img { height: 180px; }
 }
