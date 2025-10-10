@@ -164,9 +164,9 @@
 
 .section-services {
     padding: 4rem 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: transparent;
     margin: 3rem 0;
-    color: #ffffff;
+    color: #333;
 }
 
 .services-grid {
@@ -220,9 +220,9 @@
 
 .section-cta {
     padding: 4rem 0;
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    background: transparent;
     margin: 3rem 0;
-    color: #ffffff;
+    color: #333;
 }
 
 .cta-container {

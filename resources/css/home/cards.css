@@ -3,10 +3,7 @@
    ========================= */
 .section-cards-principais {
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, 
-        rgba(238, 174, 202, 0.1) 0%, 
-        rgba(148, 187, 233, 0.1) 50%, 
-        rgba(238, 174, 202, 0.1) 100%);
+    background: transparent;
     position: relative;
 }
 
@@ -273,10 +270,7 @@
    ========================= */
 .section-vantagens {
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.05) 0%, 
-        rgba(168, 85, 247, 0.05) 50%, 
-        rgba(236, 72, 153, 0.05) 100%);
+    background: transparent;
     position: relative;
 }
 

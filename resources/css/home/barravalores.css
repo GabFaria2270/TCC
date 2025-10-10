@@ -4,9 +4,9 @@
 
 .section-cardv {
     padding: 4rem 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: transparent;
     margin: 3rem 0;
-    color: #ffffff;
+    color: #333;
     position: relative;
     overflow: hidden;
 }

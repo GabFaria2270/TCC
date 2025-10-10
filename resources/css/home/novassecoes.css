@@ -3,10 +3,7 @@
    ========================= */
 .section-stats {
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, 
-        rgba(59, 130, 246, 0.05) 0%, 
-        rgba(147, 51, 234, 0.05) 50%, 
-        rgba(219, 39, 119, 0.05) 100%);
+    background: transparent;
     position: relative;
 }
 
@@ -96,10 +93,7 @@
    ========================= */
 .section-testimonials {
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, 
-        rgba(168, 85, 247, 0.05) 0%, 
-        rgba(236, 72, 153, 0.05) 50%, 
-        rgba(251, 146, 60, 0.05) 100%);
+    background: transparent;
     position: relative;
 }
 
@@ -217,10 +211,7 @@
    ========================= */
 .section-services {
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, 
-        rgba(34, 197, 94, 0.05) 0%, 
-        rgba(59, 130, 246, 0.05) 50%, 
-        rgba(168, 85, 247, 0.05) 100%);
+    background: transparent;
     position: relative;
 }
 
@@ -309,10 +300,7 @@
    ========================= */
 .section-cta {
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, 
-        #667eea 0%, 
-        #764ba2 50%, 
-        #f093fb 100%);
+    background: transparent;
     position: relative;
     overflow: hidden;
 }

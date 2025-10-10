@@ -9,23 +9,17 @@ body {
     padding: 0;
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
-    background: linear-gradient(135deg, 
-        #f0f9ff 0%, 
-        #e0e7ff 25%, 
-        #fce7f3 50%, 
-        #fef3c7 75%, 
-        #f0f9ff 100%);
-    background-size: 400% 400%;
+    background: linear-gradient(180deg, 
+        #f8fafc 0%, 
+        #f1f5f9 25%, 
+        #e2e8f0 50%, 
+        #f1f5f9 75%, 
+        #f8fafc 100%);
     background-attachment: fixed;
-    animation: gradientShift 15s ease infinite;
     min-height: 100vh;
 }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+/* Animação de fundo removida - estava causando travamento */
 h1 {
     text-align: center;
     color: #1f2937;

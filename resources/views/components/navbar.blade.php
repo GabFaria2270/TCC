@@ -9,7 +9,7 @@
         
         <!-- Menu centralizado -->
         <div class="navbar-menu" id="navbarMenu">
-            <a href="/" class="nav-link active">Início</a>
+            <a href="/" class="nav-link">Início</a>
             <a href="#funcionalidades" class="nav-link">Funcionalidades</a>
             <a href="#sobre" class="nav-link">Sobre</a>
             <a href="#valores" class="nav-link">Métricas</a>
