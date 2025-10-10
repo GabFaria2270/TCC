@@ -8,7 +8,7 @@
     gap: clamp(16px, 4vw, 40px);
     padding: 4rem 0;
     margin: 3rem 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: transparent;
 }
 
 @media (min-width: 992px) {

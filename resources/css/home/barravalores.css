@@ -3,12 +3,14 @@
    =================================================================== */
 
 .section-cardv {
-    padding: 4rem 0;
+    padding: 2rem;
     background: transparent;
-    margin: 3rem 0;
+    margin: 2rem auto;
+    max-width: 1000px;
     color: #333;
     position: relative;
     overflow: hidden;
+    border-radius: 20px;
 }
 
 .section-cardv::before {
@@ -18,7 +20,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="2"/></g></svg>');
+    background: transparent;
     z-index: 1;
 }
 
@@ -36,7 +38,7 @@
 }
 
 .container-escrita-valores .escrita {
-    color: #ffffff;
+    color: #333;
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800;
     position: relative;
@@ -59,17 +61,17 @@
 /* GRID CORRIGIDO - CARDS LADO A LADO */
 .valores-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
     width: 100%;
+    margin: 0 auto;
 }
 
 .valor1 {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 2.5rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    padding: 1.8rem;
     text-align: center;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
@@ -79,6 +81,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    margin: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .valor1::before {
