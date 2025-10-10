@@ -1,4 +1,4 @@
-’<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -16,63 +16,96 @@
 
     <!-- Conteúdo do carousel  -->
     <section class="section-home main-content">
-        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true" data-bs-pause="hover" data-bs-interval="5000" aria-roledescription="carousel" aria-label="Destaques">
-            <!-- Indicadores -->
+        <div
+            id="mainCarousel"
+            class="carousel slide carousel-fade home-carousel"
+            data-bs-ride="carousel"
+            data-bs-touch="true"
+            data-bs-pause="hover"
+            data-bs-interval="5000"
+            aria-roledescription="carousel"
+            aria-label="Destaques"
+        >
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
                 <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>
-            
+
             <div class="carousel-inner">
-
-                <!-- Primeiro Slide -->
                 <div class="carousel-item active">
-                    <img src="{{ asset('img/C1.jpg') }}" class="img_Carrossel_1 d-block w-100" alt="Banner principal do sistema" fetchpriority="high">
-                    <div class="carousel-caption d-md-block">
-                        <div class="caption-text">
-                            <h5>Primeiro Slide</h5>
-                            <p>Conteúdo de exemplo para o primeiro slide.</p>
-                        </div>
-                        <div class="botoes-carrossel">
-                            <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
-                            <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Segundo Slide -->
-                <div class="carousel-item">
-                    <img src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}" class="img_Carrossel_2 d-block w-100" alt="Cliente comprando em mercearia">
-                    <div class="carousel-caption d-md-block">
-                        <div class="caption-text">
-                            <h5>Segundo Slide</h5>
-                            <p>Conteúdo de exemplo para o segundo slide.</p>
-                        </div>
-                        <div class="botoes-carrossel">
-                            <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
-                            <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                    <div class="home-carousel__item">
+                        <picture class="home-carousel__media">
+                            <img
+                                src="{{ asset('img/C1.jpg') }}"
+                                class="home-carousel__image"
+                                alt="Banner principal do sistema"
+                                fetchpriority="high"
+                            >
+                        </picture>
+                        <span class="home-carousel__overlay" aria-hidden="true"></span>
+                        <div class="carousel-caption home-carousel__content">
+                            <div class="caption-text">
+                                <h5>Primeiro Slide</h5>
+                                <p>Conteúdo de exemplo para o primeiro slide.</p>
+                            </div>
+                            <div class="botoes-carrossel">
+                                <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                                <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Terceiro Slide -->
                 <div class="carousel-item">
-                    <img src="{{ asset('img/carrossel_IMG3.jpg') }}" class="img_Carrossel_3 d-block w-100" alt="Ilustração do carrossel">
-                    <div class="carousel-caption d-md-block">
-                        <div class="caption-text">
-                            <h5>Terceiro Slide</h5>
-                            <p>Conteúdo de exemplo para o terceiro slide.</p>
+                    <div class="home-carousel__item">
+                        <picture class="home-carousel__media">
+                            <img
+                                src="{{ asset('img/mulher-comprando-em-mercearia.jpg') }}"
+                                class="home-carousel__image"
+                                alt="Cliente comprando em mercearia"
+                                loading="lazy"
+                            >
+                        </picture>
+                        <span class="home-carousel__overlay" aria-hidden="true"></span>
+                        <div class="carousel-caption home-carousel__content">
+                            <div class="caption-text">
+                                <h5>Segundo Slide</h5>
+                                <p>Conteúdo de exemplo para o segundo slide.</p>
+                            </div>
+                            <div class="botoes-carrossel">
+                                <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                                <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                            </div>
                         </div>
-                        <div class="botoes-carrossel">
-                            <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
-                            <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="home-carousel__item">
+                        <picture class="home-carousel__media">
+                            <img
+                                src="{{ asset('img/carrossel_IMG3.jpg') }}"
+                                class="home-carousel__image"
+                                alt="Ilustração do carrossel"
+                                loading="lazy"
+                            >
+                        </picture>
+                        <span class="home-carousel__overlay" aria-hidden="true"></span>
+                        <div class="carousel-caption home-carousel__content">
+                            <div class="caption-text">
+                                <h5>Terceiro Slide</h5>
+                                <p>Conteúdo de exemplo para o terceiro slide.</p>
+                            </div>
+                            <div class="botoes-carrossel">
+                                <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>
+                                <a class="btn-login-carrossel" href="{{ route('login') }}">Login</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Controles do Carrossel -->
             <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Anterior</span>

@@ -1,370 +1,320 @@
 /* =========================
-    CARROSSEL (APOIADO NO BOOTSTRAP 5)
-    ========================= */
-.carousel {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 0;
+   CARROSSEL (APOIADO NO BOOTSTRAP 5)
+   ========================= */
+.home-carousel {
+   position: relative;
+   width: 100%;
+   margin: 0 auto 3rem auto;
+   border-radius: 12px;
+   overflow: hidden;
+   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
-.carousel-inner {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
+.home-carousel .carousel-inner,
+.home-carousel .carousel-item,
+.home-carousel__item {
+   height: clamp(360px, 55vh, 550px);
 }
 
-/* Não sobrescrever comportamento estrutural do Bootstrap
-   (display/float/margins). Manter apenas animação e otimizações. */
-.carousel-item {
-    position: relative;
-    /* backface-visibility pode causar sumiço em algumas GPUs durante transform */
-    transition: transform 0.6s ease-in-out;
-    will-change: transform;
+.home-carousel__item {
+   position: relative;
+   width: 100%;
+   height: 100%;
 }
 
-/* O Bootstrap já gerencia display dos itens; evitar override aqui. */
-/* .carousel-item.active,
-.carousel-item-next,
-.carousel-item-prev { display: block; } */
+.home-carousel__media,
+.home-carousel__image {
+   width: 100%;
+   height: 100%;
+   display: block;
+}
 
-/* Removido: deixar Bootstrap controlar os transforms das transições
-   (.carousel-item-next/.prev/.start/.end) */
+.home-carousel__media {
+   position: relative;
+   z-index: 0;
+}
 
-/* Removido transition de opacidade para evitar repaints desnecessários durante a troca */
+.home-carousel__image {
+   object-fit: cover;
+}
+
+.home-carousel__overlay {
+   position: absolute;
+   inset: 0;
+   z-index: 1;
+   pointer-events: none;
+   background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+.home-carousel__content {
+   position: absolute;
+   inset: 0;
+   z-index: 2;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding: clamp(1rem, 3vw, 2.5rem);
+   gap: clamp(1rem, 1.5vw, 2rem);
+   text-align: center;
+   color: #fff;
+}
+
+.home-carousel.carousel-fade .carousel-item {
+   transition: opacity 0.7s ease;
+}
+
+.home-carousel.carousel-fade .carousel-item,
+.home-carousel.carousel-fade .carousel-item.active.carousel-item-start,
+.home-carousel.carousel-fade .carousel-item.active.carousel-item-end {
+   opacity: 0;
+}
+
+.home-carousel.carousel-fade .carousel-item.active,
+.home-carousel.carousel-fade .carousel-item-next.carousel-item-start,
+.home-carousel.carousel-fade .carousel-item-prev.carousel-item-end {
+   opacity: 1;
+}
 
 @media (prefers-reduced-motion: reduce) {
-    .carousel-item {
-        transition: none;
-    }
+   .home-carousel.carousel-fade .carousel-item {
+      transition: none;
+   }
 }
 
-/* Imagens do carrossel */
-.carousel-item img {
-    width: 100%;
-    height: 70vh;
-    min-height: 500px;
-    object-fit: cover;
-    display: block;
+/* Controles */
+.home-carousel .carousel-control-prev,
+.home-carousel .carousel-control-next {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   z-index: 3;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 60px;
+   padding: 0;
+   color: #fff;
+   background: none;
+   border: 0;
+   opacity: 0.5;
+   transition: opacity 0.15s ease;
 }
 
-/* Controles do carrossel */
-.carousel-control-prev,
-.carousel-control-next {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    padding: 0;
-    color: #fff;
-    text-align: center;
-    background: none;
-    border: 0;
-    opacity: 0.5;
-    transition: opacity 0.15s ease;
-    cursor: pointer;
+.home-carousel .carousel-control-prev:hover,
+.home-carousel .carousel-control-next:hover,
+.home-carousel .carousel-control-prev:focus,
+.home-carousel .carousel-control-next:focus {
+   opacity: 0.9;
+   color: #fff;
 }
 
-.carousel-control-prev:hover,
-.carousel-control-next:hover,
-.carousel-control-prev:focus,
-.carousel-control-next:focus {
-    color: #fff;
-    text-decoration: none;
-    outline: 0;
-    opacity: 0.9;
+.home-carousel .carousel-control-prev {
+   left: 0;
+   background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
 }
 
-.carousel-control-prev {
-    left: 0;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+.home-carousel .carousel-control-next {
+   right: 0;
+   background: linear-gradient(270deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
 }
 
-.carousel-control-next {
-    right: 0;
-    background: linear-gradient(270deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+.home-carousel .carousel-control-prev-icon,
+.home-carousel .carousel-control-next-icon {
+   width: 2rem;
+   height: 2rem;
+   background-repeat: no-repeat;
+   background-position: 50%;
+   background-size: 100% 100%;
 }
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    background-repeat: no-repeat;
-    background-position: 50%;
-    background-size: 100% 100%;
+.home-carousel .carousel-control-prev-icon {
+   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z'/%3e%3c/svg%3e");
 }
 
-.carousel-control-prev-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z'/%3e%3c/svg%3e");
+.home-carousel .carousel-control-next-icon {
+   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z'/%3e%3c/svg%3e");
 }
 
-.carousel-control-next-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z'/%3e%3c/svg%3e");
+/* Indicadores */
+.home-carousel .carousel-indicators {
+   position: absolute;
+   right: 0;
+   bottom: 1rem;
+   left: 0;
+   z-index: 3;
+   display: flex;
+   justify-content: center;
+   padding: 0;
+   margin: 0;
+   list-style: none;
+   gap: 0.75rem;
 }
 
-/* Indicadores do carrossel */
-.carousel-indicators {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    padding: 0;
-    margin-right: 15%;
-    margin-bottom: 1rem;
-    margin-left: 15%;
-    list-style: none;
+.home-carousel .carousel-indicators [data-bs-target] {
+   box-sizing: content-box;
+   width: 30px;
+   height: 3px;
+   padding: 0;
+   cursor: pointer;
+   background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+   border: 0;
+   border-radius: 2px;
+   opacity: 0.45;
+   transition: opacity 0.6s ease;
 }
 
-.carousel-indicators [data-bs-target] {
-    box-sizing: content-box;
-    flex: 0 1 auto;
-    width: 30px;
-    height: 3px;
-    padding: 0;
-    margin-right: 3px;
-    margin-left: 3px;
-    text-indent: -999px;
-    cursor: pointer;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    opacity: 0.5;
-    transition: opacity 0.6s ease;
+.home-carousel .carousel-indicators .active {
+   opacity: 1;
+   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 }
 
-.carousel-indicators .active {
-    opacity: 1;
-}
-
-/* Caption modernizada */
-.carousel-caption {
-    position: absolute;
-    right: 15%;
-    bottom: 1.25rem;
-    left: 15%;
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
-    color: #fff;
-    text-align: center;
-    z-index: 3;
+/* Legendas */
+.home-carousel .carousel-caption {
+   position: static;
+   padding: 0;
+   color: inherit;
 }
 
 .caption-text {
-    margin-bottom: 1.5rem;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 1.5rem;
-    border-radius: 12px;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+   margin-bottom: 1.5rem;
+   background: rgba(0, 0, 0, 0.4);
+   padding: 1.5rem;
+   border-radius: 12px;
+   backdrop-filter: blur(4px);
+   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .caption-text h5 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    line-height: 1.2;
+   font-size: clamp(1.75rem, 3vw, 2.5rem);
+   font-weight: 700;
+   margin-bottom: 1rem;
+   line-height: 1.2;
+   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .caption-text p {
-    font-size: 1.25rem;
-    margin-bottom: 0;
-    opacity: 0.95;
-    line-height: 1.5;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+   font-size: clamp(1rem, 2vw, 1.25rem);
+   margin-bottom: 0;
+   opacity: 0.95;
+   line-height: 1.5;
+   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-/* Classes utilitárias necessárias */
-.visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-}
-
-.d-md-block {
-    display: block !important;
-}
-
-@media (max-width: 767.98px) {
-    .d-md-block {
-        display: block !important;
-    }
-}
-
-/* Melhorias visuais adicionais */
-.carousel {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.carousel-control-prev:hover .carousel-control-prev-icon,
-.carousel-control-next:hover .carousel-control-next-icon {
-    transform: scale(1.2);
-    transition: transform 0.3s ease;
-}
-
-.carousel-indicators [data-bs-target] {
-    border-radius: 2px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
-    backdrop-filter: blur(10px);
-}
-
-.carousel-indicators .active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .carousel-item img {
-        height: 50vh;
-        min-height: 400px;
-    }
-    /* Evitar custo do blur em mobile */
-    .caption-text { backdrop-filter: none; }
-    
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 50px;
-    }
-    
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        width: 1.5rem;
-        height: 1.5rem;
-    }
-    
-    .carousel-caption {
-        right: 5%;
-        left: 5%;
-    }
-    
-    .carousel-indicators {
-        margin-right: 10%;
-        margin-left: 10%;
-    }
-    
-    .carousel-indicators [data-bs-target] {
-        width: 25px;
-        height: 2px;
-    }
-    
-    .caption-text {
-        padding: 1rem;
-    }
-    
-    .caption-text h5 {
-        font-size: 1.75rem;
-    }
-    
-    .caption-text p {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .carousel-item img {
-        height: 40vh;
-        min-height: 300px;
-    }
-    
-    .carousel-caption {
-        bottom: 0.5rem;
-        padding: 1rem 0.5rem;
-    }
-    
-    .caption-text {
-        padding: 0.75rem;
-    }
-    
-    .caption-text h5 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .caption-text p {
-        font-size: 0.9rem;
-    }
-}
-
-/* Estilos para os botões do carrossel */
+/* Botões */
 .botoes-carrossel {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 1rem;
+   display: flex;
+   gap: 1rem;
+   justify-content: center;
+   align-items: center;
+   flex-wrap: wrap;
+   margin-top: 1rem;
 }
 
 .btn-cadastro-carrossel,
 .btn-login-carrossel {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.875rem 2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 2px solid transparent;
-    min-width: 140px;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   padding: 0.875rem 2rem;
+   font-size: 1rem;
+   font-weight: 600;
+   text-decoration: none;
+   border-radius: 50px;
+   transition: all 0.3s ease;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   border: 2px solid transparent;
+   min-width: 140px;
 }
 
 .btn-cadastro-carrossel {
-    background: var(--gradient-primary);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+   background: var(--gradient-primary);
+   color: #fff;
+   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .btn-cadastro-carrossel:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-    color: white;
+   transform: translateY(-2px) scale(1.05);
+   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+   color: #fff;
 }
 
 .btn-login-carrossel {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border-color: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(10px);
+   background: rgba(255, 255, 255, 0.2);
+   color: #fff;
+   border-color: rgba(255, 255, 255, 0.4);
+   backdrop-filter: blur(10px);
 }
 
 .btn-login-carrossel:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.6);
-    transform: translateY(-2px) scale(1.05);
-    color: white;
+   background: rgba(255, 255, 255, 0.3);
+   border-color: rgba(255, 255, 255, 0.6);
+   transform: translateY(-2px) scale(1.05);
+   color: #fff;
+}
+
+/* Utilitárias */
+.visually-hidden {
+   position: absolute !important;
+   width: 1px !important;
+   height: 1px !important;
+   padding: 0 !important;
+   margin: -1px !important;
+   overflow: hidden !important;
+   clip: rect(0, 0, 0, 0) !important;
+   white-space: nowrap !important;
+   border: 0 !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+   .home-carousel__image {
+      height: 50vh;
+      min-height: 400px;
+   }
+
+   .home-carousel .carousel-control-prev,
+   .home-carousel .carousel-control-next {
+      width: 50px;
+   }
+
+   .home-carousel .carousel-control-prev-icon,
+   .home-carousel .carousel-control-next-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+   }
+
+   .caption-text {
+      padding: 1rem;
+      backdrop-filter: none;
+   }
+
+   .botoes-carrossel {
+      gap: 0.75rem;
+   }
 }
 
 @media (max-width: 480px) {
-    .botoes-carrossel {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .btn-cadastro-carrossel,
-    .btn-login-carrossel {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-        min-width: 120px;
-    }
+   .home-carousel__image {
+      height: 40vh;
+      min-height: 300px;
+   }
+
+   .home-carousel .carousel-control-prev,
+   .home-carousel .carousel-control-next {
+      width: 44px;
+   }
+
+   .btn-cadastro-carrossel,
+   .btn-login-carrossel {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      min-width: 120px;
+   }
+
+   .botoes-carrossel {
+      flex-direction: column;
+   }
 }
