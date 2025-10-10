@@ -296,10 +296,11 @@
     }
 }
 
-.container-escrita {
+/* Escopado apenas para a seção SOBRE */
+.container-sobre .container-escrita {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Troque para center se quiser centralizado */
+    align-items: flex-start;   /* apenas no SOBRE fica à esquerda */
     justify-content: flex-start;
     text-align: left;
     color: #fff;
@@ -307,7 +308,7 @@
 }
 
 @media (max-width: 900px) {
-    .container-escrita {
+    .container-sobre .container-escrita {
         align-items: center;
         text-align: center;
     }
