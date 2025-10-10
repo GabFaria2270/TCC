@@ -13,7 +13,7 @@
     <!--botão de sair-->
     <div class="containerS">
         <div class="Cbutton">
-            <a href="{{ route('home') }}" class="botãoS">Sair</a>
+            <a href="{{ route('home') }}" class="botãoS"><i class="bi bi-box-arrow-left"></i> Sair</a>
         </div>
     </div>
     <!--botão de sair-->
@@ -98,7 +98,8 @@
 
                                 <!-- Campo de Confirmar Senha -->
                                 <div class="form-cadastro-group" style="position: relative;">
-                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirmar Senha</label>
+                                    <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirmar
+                                        Senha</label>
                                     <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
                                         name="SENHA_HASH_confirmation" required minlength="12"
                                         placeholder="Digite a senha novamente"
@@ -150,7 +151,8 @@
                             </form>
                             <div class="login-link">
                                 <span>Já tem uma conta?</span>
-                                <a href="{{ route('login') }}" class="form-cadastro-link">Entrar</a>
+                                <a href="{{ route('login') }}" class="form-cadastro-link"><span>Entrar</span> <i
+                                        class="bi bi-box-arrow-in-right"></i></a>
                             </div>
                         </div>
                     </div>

@@ -1,13 +1,56 @@
-/* Container do formulário */
+/* Desativa a reserva de espaço do scroll (faixa branca) apenas nesta página */
+html:has(body.cadastrof) {
+    scrollbar-gutter: auto !important;
+}
+/* Garante que não apareça faixa branca nas bordas */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    overflow-x: hidden;
+}
+/* ===================================================================
+   CADASTRO - TEMA GLASS ESCURO ALINHADO COM A HOME
+   =================================================================== */
+
+/* Fundo geral com o gradiente roxo da Home */
+.cadastrof {
+    /* Ocupa a viewport de forma simples */
+    /* Fallback + viewport dinâmico para evitar variação e scroll mínimo */
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    /* Permite rolagem somente quando necessário e evita empurrões ao selecionar */
+    overflow-y: auto;
+    background: var(--gradient-primary);
+    background-color: #6b2ba6; /* fallback coerente ao gradiente */
+    display: grid;
+    /* Centralização estável sem recálculos perceptíveis */
+    align-content: center;
+    justify-items: center;
+    width: 100%;
+}
+
+/* Container principal: duas colunas com respiro */
+.form-cadastro-page {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+    width: min(1200px, 96vw);
+    max-width: 100vw;
+    align-items: stretch;
+}
 
 /* Remove o ícone padrão de mostrar/ocultar senha do navegador */
-.form-cadastro-input[type="password"]::-ms-reveal,
-.form-cadastro-input[type="password"]::-webkit-reveal-password {
+.form-cadastro-input[type='password']::-ms-reveal,
+.form-cadastro-input[type='password']::-webkit-reveal-password {
     display: none !important;
 }
 
-.form-cadastro-input[type="password"]::-ms-clear,
-.form-cadastro-input[type="password"]::-webkit-clear-password {
+.form-cadastro-input[type='password']::-ms-clear,
+.form-cadastro-input[type='password']::-webkit-clear-password {
     display: none !important;
 }
 
@@ -19,27 +62,41 @@
 .form-cadastro {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
+    align-items: stretch;
     width: 100%;
     height: 100%;
 }
 
-.form-cadastro-card {
-    background: transparent;
-    width: 100%;
-    padding: 32px 24px;
-    border-radius: 8px;
-    box-shadow: none;
-}
+/* (removido bloco duplicado de .form-cadastro-card; mantido o mais completo abaixo) */
 
 /* Cabeçalho do formulário */
 .form-cadastro-header {
     text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 24px;
-    color: #0a0a0a;
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: var(--color-white);
+    letter-spacing: 0.01em;
+    position: relative;
+    line-height: 1.2; /* fixa a altura da linha para evitar micro oscilação ao selecionar */
+}
+
+.form-cadastro-header::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--gradient-secondary);
+    transition: width 300ms ease;
+}
+
+.form-cadastro-card:hover .form-cadastro-header::after {
+    width: 64px;
 }
 
 /* Campos do formulário */
@@ -50,99 +107,115 @@
 .form-cadastro-label {
     display: block;
     margin-bottom: 6px;
-    color: #000000;
-    font-size: 15px;
+    color: var(--white-90);
+    font-size: 0.95rem;
 }
 
 .form-cadastro-input {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.85rem 0.95rem;
     font-size: 1rem;
-    border: 1px solid #000000;
-    border-radius: 4px;
-    background: transparent;
-    color: #000000;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    border: 1px solid rgba(226, 232, 240, 0.25); /* --border-light com alpha */
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-white);
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .form-cadastro-input:focus {
-    border-color: #4692b6;
-    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--secondary-blue);
+    background: rgba(255, 255, 255, 0.12);
     outline: none;
-    color: #000000;
+    color: var(--color-white);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.22);
+}
+
+.form-cadastro-input:hover {
+    /* evita deslocamento vertical; apenas realce sutil */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12) inset;
 }
 
 /* Botão de cadastro */
 .form-cadastro-button {
     width: 100%;
-    padding: 12px 0;
-    background: #000000;
-    color: #fff;
+    padding: 0.9rem 1rem;
+    background: var(--gradient-secondary);
+    color: var(--color-white);
     border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
+    transition:
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.35);
 }
 
 .form-cadastro-button:hover {
-    background: #74b9ff;
+    /* evita deslocamento vertical; mantém feedback visual */
+    filter: brightness(1.05);
+    box-shadow: 0 14px 36px rgba(59, 130, 246, 0.45);
 }
 
 /* Mensagem de erro no estilo do Bootstrap alert-danger */
 .form-cadastro-error {
-    color: #842029;
-    background-color: #f8d7da;
-    border: 1px solid #f5c2c7;
-    border-radius: 0.375rem;
-    padding: 0.75rem 1.25rem;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    font-weight: 400;
+    color: #fecaca; /* texto erro suave */
+    background-color: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    backdrop-filter: blur(6px);
 }
 
 /* Página principal */
-.form-cadastro-page {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-    min-height: 100vh;
-}
+/* (já redefinido acima) */
 
 /* Lado Esquerdo: Formulário */
 .form-cadastro-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    place-items: center;
     background: transparent;
-    padding: 2rem;
-    min-height: 100vh;
+    padding: clamp(0.5rem, 2vw, 1.25rem);
 }
 
 /* Linha Divisória */
 .form-cadastro-divider {
-    width: 3px;
-    background: #ac0303;
-    height: 100%;
+    display: none;
 }
 
 /* Lado Direito: Vídeo */
 .form-cadastro-icon {
-    flex: 1;
-    display: flex;
-    justify-content: center;
+    display: grid;
     align-items: center;
+    justify-items: end; /* desloca a mídia para a direita */
     background: transparent;
-    padding: 2rem;
-    min-height: 100vh;
+    padding: clamp(0.75rem, 2.5vw, 1.5rem);
+    overflow: hidden;
 }
 
+/* Voltar mídia para o comportamento original (objeto/SVG em tamanho total da coluna; vídeo com tamanho 80%) */
 .form-cadastro-icon video {
     max-width: 80%;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Garante que SVG/OBJECT/IMG usem toda a largura da coluna */
+.form-cadastro-icon object,
+.form-cadastro-icon svg,
+.form-cadastro-icon img {
+    display: block;
+    width: 96%;
+    max-width: 96%;
+    height: auto;
+    max-height: 85vh;
+    box-sizing: border-box;
 }
 
 .d-none {
@@ -150,98 +223,205 @@
 }
 
 /* Container do botão */
+/* Botão Sair fixo no topo direito com estilo glass */
 .containerS {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-    margin-top: 20px;
-    margin-bottom: 0;
-    position: relative;
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    z-index: 1100;
 }
 
 /* Botão sair */
 .Cbutton {
-display: flex;
-    justify-content: left;
-    align-items: left;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    right: 0;
-    z-index: 1;
-    margin-left: 10px;
+    display: block;
 }
 
 .botãoS {
-    background-color: #1d1d1d;
-    color: #fff;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--color-white);
+    border: 1px solid var(--border-white);
+    padding: 12px 20px;
+    border-radius: 999px;
     font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    transition: background 0.2s;
-      text-decoration: none;
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
 }
 
 .botãoS:hover {
-    background-color: #b52a37;
+    transform: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    filter: brightness(1.05);
 }
 
-.object{
+/* Shine sutil no hover */
+.botãoS::after {
+    content: '';
+    position: absolute;
+    top: -120%;
+    left: -30%;
+    width: 60%;
+    height: 340%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+    transform: rotate(25deg);
+    transition:
+        left 0.6s ease,
+        top 0.6s ease;
+}
+.botãoS:hover::after {
+    left: 130%;
+    top: -120%;
+}
+
+/* Focus visível acessível */
+.botãoS:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.7);
+    outline-offset: 2px;
+}
+
+.botãoS:active {
+    transform: none;
+}
+
+.object {
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
     border-radius: 8px;
-    margin-bottom: 40%;
+    margin: 0;
 }
 
-.cadastrof{
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
+/* (removido bloco duplicado de .cadastrof que sobrescrevia alinhamentos e podia causar deslocamento) */
 
 .login-link {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     text-align: center;
-    font-size: 1rem;
-    color: #333;
+    font-size: 0.95rem;
+    color: var(--white-90);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
 }
 
+/* Link para login no rodapé do card */
 .form-cadastro-link {
-    display: inline-block;
-    color: #000000;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-white);
     text-decoration: none;
-    font-weight: 500;
-    transition: transform 0.2s, color 0.2s;
+    font-weight: 600;
+    transition:
+        transform 160ms ease,
+        color 200ms ease,
+        text-shadow 200ms ease;
     cursor: pointer;
+    position: relative;
+}
+
+/* micro animação do ícone */
+.form-cadastro-link i {
+    transition: transform 200ms ease;
+}
+.form-cadastro-link:hover i {
+    transform: none;
 }
 
 .form-cadastro-link:hover {
-    transform: translateY(-5px);
-    color: #f86019;
+    transform: none;
+    color: var(--secondary-blue);
+    text-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     text-decoration: none;
 }
 
+.form-cadastro-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--secondary-blue);
+    transition: width 260ms ease;
+}
+
+.form-cadastro-link:hover::after {
+    width: 100%;
+}
+
+.form-cadastro-card {
+    width: 100%;
+    padding: clamp(1.5rem, 4vw, 2rem);
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid var(--border-white);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.4);
+    /* remove deslocamento para evitar 'subida' visual */
+    transform: none;
+    opacity: 0;
+    animation: cadastroFadeIn 650ms ease-out forwards;
+    position: relative; /* necessário para o ::before */
+}
+
+/* Glow discreto ao hover para dar mais "charme" */
+.form-cadastro-card:hover {
+    box-shadow: 0 24px 68px rgba(15, 23, 42, 0.35);
+}
+
+/* Suaviza a aparição da luz de fundo */
+.form-cadastro-card {
+    transition: box-shadow 420ms ease-in-out;
+}
+.form-cadastro-card::before {
+    opacity: 0.65;
+    transition: opacity 450ms ease-in-out;
+}
+.form-cadastro-card:hover::before {
+    opacity: 0.85;
+}
+
+/* Realce suave de vidro líquido */
+.form-cadastro-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 45%);
+    pointer-events: none;
+}
+
 #loader-cadastro {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255,255,255,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  display:none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    display: none;
 }
 
 #loader-cadastro .spinner-border {
@@ -250,7 +430,7 @@ display: flex;
 }
 
 #loaderimg {
-  width: 20px;
+    width: 20px;
 }
 
 .loader-icon {
@@ -259,8 +439,8 @@ display: flex;
 }
 
 .imgloader {
-    width: 80px; 
-    height: 80px; 
+    width: 80px;
+    height: 80px;
 }
 
 .eye-icon {
@@ -269,13 +449,174 @@ display: flex;
     top: 37px;
     cursor: pointer;
     font-size: 1.3rem;
-    color: #101111;
-    opacity: 0.7;
-    transition: color 0.2s, opacity 0.2s;
+    color: var(--white-90);
+    opacity: 0.8;
+    transition:
+        color 0.15s,
+        opacity 0.15s,
+        transform 0.15s;
     z-index: 2;
 }
 
 .eye-icon:hover {
-    color: #777372;
+    color: var(--color-white);
     opacity: 1;
+    transform: scale(1.05);
+}
+
+/* Animações sutis */
+@keyframes cadastroFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-cadastro-group {
+    animation: groupSlideUp 420ms ease-out both;
+}
+.form-cadastro-group:nth-child(1) {
+    animation-delay: 60ms;
+}
+.form-cadastro-group:nth-child(2) {
+    animation-delay: 120ms;
+}
+.form-cadastro-group:nth-child(3) {
+    animation-delay: 180ms;
+}
+.form-cadastro-group:nth-child(4) {
+    animation-delay: 240ms;
+}
+.form-cadastro-group:nth-child(5) {
+    animation-delay: 300ms;
+}
+/* Estende o escalonamento para mais campos */
+.form-cadastro-group:nth-child(6) {
+    animation-delay: 360ms;
+}
+.form-cadastro-group:nth-child(7) {
+    animation-delay: 420ms;
+}
+.form-cadastro-group:nth-child(8) {
+    animation-delay: 480ms;
+}
+.form-cadastro-group:nth-child(9) {
+    animation-delay: 540ms;
+}
+.form-cadastro-group:nth-child(10) {
+    animation-delay: 600ms;
+}
+.form-cadastro-group:nth-child(11) {
+    animation-delay: 660ms;
+}
+.form-cadastro-group:nth-child(12) {
+    animation-delay: 720ms;
+}
+
+@keyframes groupSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Preferências de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+    .form-cadastro-card,
+    .form-cadastro-group {
+        animation: none !important;
+    }
+    .form-cadastro-input,
+    .form-cadastro-button,
+    .form-cadastro-link,
+    .botãoS {
+        transition: none !important;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    /* Espaço seguro no topo para o SVG não encostar/cortar no limite superior */
+    .cadastrof {
+        padding-top: clamp(12px, 4vh, 28px);
+        /* Em telas menores, comece o layout do topo para não 'comer' o início da mídia */
+        align-content: start;
+    }
+    .form-cadastro-page {
+        grid-template-columns: 1fr;
+        margin-top: 0;
+    }
+    .form-cadastro-icon {
+        order: -1;
+        /* Respiro menor, mas suficiente para evitar cortes */
+        padding-top: clamp(8px, 2.5vh, 16px);
+        margin-top: clamp(4px, 1vh, 8px);
+        overflow: visible;
+        justify-items: center;
+        align-items: start;
+    }
+
+    /* Reduz levemente a altura máxima da mídia no mobile para evitar corte */
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 70vh;
+        object-fit: contain;
+        object-position: top center;
+        margin-top: 4px;
+    }
+
+    /* Ajuste específico para telas muito estreitas */
+    @media (max-width: 576px) {
+        .cadastrof {
+            padding-top: clamp(28px, 7vh, 64px);
+        }
+        .form-cadastro-icon {
+            padding-top: clamp(18px, 6vh, 40px);
+        }
+        .form-cadastro-icon object,
+        .form-cadastro-icon svg,
+        .form-cadastro-icon img {
+            max-height: 60vh;
+        }
+    }
+    /* Reposiciona o botão Sair de volta para o topo direito no mobile */
+    .containerS {
+        left: auto;
+        right: max(12px, env(safe-area-inset-right));
+        top: max(10px, env(safe-area-inset-top));
+        bottom: auto;
+    }
+    .botãoS {
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        gap: 8px;
+    }
+}
+
+/* Tornar o SVG maior em telas médias/grandes (aproxima do layout original) */
+@media (min-width: 993px) {
+    .form-cadastro-page {
+        grid-template-columns: 1fr 1.2fr; /* dá mais espaço ao bloco do SVG */
+        width: min(1500px, 98vw);
+    }
+
+    .form-cadastro-icon {
+        padding: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    /* Limita a altura para não estourar a viewport, mantendo o visual grande */
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 80vh;
+    }
 }
