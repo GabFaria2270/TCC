@@ -5,7 +5,7 @@
             <div class="col-12 col-md-3 text-center text-md-start mb-2 mb-md-0">
                 <span class="footer-logo d-inline-flex align-items-center">
                     <i class="bi bi-shop-window me-2" style="font-size:2.2rem;color:#0d6efd;"></i>
-                    <span class="fw-bold" style="font-size:1.25rem;letter-spacing:1px;">60+conectado</span>
+                    <span class="fw-bold" style="font-size:1.25rem;letter-spacing:1px;">+Conectado</span>
                 </span>
             </div>
 

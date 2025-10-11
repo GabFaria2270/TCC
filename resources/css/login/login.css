@@ -20,14 +20,7 @@ html:has(body.loginf) {
     scrollbar-gutter: auto !important;
 }
 
-/* Garante que não apareça faixa branca nas bordas */
-html,
-body {
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-primary);
-    overflow-x: hidden;
-}
+/* (escopo removido para não afetar outras páginas) */
 
 /* Fundo, layout e centragem estável */
 .loginf {

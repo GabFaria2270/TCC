@@ -44,11 +44,7 @@ class AnimationManager {
                     element.classList.toggle('section-home-true', isEntering);
                     element.classList.toggle('section-home-false', !isEntering);
 
-                    if (
-                        isEntering &&
-                        element.classList.contains('section-stats') &&
-                        !element.dataset.animated
-                    ) {
+                    if (isEntering && element.classList.contains('section-stats') && !element.dataset.animated) {
                         element.dataset.animated = 'true';
                         this.animateNumbers(element.querySelectorAll('.stat-number'));
                     }
@@ -57,11 +53,11 @@ class AnimationManager {
             {
                 threshold: 0.15,
                 rootMargin: '0px 0px -10% 0px',
-            }
+            },
         );
 
         const sections = document.querySelectorAll(
-            '.section-cards-principais, .section-vantagens, .section-cardv, .container-sobre, .section-stats, .section-testimonials, .section-services, .section-cta'
+            '.section-cards-principais, .section-vantagens, .section-cardv, .container-sobre, .section-stats, .section-testimonials, .section-services, .section-cta',
         );
         sections.forEach((section, index) => {
             setTimeout(() => {
@@ -71,13 +67,7 @@ class AnimationManager {
     }
 
     forceVisibility() {
-        const criticalSections = [
-            '.section-vantagens',
-            '.section-stats',
-            '.section-testimonials',
-            '.section-services',
-            '.section-cta',
-        ];
+        const criticalSections = ['.section-vantagens', '.section-stats', '.section-testimonials', '.section-services', '.section-cta'];
 
         criticalSections.forEach((selector) => {
             const section = document.querySelector(selector);
@@ -102,9 +92,7 @@ class AnimationManager {
             const animate = () => {
                 if (currentCount < finalCount) {
                     currentCount += increment;
-                    const displayCount = isDecimal
-                        ? Math.min(currentCount, finalCount).toFixed(1)
-                        : Math.floor(Math.min(currentCount, finalCount));
+                    const displayCount = isDecimal ? Math.min(currentCount, finalCount).toFixed(1) : Math.floor(Math.min(currentCount, finalCount));
                     element.textContent = displayCount;
                     requestAnimationFrame(animate);
                 } else {
@@ -180,13 +168,17 @@ class AnimationManager {
         const navVar = rootStyles.getPropertyValue('--nav-height');
         const parsedNavHeight = parseInt(navVar, 10);
         this.navHeight = Number.isNaN(parsedNavHeight) ? 70 : parsedNavHeight;
-        this.heroHeight = this.heroSection
-            ? Math.max(this.heroSection.getBoundingClientRect().height, window.innerHeight)
-            : window.innerHeight;
+        this.heroHeight = this.heroSection ? Math.max(this.heroSection.getBoundingClientRect().height, window.innerHeight) : window.innerHeight;
     }
 
     toggleNavbarState(scrollY) {
         if (!this.navbar) return;
+
+        if (!this.heroSection) {
+            this.navbar.classList.remove('navbar-transparent');
+            this.navbar.classList.add('navbar-solid');
+            return;
+        }
 
         const threshold = Math.max(this.heroHeight - this.navHeight, this.navHeight);
         if (scrollY >= threshold) {
@@ -220,6 +212,11 @@ const setupNavbar = () => {
     const menu = document.getElementById('navbarMenu');
 
     if (toggle && menu) {
+        const closeMenu = () => {
+            toggle.classList.remove('active');
+            menu.classList.remove('active');
+        };
+
         toggle.addEventListener('click', () => {
             toggle.classList.toggle('active');
             menu.classList.toggle('active');
@@ -227,14 +224,33 @@ const setupNavbar = () => {
 
         menu.querySelectorAll('.nav-link').forEach((link) => {
             link.addEventListener('click', () => {
-                toggle.classList.remove('active');
-                menu.classList.remove('active');
+                closeMenu();
             });
+        });
+
+        // Fecha com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMenu();
+        });
+
+        // Fecha ao clicar fora do dropdown (fora do container e do toggle)
+        document.addEventListener('click', (e) => {
+            const withinToggle = toggle.contains(e.target);
+            const withinMenu = menu.contains(e.target);
+            if (!withinToggle && !withinMenu) closeMenu();
         });
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Fallback para viewport height em mobile (iOS/Android): define --vh em px
+    const setVh = () => {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    setVh();
+    window.addEventListener('resize', setVh);
+
     new AnimationManager();
     setupSmoothScroll();
     setupNavbar();

@@ -39,7 +39,8 @@
                     }
                 }
             } catch (e) {
-                /* noop */ }
+                /* noop */
+            }
         })();
     </script>
     <script>
@@ -59,7 +60,7 @@
         })();
     </script>
 
-<body class="bg-body-tertiary">
+<body class="bg-body-tertiary layout-gerenciamento">
     <noscript>
         <div style="margin:1rem; padding:0.75rem; border:1px solid #ccc; background:#fff; color:#333;">
             O aplicativo requer JavaScript para funcionar. Verifique se o Vite está rodando e se o navegador permite

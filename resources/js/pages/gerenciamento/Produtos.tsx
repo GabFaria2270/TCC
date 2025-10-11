@@ -755,7 +755,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                                 aria-label="Movimentar estoque do produto"
                                                                 onClick={() => abrirModalEstoque(produto)}
                                                             >
-                                                                <i className="bi bi-box-arrow-in-down-up"></i>
+                                                                <i className="bi bi-arrow-left-right"></i>
                                                                 <span className="d-none d-sm-inline ms-2">Movimentar</span>
                                                             </button>
                                                             <button

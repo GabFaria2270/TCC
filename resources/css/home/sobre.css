@@ -6,16 +6,17 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: clamp(12px, 3.5vw, 36px);
-    padding: 2rem 3% 3rem 3%; /* Reduzi o padding-top para 'subir' o conteúdo */
-    background: var(--color-black); /* Fundo preto mantido */
-    margin: 2rem 4%; /* Afastamento dos cantos ajustado */
-    max-width: 92%; /* Largura máxima igual à barra valores */
-    color: var(--color-white); /* Texto branco para contraste */
+    padding: 2.5rem clamp(1.5rem, 4vw, 3rem) 3.5rem;
+    background: var(--color-black);
+    margin: 2.5rem auto;
+    max-width: min(1180px, 92vw);
+    width: 100%;
+    color: var(--color-white);
     position: relative;
-    overflow: hidden; /* Esconde conteúdo que ultrapassar */
-    border-radius: 20px; /* Arredondamento dos cantos */
-    box-sizing: border-box; /* Inclui padding na largura total */
-    min-height: 500px; /* Altura mínima ajustada */
+    overflow: hidden;
+    border-radius: 20px;
+    box-sizing: border-box;
+    min-height: 500px;
 }
 
 @media (min-width: 992px) {
@@ -137,6 +138,11 @@
     font-weight: 400;
     line-height: 1.5;
     letter-spacing: 0.01em;
+    text-align: justify;
+}
+
+.sobre-escrita-detalhe {
+    text-align: justify;
 }
 
 .sobre-destaque {
@@ -318,18 +324,11 @@
 .container-sobre .container-escrita {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* apenas no SOBRE fica à esquerda */
-    justify-content: flex-start;
-    text-align: left;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     color: var(--color-white);
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 900px) {
-    .container-sobre .container-escrita {
-        align-items: center;
-        text-align: center;
-    }
+    margin-bottom: 1.5rem;
 }
 
 /* ===================================================================
@@ -338,10 +337,10 @@
 
 /* Seção Vantagens com as mesmas margens da seção Sobre */
 .section-vantagens {
-    margin: 2rem 4%; /* igual ao .container-sobre */
-    max-width: 92%; /* igual ao .container-sobre */
+    margin: 2.5rem auto;
+    max-width: min(1180px, 92vw);
     width: 100%;
-    padding: 1rem 0; /* reduz a altura geral */
+    padding: 1.5rem 0;
     background: transparent;
 }
 
@@ -383,8 +382,8 @@
     .vantagem-card {
         grid-template-columns: 1fr;
         width: 100%;
-        max-width: 100%;
-        margin: 0;
+        max-width: 680px;
+        margin: 0 auto;
         padding: 0.9rem;
     }
     .vantagem-image img {

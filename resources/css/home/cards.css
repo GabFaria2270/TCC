@@ -273,10 +273,12 @@
    SEÇÃO DE VANTAGENS (SEM BOOTSTRAP)
    ========================= */
 .section-vantagens {
-    padding: 3rem 2rem;
+    padding: 3.5rem clamp(1.5rem, 5vw, 3rem);
     background: transparent;
     position: relative;
-    margin: 2rem 0;
+    margin: 3rem auto;
+    max-width: min(1180px, 92vw);
+    width: 100%;
 }
 
 .section-vantagens::before {

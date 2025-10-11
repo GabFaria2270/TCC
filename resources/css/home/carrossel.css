@@ -3,6 +3,7 @@
    ========================= */
 
 .main-content {
+    /* Altura base preenchendo a viewport; --vh é atualizada via JS (fallback para 1vh) */
     height: calc(var(--vh, 1vh) * 100);
     margin-top: 0;
     overflow: hidden; /* evita 1-2px de rolagem por arredondamento/efeitos internos */
@@ -14,9 +15,9 @@
     margin: 0 !important;
 }
 
-/* O wrapper da navbar no home não deve empurrar o conteúdo */
+/* O wrapper da navbar não empurra o conteúdo pois a navbar é fixed, mas manter altura auto evita colapsos estranhos */
 section#nav {
-    height: 0;
+    height: auto;
 }
 
 .home-carousel {
@@ -52,12 +53,30 @@ section#nav {
 }
 
 .home-carousel__media {
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 0;
 }
 
 .home-carousel__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    object-position: 50% 45%;
+}
+
+.home-carousel__image--gestao {
+    object-position: 50% 38%;
+}
+
+.home-carousel__image--fiado {
+    object-position: 42% 30%;
+}
+
+.home-carousel__image--comecar {
+    object-position: 58% 35%;
 }
 
 .home-carousel__overlay {
@@ -75,6 +94,7 @@ section#nav {
     display: grid;
     place-items: center;
     padding: clamp(1rem, 2vw, 2rem);
+    padding-inline: clamp(2rem, 6vw, 4rem);
     text-align: center;
     color: var(--color-white);
 }
@@ -84,8 +104,10 @@ section#nav {
     flex-direction: column;
     align-items: center;
     gap: clamp(1rem, 2vw, 2.5rem);
-    padding: clamp(2rem, 4vw, 3rem);
-    width: min(520px, 90vw);
+    padding: clamp(1.6rem, 3.2vw, 2.4rem);
+    width: min(480px, 72vw);
+    max-width: 480px;
+    margin-inline: auto;
     background: rgba(15, 23, 42, 0.52);
     border-radius: 32px;
     border: 1px solid rgba(255, 255, 255, 0.18);
@@ -297,24 +319,74 @@ section#nav {
 
 /* Responsividade */
 @media (max-width: 768px) {
+    /* Evita compensações duplicadas da navbar nesta seção específica */
+    .section-home.main-content {
+        margin-top: 0 !important;
+    }
+    /* A seção herói deve ter a mesma altura do carrossel (viewport útil - navbar) */
+    .section-home.main-content {
+        height: calc(100vh - var(--nav-height) - env(safe-area-inset-top, 0px) + 64px);
+    }
+
+    /* Carrossel principal deve ocupar a viewport útil no mobile, descontando navbar fixa */
+    .home-carousel,
     .home-carousel .carousel-inner,
     .home-carousel .carousel-item,
     .home-carousel__item,
     .home-carousel__media,
     .home-carousel__image {
-        height: 100%;
+        height: calc(100vh - var(--nav-height) - env(safe-area-inset-top, 0px) + 64px);
+        max-height: none;
     }
 
-    /* Usa a unidade dvh quando suportada para evitar barras/overlays móveis afetando 100vh */
+    .home-carousel__media {
+        background-color: rgba(15, 23, 42, 0.85);
+    }
+
+    .home-carousel__glass {
+        width: min(440px, 68vw);
+        padding: 1.35rem 1.6rem 1.6rem;
+        gap: 0.85rem;
+    }
+
+    .home-carousel__image--gestao {
+        object-position: 50% 32%;
+    }
+
+    .home-carousel__image--fiado {
+        object-position: 38% 26%;
+    }
+
+    .home-carousel__image--comecar {
+        object-position: 62% 30%;
+    }
+
+    /* Usa dvh/svh quando suportado para lidar com barras do navegador móvel */
     @supports (height: 100dvh) {
         .main-content {
-            height: 100dvh;
+            height: calc(100dvh - var(--nav-height) - env(safe-area-inset-top, 0px) + 64px);
+        }
+        .home-carousel,
+        .home-carousel .carousel-inner,
+        .home-carousel .carousel-item,
+        .home-carousel__item,
+        .home-carousel__media,
+        .home-carousel__image {
+            height: calc(100dvh - var(--nav-height) - env(safe-area-inset-top, 0px) + 64px);
         }
     }
 
     @supports (height: 100svh) {
         .main-content {
-            height: 100svh;
+            height: calc(100svh - var(--nav-height) - env(safe-area-inset-top, 0px) + 64px);
+        }
+        .home-carousel,
+        .home-carousel .carousel-inner,
+        .home-carousel .carousel-item,
+        .home-carousel__item,
+        .home-carousel__media,
+        .home-carousel__image {
+            height: calc(100svh - var(--nav-height) - env(safe-area-inset-top, 0px) + 64px);
         }
     }
     .home-carousel .carousel-control-prev,
@@ -328,25 +400,76 @@ section#nav {
         height: 1.5rem;
     }
 
+    .home-carousel .carousel-control-prev,
+    .home-carousel .carousel-control-next {
+        padding: 0 12px;
+    }
+
     .botoes-carrossel {
         gap: 0.75rem;
     }
 }
 
 @media (max-width: 480px) {
-    .home-carousel .carousel-control-prev,
-    .home-carousel .carousel-control-next {
-        width: 44px;
+    /* Evita sobreposição com a navbar fixa (iPhone 14 ~430px) */
+    .home-carousel__content {
+        /* centraliza vertical quando houver espaço, mas deixa respiro do topo */
+        align-content: center;
+        justify-items: center;
+        padding-top: calc(var(--nav-height) + max(6px, env(safe-area-inset-top)));
+        padding-bottom: 14px;
+    }
+
+    /* Glass mais compacto e texto menor para caber confortável */
+    .home-carousel__glass {
+        gap: 0.68rem;
+        padding: 0.82rem 0.85rem 1rem;
+        width: min(72vw, 280px);
+        border-radius: 18px;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
+    }
+
+    .home-carousel__text h5 {
+        font-size: clamp(1.4rem, 6vw, 1.8rem);
+        line-height: 1.25;
+    }
+    .home-carousel__text p {
+        font-size: clamp(0.95rem, 4.2vw, 1.05rem);
+        line-height: 1.5;
     }
 
     .btn-cadastro-carrossel,
     .btn-login-carrossel {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-        min-width: 120px;
+        padding: 0.65rem 1.05rem;
+        font-size: 0.85rem;
+        min-width: 102px;
+    }
+    .home-carousel .carousel-control-prev,
+    .home-carousel .carousel-control-next {
+        width: 40px;
+    }
+
+    .home-carousel__image--gestao {
+        object-position: 50% 28%;
+    }
+
+    .home-carousel__image--fiado {
+        object-position: 34% 22%;
+    }
+
+    .home-carousel__image--comecar {
+        object-position: 66% 26%;
     }
 
     .botoes-carrossel {
         flex-direction: column;
+        margin-top: 0.5rem;
+    }
+}
+
+/* iPhone 14/Pro (390–430px de largura) ajuste fino */
+@media (min-width: 381px) and (max-width: 450px) {
+    .home-carousel__glass {
+        width: min(74vw, 300px);
     }
 }

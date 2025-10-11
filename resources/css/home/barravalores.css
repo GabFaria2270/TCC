@@ -6,16 +6,17 @@
    │ 🎯 CONTAINER PRINCIPAL - ALTURA AUMENTADA                       │
    └─────────────────────────────────────────────────────────────────┘ */
 .section-cardv {
-    padding: 6rem 4%; /* Aumentei o padding vertical para 15rem */
+    padding: 6rem clamp(1.5rem, 5vw, 3rem);
     background: transparent;
-    margin: 2rem 4%; /* Afastamento ajustado para 4% */
-    max-width: 92%; /* Mantém a largura proporcional */
+    margin: 3rem auto;
+    max-width: min(1180px, 92vw);
+    width: 100%;
     color: var(--text-primary);
     position: relative;
     overflow: hidden;
-    border-radius: 20px; /* Arredondamento dos cantos */
-    box-sizing: border-box; /* Garante que padding não afete a largura */
-    min-height: 500px; /* Aumentei a altura mínima para 1000px */
+    border-radius: 20px;
+    box-sizing: border-box;
+    min-height: 500px;
 }
 
 .section-cardv::before {
@@ -187,8 +188,8 @@
    └─────────────────────────────────────────────────────────────────┘ */
 @media (max-width: 992px) {
     .section-cardv {
-        padding: 3rem 0; /* ← ESPAÇAMENTO EM TABLET */
-        margin: 2rem 0; /* ← MARGEM EM TABLET */
+        padding: 3rem 1.5rem;
+        margin: 2rem auto;
     }
 
     .valores-container {
@@ -209,6 +210,11 @@
    │ 📱 MOBILE GRANDE (768px e abaixo)                               │
    └─────────────────────────────────────────────────────────────────┘ */
 @media (max-width: 768px) {
+    .section-cardv {
+        padding: 2.75rem 1.25rem;
+        margin: 2rem auto;
+    }
+
     .valores-grid {
         grid-template-columns: repeat(2, 1fr); /* ← 2 COLUNAS EM MOBILE */
         gap: 1rem; /* ← ESPAÇO REDUZIDO EM MOBILE */
@@ -236,6 +242,11 @@
    │ 📱 MOBILE PEQUENO (480px e abaixo)                              │
    └─────────────────────────────────────────────────────────────────┘ */
 @media (max-width: 480px) {
+    .section-cardv {
+        padding: 2.2rem 1rem;
+        margin: 1.5rem auto;
+    }
+
     .valores-grid {
         grid-template-columns: 1fr; /* ← 1 COLUNA EM MOBILE PEQUENO */
         gap: 1rem;

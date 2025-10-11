@@ -2,14 +2,7 @@
 html:has(body.cadastrof) {
     scrollbar-gutter: auto !important;
 }
-/* Garante que não apareça faixa branca nas bordas */
-html,
-body {
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-primary);
-    overflow-x: hidden;
-}
+/* (escopo removido para não afetar outras páginas) */
 /* ===================================================================
    CADASTRO - TEMA GLASS ESCURO ALINHADO COM A HOME
    =================================================================== */
@@ -22,7 +15,7 @@ body {
     min-height: 100dvh;
     margin: 0;
     padding: 0;
-    /* Permite rolagem somente quando necessário e evita empurrões ao selecionar */
+    /* Por padrão pode rolar; em desktop eu travo e passo a rolagem para dentro do card */
     overflow-y: auto;
     background: var(--gradient-primary);
     background-color: #6b2ba6; /* fallback coerente ao gradiente */
@@ -36,7 +29,7 @@ body {
 /* Container principal: duas colunas com respiro */
 .form-cadastro-page {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 1.2fr 0.8fr; /* dá mais espaço ao formulário em telas médias */
     gap: clamp(1rem, 2.5vw, 1.5rem);
     width: min(1200px, 96vw);
     max-width: 100vw;
@@ -181,7 +174,7 @@ body {
     display: grid;
     place-items: center;
     background: transparent;
-    padding: clamp(0.5rem, 2vw, 1.25rem);
+    padding: clamp(0.75rem, 2.5vw, 1.5rem);
 }
 
 /* Linha Divisória */
@@ -211,8 +204,8 @@ body {
 .form-cadastro-icon svg,
 .form-cadastro-icon img {
     display: block;
-    width: 96%;
-    max-width: 96%;
+    width: 94%;
+    max-width: 94%;
     height: auto;
     max-height: 85vh;
     box-sizing: border-box;
@@ -591,20 +584,7 @@ body {
         margin-top: 4px;
     }
 
-    /* Ajuste específico para telas muito estreitas */
-    @media (max-width: 576px) {
-        .cadastrof {
-            padding-top: clamp(28px, 7vh, 64px);
-        }
-        .form-cadastro-icon {
-            padding-top: clamp(18px, 6vh, 40px);
-        }
-        .form-cadastro-icon object,
-        .form-cadastro-icon svg,
-        .form-cadastro-icon img {
-            max-height: 60vh;
-        }
-    }
+    /* (bloco para telas muito estreitas movido para o nível superior; CSS não aceita @media aninhado) */
     /* Reposiciona o botão Sair de volta para o topo direito no mobile */
     .containerS {
         left: auto;
@@ -619,11 +599,76 @@ body {
     }
 }
 
+/* Empilha mais cedo em telas médias para evitar corte (similar ao login estável) */
+@media (max-width: 1280px) {
+    .form-cadastro-page {
+        grid-template-columns: 1fr;
+    }
+    .form-cadastro-icon {
+        order: -1;
+        padding-top: clamp(8px, 2.5vh, 16px);
+        margin-top: clamp(4px, 1vh, 8px);
+        overflow: visible;
+        justify-items: center;
+        align-items: start;
+    }
+}
+
+/* Telas com pouca altura: prioriza o formulário e reduz a mídia */
+@media (max-height: 820px) {
+    .cadastrof {
+        align-content: start;
+        padding-top: clamp(8px, 3vh, 18px);
+    }
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 65vh;
+    }
+}
+@media (max-height: 700px) {
+    .cadastrof {
+        align-content: start;
+        padding-top: clamp(10px, 4vh, 22px);
+    }
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 48vh;
+    }
+}
+/* Se a altura estiver baixa, empilha para priorizar o formulário, mesmo com largura maior */
+@media (max-height: 760px) {
+    .form-cadastro-page {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ajuste específico para telas muito estreitas (igual Login) */
+@media (max-width: 576px) {
+    .cadastrof {
+        padding-top: clamp(28px, 7vh, 64px);
+    }
+    .form-cadastro-icon {
+        padding-top: clamp(18px, 6vh, 40px);
+    }
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 60vh;
+    }
+}
+
 /* Tornar o SVG maior em telas médias/grandes (aproxima do layout original) */
 @media (min-width: 993px) {
+    /* Em desktop: página sem rolagem e conteúdo ajustado à viewport */
+    .cadastrof {
+        overflow: hidden;
+    }
     .form-cadastro-page {
         grid-template-columns: 1fr 1.2fr; /* dá mais espaço ao bloco do SVG */
         width: min(1500px, 98vw);
+        height: 100dvh; /* ocupa a altura da viewport para centralizar */
     }
 
     .form-cadastro-icon {
@@ -635,5 +680,174 @@ body {
     .form-cadastro-icon svg,
     .form-cadastro-icon img {
         max-height: 80vh;
+    }
+
+    /* Limita o card para caber na viewport e habilita rolagem interna suave */
+    .form-cadastro-container {
+        display: flex;
+        align-items: center;
+    }
+    .form-cadastro-card {
+        max-height: calc(100dvh - 48px);
+        display: flex;
+        flex-direction: column;
+    }
+    /* O scroll acontece no corpo do card para não esticar o cabeçalho */
+    .form-cadastro {
+        flex: 1 1 auto;
+        overflow: visible;
+    }
+    .form-cadastro-body {
+        flex: 1 1 auto;
+        min-height: 0; /* necessário para overflow funcionar em flex */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-gutter: stable both-edges;
+    }
+}
+
+/* Em telas de desktop com pouca altura: distribuir campos em 2 colunas para reduzir a altura total */
+@media (min-width: 993px) and (max-height: 820px) {
+    #cadastroForm {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 16px;
+        row-gap: 10px;
+        align-content: start;
+    }
+    #cadastroForm .form-cadastro-group {
+        margin-bottom: 8px;
+    }
+    #cadastroForm .form-cadastro-error {
+        grid-column: 1 / -1;
+    }
+    #cadastroForm .form-cadastro-button {
+        grid-column: 1 / -1;
+    }
+    .login-link {
+        margin-top: 8px;
+    }
+}
+
+@media (min-width: 993px) and (max-height: 700px) {
+    #cadastroForm {
+        column-gap: 12px;
+        row-gap: 8px;
+    }
+    .form-cadastro-header {
+        margin-bottom: 8px;
+        font-size: clamp(1.2rem, 2vw, 1.4rem);
+    }
+}
+
+/* ---- Mensagens de erro e rate-limit mais compactas ---- */
+.form-cadastro-error {
+    margin-bottom: 0.65rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.92rem;
+}
+
+/* Ajustes específicos do alerta de rate-limit dentro do Cadastro */
+.cadastrof .rate-limit-alert {
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    animation: none; /* evita pulsar e aumentar altura */
+}
+.cadastrof .rate-limit-content {
+    gap: 10px;
+}
+.cadastrof .rate-limit-content i {
+    font-size: 1.3rem;
+}
+.cadastrof #countdown {
+    font-size: 1rem;
+    padding: 1px 6px;
+}
+
+/* Em telas muito baixas, compacte ainda mais os avisos */
+@media (max-height: 700px) {
+    .cadastrof .rate-limit-alert {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+    .form-cadastro-error {
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0.7rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* MODO COMPACTO: telas muito baixas — reduzir espaços para evitar rolagem */
+@media (max-height: 650px) {
+    .form-cadastro-page {
+        gap: 0.75rem;
+    }
+    .form-cadastro-card {
+        padding: 1rem 1rem;
+    }
+    .form-cadastro-header {
+        font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+        margin-bottom: 10px;
+    }
+    .form-cadastro-group {
+        margin-bottom: 10px;
+    }
+    .form-cadastro-label {
+        margin-bottom: 4px;
+        font-size: 0.92rem;
+    }
+    .form-cadastro-input {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.96rem;
+    }
+    .form-cadastro-button {
+        padding: 0.75rem 0.9rem;
+        font-size: 0.95rem;
+    }
+    .form-cadastro-link {
+        font-size: 0.9rem;
+    }
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 44vh;
+        width: 86%;
+        max-width: 86%;
+    }
+    .botãoS {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+        gap: 6px;
+    }
+}
+
+@media (max-height: 600px) {
+    .cadastrof {
+        padding-top: clamp(6px, 2vh, 12px);
+    }
+    .form-cadastro-card {
+        padding: 0.8rem 0.9rem;
+    }
+    .form-cadastro-header {
+        font-size: clamp(1.15rem, 2vw, 1.35rem);
+        margin-bottom: 8px;
+    }
+    .form-cadastro-group {
+        margin-bottom: 8px;
+    }
+    .form-cadastro-input {
+        padding: 0.55rem 0.75rem;
+        font-size: 0.94rem;
+    }
+    .form-cadastro-button {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.93rem;
+    }
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 40vh;
+        width: 84%;
+        max-width: 84%;
     }
 }

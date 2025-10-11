@@ -88,19 +88,19 @@
 }
 
 @media (max-width: 900px) {
-    /* Banner/Carrossel */
-    .carousel {
+    /* Banner/Carrossel (GENÉRICO) — NÃO afeta o carrossel principal da Home */
+    .carousel:not(.home-carousel) {
         height: auto !important;
         background: transparent;
         overflow: hidden;
         width: 100% !important;
         border-radius: 16px !important;
     }
-    .carousel-inner,
-    .carousel-item {
+    .carousel:not(.home-carousel) .carousel-inner,
+    .carousel:not(.home-carousel) .carousel-item {
         height: auto;
     }
-    .carousel-item img {
+    .carousel:not(.home-carousel) .carousel-item img {
         width: 100% !important;
         height: auto !important;
         max-height: 420px;
@@ -108,7 +108,7 @@
         display: block;
         margin: 0 auto;
     }
-    .carousel-caption {
+    .carousel:not(.home-carousel) .carousel-caption {
         background: rgba(0, 0, 0, 0.45) !important;
         border-radius: 0 0 16px 16px;
         padding: 0.75rem 1rem;
@@ -126,10 +126,25 @@
         padding: 1rem 0.5rem;
         margin: 0;
     }
+
+    .container-sobre,
+    .section-vantagens,
+    .section-cardv {
+        margin-left: auto;
+        margin-right: auto;
+        width: min(94vw, 720px);
+        max-width: 100%;
+        padding-left: clamp(1rem, 6vw, 1.75rem);
+        padding-right: clamp(1rem, 6vw, 1.75rem);
+    }
     .main-content {
         padding: 0;
         margin: 0;
         margin-top: calc(-1 * var(--nav-height));
+    }
+    /* Não aplicar margem negativa na seção Home (carrossel) */
+    .section-home.main-content {
+        margin-top: 0 !important;
     }
     .container-escrita {
         font-size: 1.1rem;
@@ -232,17 +247,17 @@
 }
 
 @media (max-width: 600px) {
-    .carousel {
+    .carousel:not(.home-carousel) {
         margin-bottom: 24px !important;
     }
-    .carousel + section,
-    .carousel + .sobre-empresa,
-    .carousel + .content-section {
+    .carousel:not(.home-carousel) + section,
+    .carousel:not(.home-carousel) + .sobre-empresa,
+    .carousel:not(.home-carousel) + .content-section {
         margin-top: 24px !important;
     }
-    .carousel,
-    .carousel-inner,
-    .carousel-item {
+    .carousel:not(.home-carousel),
+    .carousel:not(.home-carousel) .carousel-inner,
+    .carousel:not(.home-carousel) .carousel-item {
         height: 320px !important;
         min-height: 280px;
         max-height: 360px;
@@ -250,18 +265,18 @@
         overflow: hidden;
         position: relative;
     }
-    .carousel-item img {
+    .carousel:not(.home-carousel) .carousel-item img {
         max-height: 320px;
     }
-    .carousel-control-prev,
-    .carousel-control-next {
+    .carousel:not(.home-carousel) .carousel-control-prev,
+    .carousel:not(.home-carousel) .carousel-control-next {
         top: 50%;
         transform: translateY(-50%);
         height: 44px;
         width: 30px;
         opacity: 0.95;
     }
-    .carousel-caption {
+    .carousel:not(.home-carousel) .carousel-caption {
         position: absolute;
         left: 50%;
         bottom: 0;
@@ -273,16 +288,16 @@
         background: rgba(0, 0, 0, 0.35) !important;
         text-align: center;
     }
-    .carousel-caption h5 {
+    .carousel:not(.home-carousel) .carousel-caption h5 {
         font-size: 1.15rem;
         margin-bottom: 6px;
         font-weight: 700;
     }
-    .carousel-caption p {
+    .carousel:not(.home-carousel) .carousel-caption p {
         font-size: 0.98rem;
         margin-bottom: 8px;
     }
-    .carousel-caption .btn {
+    .carousel:not(.home-carousel) .carousel-caption .btn {
         font-size: 1rem;
         padding: 10px 0;
         min-width: 130px;
@@ -292,7 +307,7 @@
         width: 48%;
         max-width: 160px;
     }
-    .carousel-caption .btn-group {
+    .carousel:not(.home-carousel) .carousel-caption .btn-group {
         display: flex;
         justify-content: center;
         gap: 12px;
@@ -306,10 +321,25 @@
     .section-cardv {
         padding: 0.5rem 0.2rem;
     }
+
+    .container-sobre,
+    .section-vantagens,
+    .section-cardv {
+        width: min(95vw, 680px);
+        max-width: 100%;
+        padding-left: clamp(0.85rem, 6vw, 1.25rem);
+        padding-right: clamp(0.85rem, 6vw, 1.25rem);
+        margin-left: auto;
+        margin-right: auto;
+    }
     .main-content {
         padding: 0;
         margin: 0;
         margin-top: calc(-1 * var(--nav-height));
+    }
+    /* Refina a Home: nada de margem negativa aqui no mobile */
+    .section-home.main-content {
+        margin-top: 0 !important;
     }
     .container-escrita {
         font-size: 1rem;
