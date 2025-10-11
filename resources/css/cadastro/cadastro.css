@@ -372,32 +372,38 @@ body {
     padding: clamp(1.5rem, 4vw, 2rem);
     border-radius: 20px;
     background: rgba(15, 23, 42, 0.5);
-    border: 1px solid var(--border-white);
+    border: 1px solid transparent; /* sem contorno visível por padrão */
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
-    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.4);
+    box-shadow: none; /* sem sombra por padrão */
     /* remove deslocamento para evitar 'subida' visual */
     transform: none;
     opacity: 0;
     animation: cadastroFadeIn 650ms ease-out forwards;
     position: relative; /* necessário para o ::before */
 }
-
-/* Glow discreto ao hover para dar mais "charme" */
-.form-cadastro-card:hover {
-    box-shadow: 0 24px 68px rgba(15, 23, 42, 0.35);
+/* Apenas sombra suave no hover/focus, sem borda aparecendo */
+.form-cadastro-card:hover,
+.form-cadastro-card:focus-within {
+    /* Glow forte e claramente visível (sem anel/borda) */
+    box-shadow:
+        0 0 120px 36px rgba(168, 85, 247, 0.45),
+        0 24px 80px rgba(124, 58, 237, 0.35),
+        0 12px 32px rgba(0, 0, 0, 0.35);
 }
+
+/* Glow discreto focado no contorno (ajustado acima em :hover/:focus-within) */
 
 /* Suaviza a aparição da luz de fundo */
 .form-cadastro-card {
-    transition: box-shadow 420ms ease-in-out;
+    transition: box-shadow 380ms ease-in-out;
 }
 .form-cadastro-card::before {
     opacity: 0.65;
     transition: opacity 450ms ease-in-out;
 }
 .form-cadastro-card:hover::before {
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
 /* Realce suave de vidro líquido */
@@ -478,6 +484,16 @@ body {
 
 .form-cadastro-group {
     animation: groupSlideUp 420ms ease-out both;
+    transition: transform 180ms ease-out; /* leve subida ao hover */
+    will-change: transform;
+}
+/* Todos os campos sobem levemente quando o card está em hover */
+.form-cadastro-card:hover .form-cadastro-group {
+    transform: translateY(-2px);
+}
+/* O campo sob o mouse sobe um pouco mais */
+.form-cadastro-group:hover {
+    transform: translateY(-4px);
 }
 .form-cadastro-group:nth-child(1) {
     animation-delay: 60ms;
@@ -537,7 +553,8 @@ body {
     .form-cadastro-input,
     .form-cadastro-button,
     .form-cadastro-link,
-    .botãoS {
+    .botãoS,
+    .form-cadastro-group {
         transition: none !important;
     }
 }

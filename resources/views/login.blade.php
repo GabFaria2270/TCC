@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    @vite(['resources/css/app.css',  'resources/js/geralJS.js'])
+    @vite(['resources/css/app.css', 'resources/js/geralJS.js'])
 </head>
 
 <body class="loginf">
     <!--botão de sair-->
     <div class="containerS">
         <div class="Cbutton">
-            <a href="{{ route('home') }}" class="botãoS">Sair</a>
+            <a href="{{ route('home') }}" class="botãoS"><i class="bi bi-box-arrow-left"></i> Sair</a>
         </div>
     </div>
     <!--botão de sair-->
@@ -100,7 +100,8 @@
 
                             <div class="login-link">
                                 <span>Não tem uma conta?</span>
-                                <a href="{{ route('cadastro') }}" class="form-login-link">Cadastrar</a>
+                                <a href="{{ route('cadastro') }}" class="form-login-link"><i
+                                        class="bi bi-box-arrow-in-right"></i> Cadastrar</a>
                             </div>
                         </div>
                     </div>

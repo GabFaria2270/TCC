@@ -1,274 +1,552 @@
-/* CSS de login (cópia do cadastro) */
+/* LOGIN - CSS organizado alinhado ao Cadastro/Home */
 @import 'rate-limiting.css';
 
 /* Remove o ícone padrão de mostrar/ocultar senha do navegador */
-.form-login-input[type="password"]::-ms-reveal,
-.form-login-input[type="password"]::-webkit-reveal-password {
+.form-login-input[type='password']::-ms-reveal,
+.form-login-input[type='password']::-webkit-reveal-password {
     display: none !important;
 }
-
-.form-login-input[type="password"]::-ms-clear,
-.form-login-input[type="password"]::-webkit-clear-password {
+.form-login-input[type='password']::-ms-clear,
+.form-login-input[type='password']::-webkit-clear-password {
     display: none !important;
 }
-
 /* Remove botões de auto-preenchimento do navegador */
 .form-login-input::-webkit-credentials-auto-fill-button {
     display: none !important;
 }
 
-.loginf {
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    min-height: 100vh;
-    height: auto;
-    background-color: #ede7d7;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
+/* Evita reservar espaço de scroll apenas nesta página (mesmo comportamento do cadastro) */
+html:has(body.loginf) {
+    scrollbar-gutter: auto !important;
 }
 
+/* Garante que não apareça faixa branca nas bordas */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    overflow-x: hidden;
+}
+
+/* Fundo, layout e centragem estável */
+.loginf {
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    background: var(--gradient-primary);
+    background-color: #6b2ba6; /* fallback coerente */
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    width: 100%;
+}
+
+/* Container principal: duas colunas com respiro */
+.form-login-page {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(1rem, 2.5vw, 1.5rem);
+    width: min(1200px, 96vw);
+    max-width: 100vw;
+    align-items: stretch;
+}
+
+/* Lado esquerdo: formulário */
 .form-login {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: auto;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding: 0;
-}
-
-.form-login-card {
-    background: transparent;
-    width: 100%;
-    padding: 32px 24px;
-    border-radius: 8px;
-    box-shadow: none;
-}
-
-.form-login-header {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 24px;
-    color: #0a0a0a;
-}
-
-.form-login-group {
-    margin-bottom: 18px;
-}
-
-.form-login-label {
-    display: block;
-    margin-bottom: 6px;
-    color: #000000;
-    font-size: 15px;
-}
-
-.form-login-input {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: 1px solid #000000;
-    border-radius: 4px;
-    background: transparent;
-    color: #000000;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-
-.form-login-input:focus {
-    border-color: #4692b6;
-    background: rgba(255, 255, 255, 0.1);
-    outline: none;
-    color: #000000;
-}
-
-.form-login-button {
-    width: 100%;
-    padding: 12px 0;
-    background: #000000;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.form-login-button:hover {
-    background: #74b9ff;
-}
-
-.form-login-error {
-    color: #842029;
-    background-color: #f8d7da;
-    border: 1px solid #f5c2c7;
-    border-radius: 0.375rem;
-    padding: 0.75rem 1.25rem;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    font-weight: 400;
-}
-
-.form-login-page {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-    min-height: unset;
-}
-
-.form-login-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
-    padding: 0;
-    min-height: unset;
-    margin-top: -8%;
-}
-
-.form-login-icon {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
-    min-height: unset;
-}
-
-.containerS {
-    width: auto;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin-top: 0;
-    margin-bottom: 0;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: unset;
-    z-index: 10;
-}
-
-.Cbutton {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: auto;
-    height: auto;
-    margin-left: 0;
-}
-
-.botãoS {
-    background-color: #1d1d1d;
-    color: #fff;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-    text-decoration: none;
-}
-
-.botãoS:hover {
-    background-color: #b52a37;
-}
-
-.objectL {
-    width: 70%;
-    height: auto;
-    object-fit: cover;
-    border-radius: 8px;
-   margin-top: -20%;
-}
-
-.cadastrof {
-    justify-content: center;
-    align-items: center;
+    align-items: stretch;
     width: 100%;
     height: 100%;
 }
 
-.login-link {
-    margin-top: 1.5rem;
+/* Card do formulário (glass) */
+.form-login-card {
+    width: 100%;
+    padding: clamp(1.5rem, 4vw, 2rem);
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid transparent; /* sem contorno visível por padrão */
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    box-shadow: none; /* sem sombra por padrão */
+    transform: none;
+    opacity: 0;
+    animation: loginFadeIn 650ms ease-out forwards;
+    position: relative;
+    transition: box-shadow 380ms ease-in-out;
+}
+/* Sombra/anel roxo no hover/focus */
+.form-login-card:hover,
+.form-login-card:focus-within {
+    /* Glow forte e claramente visível (sem anel/borda) */
+    box-shadow:
+        0 0 120px 36px rgba(168, 85, 247, 0.45),
+        0 24px 80px rgba(124, 58, 237, 0.35),
+        0 12px 32px rgba(0, 0, 0, 0.35);
+}
+/* Realce suave de vidro líquido */
+.form-login-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 45%);
+    pointer-events: none;
+    opacity: 0.65;
+    transition: opacity 450ms ease-in-out;
+}
+.form-login-card:hover::before {
+    opacity: 0.85;
+}
+.form-login-card:hover::before {
+    opacity: 0.9;
+}
+
+/* Cabeçalho com sublinhado animado */
+.form-login-header {
     text-align: center;
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: var(--color-white);
+    letter-spacing: 0.01em;
+    position: relative;
+    line-height: 1.2;
+}
+.form-login-header::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--gradient-secondary);
+    transition: width 300ms ease;
+}
+.form-login-card:hover .form-login-header::after {
+    width: 64px;
+}
+
+/* Campos */
+.form-login-group {
+    margin-bottom: 18px;
+    animation: groupSlideUpLogin 420ms ease-out both;
+    transition: transform 180ms ease-out;
+    will-change: transform;
+}
+/* Todos os campos sobem levemente quando o card está em hover */
+.form-login-card:hover .form-login-group {
+    transform: translateY(-2px);
+}
+/* O campo sob o mouse sobe um pouco mais */
+.form-login-group:hover {
+    transform: translateY(-4px);
+}
+.form-login-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--white-90);
+    font-size: 0.95rem;
+}
+.form-login-input {
+    width: 100%;
+    padding: 0.85rem 0.95rem;
     font-size: 1rem;
-    color: #333;
+    border: 1px solid rgba(226, 232, 240, 0.25);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-white);
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+.form-login-input:focus {
+    border-color: var(--secondary-blue);
+    background: rgba(255, 255, 255, 0.12);
+    outline: none;
+    color: var(--color-white);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.22);
+}
+.form-login-input:hover {
+    box-shadow: none;
+}
+
+/* Mensagem de erro */
+.form-login-error {
+    color: #fecaca;
+    background-color: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    backdrop-filter: blur(6px);
+}
+
+/* Texto do checkbox "Lembrar-me" no tema escuro */
+.form-login .form-check-label {
+    color: var(--color-white);
+}
+
+/* Botão de entrar */
+.form-login-button {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: var(--gradient-secondary);
+    color: var(--color-white);
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.35);
+}
+.form-login-button:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 14px 36px rgba(59, 130, 246, 0.45);
+}
+
+/* Link inferior */
+.login-link {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--white-90);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
 }
-
 .form-login-link {
-    display: inline-block;
-    color: #000000;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-white);
     text-decoration: none;
-    font-weight: 500;
-    transition: transform 0.2s, color 0.2s;
+    font-weight: 600;
+    transition:
+        color 200ms ease,
+        text-shadow 200ms ease;
     cursor: pointer;
+    position: relative;
 }
-
 .form-login-link:hover {
-    transform: translateY(-5px);
-    color: #f86019;
+    color: var(--secondary-blue);
+    text-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     text-decoration: none;
+    transform: none;
+}
+.form-login-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--secondary-blue);
+    transition: width 260ms ease;
+}
+.form-login-link:hover::after {
+    width: 100%;
 }
 
+/* Botão "Sair" em glass e container (paridade com cadastro) */
+.containerS {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    z-index: 1100;
+}
+.Cbutton {
+    display: block;
+}
+.botãoS {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--color-white);
+    border: 1px solid var(--border-white);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+.botãoS:hover {
+    transform: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    filter: brightness(1.05);
+}
+.botãoS::after {
+    content: '';
+    position: absolute;
+    top: -120%;
+    left: -30%;
+    width: 60%;
+    height: 340%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+    transform: rotate(25deg);
+    transition:
+        left 0.6s ease,
+        top 0.6s ease;
+}
+.botãoS:hover::after {
+    left: 130%;
+    top: -120%;
+}
+.botãoS:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.7);
+    outline-offset: 2px;
+}
+.botãoS:active {
+    transform: none;
+}
+
+/* Container do formulário (equivalente ao cadastro) */
+.form-login-container {
+    display: grid;
+    place-items: center;
+    background: transparent;
+    padding: clamp(0.5rem, 2vw, 1.25rem);
+}
+
+/* Lado direito: SVG/IMG/OBJECT */
+.form-login-icon {
+    display: grid;
+    align-items: center;
+    justify-items: end;
+    background: transparent;
+    padding: clamp(0.75rem, 2.5vw, 1.5rem);
+    overflow: hidden;
+}
+.form-login-icon object,
+.form-login-icon svg,
+.form-login-icon img {
+    display: block;
+    width: 96%;
+    max-width: 100%;
+    height: auto;
+    max-height: 85vh;
+    box-sizing: border-box;
+}
+.objectL {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    margin: 0;
+}
+
+/* Loader escuro */
 #loader-cadastro {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255,255,255,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  display:none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    display: none;
 }
-
 #loader-cadastro .spinner-border {
     width: 4rem;
     height: 4rem;
 }
-
 #loaderimg {
-  width: 20px;
+    width: 20px;
 }
-
 .loader-icon {
     display: flex !important;
     animation: girar 0.8s linear infinite;
 }
-
 .imgloader {
     width: 80px;
     height: 80px;
 }
 
-/* Ícone de olho personalizado */
+/* Ícone de olho personalizado (tema escuro) */
 .eye-icon {
     position: absolute;
     right: 14px;
     top: 37px;
     cursor: pointer;
     font-size: 1.3rem;
-    color: #101111;
-    opacity: 0.7;
-    transition: color 0.2s, opacity 0.2s;
+    color: var(--white-90);
+    opacity: 0.8;
+    transition:
+        color 0.15s,
+        opacity 0.15s,
+        transform 0.15s;
     z-index: 2;
 }
-
 .eye-icon:hover {
-    color: #777372;
+    color: var(--color-white);
     opacity: 1;
+    transform: scale(1.05);
 }
 
+/* Animações */
+@keyframes loginFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes groupSlideUpLogin {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.form-login-group:nth-child(1) {
+    animation-delay: 60ms;
+}
+.form-login-group:nth-child(2) {
+    animation-delay: 120ms;
+}
+.form-login-group:nth-child(3) {
+    animation-delay: 180ms;
+}
+.form-login-group:nth-child(4) {
+    animation-delay: 240ms;
+}
+.form-login-group:nth-child(5) {
+    animation-delay: 300ms;
+}
+.form-login-group:nth-child(6) {
+    animation-delay: 360ms;
+}
+.form-login-group:nth-child(7) {
+    animation-delay: 420ms;
+}
+.form-login-group:nth-child(8) {
+    animation-delay: 480ms;
+}
+.form-login-group:nth-child(9) {
+    animation-delay: 540ms;
+}
+.form-login-group:nth-child(10) {
+    animation-delay: 600ms;
+}
+
+/* Preferências de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+    .form-login-card,
+    .form-login-group {
+        animation: none !important;
+    }
+    .form-login-input,
+    .form-login-button,
+    .form-login-link,
+    .form-login-group {
+        transition: none !important;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .loginf {
+        padding-top: clamp(12px, 4vh, 28px);
+        align-content: start;
+    }
+    .form-login-page {
+        grid-template-columns: 1fr;
+        margin-top: 0;
+    }
+    .form-login-icon {
+        order: -1;
+        padding-top: clamp(8px, 2.5vh, 16px);
+        margin-top: clamp(4px, 1vh, 8px);
+        overflow: visible;
+        justify-items: center;
+        align-items: start;
+    }
+    .form-login-icon object,
+    .form-login-icon svg,
+    .form-login-icon img {
+        max-height: 70vh;
+        object-fit: contain;
+        object-position: top center;
+        margin-top: 4px;
+    }
+    /* Botão Sair topo-direito no mobile, igual cadastro */
+    .containerS {
+        left: auto;
+        right: max(12px, env(safe-area-inset-right));
+        top: max(10px, env(safe-area-inset-top));
+        bottom: auto;
+    }
+    .botãoS {
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        gap: 8px;
+    }
+}
+
+/* Ajuste específico para telas muito estreitas (mesmo do cadastro) */
+@media (max-width: 576px) {
+    .form-login-icon {
+        padding-top: clamp(18px, 6vh, 40px);
+    }
+    .form-login-icon object,
+    .form-login-icon svg,
+    .form-login-icon img {
+        max-height: 60vh;
+    }
+}
+
+@media (min-width: 993px) {
+    .form-login-page {
+        grid-template-columns: 1fr 1.2fr;
+        width: min(1500px, 98vw);
+    }
+    .form-login-icon {
+        padding: clamp(0.5rem, 1.5vw, 1rem);
+        overflow: hidden;
+    }
+    .form-login-icon object,
+    .form-login-icon svg,
+    .form-login-icon img {
+        max-height: 80vh;
+        width: 96%;
+        max-width: 96%;
+    }
+}
