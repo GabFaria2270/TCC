@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/home/home.css',
                 'resources/js/app.js',
+                'resources/js/home/home.js',
                 'resources/css/login/login.css',
                 'resources/css/cadastro/cadastro.css',
                 'resources/js/set.tsx',
