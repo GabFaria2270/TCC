@@ -407,6 +407,22 @@ html:has(body.loginf) {
     transform: scale(1.05);
 }
 
+/* Corrige preenchimento automático para manter o ícone visível */
+input:-webkit-autofill {
+    background-clip: text;
+    -webkit-text-fill-color: var(--color-white) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Ajusta o posicionamento do ícone para preenchimento automático */
+input:-webkit-autofill + .eye-icon {
+    position: absolute;
+    right: 14px;
+    top: 37px; /* Define uma posição fixa para evitar deslocamento */
+    transform: none;
+    z-index: 2;
+}
+
 /* Animações */
 @keyframes loginFadeIn {
     from {

@@ -456,6 +456,22 @@ html:has(body.cadastrof) {
     transform: scale(1.05);
 }
 
+/* Corrige preenchimento automático para manter o ícone visível */
+input:-webkit-autofill {
+    background-clip: text;
+    -webkit-text-fill-color: var(--color-white) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Ajusta o posicionamento do ícone para preenchimento automático */
+input:-webkit-autofill + .eye-icon {
+    position: absolute;
+    right: 14px;
+    top: 37px; /* Define uma posição fixa para evitar deslocamento */
+    transform: none;
+    z-index: 2;
+}
+
 /* Animações sutis */
 @keyframes cadastroFadeIn {
     from {
@@ -545,7 +561,7 @@ html:has(body.cadastrof) {
     }
 }
 
-/* Responsividade */
+/* Media Queries para Responsividade Horizontal */
 @media (max-width: 1200px) {
     .form-cadastro-page {
         grid-template-columns: 1fr;
@@ -557,52 +573,6 @@ html:has(body.cadastrof) {
 }
 
 @media (max-width: 992px) {
-    /* Espaço seguro no topo para o SVG não encostar/cortar no limite superior */
-    .cadastrof {
-        padding-top: clamp(12px, 4vh, 28px);
-        /* Em telas menores, comece o layout do topo para não 'comer' o início da mídia */
-        align-content: start;
-    }
-    .form-cadastro-page {
-        grid-template-columns: 1fr;
-        margin-top: 0;
-    }
-    .form-cadastro-icon {
-        order: -1;
-        /* Respiro menor, mas suficiente para evitar cortes */
-        padding-top: clamp(8px, 2.5vh, 16px);
-        margin-top: clamp(4px, 1vh, 8px);
-        overflow: visible;
-        justify-items: center;
-        align-items: start;
-    }
-
-    /* Reduz levemente a altura máxima da mídia no mobile para evitar corte */
-    .form-cadastro-icon object,
-    .form-cadastro-icon svg,
-    .form-cadastro-icon img {
-        max-height: 70vh;
-        object-fit: contain;
-        object-position: top center;
-        margin-top: 4px;
-    }
-
-    /* (bloco para telas muito estreitas movido para o nível superior; CSS não aceita @media aninhado) */
-    /* Reposiciona o botão Sair de volta para o topo direito no mobile */
-    .containerS {
-        left: auto;
-        right: max(12px, env(safe-area-inset-right));
-        top: max(10px, env(safe-area-inset-top));
-        bottom: auto;
-    }
-    .botãoS {
-        padding: 10px 16px;
-        font-size: 0.95rem;
-        gap: 8px;
-    }
-}
-
-@media (max-width: 768px) {
     .cadastrof {
         padding: 1rem;
         display: flex;
@@ -627,7 +597,7 @@ html:has(body.cadastrof) {
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .cadastrof {
         padding: 0.5rem;
     }
@@ -647,74 +617,31 @@ html:has(body.cadastrof) {
     }
 }
 
-/* Tornar o SVG maior em telas médias/grandes (aproxima do layout original) */
-@media (min-width: 993px) {
-    /* Em desktop: página sem rolagem e conteúdo ajustado à viewport */
+/* Media Queries para Responsividade Vertical */
+@media (max-height: 820px) {
     .cadastrof {
-        overflow: hidden;
+        align-content: start;
+        padding-top: clamp(8px, 3vh, 18px);
     }
-    .form-cadastro-page {
-        grid-template-columns: 1fr 1.2fr; /* dá mais espaço ao bloco do SVG */
-        width: min(1500px, 98vw);
-        height: 100dvh; /* ocupa a altura da viewport para centralizar */
-    }
-
-    .form-cadastro-icon {
-        padding: clamp(0.5rem, 1.5vw, 1rem);
-    }
-
-    /* Limita a altura para não estourar a viewport, mantendo o visual grande */
     .form-cadastro-icon object,
     .form-cadastro-icon svg,
     .form-cadastro-icon img {
-        max-height: 80vh;
-    }
-
-    /* Limita o card para caber na viewport e habilita rolagem interna suave */
-    .form-cadastro-container {
-        display: flex;
-        align-items: center;
-    }
-    .form-cadastro-card {
-        display: flex;
-        flex-direction: column;
-    }
-    /* O scroll acontece no corpo do card para não esticar o cabeçalho */
-    .form-cadastro {
-        flex: 1 1 auto;
-        overflow: visible;
-    }
-    .form-cadastro-body {
-        flex: 1 1 auto;
-        min-height: 0; /* necessário para overflow funcionar em flex */
-        /* Removido overflow-y para evitar rolagem interna */
+        max-height: 65vh;
     }
 }
 
-/* Em telas de desktop com pouca altura: distribuir campos em 2 colunas para reduzir a altura total */
-@media (min-width: 993px) and (max-height: 820px) {
-    #cadastroForm {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        column-gap: 16px;
-        row-gap: 10px;
+@media (max-height: 700px) {
+    .cadastrof {
         align-content: start;
+        padding-top: clamp(10px, 4vh, 22px);
     }
-    #cadastroForm .form-cadastro-group {
-        margin-bottom: 8px;
-    }
-    #cadastroForm .form-cadastro-error {
-        grid-column: 1 / -1;
-    }
-    #cadastroForm .form-cadastro-button {
-        grid-column: 1 / -1;
-    }
-    .login-link {
-        margin-top: 8px;
+    .form-cadastro-icon object,
+    .form-cadastro-icon svg,
+    .form-cadastro-icon img {
+        max-height: 48vh;
     }
 }
 
-/* Estilo específico para telas muito pequenas (mobile) */
 @media (max-width: 992px) {
     .cadastrof {
         background: #111 !important;

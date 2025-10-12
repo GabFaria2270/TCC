@@ -34,8 +34,33 @@ class LoginSystem {
     }
 }
 
+// Função para alternar visibilidade da senha
+function togglePasswordVisibility(toggleId, inputId) {
+    const toggleElement = document.getElementById(toggleId);
+    const inputElement = document.getElementById(inputId);
+
+    if (toggleElement && inputElement) {
+        toggleElement.addEventListener('click', () => {
+            const isPassword = inputElement.type === 'password';
+            inputElement.type = isPassword ? 'text' : 'password';
+
+            const icon = toggleElement.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+            }
+        });
+    }
+}
+
 // Inicializa apenas se estiver na página de login
 if (document.getElementById('loginForm') || document.querySelector('.form-login')) {
     const loginSystem = new LoginSystem();
+
+    // Adiciona a funcionalidade ao campo de senha
+    if (document.getElementById('toggleSenha') && document.getElementById('SENHA_HASH')) {
+        togglePasswordVisibility('toggleSenha', 'SENHA_HASH');
+    }
+
     window.LoginSystem = LoginSystem;
 }

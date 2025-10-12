@@ -43,6 +43,34 @@ class RegisterSystem {
     }
 }
 
+// Função para alternar visibilidade da senha
+function togglePasswordVisibility(toggleId, inputId) {
+    const toggleElement = document.getElementById(toggleId);
+    const inputElement = document.getElementById(inputId);
+
+    if (toggleElement && inputElement) {
+        toggleElement.addEventListener('click', () => {
+            const isPassword = inputElement.type === 'password';
+            inputElement.type = isPassword ? 'text' : 'password';
+
+            const icon = toggleElement.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+            }
+        });
+    }
+}
+
+// Adiciona a funcionalidade aos campos de senha
+if (document.getElementById('toggleSenha') && document.getElementById('SENHA_HASH')) {
+    togglePasswordVisibility('toggleSenha', 'SENHA_HASH');
+}
+
+if (document.getElementById('toggleSenhaConfirm') && document.getElementById('SENHA_HASH_confirmation')) {
+    togglePasswordVisibility('toggleSenhaConfirm', 'SENHA_HASH_confirmation');
+}
+
 // Inicializa apenas se estiver na página de cadastro
 if (document.getElementById('cadastroForm') || document.querySelector('.form-cadastro')) {
     const registerSystem = new RegisterSystem();
