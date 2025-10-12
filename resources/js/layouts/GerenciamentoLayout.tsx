@@ -170,7 +170,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 {renderSidebar()}
 
                 <main className="flex-grow-1" onClick={onMainClick}>
-                    <header className="d-flex align-items-center justify-content-between border-bottom bg-body p-3">
+                    <header className="d-flex align-items-center justify-content-between border-bottom bg-body gerenciamento-header-fixed p-3">
                         <div className="d-flex align-items-center gap-2">
                             {!isDesktop && (
                                 <button
@@ -182,7 +182,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                                     aria-label="Abrir menu"
                                     onClick={toggleSidebar}
                                 >
-                                    ☰ Menu
+                                    ☰
                                 </button>
                             )}
                             <h1 className="h4 m-0">{title ?? 'Painel de Gerenciamento'}</h1>
@@ -193,7 +193,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                         </div>
                     </header>
 
-                    <section key={enterKey} className="container-fluid p-4 page-view is-entering">
+                    <section key={enterKey} className="container-fluid page-view is-entering p-4">
                         <div className="d-flex align-items-center mb-3 flex-wrap gap-2" role="region" aria-label="Acessibilidade">
                             <span className="text-secondary">Acessibilidade:</span>
                             <button

@@ -276,6 +276,8 @@ section#nav {
     letter-spacing: 0.05em;
     border: 2px solid transparent;
     min-width: 140px;
+    width: 160px;
+    box-sizing: border-box;
 }
 
 .btn-cadastro-carrossel {
@@ -443,6 +445,8 @@ section#nav {
         padding: 0.65rem 1.05rem;
         font-size: 0.85rem;
         min-width: 102px;
+        width: 120px;
+        box-sizing: border-box;
     }
     .home-carousel .carousel-control-prev,
     .home-carousel .carousel-control-next {

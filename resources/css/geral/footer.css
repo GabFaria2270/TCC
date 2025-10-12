@@ -1,13 +1,18 @@
+/* Aumentar tamanho dos ícones das redes sociais no footer */
+.footer-social a {
+    font-size: 1.7rem;
+    margin: 0 0.5rem;
+}
 .footer-simple {
     background: #181818;
     color: #fff;
     padding: 2.5rem 0 1.5rem 0;
     font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.08rem);
-    border-top: 3px solid #0d6efd;
-    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.18);
-    letter-spacing: 0.5px;
-    margin-top: 2rem;
-    position: relative;
+    transition:
+        transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+        color 0.3s,
+        box-shadow 0.3s,
+        background 0.2s;
     z-index: 10;
 }
 
@@ -56,34 +61,44 @@
     background: transparent;
 }
 
-.footer-links a:focus,
-.footer-links a:hover {
+/* Nova estrutura para navegação do footer */
+.footer-links {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.footer-nav-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.footer-nav-list li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 500;
+    opacity: 0.9;
+    transition:
+        color 0.2s,
+        opacity 0.2s,
+        text-shadow 0.2s,
+        background 0.2s;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    background: transparent;
+}
+.footer-nav-list li a:focus,
+.footer-nav-list li a:hover {
     color: #0d6efd;
     opacity: 1;
     background: #232526;
     text-shadow: 0 2px 8px #0d6efd33;
     outline: none;
-}
-
-.footer-social {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.8rem;
-    margin-bottom: 0.5rem;
-}
-
-.footer-social a {
-    color: #fff;
-    font-size: 1.5rem;
-    transition:
-        transform 0.3s,
-        color 0.3s,
-        box-shadow 0.3s,
-        background 0.2s;
-    border-radius: 50%;
-    padding: 0.25rem;
-    background: transparent;
 }
 
 .footer-social a:focus,
@@ -126,7 +141,14 @@
         padding: 1.2rem 0 0.9rem 0;
     }
     .footer-links {
-        gap: 0.35rem 0.55rem; /* linha x coluna */
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.35rem 0.55rem !important;
+        flex-wrap: wrap !important;
+        width: 100% !important;
     }
-    .footer-logo i { font-size: 2rem; }
+    .footer-logo i {
+        font-size: 2rem;
+    }
 }

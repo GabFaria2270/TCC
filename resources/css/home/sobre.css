@@ -180,16 +180,27 @@
 
 .sobre-stats {
     display: flex;
-    gap: 2rem; /* Espaçamento entre as estatísticas */
+    gap: 1.2rem; /* Espaçamento entre as estatísticas */
     margin-top: 2rem;
+    flex-wrap: nowrap;
+    justify-content: center;
+    row-gap: 0;
 }
 
 .stat-mini {
     text-align: center;
-    padding: 1.5rem;
+    padding: 0.6rem;
     background: rgba(59, 130, 246, 0.08);
     border-radius: 12px;
     transition: all 0.3s ease;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .stat-mini:hover {
@@ -234,7 +245,15 @@
 @media (max-width: 768px) {
     .container-sobre {
         padding: 3rem 0;
-        margin: 2rem 0;
+        margin: 2rem 0 4rem 0;
+    }
+
+    .section-vantagens {
+        margin-bottom: 4rem !important;
+    }
+
+    .section-cardv {
+        margin-top: 4rem !important;
     }
 
     .sobre-empresa {
@@ -246,15 +265,24 @@
     }
 
     .sobre-stats {
-        grid-template-columns: 1fr;
+        flex-wrap: nowrap;
+        gap: 0.3rem;
+        row-gap: 0;
+        overflow-x: unset;
+        -webkit-overflow-scrolling: unset;
     }
 
     .stat-mini {
-        padding: 1rem;
+        padding: 0.28rem;
+        width: 95px;
+        min-width: 95px;
+        max-width: 95px;
+        box-sizing: border-box;
+        margin: 0;
     }
 
     .stat-mini-number {
-        font-size: 1.5rem;
+        font-size: 1.18rem;
     }
 }
 

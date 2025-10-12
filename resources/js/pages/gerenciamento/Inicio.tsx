@@ -45,7 +45,7 @@ export default function Inicio() {
                 <div className="card-body d-flex flex-column flex-lg-row align-items-lg-center gap-3">
                     <div className="flex-grow-1">
                         <h3 className="h3 m-0">Bem-vindo(a), {user?.NOME ?? 'Usuário'} 👋</h3>
-                        <p className="text-secondary mb-0">Use o menu à esquerda para navegar entre Clientes, Produtos, Vendas e Estoque.</p>
+                        <p className="text-secondary mb-0">Navegue entre Clientes, Produtos, Vendas e Estoque usando a barra lateral.</p>
                     </div>
                     {/* Removido botão redundante; a navegação já está na barra lateral */}
                 </div>
@@ -66,7 +66,7 @@ export default function Inicio() {
                 <div className="card-body">
                     <ol className="mb-0">
                         <li>
-                            Para registrar uma venda, clique em <strong>Vendas</strong> no menu à esquerda.
+                            Para registrar uma venda, clique em <strong>Vendas</strong> na barra lateral.
                         </li>
                         <li>
                             Para cadastrar ou atualizar um produto, clique em <strong>Produtos</strong>.

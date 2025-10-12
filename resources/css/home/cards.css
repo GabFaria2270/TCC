@@ -174,13 +174,19 @@
 .card-badge {
     background: var(--secondary-blue);
     color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 600;
+    padding: 0.7rem 1.35rem;
+    border-radius: 24px;
+    font-size: 1.05rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    letter-spacing: 0.07em;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.45);
+    margin-bottom: 1.1rem;
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 /* Animações de entrada iniciais */
@@ -266,6 +272,18 @@
 
     .card-image {
         height: 200px;
+    }
+
+    .card-badge {
+        margin-bottom: 1.7rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.13rem;
+        border-radius: 26px;
+        width: 200px;
+        min-width: 200px;
+        max-width: 200px;
+        box-sizing: border-box;
+        text-align: center;
     }
 }
 
@@ -409,19 +427,25 @@
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-light);
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
 }
 
 .vantagem-tempo {
     background: var(--secondary-blue);
     color: white;
-    padding: 0.5rem 1.25rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 600;
+    padding: 0.7rem 1.35rem;
+    border-radius: 24px;
+    font-size: 1.05rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    letter-spacing: 0.07em;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.45);
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 /* Responsividade */
@@ -429,6 +453,12 @@
     .vantagem-card {
         grid-template-columns: 1fr;
         gap: 0;
+        width: 100%;
+        max-width: min(1180px, 92vw);
+        margin: 0 auto;
+        border-radius: 20px;
+        padding-left: clamp(1.5rem, 4vw, 3rem);
+        padding-right: clamp(1.5rem, 4vw, 3rem);
     }
 
     .vantagem-image {
@@ -450,11 +480,19 @@
 
 @media (max-width: 768px) {
     .section-vantagens {
-        padding: 3rem 1rem;
+        padding: 0 !important;
+    }
+
+    .vantagem-card {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 !important;
+        box-sizing: border-box;
     }
 
     .vantagem-content {
-        padding: 1.5rem;
+        padding: 1.5rem 0;
     }
 
     .vantagem-titulo {
@@ -468,6 +506,18 @@
     .vantagem-lista li {
         padding: 0.6rem 0.8rem;
         font-size: 0.9rem;
+    }
+
+    .vantagem-tempo {
+        margin-bottom: 1.7rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.13rem;
+        border-radius: 26px;
+        width: 200px;
+        min-width: 200px;
+        max-width: 200px;
+        box-sizing: border-box;
+        text-align: center;
     }
 }
 

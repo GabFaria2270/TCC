@@ -249,8 +249,8 @@
                             <span class="stat-mini-label">Clientes</span>
                         </div>
                         <div class="stat-mini">
-                            <span class="stat-mini-number">98</span>
-                            <span class="stat-mini-label">% Satisfação</span>
+                            <span class="stat-mini-number">98%</span>
+                            <span class="stat-mini-label">Satisfação</span>
                         </div>
                     </div>
                 </div>

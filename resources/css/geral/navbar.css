@@ -47,16 +47,16 @@ body.nav-open {
 }
 
 .modern-navbar.navbar-transparent {
-    background: rgba(15, 23, 42, 0.24);
-    border-bottom-color: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(16px);
+    background: rgba(24, 24, 27, 0.82);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
     box-shadow: none;
 }
 
 .modern-navbar.navbar-solid {
-    background: #0b0b0c;
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    background: #18181b;
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
 }
 
 .modern-navbar.navbar-transparent .navbar-brand a {
@@ -252,7 +252,7 @@ body.nav-open {
         max-width: min(480px, 92vw);
         overflow-x: hidden;
         box-sizing: border-box;
-        background: rgba(15, 23, 42, 0.72);
+        background: rgba(15, 23, 42, 0.52);
         backdrop-filter: blur(22px);
         border-radius: 18px;
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -277,15 +277,15 @@ body.nav-open {
     }
 
     .modern-navbar.navbar-transparent .navbar-menu {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.58), rgba(30, 41, 59, 0.78));
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        box-shadow: 0 28px 60px rgba(15, 23, 42, 0.5);
+        background: linear-gradient(135deg, rgba(24, 24, 27, 0.92), rgba(39, 39, 42, 0.98));
+        border: 1px solid rgba(148, 163, 184, 0.13);
+        box-shadow: 0 28px 60px rgba(24, 24, 27, 0.38);
     }
 
     .modern-navbar.navbar-solid .navbar-menu {
-        background: linear-gradient(135deg, rgba(11, 11, 12, 0.92), rgba(15, 23, 42, 0.94));
-        border: 1px solid rgba(148, 163, 184, 0.12);
-        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55);
+        background: linear-gradient(135deg, rgba(24, 24, 27, 0.98), rgba(39, 39, 42, 0.98));
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        box-shadow: 0 24px 48px rgba(24, 24, 27, 0.32);
     }
 
     .navbar-menu.active {
@@ -297,8 +297,8 @@ body.nav-open {
     /* Links do menu: layout central, leve e elegante */
     .navbar-menu .nav-link {
         color: #eef2ff;
-        background: linear-gradient(160deg, rgba(30, 64, 175, 0.12), rgba(59, 130, 246, 0.14));
-        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: linear-gradient(160deg, rgba(36, 37, 38, 0.16), rgba(24, 24, 27, 0.18));
+        border: 1px solid rgba(148, 163, 184, 0.18);
         border-radius: 16px;
         width: min(400px, 90vw);
         overflow: hidden;
@@ -311,9 +311,9 @@ body.nav-open {
         backdrop-filter: blur(6px);
     }
     .navbar-menu .nav-link:hover {
-        background: linear-gradient(160deg, rgba(99, 102, 241, 0.32), rgba(79, 70, 229, 0.36));
-        box-shadow: 0 16px 32px rgba(79, 70, 229, 0.28);
-        border-color: rgba(165, 180, 252, 0.38);
+        background: linear-gradient(160deg, rgba(63, 63, 70, 0.22), rgba(39, 39, 42, 0.22));
+        box-shadow: 0 16px 32px rgba(24, 24, 27, 0.18);
+        border-color: rgba(148, 163, 184, 0.22);
     }
     .navbar-menu .nav-link:active {
         transform: translateY(1px);
@@ -321,9 +321,9 @@ body.nav-open {
     }
 
     .modern-navbar.navbar-solid .navbar-menu .nav-link {
-        background: linear-gradient(165deg, rgba(15, 23, 42, 0.78), rgba(17, 24, 39, 0.92));
-        border-color: rgba(71, 85, 105, 0.32);
-        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
+        background: linear-gradient(165deg, rgba(36, 37, 38, 0.82), rgba(24, 24, 27, 0.92));
+        border-color: rgba(71, 85, 105, 0.18);
+        box-shadow: 0 14px 34px rgba(24, 24, 27, 0.18);
     }
 
     .navbar-toggle {

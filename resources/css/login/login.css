@@ -334,7 +334,6 @@ html:has(body.loginf) {
     align-items: center;
     justify-items: end;
     background: transparent;
-    padding: clamp(0.75rem, 2.5vw, 1.5rem);
     overflow: hidden;
 }
 .form-login-icon object,
@@ -364,7 +363,7 @@ html:has(body.loginf) {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.35);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -498,7 +497,6 @@ html:has(body.loginf) {
         max-height: 70vh;
         object-fit: contain;
         object-position: top center;
-        margin-top: 4px;
     }
     /* Botão Sair topo-direito no mobile, igual cadastro */
     .containerS {
@@ -532,7 +530,7 @@ html:has(body.loginf) {
         width: min(1500px, 98vw);
     }
     .form-login-icon {
-        padding: clamp(0.5rem, 1.5vw, 1rem);
+        padding-top: 0;
         overflow: hidden;
     }
     .form-login-icon object,

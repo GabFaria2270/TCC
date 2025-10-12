@@ -102,14 +102,7 @@
 }
 
 .testimonial-card::before {
-    content: '"';
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    font-size: 6rem;
-    color: var(--secondary-blue);
-    opacity: 0.1;
-    font-weight: bold;
+    content: none;
 }
 
 .testimonial-card:hover {

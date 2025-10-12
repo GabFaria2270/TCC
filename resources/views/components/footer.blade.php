@@ -10,13 +10,15 @@
             </div>
 
             <!-- Links de Navegação -->
-            <div class="col-12 col-md-6 text-center mb-2 mb-md-0">
-                <nav class="footer-links d-flex justify-content-center gap-2" role="navigation" aria-label="Links do rodapé">
-                    <a href="/" class="nav-link px-2 text-light">Início</a>
-                    <a href="#sobre" class="nav-link px-2 text-light">Sobre</a>
-                    <a href="#valores" class="nav-link px-2 text-light">Contato</a>
-                    <a href="#" class="nav-link px-2 text-light">Política</a>
-                    <a href="#" class="nav-link px-2 text-light">Termos</a>
+            <div class="col-12 col-md-6">
+                <nav class="footer-links" role="navigation" aria-label="Links do rodapé">
+                    <ul class="footer-nav-list">
+                        <li><a href="/">Início</a></li>
+                        <li><a href="#sobre">Sobre</a></li>
+                        <li><a href="#valores">Contato</a></li>
+                        <li><a href="#">Política</a></li>
+                        <li><a href="#">Termos</a></li>
+                    </ul>
                 </nav>
             </div>
 
@@ -31,7 +33,8 @@
         </div>
         <div class="row mt-3">
             <div class="col text-center">
-                <small class="text-white-50">&copy; {{ date('Y') }} 60+conectado. Todos os direitos reservados.</small>
+                <small class="text-white-50">&copy; {{ date('Y') }} +Conectado. Todos os direitos
+                    reservados.</small>
             </div>
         </div>
     </div>
