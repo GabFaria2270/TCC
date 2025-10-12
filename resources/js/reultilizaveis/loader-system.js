@@ -3,7 +3,11 @@
  */
 
 class LoaderSystem {
-    constructor(formId, loaderId) {
+    /**
+     * @param {string|null} formId - id do formulário (opcional)
+     * @param {string|null} loaderId - id do loader (opcional)
+     */
+    constructor(formId = null, loaderId = null) {
         this.formId = formId;
         this.loaderId = loaderId;
         this.form = null;
@@ -22,23 +26,25 @@ class LoaderSystem {
     setup() {
         this.findElements();
         this.bindEvents();
-        
+
         console.log(`🔧 LoaderSystem (${this.formId}):`, {
             form: !!this.form,
-            loader: !!this.loader
+            loader: !!this.loader,
         });
     }
 
     findElements() {
-        this.form = document.getElementById(this.formId);
-        this.loader = document.getElementById(this.loaderId);
-        
-        if (!this.form) {
-            console.error(`❌ Formulário não encontrado: #${this.formId}`);
+        if (this.formId) {
+            this.form = document.getElementById(this.formId);
+            if (!this.form) {
+                console.error(`❌ Formulário não encontrado: #${this.formId}`);
+            }
         }
-        
-        if (!this.loader) {
-            console.error(`❌ Loader não encontrado: #${this.loaderId}`);
+        if (this.loaderId) {
+            this.loader = document.getElementById(this.loaderId);
+            if (!this.loader) {
+                console.error(`❌ Loader não encontrado: #${this.loaderId}`);
+            }
         }
     }
 
@@ -51,7 +57,7 @@ class LoaderSystem {
 
     handleSubmit(event) {
         console.log(`📤 Formulário ${this.formId} submetido`);
-        
+
         if (this.loader) {
             this.mostrarLoader();
         }
