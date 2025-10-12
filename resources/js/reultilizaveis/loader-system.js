@@ -91,5 +91,5 @@ class LoaderSystem {
 }
 
 // Exporta para uso global
-window.LoaderSystem = LoaderSystem;
+export default LoaderSystem;
 console.log('📦 LoaderSystem carregado');

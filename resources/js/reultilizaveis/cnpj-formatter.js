@@ -69,4 +69,4 @@ class CNPJFormatter {
     }
 }
 
-new CNPJFormatter();
+export default CNPJFormatter;

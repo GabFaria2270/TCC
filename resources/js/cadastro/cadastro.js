@@ -2,6 +2,9 @@
  * Sistema de Cadastro - REFATORADO MANTENDO ESTÉTICA ATUAL
  */
 
+import './cadastro/rate-limiting.js';
+
+
 class RegisterSystem {
     constructor() {
         this.loader = null;

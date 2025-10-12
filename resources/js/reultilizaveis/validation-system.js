@@ -126,5 +126,4 @@ class ValidationSystem {
     }
 }
 
-// Exporta para uso global
-window.ValidationSystem = ValidationSystem;
+export default ValidationSystem;

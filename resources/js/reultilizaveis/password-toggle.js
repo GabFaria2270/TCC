@@ -113,5 +113,4 @@ class PasswordToggle {
     }
 }
 
-// Inicializa automaticamente
-new PasswordToggle();
+export default PasswordToggle;

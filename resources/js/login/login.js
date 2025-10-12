@@ -2,6 +2,9 @@
  * Sistema de Login - REFATORADO MANTENDO ESTÉTICA ATUAL
  */
 
+import './login/rate-limiting.js';
+
+
 class LoginSystem {
     constructor() {
         this.loader = null;
