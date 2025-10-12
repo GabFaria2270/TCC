@@ -12,7 +12,6 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/login/login.css',
                 'resources/css/cadastro/cadastro.css',
-                'resources/js/geralJS.js',
                 'resources/js/set.tsx',
             ],
             ssr: 'resources/js/ssr.tsx',
