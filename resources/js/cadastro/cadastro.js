@@ -2,8 +2,10 @@
  * Sistema de Cadastro - REFATORADO MANTENDO ESTÉTICA ATUAL
  */
 
+import CNPJFormatter from '../reultilizaveis/cnpj-formatter.js';
+import LoaderSystem from '../reultilizaveis/loader-system.js';
+import ValidationSystem from '../reultilizaveis/validation-system.js';
 import './rate-limiting.js';
-
 
 class RegisterSystem {
     constructor() {
@@ -21,10 +23,10 @@ class RegisterSystem {
     setupSystems() {
         // USA OS IDS ATUAIS - loader-cadastro (como está no CSS)
         this.loader = new LoaderSystem('cadastroForm', 'loader-cadastro');
-        
+
         // Inicializa validação
         this.validation = new ValidationSystem();
-        
+
         // Adiciona validações específicas do cadastro
         this.validation.addValidation('NOME', 'nome');
         this.validation.addValidation('EMAIL', 'email');
@@ -32,12 +34,11 @@ class RegisterSystem {
         this.validation.addValidation('SENHA_HASH_confirmation', 'passwordConfirmation');
         this.validation.addValidation('PERFIL', 'perfil');
         this.validation.addValidation('COMERCIO_CNPJ', 'cnpj');
-        
 
         if (typeof CNPJFormatter !== 'undefined') {
             this.cnpjFormatter = new CNPJFormatter();
         }
-        
+
         console.log('✅ Sistema de cadastro inicializado');
     }
 }
@@ -47,4 +48,3 @@ if (document.getElementById('cadastroForm') || document.querySelector('.form-cad
     const registerSystem = new RegisterSystem();
     window.RegisterSystem = RegisterSystem;
 }
-
