@@ -2,7 +2,7 @@
  * Sistema de Login - REFATORADO MANTENDO ESTÉTICA ATUAL
  */
 
-import './login/rate-limiting.js';
+import './rate-limiting.js';
 
 
 class LoginSystem {

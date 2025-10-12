@@ -1,5 +1,4 @@
 // 1. Manter as importações essenciais
-import '../css/app.css';
 import 'bootstrap';
 
 // 2. Importar os seus módulos reutilizáveis

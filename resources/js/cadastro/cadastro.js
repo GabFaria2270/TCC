@@ -2,7 +2,7 @@
  * Sistema de Cadastro - REFATORADO MANTENDO ESTÉTICA ATUAL
  */
 
-import './cadastro/rate-limiting.js';
+import './rate-limiting.js';
 
 
 class RegisterSystem {
