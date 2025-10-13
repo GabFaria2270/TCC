@@ -38,6 +38,7 @@ button:hover {
 
 .escrita {
     display: inline-block;
+    color: white;
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--text-muted);

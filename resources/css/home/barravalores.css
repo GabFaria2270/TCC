@@ -50,7 +50,7 @@
 }
 
 .container-escrita-valores .escrita {
-    color: #333;
+    color: #ffffff;
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800;
     position: relative;
@@ -60,6 +60,7 @@
 
 .container-escrita-valores .escrita::after {
     content: '';
+    color: #000;
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -194,6 +195,7 @@
 
     .valores-container {
         padding: 0 1.5rem; /* ← PADDING LATERAL EM TABLET */
+        padding-bottom: 20px;
     }
 
     .valores-grid {

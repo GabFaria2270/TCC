@@ -176,6 +176,7 @@
     margin: 0;
     font-weight: 500;
     font-size: 1.1rem;
+    color: white;
 }
 
 .sobre-stats {
@@ -258,6 +259,7 @@
 
     .sobre-empresa {
         padding: 0 1rem;
+        padding-bottom: 20px;
     }
 
     .sobre-text {

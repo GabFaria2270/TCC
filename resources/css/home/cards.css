@@ -118,8 +118,7 @@
     transform: translateY(-8px) scale(1.02);
 }
 
-/* Regra removida - consolidada acima */
-
+/* Estruturas internas dos cards */
 .card-image {
     position: relative;
     overflow: hidden;
@@ -189,69 +188,9 @@
     text-align: center;
 }
 
-/* Animações de entrada iniciais */
-.card-principal {
-    opacity: 0;
-    transform: translateY(30px);
-}
-
-.card-principal.animate-fade-in {
-    animation: fadeInUp 0.6s ease forwards;
-}
-
-.card-principal:nth-child(1).animate-fade-in {
-    animation-delay: 0.1s;
-}
-.card-principal:nth-child(2).animate-fade-in {
-    animation-delay: 0.2s;
-}
-.card-principal:nth-child(3).animate-fade-in {
-    animation-delay: 0.3s;
-}
-
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* =========================
-   ESTADOS FINAIS GARANTIDOS DOS CARDS
+   RESPONSIVIDADE
    ========================= */
-
-/* Garantir que cards carregados tenham o estado correto */
-.card-principal.animate-fade-in {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-    visibility: visible !important;
-}
-
-/* Estado padrão após carregamento */
-.cards-principais-grid .card-principal {
-    opacity: 1;
-    visibility: visible;
-    position: relative;
-}
-
-/* Transições suaves para todos os elementos dos cards */
-.card-principal,
-.card-principal *,
-.card-principal::before,
-.card-principal::after {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Prevenir que animações interferem no hover */
-.card-principal.animate-fade-in:hover {
-    animation: none !important;
-}
-
-/* Responsividade */
 @media (max-width: 768px) {
     .section-cards-principais {
         padding: 3rem 1rem;
@@ -284,6 +223,29 @@
         max-width: 200px;
         box-sizing: border-box;
         text-align: center;
+    }
+
+    .card-principal:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        z-index: auto !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .card-principal:hover::before {
+        height: 4px !important;
+    }
+
+    .card-principal:hover .card-image img {
+        transform: none !important;
+        filter: none !important;
+        background: transparent !important; /* Corrige o efeito azul na imagem */
+    }
+
+    .card-principal:hover .card-badge {
+        transform: none !important;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.45) !important; /* Mantém a sombra do botão */
     }
 }
 
@@ -448,7 +410,9 @@
     text-align: center;
 }
 
-/* Responsividade */
+/* =========================
+   RESPONSIVIDADE
+   ========================= */
 @media (max-width: 968px) {
     .vantagem-card {
         grid-template-columns: 1fr;
@@ -518,6 +482,11 @@
         max-width: 200px;
         box-sizing: border-box;
         text-align: center;
+    }
+
+    .vantagem-card:hover .vantagem-image img {
+        transform: none;
+        filter: none;
     }
 }
 
