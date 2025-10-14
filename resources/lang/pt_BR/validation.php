@@ -242,7 +242,7 @@ return [
         ],
     ],
 
-    'cliente_email_exists' => 'Este e-mail já está cadastrado neste comércio.',
+    'cliente_email_exists' => 'Este e-mail já está cadastrado para outro cliente.',
     'cliente_creation_failed' => 'Falha ao criar cliente. Tente novamente.',
     'cliente_not_found' => 'Cliente não encontrado.',
     'conta_creation_failed' => 'Falha ao criar conta fiada.',

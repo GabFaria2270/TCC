@@ -25,6 +25,13 @@ class ClienteRequest extends FormRequest
                 'required',
                 'email',
                 'max:150',
+                // Adiciona validação de unicidade para o comércio
+                function ($attribute, $value, $fail) {
+                    $comercioId = auth()->user()->comercio->id ?? null;
+                    if ($comercioId && \App\Models\Cliente::where('email', $value)->where('comercio_id', $comercioId)->exists()) {
+                        $fail(__('validation.cliente_email_exists'));
+                    }
+                },
             ],
             'telefone' => [
                 'nullable',
@@ -36,10 +43,10 @@ class ClienteRequest extends FormRequest
                     if ($value) {
                         $apenasNumeros = preg_replace('/\D/', '', $value);
                         if (strlen($apenasNumeros) > 11) {
-                            $fail('O telefone não pode ter mais que 11 dígitos.');
+                            $fail(__("validation.custom.telefone.digits_max"));
                         }
                         if (strlen($apenasNumeros) > 0 && strlen($apenasNumeros) < 10) {
-                            $fail('O telefone deve ter pelo menos 10 dígitos.');
+                            $fail(__("validation.custom.telefone.digits_min"));
                         }
                     }
                 }

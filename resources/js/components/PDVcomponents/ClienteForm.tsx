@@ -82,14 +82,24 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                 },
                 body: JSON.stringify(dadosParaEnvio),
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (!response.ok) {
+                        // Se for erro de validação, pega o JSON
+                        return response.json().then((resp) => {
+                            if (resp.errors) {
+                                Object.keys(resp.errors).forEach((campo) => {
+                                    errors[campo as keyof typeof errors] = resp.errors[campo][0];
+                                });
+                            }
+                            setIsLoading(false);
+                        });
+                    }
+                    return response.json();
+                })
                 .then((resp) => {
-                    if (resp.success && resp.cliente) {
+                    if (resp && resp.success && resp.cliente) {
                         reset();
                         onSuccess(resp.cliente as Cliente);
-                    } else {
-                        console.error('Erro na resposta:', resp);
-                        alert(resp.message || 'Erro ao criar cliente');
                     }
                 })
                 .catch((error) => {
@@ -196,7 +206,7 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                             maxLength={15}
                             disabled={processing || isLoading}
                         />
-                        {errors.telefone && <div className="invalid-feedback">{errors.telefone}</div>}
+                        {errors.telefone && <div className="cliente-form-error">{errors.telefone}</div>}
                     </div>
                     {modo === 'edit' && (
                         <div className="col-md-6 mb-3">

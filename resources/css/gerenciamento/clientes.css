@@ -334,6 +334,102 @@
     }
 }
 
+/* Responsividade para campo de busca clientes */
+@media (max-width: 600px) {
+  .clientes-header-content {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .search-input-group {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-bottom: 8px;
+  }
+  .search-icon {
+    display: none !important;
+  }
+  .clientes-actions {
+    flex-direction: row !important;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .clientes-header .d-flex.align-items-center.gap-3.mb-3 {
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+  .clientes-header .form-select {
+    width: 48% !important;
+    min-width: 120px;
+    font-size: 0.95em;
+    padding: 6px 8px;
+  }
+  .clientes-header .btn-outline-secondary {
+    width: 48% !important;
+    min-width: 80px;
+    font-size: 0.95em;
+    padding: 6px 8px;
+  }
+  .clientes-header .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 0 !important;
+  }
+  .clientes-header .d-flex.align-items-center {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+  .clientes-header .search-icon {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .search-input-group-responsive .search-icon {
+    display: none !important;
+  }
+  .clientes-filtros-row .form-select {
+    width: 120px !important;
+    min-width: 100px;
+    font-size: 0.95em;
+  }
+}
+
+@media (min-width: 601px) {
+  .clientes-filtros-row .form-select {
+    width: 240px !important;
+    min-width: 180px;
+    font-size: 1em;
+  }
+  .search-input-group-responsive .search-icon {
+    display: inline-block !important;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.search-input-group-responsive {
+  position: relative;
+  width: 100%;
+}
+.search-input-group-responsive .search-input {
+  padding-left: 36px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.clientes-filtros-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+/* Remove fundo branco estranho do input de busca */
+.search-input {
+  background: transparent;
+  box-shadow: none;
+}
+
 .search-input:focus {
     outline: none;
     border-color: #0d6efd;
@@ -891,4 +987,143 @@
     .empty-description {
         font-size: 1rem;
     }
+}
+
+/* Erro de telefone no formulário de cliente */
+.clientes-telefone-error {
+    color: #dc3545; /* vermelho padrão bootstrap, altere como quiser */
+    background: rgba(220, 53, 69, 0.08);
+    border: 1px solid #f5c2c7;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    margin-top: 0.25rem;
+    font-size: 0.98rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.04);
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+[data-bs-theme='dark'] .clientes-telefone-error {
+    color: #ffb3b3;
+    background: rgba(220, 53, 69, 0.18);
+    border-color: #7a2a31;
+}
+
+/* Erro customizado para campo do cliente */
+.cliente-form-error {
+    color: #d32f2f; /* vermelho padrão, altere como quiser */
+    font-size: 0.95em;
+    margin-top: 4px;
+    margin-left: 2px;
+    font-weight: 500;
+    /* Você pode adicionar outras propriedades para personalizar */
+}
+
+/* Responsividade para filtros de clientes */
+.clientes-filtros-responsive {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+.search-input-group-responsive {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+
+}
+.search-input-group-responsive .search-icon {
+    margin-right: 8px;
+    color: #888;
+}
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    padding: 8px 0;
+    outline: none;
+}
+.clientes-filtros-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+}
+@media (max-width: 600px) {
+    .clientes-filtros-responsive {
+        gap: 8px;
+    }
+    .search-input-group-responsive {
+        padding: 2px 6px;
+    }
+    .clientes-filtros-row {
+        flex-direction: row;
+        gap: 6px;
+    }
+    .search-input {
+        font-size: 0.98rem;
+        padding: 6px 0;
+    }
+}
+
+@media (min-width: 992px) {
+  .clientes-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .search-input-group {
+    max-width: 600px !important;
+    width: 100%;
+  }
+  .form-select {
+    min-width: 180px;
+    width: 220px;
+  }
+  .btn-outline-secondary {
+    margin-left: 0.5rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .search-input-group {
+    max-width: 100% !important;
+    width: 100%;
+  }
+  .form-select {
+    min-width: 120px;
+    width: 140px;
+    font-size: 0.95em;
+  }
+  .btn-outline-secondary {
+    margin-left: 0.25rem;
+    font-size: 0.95em;
+  }
+  .clientes-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+}
+
+/* Ajuste do ícone de lupa para não ficar para fora */
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 2.2rem !important;
+}
+
+@media (max-width: 600px) {
+  .search-icon {
+    display: none !important;
+  }
 }

@@ -171,8 +171,8 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                 </div>
                 
                 {/* Filtros: Barra de busca + Status */}
-                <div className="d-flex align-items-center gap-3 mb-3">
-                    <div className="search-input-group flex-grow-1" style={{ maxWidth: '400px' }}>
+                <div className="clientes-filtros-responsive">
+                    <div className="search-input-group-responsive">
                         <i className="bi bi-search search-icon" aria-hidden="true"></i>
                         <input
                             type="text"
@@ -184,23 +184,25 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                             aria-label="Buscar clientes"
                         />
                     </div>
-                    <select 
-                        className="form-select" 
-                        style={{ width: '200px', flexShrink: 0 }}
-                        value={filtroStatus} 
-                        onChange={(e) => setFiltroStatus(e.target.value)}
-                    >
-                        <option value="">Todas as contas</option>
-                        <option value="pendente">📋 Conta Pendente</option>
-                        <option value="quitada">✅ Conta Quitada</option>
-                    </select>
-                    <button 
-                        className="btn btn-outline-secondary flex-shrink-0" 
-                        onClick={limparFiltros}
-                        title="Limpar filtros"
-                    >
-                        <i className="bi bi-arrow-clockwise"></i>
-                    </button>
+                    <div className="clientes-filtros-row">
+                        <select 
+                            className="form-select" 
+                            style={{ width: '200px', flexShrink: 0 }}
+                            value={filtroStatus} 
+                            onChange={(e) => setFiltroStatus(e.target.value)}
+                        >
+                            <option value="">Todas as contas</option>
+                            <option value="pendente">📋 Conta Pendente</option>
+                            <option value="quitada">✅ Conta Quitada</option>
+                        </select>
+                        <button 
+                            className="btn btn-outline-secondary flex-shrink-0" 
+                            onClick={limparFiltros}
+                            title="Limpar filtros"
+                        >
+                            <i className="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 {/* Contador */}
