@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('cliente', function (Blueprint $table) {
             $table->id();
             $table->string('nome', 100);
-            $table->string('email', 150)->unique();
+            $table->string('email', 150);
             $table->string('telefone', 20)->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('comercio_id');
             $table->foreign('comercio_id')->references('id')->on('comercio')->onDelete('cascade');
+            $table->unique(['email', 'comercio_id']);
         });
     }
 
