@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\ProdutoController;
 use App\Http\Controllers\Auth\VendasController; // ✅ ADICIONAR IMPORT
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\FiadoController;
+use App\Http\Controllers\Auth\MaquininhaController;
 
 // ✅ ROTAS PÚBLICAS - SEM MIDDLEWARE
 Route::get('/', function () {
@@ -80,9 +81,12 @@ Route::middleware(['require.token'])->group(function () {
             ->name('fiado.historico');
 
         // ✅ ROTAS DE MAQUININHAS
-        Route::get('maquininhas', function () {
-            return Inertia::render('gerenciamento/MaquininhasPage');
-        })->name('maquininhas.index');
+        Route::get('maquininhas', [MaquininhaController::class, 'index'])
+            ->name('maquininhas.index');
+
+        // ROTA PARA CADASTRAR MAQUININHA
+        Route::post('maquininhas', [MaquininhaController::class, 'store'])
+            ->name('maquininhas.store');
     });
 });
 

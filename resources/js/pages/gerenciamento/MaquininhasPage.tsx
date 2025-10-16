@@ -15,14 +15,7 @@ interface Maquininha {
   status: 'ativa' | 'inativa';
 }
 
-// Mock de maquininhas para exibição inicial
-const maquininhasMock: Maquininha[] = [
-  { id: 1, modelo: 'PagSeguro', nome: 'PagSeguro 1', comercio: 'Padaria do Zé', status: 'ativa' },
-  { id: 2, modelo: 'Cielo', nome: 'Cielo 2', comercio: 'Mercado Silva', status: 'inativa' },
-  { id: 3, modelo: 'Stone', nome: 'Stone 3', comercio: 'Mercado Silva', status: 'ativa' },
-  { id: 4, modelo: 'Rede', nome: 'Rede 4', comercio: 'Mercado Silva', status: 'ativa' },
-  { id: 5, modelo: 'Getnet', nome: 'Getnet 5', comercio: 'Mercado Silva', status: 'inativa' },
-];
+
 
 function getMaquininhaIcon(modelo: string): JSX.Element | null {
   switch (modelo) {
@@ -42,8 +35,9 @@ function getMaquininhaIcon(modelo: string): JSX.Element | null {
 }
 
 export default function MaquininhasPage() {
-  // Recebe maquininhas do backend, garantindo array vazio se não vier nada
-  const { maquininhas = [] } = usePage().props as any;
+  // Recebe maquininhas do backend via props
+  const { maquininhas } = (usePage().props as unknown as { maquininhas: Maquininha[] | null });
+  const listaMaquininhas = maquininhas ?? [];
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState<Maquininha | null>(null);
   const [loading, setLoading] = useState(false);
@@ -62,15 +56,16 @@ export default function MaquininhasPage() {
     const payload = {
       modelo: data.modelo,
       nome: data.nome,
-      comercio: data.comercio,
       status: data.status,
     };
     if (editData) {
-      router.put(`/maquininhas/${editData.id}`, { ...payload });
+      router.put(`/gerenciamento/maquininhas/${editData.id}`, { ...payload });
     } else {
-      router.post('/maquininhas', payload);
+      router.post('/gerenciamento/maquininhas', payload);
     }
-    setShowModal(false);
+  setShowModal(false);
+  // Após salvar, recarrega a página para garantir que os dados do backend sejam exibidos
+  router.reload({ only: ['maquininhas'] });
   }
 
   function handleCancelar() {
@@ -110,7 +105,7 @@ export default function MaquininhasPage() {
             </button>
           </div>
         </div>
-        {maquininhas.length === 0 ? (
+  {listaMaquininhas.length === 0 ? (
           <div className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '40vh' }}>
             <h2 className="mb-3 text-center">Gerenciamento de Maquininhas</h2>
             <p className="mb-4 text-center">Nenhuma maquininha cadastrada ainda.</p>
@@ -121,7 +116,7 @@ export default function MaquininhasPage() {
         ) : (
           <div className="maquininhas-page">
             <div className="maquininhas-list">
-              {maquininhas.map((maq: Maquininha) => (
+              {listaMaquininhas.map((maq: Maquininha) => (
                 <div key={maq.id} className={`maquininha-card ${maq.modelo.toLowerCase()}`}>
                   <div className="maquininha-icone">
                     {getMaquininhaIcon(maq.modelo)}
