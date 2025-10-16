@@ -73,18 +73,21 @@ export default function MaquininhaForm({ initialData, onSave, onCancel, showModa
                 disabled={isLoading}
               />
             </div>
-            <div className="col-md-6 mb-3">
-              <label htmlFor="modelo" className="form-label">Modelo *</label>
-              <select
-                id="modelo"
-                className="form-select"
-                value={modelo}
-                onChange={e => setModelo(e.target.value)}
-                disabled={isLoading}
-              >
-                {modelosDisponiveis.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
+            {/* Campo de modelo só aparece no cadastro, não na edição */}
+            {!initialData && (
+              <div className="col-md-6 mb-3">
+                <label htmlFor="modelo" className="form-label">Modelo *</label>
+                <select
+                  id="modelo"
+                  className="form-select"
+                  value={modelo}
+                  onChange={e => setModelo(e.target.value)}
+                  disabled={isLoading}
+                >
+                  {modelosDisponiveis.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+            )}
           </div>
           <div className="row">
             <div className="col-md-6 mb-3">

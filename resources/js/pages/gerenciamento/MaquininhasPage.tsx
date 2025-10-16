@@ -3,6 +3,8 @@ import type { JSX } from 'react';
 import '../../../css/gerenciamento/maquininhas-cards.css';
 import MaquininhaForm from '../../components/PDVcomponents/MaquininhaForm';
 import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
+import { useEffect } from 'react';
+import { router, usePage } from '@inertiajs/react';
 
 // Tipagem do objeto Maquininha
 interface Maquininha {
@@ -40,7 +42,8 @@ function getMaquininhaIcon(modelo: string): JSX.Element | null {
 }
 
 export default function MaquininhasPage() {
-  const [maquininhas, setMaquininhas] = useState<Maquininha[]>(maquininhasMock);
+  // Recebe maquininhas do backend, garantindo array vazio se não vier nada
+  const { maquininhas = [] } = usePage().props as any;
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState<Maquininha | null>(null);
   const [loading, setLoading] = useState(false);
@@ -56,10 +59,16 @@ export default function MaquininhasPage() {
   }
 
   function handleSalvar(data: Maquininha) {
+    const payload = {
+      modelo: data.modelo,
+      nome: data.nome,
+      comercio: data.comercio,
+      status: data.status,
+    };
     if (editData) {
-      setMaquininhas(maquininhas.map(m => m.id === editData.id ? { ...m, ...data } : m));
+      router.put(`/maquininhas/${editData.id}`, { ...payload });
     } else {
-      setMaquininhas([...maquininhas, { ...data, id: Date.now() }]);
+      router.post('/maquininhas', payload);
     }
     setShowModal(false);
   }
@@ -69,7 +78,9 @@ export default function MaquininhasPage() {
   }
 
   function handleExcluir(id: number) {
-    setMaquininhas(maquininhas.filter(m => m.id !== id));
+    if (confirm('Tem certeza que deseja excluir esta maquininha?')) {
+      router.delete(`/maquininhas/${id}`);
+    }
   }
 
   function handleRefresh() {
