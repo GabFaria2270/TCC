@@ -1,0 +1,165 @@
+/* Estilos para Gerenciamento de Maquininhas */
+.maquininhas-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.maquininhas-page h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-cadastrar {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: background 0.2s;
+}
+.btn-cadastrar:hover {
+  background: #0056b3;
+}
+
+.maquininhas-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+/* Card principal de maquininhas adaptado para tema claro/escuro e paleta do gerenciamento */
+.maquininha-card {
+  background: var(--theme-surface-1, #fff);
+  color: var(--theme-text, #222);
+  border-radius: 8px;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+  margin-bottom: 2rem;
+  padding: 2rem 2rem 1.5rem 2rem;
+  min-width: 320px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Header do card (se houver) */
+.maquininha-card-header {
+  background: var(--theme-surface-2, #f8f9fa);
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid var(--theme-border, #dee2e6);
+  padding: 1.25rem;
+}
+
+.maquininha-info strong {
+  color: var(--theme-text, #212529);
+}
+.maquininha-info span {
+  color: var(--theme-text-secondary, #6c757d);
+}
+
+/* Modo escuro */
+[data-bs-theme='dark'] .maquininha-card {
+  background: var(--theme-surface-1, #23272b);
+  color: var(--theme-text, #eaeaea);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+[data-bs-theme='dark'] .maquininha-card-header {
+  background: var(--theme-surface-2, #181a1b);
+  border-color: var(--theme-border, #334155);
+}
+[data-bs-theme='dark'] .maquininha-info strong {
+  color: var(--theme-text, #eaeaea);
+}
+[data-bs-theme='dark'] .maquininha-info span {
+  color: var(--theme-text-secondary, #bdbdbd);
+}
+
+/* Ícone do card */
+.maquininha-icone {
+  width: 100%;
+  min-height: 80px;
+  max-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  background: none;
+}
+.maquininha-icone-img {
+  width: 100%;
+  max-width: 100%;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+}
+[data-bs-theme='dark'] .maquininha-icone {
+  background: var(--theme-surface-2, #2c2f36);
+  color: var(--theme-text-secondary, #bdbdbd);
+}
+
+/* Ações do card */
+.maquininha-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-editar, .btn-excluir {
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-editar {
+  background: #ffc107;
+  color: #222;
+}
+.btn-editar:hover {
+  background: #e0a800;
+}
+.btn-excluir {
+  background: #dc3545;
+  color: #fff;
+}
+.btn-excluir:hover {
+  background: #a71d2a;
+}
+[data-bs-theme='dark'] .btn-editar {
+  background: #ffd34d;
+  color: #222;
+}
+[data-bs-theme='dark'] .btn-excluir {
+  background: #e44;
+  color: #fff;
+}
+
+/* Centralização da mensagem quando não há maquininhas */
+.maquininhas-empty {
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .maquininhas-list {
+    gap: 1rem;
+  }
+  .maquininha-card {
+    min-width: 90vw;
+    max-width: 98vw;
+    padding: 1.2rem;
+  }
+}

@@ -1,0 +1,140 @@
+/* Estilos para cards e ícones das maquininhas */
+.maquininhas-page {
+  padding: 2rem 0;
+}
+
+.maquininhas-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1100px) {
+  .maquininhas-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .maquininhas-list {
+    grid-template-columns: 1fr;
+  }
+  .maquininha-card {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Card de Maquininha - totalmente recriado para integração visual e hover customizado */
+.maquininha-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg, #23272b);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 0;
+  margin: 0;
+  transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+  border: 2px solid transparent;
+  max-width: 320px;
+  min-width: 180px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Hover customizado por modelo */
+.maquininha-card.pagseguro:hover {
+  border-color: #f6df3f;
+  box-shadow: 0 0 0 8px #f6df3f55, 0 8px 32px #f6df3f99, 0 0 32px #f6df3f88;
+}
+.maquininha-card.cielo:hover {
+  border-color: #005CA9;
+  box-shadow: 0 0 0 8px #005CA955, 0 8px 32px #005CA999, 0 0 32px #005CA988;
+}
+.maquininha-card.stone:hover {
+  border-color: #00A859;
+  box-shadow: 0 0 0 8px #00A85955, 0 8px 32px #00A85999, 0 0 32px #00A85988;
+}
+.maquininha-card.rede:hover {
+  border-color: #FF6600;
+  box-shadow: 0 0 0 8px #FF660055, 0 8px 32px #FF660099, 0 0 32px #FF660088;
+}
+.maquininha-card.getnet:hover {
+  border-color: #E30613;
+  box-shadow: 0 0 0 8px #E3061355, 0 8px 32px #E3061399, 0 0 32px #E3061388;
+}
+
+.maquininha-icone {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  background: transparent;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.maquininha-icone-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  display: block;
+  background: transparent;
+}
+
+.maquininha-info {
+  padding: 1.2rem 1.5rem 1rem 1.5rem;
+  background: transparent;
+  color: #eaeaea;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.maquininha-info strong {
+  font-size: 1.15rem;
+  margin-bottom: 0.2rem;
+}
+
+.maquininha-actions {
+  display: flex;
+  gap: 0.7rem;
+  padding: 1rem 1.5rem 1.2rem 1.5rem;
+  background: transparent;
+}
+.btn-editar, .btn-excluir {
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-editar {
+  background: #ffc107;
+  color: #222;
+}
+.btn-editar:hover {
+  background: #e0a800;
+}
+.btn-excluir {
+  background: #dc3545;
+  color: #fff;
+}
+.btn-excluir:hover {
+  background: #a71d2a;
+}
+
+@media (max-width: 600px) {
+  .maquininha-info, .maquininha-actions {
+    padding: 0.8rem 0.7rem;
+  }
+  .maquininha-icone {
+    height: 80px;
+  }
+}

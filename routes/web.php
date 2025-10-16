@@ -78,6 +78,11 @@ Route::middleware(['require.token'])->group(function () {
             ->name('vendas.destroy');
         Route::get('fiado/historico', [FiadoController::class, 'historico'])
             ->name('fiado.historico');
+
+        // ✅ ROTAS DE MAQUININHAS
+        Route::get('maquininhas', function () {
+            return Inertia::render('gerenciamento/MaquininhasPage');
+        })->name('maquininhas.index');
     });
 });
 

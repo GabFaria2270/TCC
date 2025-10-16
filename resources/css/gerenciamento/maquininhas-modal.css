@@ -1,0 +1,144 @@
+/* Modal de cadastro/edição de maquininhas - baseado no modal de cadastro de cliente */
+.maquininha-modal-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.maquininha-modal {
+  background: var(--card-bg, #23272b);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  min-width: 600px;
+  max-width: 700px;
+  width: 100%;
+  color: #eaeaea;
+  padding: 2.5rem 2rem 2rem 2rem;
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.maquininha-modal .maquininha-icon-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.2rem;
+  width: 340px;
+  height: 190px;
+  max-width: 340px;
+  max-height: 190px;
+  border-radius: 17px;
+}
+
+.maquininha-modal .maquininha-icon-preview img,
+.maquininha-modal .maquininha-icon-preview svg {
+  width: 64px;
+  height: 64px;
+  max-width: 64px;
+  max-height: 64px;
+  object-fit: contain;
+  display: block;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.maquininha-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.maquininha-modal label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.maquininha-modal input,
+.maquininha-modal select {
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  font-size: 1.1rem;
+  background: #181a1b;
+  color: #eaeaea;
+  margin-bottom: 0.2rem;
+}
+
+.erro-form {
+  color: #dc3545;
+  font-size: 0.97rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: flex-end;
+}
+
+.btn-salvar {
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-salvar:hover {
+  background: #5b21b6;
+}
+
+.btn-cancelar {
+  background: #6c757d;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-cancelar:hover {
+  background: #343a40;
+}
+
+/* Remove scroll do modal */
+.maquininha-modal::-webkit-scrollbar {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  .maquininha-modal {
+    min-width: 95vw;
+    max-width: 98vw;
+    padding: 1rem 0.5rem;
+  }
+}
+
+/* Modo escuro */
+@media (prefers-color-scheme: dark) {
+  .maquininha-modal {
+    background: var(--theme-surface-1, #23272b);
+    color: var(--theme-text, #eaeaea);
+  }
+  .maquininha-modal input,
+  .maquininha-modal select {
+    background: #181a1b;
+    color: #eaeaea;
+    border: 1px solid #444;
+  }
+  .btn-cancelar {
+    background: #444;
+    color: #eaeaea;
+  }
+}

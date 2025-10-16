@@ -141,6 +141,15 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 >
                     <span className="large-icon me-2">🛒</span> Produtos
                 </Link>
+                <Link
+                    href={'/gerenciamento/maquininhas'}
+                    className="list-group-item list-group-item-action d-flex align-items-center"
+                    onClick={closeSidebar}
+                >
+                    <span>
+                        <span className="large-icon me-2">💳</span> Maquininhas
+                    </span>
+                </Link>
             </div>
         </nav>
     );
