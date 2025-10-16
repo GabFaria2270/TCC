@@ -1,10 +1,42 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import { Tour ,StepType } from '@reactour/tour';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import Toast from '../components/Toast';
 import { useAppearance, type Appearance } from '../hooks/use-appearance';
 import type { SharedProps } from '../types/inertia';
 
+
 export default function GerenciamentoLayout({ children, title }: { children: React.ReactNode; title?: string }) {
+    const [disabledActions, setDisabledActions] = useState(false);
+    // Passos do tour guiado
+    const tourSteps: StepType[] = [
+        { selector: '.btn-tour-inicio', content: () => <><b>Painel Inicial</b><br />Aqui você acessa o início do sistema, onde verá um resumo das funções principais. Ideal para começar seu dia!</> },
+        { selector: '.btn-tour-vendas', content: () => <><b>Vendas</b><br />Clique aqui para registrar novas vendas ou consultar vendas anteriores. Tudo de forma simples e rápida.</> },
+        { selector: '.btn-tour-clientes', content: () => <><b>Clientes</b><br />Gerencie seus clientes, veja dados e histórico. Fácil para encontrar e cadastrar novos clientes.</> },
+        { selector: '.btn-tour-produtos', content: () => <><b>Produtos</b><br />Veja, edite ou cadastre produtos. Mantenha seu estoque sempre atualizado.</> },
+        { selector: '#a11y-font-dec', content: () => <><b>Diminuir texto</b><br />Se preferir letras menores, clique aqui para facilitar a leitura.</> },
+        { selector: '#a11y-font-inc', content: () => <><b>Aumentar texto</b><br />Se as letras estiverem pequenas, clique aqui para aumentar e enxergar melhor.</> },
+        { selector: '#a11y-contrast', content: () => <><b>Modo escuro</b><br />Altere entre fundo claro e escuro para maior conforto visual, principalmente à noite.</> },
+    ];
+
+    const [isTourOpen, setIsTourOpen] = useState(false);
+    const [currentStep, setCurrentStep] = useState(0);
+    useEffect(() => {
+        if (!localStorage.getItem('tourDone')) {
+            setIsTourOpen(true);
+        }
+    }, []);
+    const handleCloseTour = () => {
+        setIsTourOpen(false);
+        localStorage.setItem('tourDone', 'true');
+    };
+
+    // Função para reiniciar o tour guiado
+    const handleRestartTour = () => {
+        setCurrentStep(0);
+        setIsTourOpen(true);
+        localStorage.removeItem('tourDone');
+    };
     const { props } = usePage<SharedProps>();
     const user = props.auth?.user;
     // Notificações removidas conforme solicitação
@@ -92,7 +124,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
     };
 
     const renderSidebar = () => (
-        <nav id="sidebar" className={`sidebar border-end bg-body ${!isDesktop && !sidebarOpen ? 'd-none' : ''}`} aria-label="Navegação principal">
+    <nav id="sidebar" className={`sidebar border-end bg-body ${!isDesktop && !sidebarOpen ? 'd-none' : ''}`} aria-label="Navegação principal">
             <div className="border-bottom d-flex align-items-center justify-content-between p-3">
                 <div className="brand-title">Mercearia Fácil</div>
                 {!isDesktop && (
@@ -110,17 +142,16 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
             <div className="list-group list-group-flush">
                 <Link
                     href={'/gerenciamento'}
-                    className="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
+                    className="list-group-item list-group-item-action d-flex align-items-center justify-content-between btn-tour-inicio"
                     onClick={closeSidebar}
                 >
                     <span>
                         <span className="large-icon me-2">🏠</span> Início
                     </span>
                 </Link>
-                {/* ✅ ADICIONANDO O BOTÃO DE VENDAS */}
                 <Link
                     href={'/gerenciamento/vendas'}
-                    className="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
+                    className="list-group-item list-group-item-action d-flex align-items-center justify-content-between btn-tour-vendas"
                     onClick={closeSidebar}
                 >
                     <span>
@@ -129,14 +160,14 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 </Link>
                 <Link
                     href={'/gerenciamento/clientes'}
-                    className="list-group-item list-group-item-action d-flex align-items-center"
+                    className="list-group-item list-group-item-action d-flex align-items-center btn-tour-clientes"
                     onClick={closeSidebar}
                 >
                     <span className="large-icon me-2">🧑</span> Clientes
                 </Link>
                 <Link
                     href={'/gerenciamento/produtos'}
-                    className="list-group-item list-group-item-action d-flex align-items-center"
+                    className="list-group-item list-group-item-action d-flex align-items-center btn-tour-produtos"
                     onClick={closeSidebar}
                 >
                     <span className="large-icon me-2">🛒</span> Produtos
@@ -162,6 +193,15 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
 
     return (
         <>
+            <Tour
+                steps={tourSteps}
+                isOpen={isTourOpen}
+                setIsOpen={setIsTourOpen}
+                currentStep={currentStep}
+                setCurrentStep={setCurrentStep}
+                disabledActions={disabledActions}
+                setDisabledActions={setDisabledActions}
+            />
             <Head title={title ?? 'Gerenciamento'} />
             <div className="d-flex min-vh-100 bg-body-tertiary">
                 <Toast message={flash.success} type="success" />
@@ -225,6 +265,15 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                                 onClick={toggleContrast}
                             >
                                 Modo escuro
+                            </button>
+                            <button
+                                id="a11y-tour-restart"
+                                type="button"
+                                className="btn btn-sm btn-outline-primary ms-2"
+                                aria-label="Reiniciar tour guiado"
+                                onClick={handleRestartTour}
+                            >
+                                ? Tour do sistema
                             </button>
                         </div>
                         {children}
