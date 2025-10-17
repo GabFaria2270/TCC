@@ -212,22 +212,22 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                     </div>
                 )}
 
-                {/* Header com Abas */}
-                <div className="d-flex justify-content-between align-items-center mb-4 elemento-vendas-1">
-                    <h2 className="mb-0">
+                {/* ====== INÍCIO DA TELA DE VENDAS (FOCO DO TOUR) ====== */}
+                <div className="d-flex justify-content-between align-items-center mb-4 elemento-vendas-header">
+                    <h2 className="mb-0 elemento-vendas-titulo">
                         <i className="bi bi-receipt text-primary me-2"></i>
                         Vendas
                     </h2>
                     {/* Navegação por Abas */}
-                    <ul className="nav nav-pills elemento-vendas-2">
+                    <ul className="nav nav-pills elemento-vendas-abas">
                         <li className="nav-item">
-                            <button className={`nav-link ${abaAtiva === 'lista' ? 'active' : ''}`} onClick={() => setAbaAtiva('lista')}>
+                            <button className={`nav-link ${abaAtiva === 'lista' ? 'active' : ''} elemento-vendas-aba-lista`} onClick={() => setAbaAtiva('lista')}>
                                 <i className="bi bi-list me-2"></i>
                                 Histórico de Vendas
                             </button>
                         </li>
                         <li className="nav-item">
-                            <button className={`nav-link ${abaAtiva === 'nova' ? 'active' : ''}`} onClick={() => setAbaAtiva('nova')}>
+                            <button className={`nav-link ${abaAtiva === 'nova' ? 'active' : ''} elemento-vendas-aba-nova`} onClick={() => setAbaAtiva('nova')}>
                                 <i className="bi bi-plus-circle me-2"></i>
                                 Nova Venda
                             </button>
@@ -235,66 +235,65 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                     </ul>
                 </div>
 
-                {/* Conteúdo das Abas */}
                 {abaAtiva === 'lista' ? (
                     /* ABA 1: LISTA DE VENDAS */
-                    <div className="elemento-vendas-3">
+                    <div className="elemento-vendas-lista">
                         <VendasList
                             clientes={clientes}
                             filtroStatus={filtroStatus}
                             filtroCliente={filtroCliente}
-                            filtroClienteTexto={filtroClienteTexto}        // <- novo
+                            filtroClienteTexto={filtroClienteTexto}
                             setFiltroStatus={setFiltroStatus}
                             setFiltroCliente={setFiltroCliente}
-                            setFiltroClienteTexto={setFiltroClienteTexto}  // <- novo
+                            setFiltroClienteTexto={setFiltroClienteTexto}
                             vendasFiltradas={vendasFiltradas}
                             abrirDetalhes={abrirDetalhesVenda}
                             limparFiltros={limparFiltros}
                         />
                     </div>
-                ) : (
-                    /* ABA 2: NOVA VENDA (PDV) */
-                    <div className={`row fade-in vendas-container ${loadingVenda ? 'processing' : ''}`}>
+                ) : null}
+                {/* ====== FIM DA TELA INICIAL DE VENDAS ====== */}
+
+                {/* ====== INÍCIO DO PDV (NÃO ALTERAR PARA TOUR) ====== */}
+                {abaAtiva === 'nova' ? (
+                    <div className={`row fade-in vendas-container ${loadingVenda ? 'processing' : ''}`}> 
                         {/* Coluna Esquerda - Produtos */}
-                        <div className="elemento-vendas-4 col">
-                            <ProdutosList
-                                busca={busca}
-                                setBusca={setBusca}
-                                produtosFiltrados={produtosFiltrados}
-                                limparBusca={limparBusca}
-                                adicionarAoCarrinho={adicionarAoCarrinho}
-                                addNotification={addNotification}
-                            />
-                        </div>
+                        <ProdutosList
+                            busca={busca}
+                            setBusca={setBusca}
+                            produtosFiltrados={produtosFiltrados}
+                            limparBusca={limparBusca}
+                            adicionarAoCarrinho={adicionarAoCarrinho}
+                            addNotification={addNotification}
+                        />
 
                         {/* Coluna Direita - Carrinho */}
-                        <div className="elemento-vendas-5 col">
-                            <CarrinhoVenda
-                                carrinho={carrinho}
-                                clienteSelecionado={clienteSelecionado}
-                                clientesAtualizados={clientesAtualizados}
-                                desconto={desconto}
-                                formaPagamento={formaPagamento}
-                                valorRecebido={String(valorRecebido)}
-                                observacoes={observacoes}
-                                loadingVenda={loadingVenda}
-                                setClienteSelecionado={setClienteSelecionado}
-                                setDesconto={setDesconto}
-                                setFormaPagamento={setFormaPagamento}
-                                setValorRecebido={setValorRecebido}
-                                setObservacoes={setObservacoes}
-                                editarQuantidade={editarQuantidade}
-                                removerDoCarrinho={removerDoCarrinho}
-                                limparCarrinho={limparCarrinho}
-                                calcularSubtotal={calcularSubtotal}
-                                calcularTotal={calcularTotal}
-                                finalizarVenda={finalizarVenda}
-                                abrirModalCliente={abrirModalCliente}
-                                addNotification={addNotification}
-                            />
-                        </div>
+                        <CarrinhoVenda
+                            carrinho={carrinho}
+                            clienteSelecionado={clienteSelecionado}
+                            clientesAtualizados={clientesAtualizados}
+                            desconto={desconto}
+                            formaPagamento={formaPagamento}
+                            valorRecebido={String(valorRecebido)}
+                            observacoes={observacoes}
+                            loadingVenda={loadingVenda}
+                            setClienteSelecionado={setClienteSelecionado}
+                            setDesconto={setDesconto}
+                            setFormaPagamento={setFormaPagamento}
+                            setValorRecebido={setValorRecebido}
+                            setObservacoes={setObservacoes}
+                            editarQuantidade={editarQuantidade}
+                            removerDoCarrinho={removerDoCarrinho}
+                            limparCarrinho={limparCarrinho}
+                            calcularSubtotal={calcularSubtotal}
+                            calcularTotal={calcularTotal}
+                            finalizarVenda={finalizarVenda}
+                            abrirModalCliente={abrirModalCliente}
+                            addNotification={addNotification}
+                        />
                     </div>
-                )}
+                ) : null}
+                {/* ====== FIM DO PDV ====== */}
             </div>
 
             {/* Modal de Cadastro de Cliente */}
