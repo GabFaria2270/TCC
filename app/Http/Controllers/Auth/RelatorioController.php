@@ -35,8 +35,27 @@ class RelatorioController
                     }),
                 ];
             });
+
+        // Busca global de movimentos de estoque
+        $movimentos = \App\Models\MovimentoEstoque::with(['produto', 'usuario'])
+            ->orderByDesc('created_at')
+            ->limit(200)
+            ->get()
+            ->map(function($m) {
+                return [
+                    'id' => $m->id,
+                    'data' => optional($m->created_at)->format('d/m/Y H:i'),
+                    'produto' => optional($m->produto)->nome ?? '-',
+                    'tipo' => $m->tipo,
+                    'quantidade' => (int) $m->quantidade_movimentada,
+                    'usuario' => optional($m->usuario)->NOME ?? '-',
+                    'motivo' => $m->motivo,
+                ];
+            });
+
         return Inertia::render('gerenciamento/Relatorio', [
             'dados' => $vendas,
+            'movimentosEstoque' => $movimentos,
         ]);
     }
 
