@@ -10,10 +10,33 @@ class RelatorioController
 {
     public function index(Request $request): Response
     {
-        // Aqui você pode buscar dados reais para o relatório, se desejar
+        // Busca vendas com cliente e usuário
+        $vendas = \App\Models\Venda::with(['cliente', 'usuario', 'itens.produto'])
+            ->orderBy('id', 'asc')
+            ->get()
+            ->map(function($venda) {
+                return [
+                    'id' => $venda->id,
+                    'data' => optional($venda->created_at)->format('d/m/Y H:i'),
+                    'cliente' => optional($venda->cliente)->nome ?? '-',
+                    'usuario' => optional($venda->usuario)->NOME ?? '-',
+                    'total' => number_format($venda->total, 2, ',', '.'),
+                    'desconto' => number_format($venda->desconto, 2, ',', '.'),
+                    'forma_pagamento' => $venda->forma_pagamento,
+                    'status' => $venda->status,
+                    'observacoes' => $venda->observacoes,
+                    'itens' => $venda->itens->map(function($item) {
+                        return [
+                            'produto' => optional($item->produto)->nome ?? '-',
+                            'quantidade' => $item->quantidade,
+                            'valor_unitario' => number_format($item->preco_unitario, 2, ',', '.'),
+                            'subtotal' => number_format($item->subtotal, 2, ',', '.'),
+                        ];
+                    }),
+                ];
+            });
         return Inertia::render('gerenciamento/Relatorio', [
-            // Exemplo de dados fictícios, substitua conforme necessário
-            'dados' => [],
+            'dados' => $vendas,
         ]);
     }
 

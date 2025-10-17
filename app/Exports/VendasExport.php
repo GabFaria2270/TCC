@@ -18,7 +18,7 @@ class VendasExport implements FromCollection, WithHeadings, WithMapping, WithSty
     {
         // Você pode adicionar filtros aqui se desejar
         return Venda::with(['cliente', 'usuario'])
-            ->orderByDesc('created_at')
+            ->orderBy('id', 'asc')
             ->get();
     }
 
@@ -87,9 +87,7 @@ class VendasExport implements FromCollection, WithHeadings, WithMapping, WithSty
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $vendas = $this->collection();
-                $row = 2; // Começa após o cabeçalho
-                // Removido: sobrescrita de 'Ver detalhes' e hyperlink
-                // Mantém apenas estilos e bordas
+                $row = 2;
                 $lastRow = $row + count($vendas) - 1;
                 $sheet->getStyle("A1:I$lastRow")->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                 $sheet->getStyle('A1:I1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFCCE5FF');
@@ -101,7 +99,7 @@ class VendasExport implements FromCollection, WithHeadings, WithMapping, WithSty
     {
         $vendas = $this->collection();
         return [
-            'DetalhesObservacoes' => new class($vendas) implements FromCollection, WithHeadings, WithStyles, WithColumnWidths {
+            'DetalhesObservacoes' => new class($vendas) implements FromCollection, WithHeadings, WithStyles, WithColumnWidths, WithEvents {
                 protected $vendas;
                 public function __construct($vendas) { $this->vendas = $vendas; }
                 public function collection() {
@@ -136,6 +134,7 @@ class VendasExport implements FromCollection, WithHeadings, WithMapping, WithSty
                         'E' => 80,
                     ];
                 }
+                // Não define altura fixa, mantém ajuste automático do Excel
             },
             'RelatorioVendas' => $this,
         ];
