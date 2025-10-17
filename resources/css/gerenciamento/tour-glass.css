@@ -1,0 +1,81 @@
+/* =========================
+   TOUR GUIADO - GLASSMORPHISM MODERNO COM CORES DO SITE
+   ========================= */
+.tour-glass {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.28);
+  color: #222;
+  padding: 1.5rem 1.2rem;
+  min-width: 220px;
+  max-width: 340px;
+  width: 90vw;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.6;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.10);
+}
+
+.tour-glass .reactour__close {
+  color: #222;
+  background: rgba(255,255,255,0.18);
+  border-radius: 50%;
+  border: none;
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  transition: background 0.2s;
+}
+.tour-glass .reactour__close:hover {
+  background: #1976d2;
+  color: #fff;
+}
+
+.tour-mask-glass {
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: rgba(255,255,255,0.12) !important;
+  z-index: 9998;
+}
+
+/* Remove contador de páginas do tour */
+.reactour__badge {
+  display: none !important;
+}
+
+/* =========================
+   MODO ESCURO
+   ========================= */
+[data-bs-theme='dark'] .tour-glass {
+  background: rgba(30, 30, 40, 0.85);
+  color: #fff;
+  border: 1px solid rgba(90,90,120,0.18);
+}
+[data-bs-theme='dark'] .tour-glass .reactour__close {
+  color: #fff;
+  background: rgba(90,90,120,0.18);
+}
+[data-bs-theme='dark'] .tour-glass .reactour__close:hover {
+  background: #90caf9;
+  color: #222;
+}
+
+/* Impede scroll quando o tour está aberto */
+body.tour-open {
+  overflow: hidden !important;
+}

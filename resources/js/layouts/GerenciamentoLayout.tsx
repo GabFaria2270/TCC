@@ -1,42 +1,14 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Tour ,StepType } from '@reactour/tour';
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import Toast from '../components/Toast';
 import { useAppearance, type Appearance } from '../hooks/use-appearance';
 import type { SharedProps } from '../types/inertia';
 
+import '../../css/gerenciamento/tour-glass.css';
+import TourGuideShepherd from '../components/TourGuideShepherd';
+
 
 export default function GerenciamentoLayout({ children, title }: { children: React.ReactNode; title?: string }) {
-    const [disabledActions, setDisabledActions] = useState(false);
-    // Passos do tour guiado
-    const tourSteps: StepType[] = [
-        { selector: '.btn-tour-inicio', content: () => <><b>Painel Inicial</b><br />Aqui você acessa o início do sistema, onde verá um resumo das funções principais. Ideal para começar seu dia!</> },
-        { selector: '.btn-tour-vendas', content: () => <><b>Vendas</b><br />Clique aqui para registrar novas vendas ou consultar vendas anteriores. Tudo de forma simples e rápida.</> },
-        { selector: '.btn-tour-clientes', content: () => <><b>Clientes</b><br />Gerencie seus clientes, veja dados e histórico. Fácil para encontrar e cadastrar novos clientes.</> },
-        { selector: '.btn-tour-produtos', content: () => <><b>Produtos</b><br />Veja, edite ou cadastre produtos. Mantenha seu estoque sempre atualizado.</> },
-        { selector: '#a11y-font-dec', content: () => <><b>Diminuir texto</b><br />Se preferir letras menores, clique aqui para facilitar a leitura.</> },
-        { selector: '#a11y-font-inc', content: () => <><b>Aumentar texto</b><br />Se as letras estiverem pequenas, clique aqui para aumentar e enxergar melhor.</> },
-        { selector: '#a11y-contrast', content: () => <><b>Modo escuro</b><br />Altere entre fundo claro e escuro para maior conforto visual, principalmente à noite.</> },
-    ];
-
-    const [isTourOpen, setIsTourOpen] = useState(false);
-    const [currentStep, setCurrentStep] = useState(0);
-    useEffect(() => {
-        if (!localStorage.getItem('tourDone')) {
-            setIsTourOpen(true);
-        }
-    }, []);
-    const handleCloseTour = () => {
-        setIsTourOpen(false);
-        localStorage.setItem('tourDone', 'true');
-    };
-
-    // Função para reiniciar o tour guiado
-    const handleRestartTour = () => {
-        setCurrentStep(0);
-        setIsTourOpen(true);
-        localStorage.removeItem('tourDone');
-    };
     const { props } = usePage<SharedProps>();
     const user = props.auth?.user;
     // Notificações removidas conforme solicitação
@@ -200,22 +172,12 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
 
     return (
         <>
-            <Tour
-                steps={tourSteps}
-                isOpen={isTourOpen}
-                setIsOpen={setIsTourOpen}
-                currentStep={currentStep}
-                setCurrentStep={setCurrentStep}
-                disabledActions={disabledActions}
-                setDisabledActions={setDisabledActions}
-            />
             <Head title={title ?? 'Gerenciamento'} />
             <div className="d-flex min-vh-100 bg-body-tertiary">
                 <Toast message={flash.success} type="success" />
                 <Toast message={flash.error} type="error" />
                 <Toast message={flash.info} type="info" />
                 {renderSidebar()}
-
                 <main className="flex-grow-1" onClick={onMainClick}>
                     <header className="d-flex align-items-center justify-content-between border-bottom bg-body gerenciamento-header-fixed p-3">
                         <div className="d-flex align-items-center gap-2">
@@ -278,7 +240,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                                 type="button"
                                 className="btn btn-sm btn-outline-primary ms-2"
                                 aria-label="Reiniciar tour guiado"
-                                onClick={handleRestartTour}
+                                // onClick={handleRestartTour}
                             >
                                 ? Tour do sistema
                             </button>
@@ -287,6 +249,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                     </section>
                 </main>
             </div>
+            <TourGuideShepherd />
         </>
     );
 }
