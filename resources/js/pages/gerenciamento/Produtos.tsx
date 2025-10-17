@@ -1,9 +1,9 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ModalPortal from '../../components/common/ModalPortal';
+import CategoriaSelectCustom from '../../components/PDVcomponents/CategoriaSelectCustom';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 import { formatarMoeda } from '../../utils/formatters';
-
 // =============================================================
 // Tipos e interfaces
 // =============================================================
@@ -535,7 +535,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     };
 
     return (
-    <GerenciamentoLayout title="Produtos">
+        <GerenciamentoLayout title="Produtos">
             <Head title="Produtos" />
             <h2 className="visually-hidden" ref={h1Ref} tabIndex={-1}>
                 Produtos
@@ -545,7 +545,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Cabeçalho / Ações principais                         */}
                 {/* ===================================================== */}
-                <div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3 elemento-produtos-1">
+                <div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary elemento-produtos-1 mb-4 flex-wrap gap-3 border p-3">
                     <div>
                         <h1 className="h3 m-0">Gestão de Produtos</h1>
                         <p className="text-secondary mb-0">Cadastre e acompanhe os itens da sua mercearia.</p>
@@ -579,8 +579,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* Filtros e controles                                   */}
                 {/* ===================================================== */}
                 <div className="card filtros-card fade-in mb-4 border-0 shadow-sm">
-                    <div className="card-body row g-3">
-                        <div className="col-md-6 col-12">
+                    <div className="card-body row g-1 align-items-end">
+                        <div className="col">
                             <label htmlFor="filtro-busca" className="form-label">
                                 Buscar
                             </label>
@@ -601,7 +601,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 />
                             </div>
                         </div>
-                        <div className="col-md-3 col-12">
+                        <div className="col-auto">
                             <label htmlFor="filtro-categoria" className="form-label">
                                 Categoria
                             </label>
@@ -623,7 +623,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ))}
                             </select>
                         </div>
-                        <div className="col-md-2 col-12">
+                        <div className="col-auto">
                             <label htmlFor="per-page" className="form-label">
                                 Por página
                             </label>
@@ -643,8 +643,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ))}
                             </select>
                         </div>
-                        <div className="col-md-1 d-flex align-items-end col-12">
-                            <div className="form-check">
+                        <div className="d-flex align-items-end col-auto">
+                            <div className="form-check ms-2">
                                 <input
                                     className="form-check-input"
                                     type="checkbox"
@@ -660,7 +660,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 </label>
                             </div>
                         </div>
-                        <div className="col-md-0 d-flex align-items-end justify-content-end col-12">
+                        <div className="d-flex align-items-end justify-content-end col-auto">
                             <button className="btn btn-outline-secondary" type="button" onClick={handleClearFilters}>
                                 Limpar filtros
                             </button>
@@ -671,7 +671,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Tabela de produtos                                    */}
                 {/* ===================================================== */}
-                <div className="card fade-in border-0 shadow-sm elemento-produtos-2">
+                <div className="card fade-in elemento-produtos-2 border-0 shadow-sm">
                     <div className="card-header d-flex justify-content-between align-items-center bg-body-tertiary border-0">
                         <strong>Produtos cadastrados</strong>
                         <div className="small text-secondary">Atualizados em tempo real conforme cadastros</div>
@@ -845,8 +845,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 </div>
                                 <form onSubmit={submit}>
                                     <div className="modal-body">
-                                        <div className="row g-3">
-                                            <div className="col-12">
+                                        <div className="row">
+                                            <div className="col-12 mb-3">
                                                 <label htmlFor="produto-nome" className="form-label">
                                                     Nome*
                                                 </label>
@@ -861,8 +861,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 />
                                                 {errors.nome && <div className="invalid-feedback">{errors.nome}</div>}
                                             </div>
-
-                                            <div className="col-md-6 col-12">
+                                            <div className="col-md-6 mb-3">
                                                 <label htmlFor="produto-preco" className="form-label">
                                                     Preço (R$)*
                                                 </label>
@@ -879,12 +878,11 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                         disabled={processing}
                                                         required
                                                     />
-                                                    {errors.preco && <div className="invalid-feedback">{errors.preco}</div>}
                                                 </div>
+                                                {errors.preco && <div className="invalid-feedback">{errors.preco}</div>}
                                             </div>
-
                                             {modalMode === 'create' ? (
-                                                <div className="col-md-6 col-12">
+                                                <div className="col-md-6 mb-3">
                                                     <label htmlFor="produto-quantidade" className="form-label">
                                                         Quantidade em estoque*
                                                     </label>
@@ -910,7 +908,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                     {errors.quantidade && <div className="invalid-feedback">{errors.quantidade}</div>}
                                                 </div>
                                             ) : (
-                                                <div className="col-md-6 col-12">
+                                                <div className="col-md-6 mb-3">
                                                     <label className="form-label">Estoque atual</label>
                                                     <div className="form-control-plaintext fw-semibold">
                                                         {produtoSelecionado?.quantidade_estoque ?? 0}
@@ -927,29 +925,44 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                     </small>
                                                 </div>
                                             )}
-
-                                            <div className="col-md-6 col-12">
-                                                <label htmlFor="produto-categoria" className="form-label">
-                                                    Categoria
-                                                </label>
-                                                <select
-                                                    id="produto-categoria"
-                                                    className={`form-select ${errors.categoria_id ? 'is-invalid' : ''}`}
-                                                    value={data.categoria_id}
-                                                    onChange={(event) => setData('categoria_id', event.target.value)}
-                                                    disabled={processing}
-                                                >
-                                                    <option value="">Selecione uma categoria</option>
-                                                    {categorias.map((categoria) => (
-                                                        <option key={categoria.id} value={String(categoria.id)}>
-                                                            {categoria.nome}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                {errors.categoria_id && <div className="invalid-feedback">{errors.categoria_id}</div>}
+                                            <div className="col-md-6 d-flex flex-column mb-3 gap-2">
+                                                <CategoriaSelectCustom
+                                                    categorias={[
+                                                        { value: '', label: 'Categoria' },
+                                                        ...categorias.map((c) => ({ value: String(c.id), label: c.nome })),
+                                                    ]}
+                                                    value={(() => {
+                                                        const found = categorias.find((c) => String(c.id) === String(data.categoria_id));
+                                                        return found
+                                                            ? { value: String(found.id), label: found.nome }
+                                                            : { value: '', label: 'Categoria' };
+                                                    })()}
+                                                    onChange={(option: any) => setData('categoria_id', option ? option.value : '')}
+                                                    isDisabled={processing}
+                                                    placeholder="Selecione ou busque uma categoria"
+                                                />
+                                                <div>
+                                                    <label htmlFor="produto-nova-categoria" className="form-label mb-1">
+                                                        Nova categoria (opcional)
+                                                    </label>
+                                                    <input
+                                                        id="produto-nova-categoria"
+                                                        type="text"
+                                                        className={`form-control ${errors.nova_categoria_nome ? 'is-invalid' : ''}`}
+                                                        value={data.nova_categoria_nome}
+                                                        onChange={(event) => setData('nova_categoria_nome', event.target.value)}
+                                                        placeholder="Informe para criar automaticamente"
+                                                        disabled={processing}
+                                                    />
+                                                    {errors.nova_categoria_nome && (
+                                                        <div className="invalid-feedback">{errors.nova_categoria_nome}</div>
+                                                    )}
+                                                    <small className="text-secondary">
+                                                        Você pode escolher uma categoria existente ou informar uma nova.
+                                                    </small>
+                                                </div>
                                             </div>
-
-                                            <div className="col-md-6 col-12">
+                                            <div className="col-md-6 mb-3">
                                                 <label htmlFor="produto-estoque-minimo" className="form-label">
                                                     Estoque mínimo (alerta)
                                                 </label>
@@ -973,25 +986,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 />
                                                 {errors.estoque_minimo && <div className="invalid-feedback">{errors.estoque_minimo}</div>}
                                                 <small className="text-secondary">Usado para destacar produtos com estoque baixo.</small>
-                                            </div>
-
-                                            <div className="col-md-6 col-12">
-                                                <label htmlFor="produto-nova-categoria" className="form-label">
-                                                    Nova categoria (opcional)
-                                                </label>
-                                                <input
-                                                    id="produto-nova-categoria"
-                                                    type="text"
-                                                    className={`form-control ${errors.nova_categoria_nome ? 'is-invalid' : ''}`}
-                                                    value={data.nova_categoria_nome}
-                                                    onChange={(event) => setData('nova_categoria_nome', event.target.value)}
-                                                    placeholder="Informe para criar automaticamente"
-                                                    disabled={processing}
-                                                />
-                                                {errors.nova_categoria_nome && <div className="invalid-feedback">{errors.nova_categoria_nome}</div>}
-                                                <small className="text-secondary">
-                                                    Você pode escolher uma categoria existente ou informar uma nova.
-                                                </small>
                                             </div>
                                         </div>
                                     </div>

@@ -54,6 +54,7 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-icons": "^5.5.0",
+        "react-select": "^5.10.2",
         "shepherd.js": "^14.5.1",
         "tailwind-merge": "^3.0.1",
         "tailwindcss": "^4.0.0",
