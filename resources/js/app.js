@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializa os sistemas que devem correr em TODAS as páginas
     new LoaderSystem();
 
+    // Exibe o tour guiado apenas uma vez por navegador
+    if (!localStorage.getItem('tourGuiadoFinalizado')) {
+        iniciarTourGuiado();
+        localStorage.setItem('tourGuiadoFinalizado', 'true');
+    }
+
     // Inicializa funcionalidades apenas se os elementos existirem na página
     if (document.querySelector('.toggle-password')) {
         new PasswordToggle();
@@ -19,3 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
         new CnpjFormatter();
     }
 });
+
+// Função para iniciar o tour guiado
+function iniciarTourGuiado() {
+    // Coloque aqui o código do seu tour guiado
+    // Exemplo: window.startTour(); ou integração com biblioteca de tour
+    // ...
+}

@@ -5,6 +5,9 @@ import 'shepherd.js/dist/css/shepherd.css';
 
 export default function TourGuideShepherd() {
   useEffect(() => {
+    // Só inicia o tour se não estiver finalizado
+    if (localStorage.getItem('tourGuiadoFinalizado')) return;
+
     const tour: ShepherdTour = new Shepherd.Tour({
       defaultStepOptions: {
         classes: 'shepherd-theme-arrows',
@@ -68,6 +71,13 @@ export default function TourGuideShepherd() {
 
     steps.forEach((step) => tour.addStep(step));
     tour.start();
+
+    // Marca como finalizado ao completar ou cancelar
+    const finalizarTour = () => {
+      localStorage.setItem('tourGuiadoFinalizado', 'true');
+    };
+    tour.on('complete', finalizarTour);
+    tour.on('cancel', finalizarTour);
 
     return () => {
       document.body.removeEventListener('click', advanceStep);
