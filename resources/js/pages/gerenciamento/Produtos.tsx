@@ -535,7 +535,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     };
 
     return (
-        <GerenciamentoLayout title="Produtos">
+    <GerenciamentoLayout title="Produtos">
             <Head title="Produtos" />
             <h2 className="visually-hidden" ref={h1Ref} tabIndex={-1}>
                 Produtos
@@ -545,7 +545,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Cabeçalho / Ações principais                         */}
                 {/* ===================================================== */}
-                <div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3">
+                <div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3 elemento-produtos-1">
                     <div>
                         <h1 className="h3 m-0">Gestão de Produtos</h1>
                         <p className="text-secondary mb-0">Cadastre e acompanhe os itens da sua mercearia.</p>
@@ -559,7 +559,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                             )}{' '}
                             Atualizar
                         </button>
-                        <button className="btn btn-primary" onClick={abrirModalCriar}>
+                        <button className="btn btn-primary elemento-produtos-3" onClick={abrirModalCriar}>
                             <i className="bi bi-plus-lg" /> Novo produto
                         </button>
                     </div>
@@ -671,7 +671,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Tabela de produtos                                    */}
                 {/* ===================================================== */}
-                <div className="card fade-in border-0 shadow-sm">
+                <div className="card fade-in border-0 shadow-sm elemento-produtos-2">
                     <div className="card-header d-flex justify-content-between align-items-center bg-body-tertiary border-0">
                         <strong>Produtos cadastrados</strong>
                         <div className="small text-secondary">Atualizados em tempo real conforme cadastros</div>

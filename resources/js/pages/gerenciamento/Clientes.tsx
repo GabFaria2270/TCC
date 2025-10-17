@@ -155,13 +155,13 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
         <GerenciamentoLayout title="Clientes">
             <Head title="Clientes" />
             {/* Cabeçalho, busca e contador */}
-            <div className="clientes-header">
-                <div className="clientes-header-content">
-                    <div className="clientes-title-section">
+            <div className="clientes-header elemento-clientes-1">
+                <div className="clientes-header-content elemento-clientes-2">
+                    <div className="clientes-title-section elemento-clientes-3">
                         <h1 className="clientes-title">Gestão de Clientes</h1>
                         <p className="clientes-subtitle">Gerencie seus clientes e contas fiadas</p>
                     </div>
-                    <div className="clientes-actions">
+                    <div className="clientes-actions elemento-clientes-4">
                         <button className="btn-refresh" onClick={handleRefresh} disabled={loading}>
                             {loading ? <span className="spinner-loading" /> : <i className="bi bi-arrow-clockwise"></i>}
                             Atualizar
@@ -218,7 +218,7 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
 
             {/* Mensagem de vazio ou tabela */}
             {clientesArray.length === 0 ? (
-                <div className="clientes-empty-state">
+                <div className="clientes-empty-state elemento-clientes-6">
                     <i className="bi bi-people clientes-empty-icon"></i>
                     <h3>Cadastre um cliente durante uma venda</h3>
                     <p>Abra sua Aba de vendas e crie o cliente no metodo Conta Fiada.</p>
@@ -227,12 +227,14 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                     </Link>
                 </div>
             ) : (
-                <ClienteTabela
-                    clientes={clientesFiltrados}
-                    abrirDetalhes={abrirDetalhesConta}
-                    abrirConfirmarPagamento={abrirConfirmarPagamento}
-                    abrirModal={abrirModal}
-                />
+                <div className="elemento-clientes-5">
+                    <ClienteTabela
+                        clientes={clientesFiltrados}
+                        abrirDetalhes={abrirDetalhesConta}
+                        abrirConfirmarPagamento={abrirConfirmarPagamento}
+                        abrirModal={abrirModal}
+                    />
+                </div>
             )}
 
             {modalMode === 'create' && showModal && (

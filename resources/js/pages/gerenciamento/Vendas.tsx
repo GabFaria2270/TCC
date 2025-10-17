@@ -213,14 +213,13 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                 )}
 
                 {/* Header com Abas */}
-                <div className="d-flex justify-content-between align-items-center mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-4 elemento-vendas-1">
                     <h2 className="mb-0">
                         <i className="bi bi-receipt text-primary me-2"></i>
                         Vendas
                     </h2>
-
                     {/* Navegação por Abas */}
-                    <ul className="nav nav-pills">
+                    <ul className="nav nav-pills elemento-vendas-2">
                         <li className="nav-item">
                             <button className={`nav-link ${abaAtiva === 'lista' ? 'active' : ''}`} onClick={() => setAbaAtiva('lista')}>
                                 <i className="bi bi-list me-2"></i>
@@ -239,55 +238,61 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                 {/* Conteúdo das Abas */}
                 {abaAtiva === 'lista' ? (
                     /* ABA 1: LISTA DE VENDAS */
-                    <VendasList
-                        clientes={clientes}
-                        filtroStatus={filtroStatus}
-                        filtroCliente={filtroCliente}
-                        filtroClienteTexto={filtroClienteTexto}        // <- novo
-                        setFiltroStatus={setFiltroStatus}
-                        setFiltroCliente={setFiltroCliente}
-                        setFiltroClienteTexto={setFiltroClienteTexto}  // <- novo
-                        vendasFiltradas={vendasFiltradas}
-                        abrirDetalhes={abrirDetalhesVenda}
-                        limparFiltros={limparFiltros}
-                    />
+                    <div className="elemento-vendas-3">
+                        <VendasList
+                            clientes={clientes}
+                            filtroStatus={filtroStatus}
+                            filtroCliente={filtroCliente}
+                            filtroClienteTexto={filtroClienteTexto}        // <- novo
+                            setFiltroStatus={setFiltroStatus}
+                            setFiltroCliente={setFiltroCliente}
+                            setFiltroClienteTexto={setFiltroClienteTexto}  // <- novo
+                            vendasFiltradas={vendasFiltradas}
+                            abrirDetalhes={abrirDetalhesVenda}
+                            limparFiltros={limparFiltros}
+                        />
+                    </div>
                 ) : (
                     /* ABA 2: NOVA VENDA (PDV) */
                     <div className={`row fade-in vendas-container ${loadingVenda ? 'processing' : ''}`}>
                         {/* Coluna Esquerda - Produtos */}
-                        <ProdutosList
-                            busca={busca}
-                            setBusca={setBusca}
-                            produtosFiltrados={produtosFiltrados}
-                            limparBusca={limparBusca}
-                            adicionarAoCarrinho={adicionarAoCarrinho}
-                            addNotification={addNotification}
-                        />
+                        <div className="elemento-vendas-4 col">
+                            <ProdutosList
+                                busca={busca}
+                                setBusca={setBusca}
+                                produtosFiltrados={produtosFiltrados}
+                                limparBusca={limparBusca}
+                                adicionarAoCarrinho={adicionarAoCarrinho}
+                                addNotification={addNotification}
+                            />
+                        </div>
 
                         {/* Coluna Direita - Carrinho */}
-                        <CarrinhoVenda
-                            carrinho={carrinho}
-                            clienteSelecionado={clienteSelecionado}
-                            clientesAtualizados={clientesAtualizados}
-                            desconto={desconto}
-                            formaPagamento={formaPagamento}
-                            valorRecebido={String(valorRecebido)}
-                            observacoes={observacoes}
-                            loadingVenda={loadingVenda}
-                            setClienteSelecionado={setClienteSelecionado}
-                            setDesconto={setDesconto}
-                            setFormaPagamento={setFormaPagamento}
-                            setValorRecebido={setValorRecebido}
-                            setObservacoes={setObservacoes}
-                            editarQuantidade={editarQuantidade}
-                            removerDoCarrinho={removerDoCarrinho}
-                            limparCarrinho={limparCarrinho}
-                            calcularSubtotal={calcularSubtotal}
-                            calcularTotal={calcularTotal}
-                            finalizarVenda={finalizarVenda}
-                            abrirModalCliente={abrirModalCliente}
-                            addNotification={addNotification}
-                        />
+                        <div className="elemento-vendas-5 col">
+                            <CarrinhoVenda
+                                carrinho={carrinho}
+                                clienteSelecionado={clienteSelecionado}
+                                clientesAtualizados={clientesAtualizados}
+                                desconto={desconto}
+                                formaPagamento={formaPagamento}
+                                valorRecebido={String(valorRecebido)}
+                                observacoes={observacoes}
+                                loadingVenda={loadingVenda}
+                                setClienteSelecionado={setClienteSelecionado}
+                                setDesconto={setDesconto}
+                                setFormaPagamento={setFormaPagamento}
+                                setValorRecebido={setValorRecebido}
+                                setObservacoes={setObservacoes}
+                                editarQuantidade={editarQuantidade}
+                                removerDoCarrinho={removerDoCarrinho}
+                                limparCarrinho={limparCarrinho}
+                                calcularSubtotal={calcularSubtotal}
+                                calcularTotal={calcularTotal}
+                                finalizarVenda={finalizarVenda}
+                                abrirModalCliente={abrirModalCliente}
+                                addNotification={addNotification}
+                            />
+                        </div>
                     </div>
                 )}
             </div>

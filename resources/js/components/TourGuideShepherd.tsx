@@ -10,7 +10,7 @@ export default function TourGuideShepherd() {
 
     const tour: ShepherdTour = new Shepherd.Tour({
       defaultStepOptions: {
-        classes: 'shepherd-theme-arrows',
+        classes: 'shepherd-theme-arrows tour-glass rainbow-card', // Adiciona borda arco-íris
         scrollTo: true,
         cancelIcon: { enabled: true },
         canClickTarget: false,
@@ -18,10 +18,458 @@ export default function TourGuideShepherd() {
       useModalOverlay: true,
     });
 
-    // Função para avançar ao clicar em qualquer lugar
-    const advanceStep = () => {
-      if (tour.getCurrentStep()) {
-        if (tour.steps.indexOf(tour.getCurrentStep()!) < tour.steps.length - 1) {
+    // Recupera o índice salvo do passo
+    const savedStepIndex = localStorage.getItem('tourGuiadoStepIndex');
+
+    // Helper para aguardar elemento
+    function waitForElement(selector: string, timeout = 5000) {
+      return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const check = () => {
+          const el = document.querySelector(selector);
+          if (el && (el as HTMLElement).offsetParent !== null) {
+            resolve(true);
+          } else if (Date.now() - start > timeout) {
+            reject('Elemento não encontrado: ' + selector);
+          } else {
+            setTimeout(check, 100);
+          }
+        };
+        check();
+      });
+    }
+
+    const steps: StepOptions[] = [
+      // Navbar Home
+      {
+        id: 'navbar-home',
+        attachTo: { element: '.btn-tour-inicio', on: 'bottom' as const },
+        title: 'Bem-vindo ao sistema!',
+        text: 'Este é o menu principal. Por aqui você acessa todas as Informações  do sistema. Vamos conhecer juntos cada funcionalidade!',
+        buttons: [],
+        when: {
+          show: () => {
+            if (window.location.pathname !== '/gerenciamento') {
+              window.location.href = '/gerenciamento';
+              return new Promise(resolve => setTimeout(resolve, 800));
+            }
+            return waitForElement('.btn-tour-inicio');
+          }
+        }
+      },
+      // Botão diminuir texto
+      {
+        id: 'a11y-dec',
+        attachTo: { element: '.elemento-a11y-dec', on: 'bottom' as const },
+        title: 'Diminuir tamanho do texto',
+        text: 'Se as letras estiverem grandes demais, clique aqui para diminuir e deixar a leitura mais confortável para você.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-a11y-dec')
+        }
+      },
+      // Botão aumentar texto
+      {
+        id: 'a11y-inc',
+        attachTo: { element: '.elemento-a11y-inc', on: 'bottom' as const },
+        title: 'Aumentar tamanho do texto',
+        text: 'Prefere letras maiores? Clique aqui para aumentar o tamanho dos textos e facilitar a leitura.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-a11y-inc')
+        }
+      },
+      // Botão modo escuro/claro
+      {
+        id: 'a11y-contrast',
+        attachTo: { element: '.elemento-a11y-contrast', on: 'bottom' as const },
+        title: 'Modo escuro e claro',
+        text: 'Aqui você pode alternar entre modo claro e escuro. Escolha o que for mais confortável para seus olhos!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-a11y-contrast')
+        }
+      },
+     
+      // Card "Como usar"
+      {
+        id: 'home-comousar',
+        attachTo: { element: '.elemento-home-2', on: 'top' as const },
+        title: 'Como usar o sistema',
+        text: 'Aqui você encontra instruções rápidas para registrar vendas, cadastrar produtos e gerenciar clientes. Tudo de forma simples!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-home-2')
+        }
+      },
+      // Card "Resumo de hoje"
+      {
+        id: 'home-resumo',
+        attachTo: { element: '.elemento-home-resumo', on: 'top' as const },
+        title: 'Resumo do dia',
+        text: 'Aqui você acompanha o resumo das vendas e do estoque do dia. Ótimo para ter uma visão rápida do seu negócio!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-home-resumo')
+        }
+      },
+      // Card vendas do resumo
+      {
+        id: 'home-vendas',
+        attachTo: { element: '.elemento-home-vendas', on: 'top' as const },
+        title: 'Vendas do dia',
+        text: 'Veja quantas vendas foram feitas hoje e o valor total. Assim você acompanha o movimento da sua loja!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-home-vendas')
+        }
+      },
+      // Card estoque do resumo
+      {
+        id: 'home-estoque',
+        attachTo: { element: '.elemento-home-estoque', on: 'top' as const },
+        title: 'Alerta de estoque baixo',
+        text: 'Fique atento aos produtos que estão com estoque baixo. Assim você evita faltar mercadoria para seus clientes!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-home-estoque')
+        }
+      },
+      // Listas: últimas vendas
+      {
+        id: 'home-ultimasvendas',
+        attachTo: { element: '.elemento-home-ultimasvendas', on: 'top' as const },
+        title: 'Últimas vendas realizadas',
+        text: 'Aqui você pode conferir as vendas mais recentes feitas na sua loja.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-home-ultimasvendas')
+        }
+      },
+      // Listas: fiado em aberto
+      {
+        id: 'home-fiado',
+        attachTo: { element: '.elemento-home-fiado', on: 'top' as const },
+        title: 'Fiado em aberto',
+        text: 'Veja quais clientes estão com fiado em aberto e o valor total. Controle fácil das dívidas!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-home-fiado')
+        }
+      },
+      // Listas: agrupamento de listas
+      {
+        id: 'home-listas',
+        attachTo: { element: '.elemento-home-listas', on: 'top' as const },
+        title: 'Painel de listas',
+        text: 'Este painel mostra as últimas vendas e os fiados em aberto, tudo em um só lugar!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-home-listas')
+        }
+      },
+      // Card mercearia (último passo do Home)
+      {
+        id: 'home-mercearia',
+        attachTo: { element: '.elemento-home-mercearia', on: 'top' as const },
+        title: 'Informações da mercearia',
+        text: 'Aqui estão os dados da sua mercearia e do responsável. Mantenha sempre atualizado!',
+        buttons: [
+          {
+            text: 'Continuar o tour',
+            action: () => {
+              localStorage.setItem('tourGuiadoStepIndex', String(steps.findIndex(s => s.id === 'navbar-vendas')));
+              window.location.href = '/gerenciamento/vendas';
+            }
+          },
+          {
+            text: 'Cancelar',
+            action: () => tour.cancel(),
+          }
+        ],
+        when: {
+          show: () => waitForElement('.elemento-home-mercearia')
+        }
+      },
+      // Navbar Vendas (primeiro passo em vendas)
+      {
+        id: 'navbar-vendas',
+        attachTo: { element: '.btn-tour-vendas', on: 'top' as const },
+        title: 'Área de Vendas',
+        text: 'Aqui você pode registrar e acompanhar todas as vendas realizadas no sistema. Clique para explorar!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.btn-tour-vendas')
+        }
+      },
+      // Elementos da página Vendas
+      {
+        id: 'vendas-element1',
+        attachTo: { element: '.elemento-vendas-1', on: 'top' as const },
+        title: 'Registrar Venda',
+        text: 'Use este espaço para registrar novas vendas e acessar o histórico. Tudo prático e rápido!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-vendas-1')
+        }
+      },
+      {
+        id: 'vendas-element2',
+        attachTo: { element: '.elemento-vendas-2', on: 'top' as const },
+        title: 'Botões de Ação',
+        text: 'Aqui estão os botões de Nova venda e histórico use para acessar essas funcionalidades.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-vendas-2')
+        }
+      },
+      {
+        id: 'vendas-element3',
+        attachTo: { element: '.elemento-vendas-3', on: 'top' as const },
+        title: 'Filtros e histórico de vendas ',
+        text: 'Use os filtros para encontrar vendas específicas por cliente, para facilitar muito a busca e análise suas vendas!',
+        buttons: [
+          {
+            text: 'Ir para Clientes',
+            action: () => {
+              localStorage.setItem('tourGuiadoStepIndex', String(steps.findIndex(s => s.id === 'navbar-clientes')));
+              window.location.href = '/gerenciamento/clientes';
+            }
+          },
+          {
+            text: 'Cancelar',
+            action: () => tour.cancel(),
+          }
+        ],
+        when: {
+          show: () => waitForElement('.elemento-vendas-3')
+        }
+      },
+      // --- PRODUTOS ---
+      {
+        id: 'navbar-produtos',
+        attachTo: { element: '.btn-tour-produtos', on: 'top' as const },
+        title: 'Área de Produtos',
+        text: 'Aqui você cadastra, edita e acompanha todos os produtos da sua mercearia. Clique para ver mais!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.btn-tour-produtos')
+        }
+      },
+      {
+        id: 'produtos-header',
+        attachTo: { element: '.elemento-produtos-1', on: 'top' as const },
+        title: 'Gestão de Produtos',
+        text: 'Este é o cabeçalho da área de produtos. Aqui você encontra ações rápidas para gerenciar seus itens.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-produtos-1')
+        }
+      },
+      {
+        id: 'produtos-lista',
+        attachTo: { element: '.elemento-produtos-2', on: 'top' as const },
+        title: 'Lista de Produtos',
+        text: 'Aqui estão todos os produtos cadastrados. Você pode editar, excluir ou adicionar novos facilmente.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-produtos-2')
+        }
+      },
+      {
+        id: 'produtos-novo',
+        attachTo: { element: '.elemento-produtos-3', on: 'top' as const },
+        title: 'Cadastrar novo produto',
+        text: 'Precisa adicionar um novo item? Clique aqui para cadastrar produtos rapidamente!',
+          buttons: [
+            {
+              text: 'Ir para Relatório',
+              action: () => {
+                localStorage.setItem('tourGuiadoStepIndex', String(steps.findIndex(s => s.id === 'navbar-relatorio')));
+                window.location.href = '/gerenciamento/relatorio';
+              }
+            },
+            {
+              text: 'Cancelar',
+              action: () => tour.cancel(),
+            }
+          ],
+        when: {
+          show: () => waitForElement('.elemento-produtos-3')
+        }
+      },
+      // --- CLIENTES ---
+      {
+        id: 'navbar-clientes',
+        attachTo: { element: '.btn-tour-clientes', on: 'top' as const },
+        title: 'Área de Clientes',
+        text: 'Aqui você gerencia todos os seus clientes, acompanha fiados e pode cadastrar novos. Clique para conhecer!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.btn-tour-clientes')
+        }
+      },
+      {
+        id: 'clientes-header',
+        attachTo: { element: '.elemento-clientes-1', on: 'top' as const },
+        title: 'Gestão de Clientes',
+        text: 'Este é o cabeçalho da área de clientes. Aqui você encontra ações rápidas para gerenciar seus clientes.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-clientes-1')
+        }
+      },
+      {
+        id: 'clientes-header-content',
+        attachTo: { element: '.elemento-clientes-2', on: 'top' as const },
+        title: 'Ações e histórico de fiado',
+        text: 'Aqui você pode atualizar a lista de clientes e acessar o histórico de fiado. Tudo para facilitar seu controle!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-clientes-2')
+        }
+      },
+      {
+        id: 'clientes-title-section',
+        attachTo: { element: '.elemento-clientes-3', on: 'top' as const },
+        title: 'Informações dos clientes',
+        text: 'Veja os dados principais dos seus clientes e acompanhe o status das contas fiadas.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-clientes-3')
+        }
+      },
+      {
+        id: 'clientes-actions',
+        attachTo: { element: '.elemento-clientes-4', on: 'top' as const },
+        title: 'Ações de Clientes',
+        text: 'Use estes botões para atualizar a lista ou acessar o histórico de fiado dos clientes.',
+          buttons: [
+            {
+              text: 'Ir para Produtos',
+              action: () => {
+                localStorage.setItem('tourGuiadoStepIndex', String(steps.findIndex(s => s.id === 'navbar-produtos')));
+                window.location.href = '/gerenciamento/produtos';
+              }
+            }
+          ],
+        when: {
+          show: () => waitForElement('.elemento-clientes-4')
+        }
+      },
+      // --- RELATÓRIO ---
+      {
+        id: 'navbar-relatorio',
+        attachTo: { element: '.btn-tour-relatorio', on: 'top' as const },
+        title: 'Área de Relatórios',
+        text: 'Aqui você pode gerar relatórios completos de vendas, estoque e muito mais. Clique para acessar!',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.btn-tour-relatorio')
+        }
+      },
+      {
+        id: 'relatorio-header',
+        attachTo: { element: '.elemento-relatorio-1', on: 'top' as const },
+        title: 'Gestão de Relatórios',
+        text: 'Este é o cabeçalho da área de relatórios. Aqui você encontra ações rápidas para gerar e exportar dados.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-relatorio-1')
+        }
+      },
+      {
+        id: 'relatorio-titulo',
+        attachTo: { element: '.elemento-relatorio-2', on: 'top' as const },
+        title: 'Informações do Relatório',
+        text: 'Veja o título e a descrição do relatório que está sendo gerado. Assim você sabe exatamente o que está analisando.',
+        buttons: [],
+        when: {
+          show: () => waitForElement('.elemento-relatorio-2')
+        }
+      },
+      {
+        id: 'relatorio-exportar',
+        attachTo: { element: '.elemento-relatorio-3', on: 'top' as const },
+        title: 'Exportar para Excel',
+        text: 'Precisa analisar os dados? Clique aqui para exportar o relatório em Excel e facilitar seu controle!',
+        buttons: [
+          {
+            text: 'Finalizar tour',
+            action: () => tour.complete(),
+          }
+        ],
+        when: {
+          show: () => waitForElement('.elemento-relatorio-3')
+        }
+      },
+    ];
+
+    steps.forEach((step) => tour.addStep(step));
+    // Inicia do índice salvo, se existir
+    if (savedStepIndex && !isNaN(Number(savedStepIndex))) {
+      setTimeout(() => {
+        tour.show(Number(savedStepIndex));
+      }, 300);
+    } else {
+      tour.start();
+    }
+
+    // Marca como finalizado ao completar ou cancelar
+    const finalizarTour = () => {
+      localStorage.setItem('tourGuiadoFinalizado', 'true');
+      localStorage.removeItem('tourGuiadoStepIndex');
+    };
+    tour.on('complete', finalizarTour);
+    tour.on('cancel', finalizarTour);
+
+    // Salva o índice do passo atual ao avançar
+    // Atualizar advanceStep para acionar o botão de transição em Produtos
+    const advanceStep = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const currentStep = tour.getCurrentStep();
+      if (target.closest('.shepherd-button')) {
+        if (target.textContent?.trim() === 'Cancelar') return;
+      }
+      // Último passo de Home
+      if (currentStep?.id === 'home-mercearia') {
+        const continuarBtn = document.querySelector('.shepherd-button');
+        if (continuarBtn) {
+          (continuarBtn as HTMLButtonElement).click();
+        }
+        return;
+      }
+      // Último passo de Produtos
+      if (currentStep?.id === 'produtos-novo') {
+        const btns = Array.from(document.querySelectorAll('.shepherd-button')) as HTMLButtonElement[];
+        const irRelatorioBtn = btns.find(b => b.textContent?.trim() === 'Ir para Relatório');
+        if (irRelatorioBtn) {
+          irRelatorioBtn.click();
+        }
+        return;
+      }
+      // Último passo de Vendas
+      if (currentStep?.id === 'vendas-element3') {
+        const btns = Array.from(document.querySelectorAll('.shepherd-button')) as HTMLButtonElement[];
+        const irClientesBtn = btns.find(b => b.textContent?.trim() === 'Ir para Clientes');
+        if (irClientesBtn) {
+          irClientesBtn.click();
+        }
+        return;
+      }
+      // Último passo de Clientes
+      if (currentStep?.id === 'clientes-actions') {
+        const btns = Array.from(document.querySelectorAll('.shepherd-button')) as HTMLButtonElement[];
+        const irProdutosBtn = btns.find(b => b.textContent?.trim() === 'Ir para Produtos');
+        if (irProdutosBtn) {
+          irProdutosBtn.click();
+        }
+        return;
+      }
+      if (currentStep) {
+        const currentIndex = tour.steps.indexOf(currentStep);
+        localStorage.setItem('tourGuiadoStepIndex', String(currentIndex));
+        if (currentIndex < tour.steps.length - 1) {
           tour.next();
         } else {
           tour.complete();
@@ -30,54 +478,6 @@ export default function TourGuideShepherd() {
     };
 
     document.body.addEventListener('click', advanceStep);
-
-    const steps: StepOptions[] = [
-      {
-        id: 'inicio',
-        attachTo: { element: '.btn-tour-inicio', on: 'bottom' as const },
-        title: 'Painel Inicial',
-        text: 'Aqui você acessa o início do sistema, onde verá um resumo das funções principais.',
-        buttons: [],
-      },
-      {
-        id: 'vendas',
-        attachTo: { element: '.btn-tour-vendas', on: 'bottom' as const },
-        title: 'Vendas',
-        text: 'Clique aqui para registrar novas vendas ou consultar vendas anteriores.',
-        buttons: [],
-      },
-      {
-        id: 'clientes',
-        attachTo: { element: '.btn-tour-clientes', on: 'bottom' as const },
-        title: 'Clientes',
-        text: 'Gerencie seus clientes, veja dados e histórico.',
-        buttons: [],
-      },
-      {
-        id: 'produtos',
-        attachTo: { element: '.btn-tour-produtos', on: 'bottom' as const },
-        title: 'Produtos',
-        text: 'Veja, edite ou cadastre produtos. Mantenha seu estoque sempre atualizado.',
-        buttons: [],
-      },
-      {
-        id: 'acessibilidade',
-        attachTo: { element: '#a11y-contrast', on: 'bottom' as const },
-        title: 'Acessibilidade',
-        text: 'Altere entre fundo claro e escuro para maior conforto visual.',
-        buttons: [],
-      },
-    ];
-
-    steps.forEach((step) => tour.addStep(step));
-    tour.start();
-
-    // Marca como finalizado ao completar ou cancelar
-    const finalizarTour = () => {
-      localStorage.setItem('tourGuiadoFinalizado', 'true');
-    };
-    tour.on('complete', finalizarTour);
-    tour.on('cancel', finalizarTour);
 
     return () => {
       document.body.removeEventListener('click', advanceStep);

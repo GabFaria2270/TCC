@@ -146,7 +146,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 </Link>
                 <Link
                     href={'/gerenciamento/relatorio'}
-                    className="list-group-item list-group-item-action d-flex align-items-center"
+                    className="list-group-item list-group-item-action d-flex align-items-center btn-tour-relatorio"
                     onClick={closeSidebar}
                 >
                     <span className="large-icon me-2">📊</span> Relatório
@@ -208,7 +208,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                             <button
                                 id="a11y-font-dec"
                                 type="button"
-                                className="btn btn-sm btn-outline-secondary"
+                                className="btn btn-sm btn-outline-secondary elemento-a11y-dec"
                                 onClick={decreaseFont}
                                 disabled={fontSize <= fontDefaults.min}
                                 aria-label="Diminuir tamanho do texto"
@@ -218,7 +218,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                             <button
                                 id="a11y-font-inc"
                                 type="button"
-                                className="btn btn-sm btn-outline-secondary"
+                                className="btn btn-sm btn-outline-secondary elemento-a11y-inc"
                                 onClick={increaseFont}
                                 disabled={fontSize >= fontDefaults.max}
                                 aria-label="Aumentar tamanho do texto"
@@ -228,7 +228,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                             <button
                                 id="a11y-contrast"
                                 type="button"
-                                className="btn btn-sm btn-outline-dark"
+                                className="btn btn-sm btn-outline-dark elemento-a11y-contrast"
                                 aria-pressed={appearance === 'dark'}
                                 aria-label="Alternar modo escuro"
                                 onClick={toggleContrast}

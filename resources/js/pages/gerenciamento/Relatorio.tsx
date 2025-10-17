@@ -1,4 +1,3 @@
-
 import { Head } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
@@ -55,12 +54,12 @@ export default function Relatorio() {
 			</h2>
 
 			<div className="container-fluid">
-				<div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3">
-					<div>
+				<div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3 elemento-relatorio-1">
+					<div className="elemento-relatorio-2">
 						<h1 className="h3 m-0">Relatórios</h1>
 						<p className="text-secondary mb-0">Gere relatórios de vendas, estoque e mais.</p>
 					</div>
-					<div>
+					<div className="elemento-relatorio-3">
 						<button className="btn btn-success" onClick={exportarExcel} type="button">
 							<i className="bi bi-file-earmark-excel me-2" /> Exportar Excel
 						</button>
@@ -125,7 +124,7 @@ export default function Relatorio() {
 						<div className="small text-secondary">Exibe os dados conforme filtros selecionados</div>
 					</div>
 					<div className="table-responsive scroll-shadow">
-						<table className="table-hover table-striped data-table mb-0 table align-middle">
+					<table className="table-hover table-striped data-table mb-0 table align-middle elemento-relatorio-4">
 							<thead>
 								<tr>
 									<th>ID</th>
