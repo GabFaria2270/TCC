@@ -59,7 +59,7 @@ export default function Inicio() {
             )}
 
             {/* Como usar (orientação simples e direta) */}
-            <div className="card mt-3 shadow-sm">
+            <div className="card mt-3 shadow-sm elemento-home-2">
                 <div className="card-header bg-body">
                     <strong>Como usar</strong>
                 </div>
@@ -79,14 +79,14 @@ export default function Inicio() {
             </div>
 
             {/* Resumo de hoje (funcional) */}
-            <div className="card mt-3 shadow-sm" aria-labelledby="resumo-hoje">
+            <div className="card mt-3 shadow-sm elemento-home-resumo" aria-labelledby="resumo-hoje">
                 <div className="card-header bg-body d-flex justify-content-between align-items-center" id="resumo-hoje">
                     <strong>Resumo de hoje</strong>
                 </div>
                 <div className="card-body">
                     <div className="row g-3">
                         <div className="col-lg-6 col-12">
-                            <div className="rounded-3 bg-body-tertiary h-100 border p-3">
+                            <div className="rounded-3 bg-body-tertiary h-100 border p-3 elemento-home-vendas">
                                 <div className="d-flex justify-content-between align-items-start">
                                     <div>
                                         <div className="text-secondary">Vendas</div>
@@ -103,7 +103,7 @@ export default function Inicio() {
                             </div>
                         </div>
                         <div className="col-lg-6 col-12">
-                            <div className="rounded-3 bg-body-tertiary h-100 border p-3">
+                            <div className="rounded-3 bg-body-tertiary h-100 border p-3 elemento-home-estoque">
                                 <div className="d-flex justify-content-between align-items-start">
                                     <div>
                                         <div className="text-secondary">Estoque</div>
@@ -143,9 +143,9 @@ export default function Inicio() {
             </div>
 
             {/* Últimas vendas e Fiado em aberto */}
-            <div className="row g-3 mt-3">
+            <div className="row g-3 mt-3 elemento-home-listas">
                 <div className="col-lg-6 col-12">
-                    <div className="card h-100 shadow-sm" aria-labelledby="ultimas-vendas">
+                    <div className="card h-100 shadow-sm elemento-home-ultimasvendas" aria-labelledby="ultimas-vendas">
                         <div className="card-header bg-body d-flex justify-content-between align-items-center" id="ultimas-vendas">
                             <strong>Últimas vendas</strong>
                             <Link href="/gerenciamento/vendas" className="btn btn-sm btn-outline-secondary">
@@ -175,7 +175,7 @@ export default function Inicio() {
                 </div>
 
                 <div className="col-lg-6 col-12">
-                    <div className="card h-100 shadow-sm" aria-labelledby="fiado-aberto">
+                    <div className="card h-100 shadow-sm elemento-home-fiado" aria-labelledby="fiado-aberto">
                         <div className="card-header bg-body d-flex justify-content-between align-items-center" id="fiado-aberto">
                             <strong>Fiado em aberto</strong>
                             <Link href="/gerenciamento/clientes" className="btn btn-sm btn-outline-secondary">
@@ -201,7 +201,7 @@ export default function Inicio() {
                 </div>
             </div>
 
-            <div className="card mt-3 shadow-sm">
+            <div className="card mt-3 shadow-sm elemento-home-mercearia">
                 <div className="card-header bg-body">
                     <strong>Informações da mercearia</strong>
                 </div>

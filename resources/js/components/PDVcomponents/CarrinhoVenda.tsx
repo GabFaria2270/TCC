@@ -107,25 +107,25 @@ export default function CarrinhoVenda(props: any) {
     };
 
     return (
-        <div className="col-lg-4">
-            <div className={`card carrinho-container h-100 ${loadingVenda ? 'loading' : ''}`}>
-                <div className="card-header carrinho-header text-white">
+        <div className="col-lg-4 elemento-vendas-carrinho">
+            <div className={`card carrinho-container h-100 ${loadingVenda ? 'loading' : ''}`}> 
+                <div className="card-header carrinho-header text-white elemento-vendas-carrinho-header">
                     <h5 className="mb-0">
                         <i className="bi bi-cart me-2"></i>
                         Carrinho ({carrinho.length} {carrinho.length === 1 ? 'item' : 'itens'})
                     </h5>
                 </div>
-                <div className="card-body d-flex flex-column">
+                <div className="card-body d-flex flex-column elemento-vendas-carrinho-body">
                     {/* Itens do Carrinho */}
-                    <div className="carrinho-lista mb-3 flex-grow-1">
+                    <div className="carrinho-lista mb-3 flex-grow-1 elemento-vendas-carrinho-lista">
                         {carrinho.length === 0 ? (
-                            <div className="estado-vazio">
+                            <div className="estado-vazio elemento-vendas-carrinho-vazio">
                                 <i className="bi bi-cart-x display-6 d-block mb-2"></i>
                                 Carrinho vazio
                             </div>
                         ) : (
                             carrinho.map((item: ItemVenda) => (
-                                <div key={item.produto_id} className="card carrinho-item mb-2">
+                                <div key={item.produto_id} className="card carrinho-item mb-2 elemento-vendas-carrinho-item">
                                     <div className="card-body p-2">
                                         <div className="d-flex justify-content-between align-items-start mb-2">
                                             <small className="produto-nome me-2 flex-grow-1">{item.produto.nome}</small>

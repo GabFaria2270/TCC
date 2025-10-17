@@ -17,9 +17,9 @@ export default function ClienteCreateModal({ show, onClose, onSuccess, carrinhoI
             <div className="modal-backdrop fade show" onClick={onClose}></div>
             <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
                 <div className="modal-dialog modal-lg modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">
+                    <div className="modal-content elemento-vendas-modal-cliente">
+                        <div className="modal-header elemento-vendas-modal-cliente-header">
+                            <h5 className="modal-title elemento-vendas-modal-cliente-title">
                                 <i className="bi bi-person-plus me-2"></i>
                                 Cadastrar Cliente
                             </h5>
@@ -30,6 +30,7 @@ export default function ClienteCreateModal({ show, onClose, onSuccess, carrinhoI
                             onClose={onClose}
                             onSuccess={onSuccess} // ✅ Agora é compatível
                             carrinhoItens={carrinhoItens}
+                            className="elemento-vendas-form-cliente"
                         />
                     </div>
                 </div>

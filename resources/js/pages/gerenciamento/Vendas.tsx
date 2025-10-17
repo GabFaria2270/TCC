@@ -213,22 +213,22 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                 )}
 
                 {/* Header com Abas */}
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2 className="mb-0">
+                <div className="d-flex justify-content-between align-items-center mb-4 elemento-vendas-header">
+                    <h2 className="mb-0 elemento-vendas-titulo">
                         <i className="bi bi-receipt text-primary me-2"></i>
                         Vendas
                     </h2>
 
                     {/* Navegação por Abas */}
-                    <ul className="nav nav-pills">
+                    <ul className="nav nav-pills elemento-vendas-abas">
                         <li className="nav-item">
-                            <button className={`nav-link ${abaAtiva === 'lista' ? 'active' : ''}`} onClick={() => setAbaAtiva('lista')}>
+                            <button className={`nav-link ${abaAtiva === 'lista' ? 'active' : ''} elemento-vendas-aba-lista`} onClick={() => setAbaAtiva('lista')}>
                                 <i className="bi bi-list me-2"></i>
                                 Histórico de Vendas
                             </button>
                         </li>
                         <li className="nav-item">
-                            <button className={`nav-link ${abaAtiva === 'nova' ? 'active' : ''}`} onClick={() => setAbaAtiva('nova')}>
+                            <button className={`nav-link ${abaAtiva === 'nova' ? 'active' : ''} elemento-vendas-aba-nova`} onClick={() => setAbaAtiva('nova')}>
                                 <i className="bi bi-plus-circle me-2"></i>
                                 Nova Venda
                             </button>
@@ -239,18 +239,20 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                 {/* Conteúdo das Abas */}
                 {abaAtiva === 'lista' ? (
                     /* ABA 1: LISTA DE VENDAS */
-                    <VendasList
-                        clientes={clientes}
-                        filtroStatus={filtroStatus}
-                        filtroCliente={filtroCliente}
-                        filtroClienteTexto={filtroClienteTexto}        // <- novo
-                        setFiltroStatus={setFiltroStatus}
-                        setFiltroCliente={setFiltroCliente}
-                        setFiltroClienteTexto={setFiltroClienteTexto}  // <- novo
-                        vendasFiltradas={vendasFiltradas}
-                        abrirDetalhes={abrirDetalhesVenda}
-                        limparFiltros={limparFiltros}
-                    />
+                    <div className="elemento-vendas-lista">
+                        <VendasList
+                            clientes={clientes}
+                            filtroStatus={filtroStatus}
+                            filtroCliente={filtroCliente}
+                            filtroClienteTexto={filtroClienteTexto}        // <- novo
+                            setFiltroStatus={setFiltroStatus}
+                            setFiltroCliente={setFiltroCliente}
+                            setFiltroClienteTexto={setFiltroClienteTexto}  // <- novo
+                            vendasFiltradas={vendasFiltradas}
+                            abrirDetalhes={abrirDetalhesVenda}
+                            limparFiltros={limparFiltros}
+                        />
+                    </div>
                 ) : (
                     /* ABA 2: NOVA VENDA (PDV) */
                     <div className={`row fade-in vendas-container ${loadingVenda ? 'processing' : ''}`}>
