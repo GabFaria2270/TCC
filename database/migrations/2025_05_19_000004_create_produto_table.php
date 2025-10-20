@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->decimal('preco', 10, 2);
             // campos consolidados
             $table->string('foto_path', 255)->nullable();
-            $table->integer('quantidade_estoque')->default(0);
             $table->integer('estoque_minimo')->default(0);
             $table->unsignedBigInteger('categoria_id');
             $table->timestamps();

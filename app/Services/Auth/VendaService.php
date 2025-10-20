@@ -57,7 +57,7 @@ class VendaService
                 });
 
             // Buscar produtos do comércio (CORRIGIDO)
-            $produtos = Produto::with(['categoria'])
+            $produtos = Produto::with(['categoria', 'estoque'])
                 ->where('comercio_id', $comercio->id)
                 ->get()
                 ->map(function ($produto) {
@@ -65,12 +65,12 @@ class VendaService
                         'id' => $produto->id,
                         'nome' => $produto->nome,
                         'preco' => (float) $produto->preco,
-                        'preco_formatado' => 'R$ ' . number_format((float) $produto->preco, 2, ',', '.'), // ✅ GARANTIR FORMATAÇÃO
+                        'preco_formatado' => 'R$ ' . number_format((float) $produto->preco, 2, ',', '.'),
                         'codigo_barras' => $produto->codigo_barras ?? '',
                         'categoria' => $produto->categoria ? [
                             'nome' => $produto->categoria->nome
                         ] : null,
-                        'quantidade_estoque' => (int) ($produto->quantidade_estoque ?? 0),
+                        'estoque' => [ 'quantidade' => (int) ($produto->estoque->quantidade ?? 0) ],
                     ];
                 });
 
@@ -257,7 +257,8 @@ class VendaService
                 continue;
             }
 
-            $estoqueAtual = (int) ($produto->quantidade_estoque ?? 0);
+            $estoque = $produto->estoque;
+            $estoqueAtual = (int) ($estoque->quantidade ?? 0);
             if ($estoqueAtual < $item['quantidade']) {
                 $erros["itens.{$index}"] = __('validation.pdv_estoque_insuficiente', [
                     'disponivel' => $estoqueAtual
@@ -270,7 +271,8 @@ class VendaService
 
     private function atualizarEstoque(Produto $produto, int $quantidade, Venda $venda, $usuario)
     {
-        $quantidadeAnterior = (int) ($produto->quantidade_estoque ?? 0);
+        $estoque = $produto->estoque;
+        $quantidadeAnterior = (int) ($estoque->quantidade ?? 0);
         $quantidadeAtual = $quantidadeAnterior - $quantidade;
 
         if ($quantidadeAtual < 0) {
@@ -279,8 +281,8 @@ class VendaService
             ]) . " para {$produto->nome}");
         }
 
-        // Atualiza diretamente na tabela produto
-        $produto->update(['quantidade_estoque' => $quantidadeAtual]);
+        // Atualiza diretamente na tabela estoque
+        $estoque->update(['quantidade' => $quantidadeAtual]);
 
         // Mantém o registro do movimento (auditoria)
         \App\Models\MovimentoEstoque::create([
@@ -438,11 +440,12 @@ class VendaService
 
     private function reverterEstoque(Produto $produto, int $quantidade, Venda $venda, $usuario)
     {
-        $quantidadeAnterior = (int) ($produto->quantidade_estoque ?? 0);
+        $estoque = $produto->estoque;
+        $quantidadeAnterior = (int) ($estoque->quantidade ?? 0);
         $quantidadeAtual = $quantidadeAnterior + $quantidade;
 
-        // Atualiza diretamente a coluna do produto
-        $produto->update(['quantidade_estoque' => $quantidadeAtual]);
+        // Atualiza diretamente a tabela estoque
+        $estoque->update(['quantidade' => $quantidadeAtual]);
 
         // Registra movimento de entrada por cancelamento
         \App\Models\MovimentoEstoque::create([

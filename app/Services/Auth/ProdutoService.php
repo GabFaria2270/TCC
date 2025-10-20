@@ -26,8 +26,11 @@ class ProdutoService
                 ];
             }
 
-            $query = Produto::with(['categoria'])
-                ->byComercio($comercio->id);
+            $query = Produto::with(['categoria', 'estoque'])
+                ->byComercio($comercio->id)
+                ->with(['estoque' => function($q) use ($comercio) {
+                    $q->where('comercio_id', $comercio->id);
+                }]);
 
             // Filtros/Ordenação/Paginação do servidor
             // Lê de query string ou, se ausente, da sessão persistida por POST
@@ -51,7 +54,9 @@ class ProdutoService
             }
 
             if ($onlyLow) {
-                $query->whereColumn('quantidade_estoque', '<=', 'estoque_minimo');
+                $query->whereHas('estoque', function($q) {
+                    $q->whereColumn('quantidade', '<=', 'produto.estoque_minimo');
+                });
             }
 
             // Ordenação segura
@@ -60,7 +65,16 @@ class ProdutoService
                 $sort = 'nome';
             }
             $dir = $dir === 'desc' ? 'desc' : 'asc';
-            $query->orderBy($sort, $dir);
+            if ($sort === 'quantidade_estoque') {
+                $query->orderBy(
+                    Estoque::select('quantidade')
+                        ->whereColumn('produto_id', 'produto.id')
+                        ->where('comercio_id', $comercio->id),
+                    $dir
+                );
+            } else {
+                $query->orderBy($sort, $dir);
+            }
 
             $prodPerPage = max(1, min($perPage, 100));
             $currentPage = max(1, $page);
@@ -174,7 +188,6 @@ class ProdutoService
             $produto = Produto::create([
                 'nome' => $data['nome'],
                 'preco' => $data['preco'],
-                'quantidade_estoque' => $data['quantidade'],
                 'estoque_minimo' => (int) ($data['estoque_minimo'] ?? 0),
                 'categoria_id' => $categoriaId,
                 'comercio_id' => $comercio->id,

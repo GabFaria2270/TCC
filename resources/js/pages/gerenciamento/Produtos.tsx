@@ -17,7 +17,7 @@ interface Produto {
     id: number;
     nome: string;
     preco: string | number;
-    quantidade_estoque: number;
+    estoque?: { quantidade: number };
     estoque_minimo?: number;
     categoria?: Categoria | null;
     created_at: string;
@@ -104,8 +104,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     function toServerSort(field: SortField): ServerFilters['sort'] {
         switch (field) {
             case 'quantidade':
-                return 'quantidade_estoque';
-            // 'categoria' não é ordenável (coluna está desabilitada). Se vier, caímos em um padrão seguro.
+                return 'quantidade_estoque'; // Mantém para compatibilidade backend, mas frontend usa estoque.quantidade
             case 'categoria':
                 return 'nome';
             default:
@@ -207,7 +206,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 case 'preco':
                     return Number(p.preco ?? 0);
                 case 'quantidade':
-                    return Number(p.quantidade_estoque ?? 0);
+                    return Number(p.estoque?.quantidade ?? 0);
                 case 'updated_at':
                     return new Date(p.updated_at).getTime();
                 default:
@@ -351,7 +350,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         setData({
             nome: produto.nome,
             preco: formatarMoeda(String(produto.preco ?? '')),
-            quantidade: String(produto.quantidade_estoque ?? '0'),
+            quantidade: String(produto.estoque?.quantidade ?? '0'),
             categoria_id: produto.categoria ? String(produto.categoria.id) : '',
             nova_categoria_nome: '',
             estoque_minimo: String(produto.estoque_minimo ?? '0'),
@@ -382,7 +381,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         const m = modo ?? 'entrada';
         setStockMode(m);
         if (m === 'ajuste') {
-            setEstoqueNovoSaldo(String(produto.quantidade_estoque ?? '0'));
+            setEstoqueNovoSaldo(String(produto.estoque?.quantidade ?? '0'));
         } else {
             setEstoqueQuantidade('');
         }
@@ -711,7 +710,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ) : (
                                     produtosOrdenados.map((produto) => {
                                         const min = produto.estoque_minimo ?? 0;
-                                        const qtd = produto.quantidade_estoque ?? 0;
+                                        const qtd = produto.estoque?.quantidade ?? 0;
                                         // Considera "baixo" quando quantidade <= mínimo, mesmo que mínimo seja 0
                                         const isLow = qtd <= min;
                                         return (
@@ -731,7 +730,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                     {currencyFormatter.format(Number(produto.preco ?? 0))}
                                                 </td>
                                                 <td className="text-end" data-label="Estoque">
-                                                    {produto.quantidade_estoque}
+                                                    {produto.estoque?.quantidade ?? 0}
                                                     {isLow && <span className="badge text-bg-warning ms-2">Baixo</span>}
                                                 </td>
                                                 <td data-label="Atualizado em">
@@ -911,7 +910,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 <div className="col-md-6 mb-3">
                                                     <label className="form-label">Estoque atual</label>
                                                     <div className="form-control-plaintext fw-semibold">
-                                                        {produtoSelecionado?.quantidade_estoque ?? 0}
+                                                        {produtoSelecionado?.estoque?.quantidade ?? 0}
                                                     </div>
                                                     <small className="text-secondary">
                                                         Para alterar estoque, use os movimentos.{' '}

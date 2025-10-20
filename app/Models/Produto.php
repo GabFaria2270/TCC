@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property string $nome
  * @property float|string $preco
- * @property int|null $quantidade_estoque
  * @property int|null $estoque_minimo
  * @property int $categoria_id
  * @property int $comercio_id
@@ -35,7 +34,6 @@ class Produto extends Model
         'nome',
         'preco',
         'foto_path',
-        'quantidade_estoque',
         'estoque_minimo',
         'categoria_id',
         'comercio_id',
@@ -44,7 +42,6 @@ class Produto extends Model
     protected $casts = [
         'preco' => 'decimal:2',
         'foto_path' => 'string',
-        'quantidade_estoque' => 'integer',
         'estoque_minimo' => 'integer',
         'categoria_id' => 'integer',
         'comercio_id' => 'integer',

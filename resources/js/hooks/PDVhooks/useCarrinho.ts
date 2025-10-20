@@ -91,11 +91,11 @@ export default function useCarrinho(messages?: any): UseCarrinhoReturn { // ✅ 
         }
 
         // Verificar estoque
-        if (produto.quantidade_estoque < 1) {
+        if ((produto.estoque?.quantidade ?? 0) < 1) {
             if (onNotification && messages?.estoque_insuficiente) {
                 onNotification({
                     type: 'error',
-                    message: messages.estoque_insuficiente.replace(':disponivel', produto.quantidade_estoque.toString()),
+                    message: messages.estoque_insuficiente.replace(':disponivel', String(produto.estoque?.quantidade ?? 0)),
                 });
             }
             return;
@@ -128,11 +128,11 @@ export default function useCarrinho(messages?: any): UseCarrinhoReturn { // ✅ 
         setCarrinho(prev => prev.map(item => {
             if (item.produto.id === produtoId) {
                 // Verificar estoque disponível
-                if (novaQuantidade > item.produto.quantidade_estoque) {
+                if (novaQuantidade > (item.produto.estoque?.quantidade ?? 0)) {
                     if (onNotification && messages?.estoque_insuficiente) {
                         onNotification({
                             type: 'error',
-                            message: messages.estoque_insuficiente.replace(':disponivel', item.produto.quantidade_estoque.toString()),
+                            message: messages.estoque_insuficiente.replace(':disponivel', String(item.produto.estoque?.quantidade ?? 0)),
                         });
                     }
                     return item; // Não alterar se não há estoque

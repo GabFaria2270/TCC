@@ -3,7 +3,7 @@ export interface Produto {
     nome: string;
     preco: number;
     categoria?: { nome: string };
-    quantidade_estoque: number;
+    estoque?: { quantidade: number };
     codigo_barras?: string;
     preco_formatado: string;
 }

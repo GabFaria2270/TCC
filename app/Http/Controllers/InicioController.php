@@ -34,9 +34,13 @@ class InicioController extends Controller
             ->when($comercio->id, fn($q, $cid) => $q->where('comercio_id', $cid))
             ->whereNotNull('estoque_minimo')
             ->where('estoque_minimo', '>', 0)
+            ->leftJoin('estoque', function($join) use ($comercio) {
+                $join->on('produto.id', '=', 'estoque.produto_id')
+                     ->where('estoque.comercio_id', '=', $comercio->id);
+            })
             ->where(function ($q) {
-                $q->whereNull('quantidade_estoque')
-                    ->orWhereColumn('quantidade_estoque', '<=', 'estoque_minimo');
+                $q->whereNull('estoque.quantidade')
+                  ->orWhereRaw('estoque.quantidade <= produto.estoque_minimo');
             })
             ->count();
 

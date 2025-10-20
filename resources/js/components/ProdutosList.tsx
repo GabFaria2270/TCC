@@ -71,14 +71,14 @@ export default function ProdutosList({
                                                     <strong className="text-success">{produto.preco_formatado}</strong>
                                                     <small
                                                         className={`badge ${
-                                                            (Number(produto.quantidade_estoque) || 0) > 5
+                                                            (Number(produto.estoque?.quantidade) || 0) > 5
                                                                 ? 'bg-success'
-                                                                : (Number(produto.quantidade_estoque) || 0) > 0
+                                                                : (Number(produto.estoque?.quantidade) || 0) > 0
                                                                   ? 'bg-warning'
                                                                   : 'bg-danger'
                                                         }`}
                                                     >
-                                                        Est: {Number(produto.quantidade_estoque) || 0}
+                                                        Est: {Number(produto.estoque?.quantidade) || 0}
                                                     </small>
                                                 </div>
                                             </div>

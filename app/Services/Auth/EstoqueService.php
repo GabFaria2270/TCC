@@ -49,11 +49,6 @@ class EstoqueService
                 ]
             );
 
-            // Espelha no produto enquanto a coluna existir
-            if ($produto->isFillable('quantidade_estoque')) {
-                $produto->quantidade_estoque = $novoSaldo;
-                $produto->save();
-            }
 
             // Registra movimento conforme estrutura da tabela movimentos_estoque
             MovimentoEstoque::create([
