@@ -72,6 +72,19 @@ class InicioController extends Controller
             return $carry + (float) $row->saldo;
         }, 0.0);
 
+        // Maior devedor
+        $maiorDevedor = (clone $fiadoBaseQuery)
+            ->with('cliente')
+            ->orderByDesc('saldo')
+            ->first();
+
+        $maiorNome = $maiorDevedor?->cliente?->nome ?? '—';
+        $maiorValor = $maiorDevedor ? number_format($maiorDevedor->saldo, 2, ',', '.') : '—';
+
+        $produtosCadastrados = Produto::query()
+            ->when($comercio->id, fn($q, $cid) => $q->where('comercio_id', $cid))
+            ->count();
+
         return Inertia::render('gerenciamento/Inicio', [
             'comercio' => $comercio->only(['nome', 'cnpj']),
             'dashboard' => [
@@ -84,7 +97,10 @@ class InicioController extends Controller
                 'fiado' => [
                     'clientes' => $fiadoClientes,
                     'total' => number_format($fiadoTotal, 2, ',', '.'),
+                    'maiorNome' => $maiorNome,
+                    'maiorValor' => $maiorValor,
                 ],
+                'produtosCadastrados' => $produtosCadastrados,
             ],
         ]);
     }

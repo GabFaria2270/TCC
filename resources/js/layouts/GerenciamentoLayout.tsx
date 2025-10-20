@@ -180,21 +180,22 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 {renderSidebar()}
                 <main className="flex-grow-1" onClick={onMainClick}>
                     <header className="d-flex align-items-center justify-content-between border-bottom bg-body gerenciamento-header-fixed p-3">
-                        <div className="d-flex align-items-center gap-2">
+                        <div className="d-flex align-items-center gap-2" style={{minHeight: '3.5rem'}}>
                             {!isDesktop && (
                                 <button
                                     id="sidebarToggle"
                                     type="button"
-                                    className="btn btn-outline-secondary"
+                                    className="btn btn-outline-secondary d-flex justify-content-center align-items-center p-0"
+                                    style={{ width: '2.5rem', height: '2.5rem', minWidth: '2.5rem', minHeight: '2.5rem', fontSize: '1.5rem' }}
                                     aria-controls="sidebar"
                                     aria-expanded={sidebarOpen}
                                     aria-label="Abrir menu"
                                     onClick={toggleSidebar}
                                 >
-                                    ☰
+                                    <span style={{lineHeight: 1}}>☰</span>
                                 </button>
                             )}
-                            <h1 className="h4 m-0">{title ?? 'Painel de Gerenciamento'}</h1>
+                            <h1 className="h4 m-0 d-flex align-items-center" style={{height: '2.5rem'}}>{title ?? 'Painel de Gerenciamento'}</h1>
                         </div>
                         <div className="text-end">
                             <div className="fw-semibold">Olá, {user?.NOME ?? 'Usuário'}</div>
@@ -204,46 +205,41 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
 
                     <section key={enterKey} className="container-fluid page-view is-entering p-4">
                         <div className="d-flex align-items-center mb-3 flex-wrap gap-2" role="region" aria-label="Acessibilidade">
-                            <span className="text-secondary">Acessibilidade:</span>
-                            <button
-                                id="a11y-font-dec"
-                                type="button"
-                                className="btn btn-sm btn-outline-secondary elemento-a11y-dec"
-                                onClick={decreaseFont}
-                                disabled={fontSize <= fontDefaults.min}
-                                aria-label="Diminuir tamanho do texto"
-                            >
-                                A-
-                            </button>
-                            <button
-                                id="a11y-font-inc"
-                                type="button"
-                                className="btn btn-sm btn-outline-secondary elemento-a11y-inc"
-                                onClick={increaseFont}
-                                disabled={fontSize >= fontDefaults.max}
-                                aria-label="Aumentar tamanho do texto"
-                            >
-                                A+
-                            </button>
-                            <button
-                                id="a11y-contrast"
-                                type="button"
-                                className="btn btn-sm btn-outline-dark elemento-a11y-contrast"
-                                aria-pressed={appearance === 'dark'}
-                                aria-label="Alternar modo escuro"
-                                onClick={toggleContrast}
-                            >
-                                Modo escuro
-                            </button>
-                            <button
-                                id="a11y-tour-restart"
-                                type="button"
-                                className="btn btn-sm btn-outline-primary ms-2"
-                                aria-label="Reiniciar tour guiado"
-                                // onClick={handleRestartTour}
-                            >
-                                ? Tour do sistema
-                            </button>
+                            <div className="d-flex align-items-center" style={{gap: '0.25rem'}}>
+                                <button
+                                    id="a11y-font-dec"
+                                    type="button"
+                                    className="btn btn-sm btn-outline-secondary elemento-a11y-dec"
+                                    onClick={decreaseFont}
+                                    disabled={fontSize <= fontDefaults.min}
+                                    aria-label="Diminuir tamanho do texto"
+                                    style={{ minHeight: '2.25rem' }}
+                                >
+                                    A-
+                                </button>
+                                <button
+                                    id="a11y-font-inc"
+                                    type="button"
+                                    className="btn btn-sm btn-outline-secondary elemento-a11y-inc ms-1"
+                                    onClick={increaseFont}
+                                    disabled={fontSize >= fontDefaults.max}
+                                    aria-label="Aumentar tamanho do texto"
+                                    style={{ minHeight: '2.25rem' }}
+                                >
+                                    A+
+                                </button>
+                                <button
+                                    id="a11y-contrast"
+                                    type="button"
+                                    className="btn btn-sm btn-outline-dark elemento-a11y-contrast ms-2 align-self-stretch"
+                                    aria-pressed={appearance === 'dark'}
+                                    aria-label="Alternar modo escuro"
+                                    onClick={toggleContrast}
+                                    style={{ minHeight: '2.25rem' }}
+                                >
+                                    Modo escuro
+                                </button>
+                            </div>
                         </div>
                         {children}
                     </section>
