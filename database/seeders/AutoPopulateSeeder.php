@@ -214,7 +214,6 @@ class AutoPopulateSeeder extends Seeder
                         'nome' => $nomeProduto,
                         'preco' => $preco,
                         'foto_path' => null,
-                        'quantidade_estoque' => $qtd,
                         'estoque_minimo' => $estoqueMin,
                         'categoria_id' => $categoriaId,
                         'comercio_id' => $comercioId,
