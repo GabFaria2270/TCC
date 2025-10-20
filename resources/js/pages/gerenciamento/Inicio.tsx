@@ -148,9 +148,6 @@ export default function Inicio() {
                     <div className="card h-100 shadow-sm" aria-labelledby="ultimas-vendas">
                         <div className="card-header bg-body d-flex justify-content-between align-items-center" id="ultimas-vendas">
                             <strong>Últimas vendas</strong>
-                            <Link href="/gerenciamento/vendas" className="btn btn-sm btn-outline-secondary">
-                                Ver todas
-                            </Link>
                         </div>
                         <div className="card-body">
                             {ultimasVendas.length === 0 ? (
@@ -170,6 +167,11 @@ export default function Inicio() {
                                     ))}
                                 </ul>
                             )}
+                            <div className="mt-auto pt-2 text-end">
+                                <Link href="/gerenciamento/vendas" className="btn btn-outline-primary">
+                                    Ver todas
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -178,9 +180,6 @@ export default function Inicio() {
                     <div className="card h-100 shadow-sm" aria-labelledby="fiado-aberto">
                         <div className="card-header bg-body d-flex justify-content-between align-items-center" id="fiado-aberto">
                             <strong>Fiado em aberto</strong>
-                            <Link href="/gerenciamento/clientes" className="btn btn-sm btn-outline-secondary">
-                                Ver clientes
-                            </Link>
                         </div>
                         <div className="card-body d-flex flex-column">
                             <div className="d-flex justify-content-between align-items-start">
@@ -191,7 +190,18 @@ export default function Inicio() {
                                 </div>
                                 <i className="bi bi-wallet2 fs-2 text-secondary" aria-hidden="true" />
                             </div>
-                            <div className="mt-auto pt-2 text-end">
+                            <div className="flex-grow-1 d-flex align-items-center justify-content-center">
+                                <div className="w-100 text-start">
+                                    <div className="mb-2 text-secondary small">
+                                        Mantenha o cadastro dos clientes atualizado para evitar .
+                                    </div>
+                                    <div className="fw-semibold text-secondary">
+                                        Cliente com maior débito:<br />
+                                        <span className="text-light">{dashboard?.fiado?.maiorNome ?? '—'}</span> - R$ <span className="text-light">{dashboard?.fiado?.maiorValor ?? '—'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="pt-2 text-end">
                                 <Link href="/gerenciamento/clientes" className="btn btn-outline-primary">
                                     Gerenciar fiados
                                 </Link>
@@ -202,20 +212,46 @@ export default function Inicio() {
             </div>
 
             <div className="card mt-3 shadow-sm elemento-home-mercearia">
-                <div className="card-header bg-body">
-                    <strong>Informações da mercearia</strong>
+                <div className="card-header bg-primary text-white d-flex align-items-center gap-2">
+                    <i className="bi bi-shop fs-3 me-2" aria-hidden="true" />
+                    <strong className="fs-5">Mercearia</strong>
                 </div>
-                <div className="card-body">
-                    <dl className="row mb-0">
-                        <dt className="col-sm-4 col-12">Nome</dt>
-                        <dd className="col-sm-8 col-12">{comercio?.nome ?? '—'}</dd>
-                        <dt className="col-sm-4 col-12">CNPJ</dt>
-                        <dd className="col-sm-8 col-12">{comercio?.cnpj ?? '—'}</dd>
-                        <dt className="col-sm-4 col-12">Responsável</dt>
-                        <dd className="col-sm-8 col-12">{user?.NOME ?? '—'}</dd>
-                        <dt className="col-sm-4 col-12">Perfil</dt>
-                        <dd className="col-sm-8 col-12">{user?.PERFIL ?? '—'}</dd>
-                    </dl>
+                <div className="card-body p-4 bg-body-tertiary">
+                    <div className="row g-3 align-items-center">
+                        <div className="col-md-6 col-12">
+                            <div className="mb-2">
+                                <span className="fw-semibold text-secondary">Nome:</span>
+                                <span className="ms-2 fs-5 text-light">{comercio?.nome ?? '—'}</span>
+                            </div>
+                            <div className="mb-2">
+                                <span className="fw-semibold text-secondary">CNPJ:</span>
+                                <span className="ms-2">{comercio?.cnpj ?? '—'}</span>
+                            </div>
+                        </div>
+                        <div className="col-md-6 col-12">
+                            <div className="mb-2">
+                                <span className="fw-semibold text-secondary">Responsável:</span>
+                                <span className="ms-2">{user?.NOME ?? '—'}</span>
+                            </div>
+                            <div className="mb-2">
+                                <span className="fw-semibold text-secondary">Perfil:</span>
+                                <span className="ms-2">{user?.PERFIL ?? '—'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr className="my-3" />
+                    <div className="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                        <div className="d-flex align-items-center gap-2">
+                            <i className="bi bi-clock-history text-primary fs-5" aria-hidden="true" />
+                            <span className="text-secondary">Data/hora atual:</span>
+                            <span className="ms-1">{new Date().toLocaleString('pt-BR')}</span>
+                        </div>
+                        <div className="d-flex align-items-center gap-2">
+                            <i className="bi bi-box-seam text-primary fs-5" aria-hidden="true" />
+                            <span className="text-secondary">Produtos cadastrados:</span>
+                            <span className="ms-1">{dashboard?.produtosCadastrados ?? '—'}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </GerenciamentoLayout>
