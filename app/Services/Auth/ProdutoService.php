@@ -27,7 +27,7 @@ class ProdutoService
             }
 
             $query = Produto::with(['categoria', 'estoque'])
-                ->byComercio($comercio->id)
+                ->where('produto.comercio_id', $comercio->id)
                 ->with(['estoque' => function($q) use ($comercio) {
                     $q->where('comercio_id', $comercio->id);
                 }]);

@@ -295,7 +295,7 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
 				<ObservacaoModal show={modalObs.show} onClose={() => setModalObs({ show: false, texto: '', itens: [] })} texto={modalObs.texto} itens={modalObs.itens} />
 
 				<div className="container-fluid">
-					<div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3">
+				<div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary mb-4 flex-wrap gap-3 border p-3 elemento-relatorio-1">
 						<div>
 							<h1 className="h3 m-0">Relatórios</h1>
 							<p className="text-secondary mb-0">Gere relatórios de vendas, estoque e mais.</p>
@@ -309,7 +309,7 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
 					</div>
 
 					{/* Filtros */}
-					<div className="card filtros-card fade-in mb-4 border-0 shadow-sm">
+				<div className="card filtros-card fade-in mb-4 border-0 shadow-sm elemento-relatorio-2">
 						<div className="card-body row g-3">
 							<div className="col-md-3 col-12">
 								<label htmlFor="filtro-data-inicio" className="form-label">Data início</label>
@@ -361,7 +361,7 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
 
 					{/* Tabela dinâmica */}
 					{tabela === 'vendas' ? (
-						<div className="card fade-in border-0 shadow-sm">
+					<div className="card fade-in border-0 shadow-sm elemento-relatorio-3">
 							<div className="card-header d-flex justify-content-between align-items-center bg-body-tertiary border-0">
 								<strong>Resultados</strong>
 								<div className="small text-secondary">Exibe os dados conforme filtros selecionados</div>

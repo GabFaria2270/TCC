@@ -1,28 +1,26 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useRef } from 'react';
 import Shepherd from 'shepherd.js';
 import type { Tour as ShepherdTour, StepOptions } from 'shepherd.js';
 import 'shepherd.js/dist/css/shepherd.css';
 
+const shepherdTourRef = typeof window !== 'undefined' ? (window as any)._shepherdTourRef || { current: null } : { current: null };
+if (typeof window !== 'undefined') (window as any)._shepherdTourRef = shepherdTourRef;
+
 export default function TourGuideShepherd() {
+  const isMounted = useRef(false);
   useEffect(() => {
+    if (isMounted.current) {
+      return;
+    }
+    isMounted.current = true;
     // Só inicia o tour se não estiver finalizado
-    if (localStorage.getItem('tourGuiadoFinalizado')) return;
-
-    const tour: ShepherdTour = new Shepherd.Tour({
-      defaultStepOptions: {
-        classes: 'shepherd-theme-arrows tour-glass rainbow-card', // Adiciona borda arco-íris
-        scrollTo: true,
-        cancelIcon: { enabled: true },
-        canClickTarget: false,
-      },
-      useModalOverlay: true,
-    });
-
-    // Recupera o índice salvo do passo
-    const savedStepIndex = localStorage.getItem('tourGuiadoStepIndex');
+    if (localStorage.getItem('tourGuiadoFinalizado')) {
+      return;
+    }
 
     // Helper para aguardar elemento
-    function waitForElement(selector: string, timeout = 5000) {
+    function waitForElement(selector: string, timeout = 7000) {
       return new Promise((resolve, reject) => {
         const start = Date.now();
         const check = () => {
@@ -38,6 +36,23 @@ export default function TourGuideShepherd() {
         check();
       });
     }
+
+    // Se já existe um tour, não cria outro
+    if (shepherdTourRef.current) return;
+
+    const tour: ShepherdTour = new Shepherd.Tour({
+      defaultStepOptions: {
+        classes: 'shepherd-theme-arrows tour-glass rainbow-card',
+        scrollTo: true,
+        cancelIcon: { enabled: true },
+        canClickTarget: false,
+      },
+      useModalOverlay: true,
+    });
+    shepherdTourRef.current = tour;
+
+    // Recupera o índice salvo do passo
+    const savedStepIndex = localStorage.getItem('tourGuiadoStepIndex');
 
     const steps: StepOptions[] = [
       // Navbar Home
@@ -202,31 +217,31 @@ export default function TourGuideShepherd() {
           show: () => waitForElement('.btn-tour-vendas')
         }
       },
-      // Elementos da página Vendas
+      // Elementos da página Vendas (ajustados para classes reais)
       {
         id: 'vendas-element1',
-        attachTo: { element: '.elemento-vendas-1', on: 'top' as const },
+        attachTo: { element: '.elemento-vendas-header', on: 'top' as const },
         title: 'Registrar Venda',
         text: 'Use este espaço para registrar novas vendas e acessar o histórico. Tudo prático e rápido!',
         buttons: [],
         when: {
-          show: () => waitForElement('.elemento-vendas-1')
+          show: () => waitForElement('.elemento-vendas-header')
         }
       },
       {
         id: 'vendas-element2',
-        attachTo: { element: '.elemento-vendas-2', on: 'top' as const },
+        attachTo: { element: '.elemento-vendas-abas', on: 'top' as const },
         title: 'Botões de Ação',
-        text: 'Aqui estão os botões de Nova venda e histórico use para acessar essas funcionalidades.',
+        text: 'Aqui estão os botões de Nova venda e histórico. Use para acessar essas funcionalidades.',
         buttons: [],
         when: {
-          show: () => waitForElement('.elemento-vendas-2')
+          show: () => waitForElement('.elemento-vendas-abas')
         }
       },
       {
         id: 'vendas-element3',
-        attachTo: { element: '.elemento-vendas-3', on: 'top' as const },
-        title: 'Filtros e histórico de vendas ',
+        attachTo: { element: '.elemento-vendas-lista', on: 'top' as const },
+        title: 'Filtros e histórico de vendas',
         text: 'Use os filtros para encontrar vendas específicas por cliente, para facilitar muito a busca e análise suas vendas!',
         buttons: [
           {
@@ -242,7 +257,7 @@ export default function TourGuideShepherd() {
           }
         ],
         when: {
-          show: () => waitForElement('.elemento-vendas-3')
+          show: () => waitForElement('.elemento-vendas-lista')
         }
       },
       // --- PRODUTOS ---
@@ -382,7 +397,7 @@ export default function TourGuideShepherd() {
         id: 'relatorio-titulo',
         attachTo: { element: '.elemento-relatorio-2', on: 'top' as const },
         title: 'Informações do Relatório',
-        text: 'Veja o título e a descrição do relatório que está sendo gerado. Assim você sabe exatamente o que está analisando.',
+        text: 'Veja os filtros e opções para gerar o relatório que está sendo analisado.',
         buttons: [],
         when: {
           show: () => waitForElement('.elemento-relatorio-2')
@@ -406,14 +421,28 @@ export default function TourGuideShepherd() {
     ];
 
     steps.forEach((step) => tour.addStep(step));
-    // Inicia do índice salvo, se existir
-    if (savedStepIndex && !isNaN(Number(savedStepIndex))) {
-      setTimeout(() => {
-        tour.show(Number(savedStepIndex));
-      }, 300);
-    } else {
-      tour.start();
-    }
+
+    // Função para iniciar ou continuar o tour
+    const startOrContinueTour = () => {
+      const idx = savedStepIndex && !isNaN(Number(savedStepIndex)) ? Number(savedStepIndex) : 0;
+      const step = steps[idx];
+      if (step && step.attachTo && (step.attachTo as any).element) {
+        waitForElement((step.attachTo as any).element, 7000)
+          .then(() => {
+            tour.show(idx);
+          })
+          .catch(() => {
+            if (idx < steps.length - 1) {
+              localStorage.setItem('tourGuiadoStepIndex', String(idx + 1));
+              startOrContinueTour();
+            } else {
+              tour.complete();
+            }
+          });
+      } else {
+        tour.show(idx);
+      }
+    };
 
     // Marca como finalizado ao completar ou cancelar
     const finalizarTour = () => {
@@ -424,7 +453,6 @@ export default function TourGuideShepherd() {
     tour.on('cancel', finalizarTour);
 
     // Salva o índice do passo atual ao avançar
-    // Atualizar advanceStep para acionar o botão de transição em Produtos
     const advanceStep = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const currentStep = tour.getCurrentStep();
@@ -479,9 +507,21 @@ export default function TourGuideShepherd() {
 
     document.body.addEventListener('click', advanceStep);
 
+    // Inicia ou continua o tour ao montar
+    startOrContinueTour();
+
+    // Ao trocar de rota, tenta continuar o tour do passo salvo
+    const onPopState = () => {
+      if (!localStorage.getItem('tourGuiadoFinalizado')) {
+        setTimeout(() => startOrContinueTour(), 400);
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+
     return () => {
       document.body.removeEventListener('click', advanceStep);
-      tour.cancel();
+      window.removeEventListener('popstate', onPopState);
+      if (tour) tour.cancel();
     };
   }, []);
 

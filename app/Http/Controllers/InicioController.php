@@ -31,7 +31,7 @@ class InicioController extends Controller
         $vendasHojeTotal = (clone $vendasQuery)->sum('total') ?: 0;
 
         $estoqueBaixo = Produto::query()
-            ->when($comercio->id, fn($q, $cid) => $q->where('comercio_id', $cid))
+            ->when($comercio->id, fn($q, $cid) => $q->where('produto.comercio_id', $cid))
             ->whereNotNull('estoque_minimo')
             ->where('estoque_minimo', '>', 0)
             ->leftJoin('estoque', function($join) use ($comercio) {
