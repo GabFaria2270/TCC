@@ -3,7 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
-use App\Services\Auth\CacheTokenService; // ✅ ADICIONAR
+use App\Services\Auth\CacheTokenService; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Log;
 
 class LoginService
 {
-    protected CacheTokenService $tokenService; // ✅ CORRIGIDO
+    protected CacheTokenService $tokenService; 
 
-    public function __construct(CacheTokenService $tokenService) // ✅ CORRIGIDO
+    public function __construct(CacheTokenService $tokenService) 
     {
         $this->tokenService = $tokenService;
     }
@@ -23,9 +23,9 @@ class LoginService
      */
     public function attempt(array $credentials, Request $request): array
     {
-        $email = $credentials['EMAIL'];
-        $password = $credentials['SENHA_HASH'];
-        $remember = $credentials['remember'] ?? false;
+    $email = $credentials['EMAIL'];
+    $password = $credentials['SENHA_HASH'];
+    $remember = $credentials['remember'] ?? false;
 
         // BUSCA USUÁRIO
         $usuario = Usuario::byEmail($email)->first();
@@ -51,17 +51,24 @@ class LoginService
             ];
         }
 
-        // LOGIN BEM-SUCEDIDO
-        Auth::login($usuario, $remember);
+        // LOGIN BEM-SUCEDIDO (sem Auth padrão)
+        // Vincula usuário à sessão manualmente
+        $request->session()->put('user_id', $usuario->id);
 
-        // ✅ GERA TOKEN VIA CACHE NATIVO
+        // Gera token de sessão para API/gerenciamento
         $tokenData = $this->tokenService->getTokenData($usuario);
+
+        // Se lembre-se de mim, gera token persistente e cookie personalizado
+        if ($remember) {
+            $rememberToken = $this->tokenService->generateToken($usuario);
+            cookie()->queue(cookie('remember_token', $rememberToken, 43200, '/', null, false, true, false, 'Lax')); // 30 dias
+        }
 
         return [
             'success' => true,
             'user' => $usuario,
             'reason' => 'success',
-            'token_data' => $tokenData // ✅ Token via Cache
+            'token_data' => $tokenData
         ];
     }
 

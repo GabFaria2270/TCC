@@ -42,31 +42,34 @@ class RequireTokenOrSession
 
         // ✅ RESTO DO MIDDLEWARE APENAS PARA ROTAS PROTEGIDAS
         // Tenta restaurar usuário via sessão DB caso não esteja autenticado
-        if (!Auth::check()) {
-            try {
-                $sessionId = $request->session()->getId();
-                if ($sessionId) {
-                    $dbSession = DB::table('sessions')
-                        ->where('id', $sessionId)
-                        ->whereNotNull('user_id')
-                        ->first();
-                    
-                    if ($dbSession && $dbSession->user_id) {
-                        $usuario = Usuario::find($dbSession->user_id);
-                        if ($usuario) {
-                            // Não regenerar ID de sessão: evita criar nova sessão
-                            Auth::setUser($usuario);
-                            Log::channel('security')->info('Usuário restaurado via sessão DB (sem regenerar sessão)', [
-                                'user_id' => $usuario->id,
-                                'session_id' => $sessionId
-                            ]);
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-                Log::channel('security')->warning('Erro ao tentar restaurar usuário via sessão DB', [
-                    'error' => $e->getMessage()
+        $usuario = null;
+        if ($request->session()->has('user_id')) {
+            $usuario = Usuario::find($request->session()->get('user_id'));
+            if ($usuario) {
+                // Usuário restaurado via sessão
+                Log::channel('security')->info('Usuário restaurado via sessão DB personalizada', [
+                    'user_id' => $usuario->id,
+                    'session_id' => $request->session()->getId()
                 ]);
+            }
+        }
+
+        // Se não restaurou via sessão, tenta via remember_token
+        if (!$usuario && $request->cookies->has('remember_token')) {
+            $rememberToken = $request->cookie('remember_token');
+            $data = $this->tokenService->validateToken($rememberToken);
+            if ($data) {
+                $usuario = Usuario::find($data['user_id']);
+                if ($usuario) {
+                    // Vincula usuário à sessão
+                    $request->session()->put('user_id', $usuario->id);
+                    // Garante que Auth reconheça o usuário como autenticado
+                    Auth::setUser($usuario);
+                    Log::channel('security')->info('Usuário autenticado via remember_token', [
+                        'user_id' => $usuario->id,
+                        'token_preview' => substr($rememberToken,0,10).'...'
+                    ]);
+                }
             }
         }
 
