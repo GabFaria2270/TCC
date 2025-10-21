@@ -107,7 +107,6 @@ export default function CarrinhoVenda(props: any) {
     };
 
     return (
-        <div className="col-lg-4">
             <div className={`card carrinho-container h-100 ${loadingVenda ? 'loading' : ''}`}>
                 <div className="card-header carrinho-header text-white">
                     <h5 className="mb-0">
@@ -438,6 +437,5 @@ export default function CarrinhoVenda(props: any) {
                     )}
                 </div>
             </div>
-        </div>
     );
 }

@@ -64,14 +64,17 @@ export default function VendasList({
                                     setValueId={setFiltroCliente}
                                     setQuery={setFiltroClienteTexto}
                                     label="Cliente (digite e selecione)"
-                                    placeholder="Ex.: Maria Silva ou maria@email.com"
+                                    placeholder="Ex.: Maria Silva"
                                 />
                             </div>
 
-                            <div className="col-md-3 d-flex align-items-end">
-                                <button className="btn btn-outline-secondary btn-limpar-filtros me-2" onClick={limparFiltros}>
-                                    <i className="bi bi-arrow-clockwise me-2"></i>
-                                    Limpar Filtros
+                            <div className="col-md-3 mb-md-0 d-flex justify-content-end align-items-end col-12 mb-2">
+                                <button
+                                    className="btn btn-outline-secondary btn-limpar-filtros d-flex align-items-center w-md-auto w-100 gap-2 text-nowrap"
+                                    onClick={limparFiltros}
+                                >
+                                    <i className="bi bi-arrow-clockwise"></i>
+                                    <span>Limpar Filtros</span>
                                 </button>
                             </div>
                         </div>
@@ -102,7 +105,7 @@ export default function VendasList({
                                 <tbody>
                                     {vendasFiltradas.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="estado-vazio">
+                                            <td colSpan={6} className="estado-vazio text-center text-lg-start" style={{ paddingLeft: 'unset !important' }}>
                                                 <i className="bi bi-receipt display-6 d-block mb-2"></i>
                                                 Nenhuma venda encontrada
                                             </td>
@@ -146,7 +149,6 @@ export default function VendasList({
                                                         {venda.cliente ? (
                                                             <div className="cliente-info">
                                                                 <div className="cliente-nome">{venda.cliente.nome}</div>
-                                                                <small className="cliente-email">{venda.cliente.email}</small>
                                                             </div>
                                                         ) : (
                                                             <span className="text-muted">Venda avulsa</span>
@@ -216,14 +218,16 @@ export default function VendasList({
                                                         <span className={`badge ${badgeClass}`}>{statusLabel}</span>
                                                     </td>
                                                     <td className="text-center" data-label="Ações">
-                                                        <button
-                                                            className="btn btn-sm btn-outline-primary"
-                                                            onClick={() => abrirDetalhes(venda)}
-                                                            title="Ver detalhes"
-                                                        >
-                                                            <i className="bi bi-eye"></i>
-                                                            <span className="ms-2">Abrir</span>
-                                                        </button>
+                                                        <div className="d-flex justify-content-start justify-content-md-center">
+                                                            <button
+                                                                className="btn btn-sm btn-outline-primary"
+                                                                onClick={() => abrirDetalhes(venda)}
+                                                                title="Ver detalhes"
+                                                            >
+                                                                <i className="bi bi-eye"></i>
+                                                                <span className="ms-2">Abrir</span>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             );

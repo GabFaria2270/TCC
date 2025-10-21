@@ -19,7 +19,6 @@ export default function ProdutosList({
     addNotification,
 }: ProdutosListProps) {
     return (
-        <div className="col-lg-8">
             <div className="card h-100">
                 <div className="card-header bg-primary text-white">
                     <h5 className="mb-0">
@@ -90,6 +89,5 @@ export default function ProdutosList({
                     </div>
                 </div>
             </div>
-        </div>
     );
 }

@@ -7,7 +7,6 @@ import type { SharedProps } from '../types/inertia';
 import '../../css/gerenciamento/tour-glass.css';
 import TourGuideShepherd from '../components/TourGuideShepherd';
 
-
 export default function GerenciamentoLayout({ children, title }: { children: React.ReactNode; title?: string }) {
     const { props } = usePage<SharedProps>();
     const user = props.auth?.user;
@@ -96,7 +95,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
     };
 
     const renderSidebar = () => (
-    <nav id="sidebar" className={`sidebar border-end bg-body ${!isDesktop && !sidebarOpen ? 'd-none' : ''}`} aria-label="Navegação principal">
+        <nav id="sidebar" className={`sidebar border-end bg-body ${!isDesktop && !sidebarOpen ? 'd-none' : ''}`} aria-label="Navegação principal">
             <div className="border-bottom d-flex align-items-center justify-content-between p-3">
                 <div className="brand-title">Mercearia Fácil</div>
                 {!isDesktop && (
@@ -180,7 +179,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                 {renderSidebar()}
                 <main className="flex-grow-1" onClick={onMainClick}>
                     <header className="d-flex align-items-center justify-content-between border-bottom bg-body gerenciamento-header-fixed p-3">
-                        <div className="d-flex align-items-center gap-2" style={{minHeight: '3.5rem'}}>
+                        <div className="d-flex align-items-center gap-2" style={{ minHeight: '3.5rem' }}>
                             {!isDesktop && (
                                 <button
                                     id="sidebarToggle"
@@ -192,10 +191,12 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                                     aria-label="Abrir menu"
                                     onClick={toggleSidebar}
                                 >
-                                    <span style={{lineHeight: 1}}>☰</span>
+                                    <span style={{ lineHeight: 1 }}>☰</span>
                                 </button>
                             )}
-                            <h1 className="h4 m-0 d-flex align-items-center" style={{height: '2.5rem'}}>{title ?? 'Painel de Gerenciamento'}</h1>
+                            <h1 className="h4 d-flex align-items-center m-0" style={{ height: '2.5rem' }}>
+                                {title ?? 'Painel de Gerenciamento'}
+                            </h1>
                         </div>
                         <div className="text-end">
                             <div className="fw-semibold">Olá, {user?.NOME ?? 'Usuário'}</div>
@@ -203,9 +204,9 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                         </div>
                     </header>
 
-                    <section key={enterKey} className="container-fluid page-view is-entering p-4">
+                    <section key={enterKey} className="container-fluid page-view is-entering px-md-4 p-4 px-2">
                         <div className="d-flex align-items-center mb-3 flex-wrap gap-2" role="region" aria-label="Acessibilidade">
-                            <div className="d-flex align-items-center" style={{gap: '0.25rem'}}>
+                            <div className="d-flex align-items-center" style={{ gap: '0.25rem' }}>
                                 <button
                                     id="a11y-font-dec"
                                     type="button"
@@ -231,7 +232,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                                 <button
                                     id="a11y-contrast"
                                     type="button"
-                                    className="btn btn-sm btn-outline-dark elemento-a11y-contrast ms-2 align-self-stretch"
+                                    className="btn btn-sm btn-outline-dark elemento-a11y-contrast align-self-stretch ms-2"
                                     aria-pressed={appearance === 'dark'}
                                     aria-label="Alternar modo escuro"
                                     onClick={toggleContrast}

@@ -62,6 +62,7 @@
     border-radius: 0.5rem;
     font-weight: 500;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .btn-limpar-filtros:hover {
@@ -91,6 +92,11 @@
    📋 TABELA DE VENDAS
    ------------------------------------------------------------------ */
 
+.btn-outline-secondary {
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 0.5rem 1rem !important;
+}
 .vendas-table,
 .data-table {
     border-collapse: collapse;
@@ -498,7 +504,7 @@
     color: #fff;
 }
 
-.quantidade-controles .form-control {
+.quantidade-controles    {
     border: none;
     padding: 0.25rem;
     text-align: center;
