@@ -54,7 +54,9 @@ class RegisterController extends Controller
                 $this->logRegistrationSuccess($usuario, $request);
 
                 // Autentica usuário e garante sessão
-                Auth::login($usuario, true);
+                // Não habilitar "remember" automaticamente no cadastro.
+                // O token remember deve ser criado apenas quando o usuário marcar o checkbox no login.
+                Auth::login($usuario);
                 if ($request->hasSession()) {
                     if (!$request->session()->isStarted()) {
                         $request->session()->start();

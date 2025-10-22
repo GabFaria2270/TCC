@@ -22,7 +22,7 @@ class Usuario extends Authenticatable
     public $timestamps = true; // ✅ ATIVADO: migrations têm timestamps
 
     protected $fillable = ['NOME', 'EMAIL', 'SENHA_HASH', 'PERFIL'];
-    protected $hidden = ['SENHA_HASH', 'remember_token'];
+    protected $hidden = ['SENHA_HASH'];
 
     /**
      * ✅ CONFIGURAÇÃO CORRIGIDA PARA SESSÕES
@@ -47,7 +47,7 @@ class Usuario extends Authenticatable
      */
     protected $casts = [
         'EMAIL' => 'string',
-        'PERFIL' => 'string',
+    'PERFIL' => 'string',
     ];
 
     /**

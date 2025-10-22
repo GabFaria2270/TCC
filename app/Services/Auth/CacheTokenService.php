@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
+use App\Models\RememberToken;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +16,11 @@ class CacheTokenService
     
     /**
      * Gera um novo token garantindo que haja apenas UM token por usuário no cache
+     * @param Usuario $usuario
+     * @param int|null $minutes Expiração em minutos; se null usa o padrão
+     * @param bool $persistInDb Se true, grava token e expiração na tabela usuario
      */
-    public function generateToken(Usuario $usuario): string
+    public function generateToken(Usuario $usuario, ?int $minutes = null, bool $persistInDb = false): string
     {
         try {
             // ✅ Antes de gerar, remove qualquer token existente desse usuário
@@ -25,7 +29,8 @@ class CacheTokenService
             $tokenId = Str::random(40);
             $cacheKey = "auth_token:{$tokenId}";
             
-            $expiresAt = now()->addMinutes($this->expirationMinutes);
+            $ttl = $minutes ?? $this->expirationMinutes;
+            $expiresAt = now()->addMinutes($ttl);
 
             $tokenData = [
                 'user_id' => $usuario->id,
@@ -39,14 +44,40 @@ class CacheTokenService
             ];
 
             // ✅ Grava apenas o token individual (sem ponteiro por usuário)
+            // Cache::put aceita DateTime para TTL também
             Cache::put($cacheKey, $tokenData, $expiresAt);
-            
+
+            // Se pedido, persiste token e expiração na tabela remember_tokens
+            if ($persistInDb) {
+                try {
+                    $tokenHash = hash_hmac('sha256', $tokenId, config('app.key'));
+                    RememberToken::create([
+                        'user_id' => $usuario->id,
+                        'token_hash' => $tokenHash,
+                        'ip_address' => request()->ip(),
+                        'user_agent' => substr(request()->userAgent() ?? '', 0, 500),
+                        'expires_at' => $expiresAt,
+                        'last_used_at' => now(),
+                    ]);
+
+                    Log::channel('security')->info('✅ Token persistido na tabela remember_tokens', [
+                        'user_id' => $usuario->id,
+                        'token_preview' => substr($tokenId, 0, 10) . '...',
+                    ]);
+                } catch (\Exception $e) {
+                    Log::channel('security')->warning('⚠️ Falha ao persistir token na tabela remember_tokens', [
+                        'user_id' => $usuario->id ?? 'N/A',
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+
             Log::channel('security')->info('✅ Token único gerado', [
                 'user_id' => $usuario->id,
                 'token_preview' => substr($tokenId, 0, 10) . '...',
                 'cache_key' => $cacheKey,
             ]);
-            
+
             return $tokenId;
             
         } catch (\Exception $e) {
@@ -66,15 +97,57 @@ class CacheTokenService
         try {
             $cacheKey = "auth_token:{$token}";
             $tokenData = Cache::get($cacheKey);
-            
+
             if (!$tokenData) {
-                Log::channel('security')->warning('⚠️ Token não encontrado', [
+                // Se não encontrou no cache, tenta localizar no banco (remember_token)
+                Log::channel('security')->debug('Token não encontrado no cache, verificando DB', [
                     'token_preview' => substr($token, 0, 10) . '...',
                     'cache_key' => $cacheKey
                 ]);
-                return null;
+
+                // Procurar pelo hash do token na tabela remember_tokens
+                try {
+                    $tokenHash = hash_hmac('sha256', $token, config('app.key'));
+                    $remember = RememberToken::where('token_hash', $tokenHash)->first();
+
+                    if ($remember && $remember->expires_at && !Carbon::parse($remember->expires_at)->isPast()) {
+                        $usuario = Usuario::find($remember->user_id);
+                        if ($usuario) {
+                            $expiresAt = Carbon::parse($remember->expires_at);
+                            $tokenData = [
+                                'user_id' => $usuario->id,
+                                'email' => $usuario->EMAIL,
+                                'nome' => $usuario->NOME,
+                                'perfil' => $usuario->PERFIL,
+                                'created_at' => now()->toDateTimeString(),
+                                'expires_at' => $expiresAt->toDateTimeString(),
+                                'ip' => request()->ip(),
+                                'user_agent' => substr(request()->userAgent() ?? '', 0, 500),
+                            ];
+
+                            // Armazena em cache até expiresAt
+                            Cache::put($cacheKey, $tokenData, $expiresAt);
+                            Log::channel('security')->info('✅ Token encontrado na tabela remember_tokens e recarregado no cache', [
+                                'user_id' => $usuario->id,
+                                'token_preview' => substr($token, 0, 10) . '...'
+                            ]);
+                        }
+                    } else {
+                        Log::channel('security')->warning('⚠️ Token não encontrado nem no cache nem na tabela remember_tokens', [
+                            'token_preview' => substr($token, 0, 10) . '...',
+                            'cache_key' => $cacheKey
+                        ]);
+                        return null;
+                    }
+                } catch (\Exception $e) {
+                    Log::channel('security')->warning('⚠️ Erro ao buscar token na tabela remember_tokens', [
+                        'token_preview' => substr($token, 0, 10) . '...',
+                        'error' => $e->getMessage()
+                    ]);
+                    return null;
+                }
             }
-            
+
             // Verifica se usuário ainda existe
             $usuario = Usuario::find($tokenData['user_id']);
             if (!$usuario) {
@@ -93,14 +166,14 @@ class CacheTokenService
                 ]);
                 return null;
             }
-            
+
             Log::channel('security')->debug('✅ Token validado', [
                 'user_id' => $usuario->id,
                 'token_preview' => substr($token, 0, 10) . '...'
             ]);
-            
+
             return $tokenData;
-            
+
         } catch (\Exception $e) {
             Log::error('❌ Erro ao validar token', [
                 'error' => $e->getMessage(),
@@ -119,7 +192,7 @@ class CacheTokenService
             $cacheKey = "auth_token:{$token}";
             $tokenData = Cache::get($cacheKey);
             $result = Cache::forget($cacheKey);
-            
+
             if ($tokenData) {
                 Log::channel('security')->info('🗑️ Token revogado', [
                     'user_id' => $tokenData['user_id'] ?? 'N/A',
@@ -127,9 +200,22 @@ class CacheTokenService
                     'cache_key' => $cacheKey
                 ]);
             }
-            
+
+            // Também limpar da tabela remember_tokens (hash)
+            try {
+                $tokenHash = hash_hmac('sha256', $token, config('app.key'));
+                RememberToken::where('token_hash', $tokenHash)->delete();
+                Log::channel('security')->info('🗑️ Token removido da tabela remember_tokens', [
+                    'token_hash_preview' => substr($tokenHash, 0, 10) . '...'
+                ]);
+            } catch (\Exception $e) {
+                Log::channel('security')->warning('⚠️ Falha ao limpar token na tabela remember_tokens durante revogação', [
+                    'error' => $e->getMessage()
+                ]);
+            }
+
             return $result;
-            
+
         } catch (\Exception $e) {
             Log::error('❌ Erro ao revogar token', [
                 'error' => $e->getMessage(),
@@ -195,7 +281,7 @@ class CacheTokenService
     public function findExistingTokenIdForUser(int $userId): ?string
     {
         try {
-            // ❗️Robusto para qualquer prefixo e separador (':' ou '_')
+            // Primeiro tenta localizar token no cache
             $rows = DB::table('cache')
                 ->select('key', 'value')
                 ->where('key', 'like', '%auth_token:%')
@@ -205,22 +291,19 @@ class CacheTokenService
             foreach ($rows as $row) {
                 $baseKey = $this->baseAuthTokenKey($row->key);
                 if (!$baseKey) continue;
-                // ignorar chaves de ponteiro antigas
-                if (str_starts_with($baseKey, 'auth_token:user:')) {
-                    continue;
-                }
                 $data = @unserialize($row->value);
                 if (!is_array($data)) continue;
                 if (($data['user_id'] ?? null) !== $userId) continue;
                 if (empty($data['expires_at']) || Carbon::parse($data['expires_at'])->isPast()) continue;
 
-                // extrai o tokenId da chave auth_token:{id}
                 if (preg_match('/^auth_token:([A-Za-z0-9:_\-]{16,128})$/', $baseKey, $m)) {
-                    // se vier no formato auth_token:ID apenas, pega a parte após o último ':'
                     $tokenId = substr($baseKey, strlen('auth_token:'));
                     return $tokenId;
                 }
             }
+
+            // Se não encontrou no cache, não podemos reconstruir token plain a partir do hash em remember_tokens
+            return null;
         } catch (\Exception $e) {
             Log::channel('security')->warning('Falha ao procurar token existente do usuário', [
                 'user_id' => $userId,
@@ -384,32 +467,22 @@ class CacheTokenService
     private function revokeAllTokensForUser(int $userId): void
     {
         try {
-            // Robusto para qualquer prefixo/separador
+            // Remove possíveis chaves de cache auth_token:*
             $rows = DB::table('cache')
-                ->select('key', 'value')
+                ->select('key')
                 ->where('key', 'like', '%auth_token:%')
                 ->get();
 
             foreach ($rows as $row) {
                 $baseKey = $this->baseAuthTokenKey($row->key);
                 if (!$baseKey) continue;
-
-                // 1) Chave de token normal: valor serializado array com user_id
-                $data = @unserialize($row->value);
-                if (is_array($data) && ($data['user_id'] ?? null) === $userId && str_starts_with($baseKey, 'auth_token:')) {
-                    Cache::forget($baseKey);
-                    continue;
-                }
-
-                // 2) Chave ponteiro antiga: auth_token:user:{id} (valor é string)
-                if ($baseKey === 'auth_token:user:' . $userId) {
+                if (str_starts_with($baseKey, 'auth_token:')) {
                     Cache::forget($baseKey);
                 }
             }
 
-            // Remoção direta do ponteiro (independente de estar listado)
-            $pointerBase = 'auth_token:user:' . $userId;
-            Cache::forget($pointerBase);
+            // Remove registros da tabela remember_tokens para o usuário
+            RememberToken::where('user_id', $userId)->delete();
         } catch (\Exception $e) {
             Log::channel('security')->warning('⚠️ Falha ao revogar tokens antigos do usuário', [
                 'user_id' => $userId,
@@ -452,4 +525,5 @@ class CacheTokenService
         }
         return substr($fullKey, $pos);
     }
+
 }
