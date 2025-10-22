@@ -1,18 +1,5 @@
-import { useState, useMemo } from 'react';
-import type { Cliente } from '../../types';
-
-interface Venda {
-    id: number;
-    total: number;
-    total_formatado: string;
-    desconto: number;
-    forma_pagamento: string;
-    status: string;
-    cliente?: Cliente | { id?: number; nome?: string; email?: string } | null;
-    cliente_id?: number;
-    created_at: string;
-    observacoes?: string;
-}
+import { useMemo, useState } from 'react';
+import type { Cliente, Venda } from '../../types';
 
 interface UseFiltrosReturn {
     filtroStatus: string;
@@ -32,7 +19,12 @@ interface UseFiltrosReturn {
 }
 
 const normalizar = (s: string) =>
-  s ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : '';
+    s
+        ? s
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .toLowerCase()
+        : '';
 
 export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosReturn => {
     const [filtroStatus, setFiltroStatus] = useState('');
@@ -45,24 +37,16 @@ export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosRetu
     const matchingClienteIds = useMemo(() => {
         const t = normalizar(filtroClienteTexto);
         if (!t) return null;
-        const ids = clientes
-            .filter(c => normalizar(c.nome).includes(t) || normalizar(c.email || '').includes(t))
-            .map(c => c.id);
+        const ids = clientes.filter((c) => normalizar(c.nome).includes(t) || normalizar(c.email || '').includes(t)).map((c) => c.id);
         return new Set(ids);
     }, [clientes, filtroClienteTexto]);
 
     // Cliente selecionado (objeto completo) para fallback por nome/email
-    const selectedCliente = useMemo(
-        () => clientes.find(c => String(c.id) === String(filtroCliente)) || null,
-        [clientes, filtroCliente]
-    );
+    const selectedCliente = useMemo(() => clientes.find((c) => String(c.id) === String(filtroCliente)) || null, [clientes, filtroCliente]);
 
-    const getVendaClienteId = (v: any): number | null =>
-        v?.cliente?.id ?? v?.cliente_id ?? v?.clienteId ?? null;
-    const getVendaClienteNome = (v: any): string =>
-        (v?.cliente?.nome ?? v?.cliente_nome ?? '') as string;
-    const getVendaClienteEmail = (v: any): string =>
-        (v?.cliente?.email ?? v?.cliente_email ?? '') as string;
+    const getVendaClienteId = (v: any): number | null => v?.cliente?.id ?? v?.cliente_id ?? v?.clienteId ?? null;
+    const getVendaClienteNome = (v: any): string => (v?.cliente?.nome ?? v?.cliente_nome ?? '') as string;
+    const getVendaClienteEmail = (v: any): string => (v?.cliente?.email ?? v?.cliente_email ?? '') as string;
 
     // Filtro final
     const vendasFiltradas = useMemo(() => {
@@ -123,8 +107,18 @@ export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosRetu
         setVendaSelecionada,
         setShowDetalhes,
         vendasFiltradas,
-        abrirDetalhes: (v) => { setVendaSelecionada(v); setShowDetalhes(true); },
-        fecharDetalhes: () => { setShowDetalhes(false); setVendaSelecionada(null); },
-        limparFiltros: () => { setFiltroStatus(''); setFiltroCliente(''); setFiltroClienteTexto(''); },
+        abrirDetalhes: (v) => {
+            setVendaSelecionada(v);
+            setShowDetalhes(true);
+        },
+        fecharDetalhes: () => {
+            setShowDetalhes(false);
+            setVendaSelecionada(null);
+        },
+        limparFiltros: () => {
+            setFiltroStatus('');
+            setFiltroCliente('');
+            setFiltroClienteTexto('');
+        },
     };
 };

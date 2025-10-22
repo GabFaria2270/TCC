@@ -329,9 +329,7 @@
     .clientes-actions > * {
         width: 100%;
     }
-    .search-input {
-        font-size: 0.95rem;
-    }
+
 }
 
 /* Responsividade para campo de busca clientes */
@@ -364,7 +362,8 @@
         padding: 6px 8px;
     }
     .clientes-header .btn-outline-secondary {
-        width: 48% !important;
+        width: 20% !important;
+        height: 49px;
         min-width: 80px;
         font-size: 0.95em;
         padding: 6px 8px;
@@ -387,7 +386,6 @@
         display: none !important;
     }
     .clientes-filtros-row .form-select {
-        width: 120px !important;
         min-width: 100px;
         font-size: 0.95em;
     }
@@ -395,7 +393,7 @@
 
 @media (min-width: 601px) {
     .clientes-filtros-row .form-select {
-        width: 240px !important;
+        width: 300px !important;
         min-width: 180px;
         font-size: 1em;
     }
@@ -1067,19 +1065,13 @@
     }
     .form-select {
         min-width: 160px !important;
-        width: 200px !important;
+        width: 300px !important;
         font-size: 1em;
         padding: 7px 8px;
     }
-    .clientes-header .btn-outline-secondary {
-        min-width: 32px !important;
-        width: 38px !important;
-        padding: 0 6px !important;
-        font-size: 1em;
-    }
+
     .search-input {
         font-size: 0.98rem;
-        padding: 6px 0;
     }
 }
 

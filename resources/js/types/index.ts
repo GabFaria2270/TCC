@@ -37,6 +37,9 @@ export interface Venda {
     forma_pagamento: string;
     status: string;
     cliente?: Cliente;
+    itens: ItemVenda[];
+    created_at: string;
+    observacoes?: string;
 }
 
 export interface NotificationConfig {
