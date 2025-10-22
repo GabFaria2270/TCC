@@ -12,21 +12,8 @@ import { useFiltros } from '../../hooks/PDVhooks/useFiltros';
 import { useFinalizarVenda } from '../../hooks/PDVhooks/useFinalizarVenda';
 import { useNotifications } from '../../hooks/PDVhooks/useNotifications';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-import type { Cliente, ItemVenda, Produto } from '../../types';
 
-// ✅ Interface para Venda com itens
-interface Venda {
-    id: number;
-    total: number;
-    total_formatado: string;
-    desconto: number;
-    forma_pagamento: string;
-    status: string;
-    cliente?: Cliente;
-    itens: ItemVenda[];
-    created_at: string;
-    observacoes?: string;
-}
+import type { Cliente, Produto, Venda } from '../../types';
 
 interface Props {
     vendas?: Venda[];

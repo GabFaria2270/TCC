@@ -173,7 +173,7 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                 {/* Filtros: Barra de busca + Status */}
                 <div className="clientes-filtros-responsive">
                     <div className="search-input-group-responsive">
-                        <i className="bi bi-search search-icon" aria-hidden="true"></i>
+                        <i className="bi bi-search search-icon"></i>
                         <input
                             type="text"
                             className="search-input"
