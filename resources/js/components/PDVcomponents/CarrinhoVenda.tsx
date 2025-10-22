@@ -136,28 +136,31 @@ export default function CarrinhoVenda(props: any) {
                                             </button>
                                         </div>
 
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <div className="input-group quantidade-controles" style={{ maxWidth: '100px' }}>
-                                                <button
-                                                    className="btn btn-outline-secondary btn-sm"
-                                                    onClick={() => editarQuantidade(item.produto.id, Math.max(1, item.quantidade - 1), addNotification)}
-                                                >
-                                                    -
-                                                </button>
-                                                <input
-                                                    type="number"
-                                                    className="form-control form-control-sm text-center"
-                                                    value={item.quantidade}
-                                                    onChange={(e) => editarQuantidade(item.produto.id, parseInt(e.target.value) || 1, addNotification)}
-                                                    min="1"
-                                                />
-                                                <button
-                                                    className="btn btn-outline-secondary btn-sm"
-                                                    onClick={() => editarQuantidade(item.produto.id, item.quantidade + 1, addNotification)}
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <div className="input-group quantidade-controles w-auto">
+                                                    <button
+                                                        className="btn btn-outline-secondary btn-sm"
+                                                        onClick={() => editarQuantidade(item.produto.id, Math.max(1, item.quantidade - 1), addNotification)}
+                                                        type="button"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <input
+                                                        type="number"
+                                                        className="form-control form-control-sm text-center px-0"
+                                                        style={{ maxWidth: '48px' }}
+                                                        value={item.quantidade}
+                                                        onChange={(e) => editarQuantidade(item.produto.id, parseInt(e.target.value) || 1, addNotification)}
+                                                        min="1"
+                                                    />
+                                                    <button
+                                                        className="btn btn-outline-secondary btn-sm"
+                                                        onClick={() => editarQuantidade(item.produto.id, item.quantidade + 1, addNotification)}
+                                                        type="button"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
 
                                             <div className="text-end">
                                                 <small className="preco-info d-block">
