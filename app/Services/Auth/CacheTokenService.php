@@ -7,6 +7,7 @@ use App\Models\RememberToken;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -37,6 +38,7 @@ class CacheTokenService
                 'email' => $usuario->EMAIL,
                 'nome' => $usuario->NOME,
                 'perfil' => $usuario->PERFIL,
+                'persisted' => $persistInDb,
                 'created_at' => now()->toDateTimeString(),
                 'expires_at' => $expiresAt->toDateTimeString(),
                 'ip' => request()->ip(),
@@ -98,6 +100,17 @@ class CacheTokenService
             $cacheKey = "auth_token:{$token}";
             $tokenData = Cache::get($cacheKey);
 
+            // Detectar se o token que estamos validando veio do cookie remember_token
+            $isRememberCookie = false;
+            try {
+                $req = request();
+                if ($req && $req->cookies->has('remember_token') && $req->cookie('remember_token') === $token) {
+                    $isRememberCookie = true;
+                }
+            } catch (\Throwable $e) {
+                // ignore
+            }
+
             if (!$tokenData) {
                 // Se não encontrou no cache, tenta localizar no banco (remember_token)
                 Log::channel('security')->debug('Token não encontrado no cache, verificando DB', [
@@ -119,6 +132,7 @@ class CacheTokenService
                                 'email' => $usuario->EMAIL,
                                 'nome' => $usuario->NOME,
                                 'perfil' => $usuario->PERFIL,
+                                'persisted' => true,
                                 'created_at' => now()->toDateTimeString(),
                                 'expires_at' => $expiresAt->toDateTimeString(),
                                 'ip' => request()->ip(),
@@ -143,6 +157,132 @@ class CacheTokenService
                     Log::channel('security')->warning('⚠️ Erro ao buscar token na tabela remember_tokens', [
                         'token_preview' => substr($token, 0, 10) . '...',
                         'error' => $e->getMessage()
+                    ]);
+                    return null;
+                }
+            }
+
+            // Se token veio do cookie remember, sempre garantir que exista no DB
+            if ($isRememberCookie) {
+                try {
+                    $tokenHash = hash_hmac('sha256', $token, config('app.key'));
+                    $remember = RememberToken::where('token_hash', $tokenHash)->first();
+                    if (!$remember || ($remember->expires_at && Carbon::parse($remember->expires_at)->isPast())) {
+                        // Garantir que o cache não permita autenticação se o DB não tem o registro.
+                        Cache::forget($cacheKey);
+                        // Limpar cookie remember_token no cliente para evitar redirecionamentos futuros
+                        try {
+                            Cookie::queue(Cookie::forget('remember_token'));
+                            Log::channel('security')->info('Cookie remember_token removido do cliente porque não existe no DB', [
+                                'token_preview' => substr($token, 0, 10) . '...'
+                            ]);
+                        } catch (\Throwable $e) {
+                            Log::channel('security')->warning('Falha ao tentar remover cookie remember_token', [
+                                'error' => $e->getMessage()
+                            ]);
+                        }
+                        Log::channel('security')->info('Token do cookie remember_token não existe/expirou na tabela remember_tokens', [
+                            'token_preview' => substr($token, 0, 10) . '...'
+                        ]);
+                        return null;
+                    }
+                } catch (\Exception $e) {
+                    Log::channel('security')->warning('Erro ao verificar remember_tokens para cookie remember', [
+                        'error' => $e->getMessage(),
+                        'token_preview' => substr($token, 0, 10) . '...'
+                    ]);
+                    return null;
+                }
+            }
+
+            // Se token foi persistido no DB, garantir que o registro ainda exista
+            if (!empty($tokenData['persisted'])) {
+                try {
+                    $tokenHash = hash_hmac('sha256', $token, config('app.key'));
+                    $remember = RememberToken::where('token_hash', $tokenHash)->first();
+                    if (!$remember || ($remember->expires_at && Carbon::parse($remember->expires_at)->isPast())) {
+                        // Token persistido foi removido do DB ou expirou -> antes de invalidar, verificar se existe sessão ativa
+                        try {
+                            $req = request();
+                            $sessionOk = false;
+                            if ($req) {
+                                // 1) Verifica se a sessão atual tem user_id igual ao do token
+                                if ($req->session()->has('user_id') && $req->session()->get('user_id') == ($tokenData['user_id'] ?? null)) {
+                                    $sessionOk = true;
+                                }
+                                // 2) Se não, tenta checar a tabela sessions pelo cookie de sessão
+                                if (!$sessionOk) {
+                                    $sessionCookieName = config('session.cookie', 'laravel_session');
+                                    $sessionId = $req->cookie($sessionCookieName);
+                                    if ($sessionId) {
+                                            $sessRow = DB::table('sessions')->where('id', $sessionId)->first();
+                                            if ($sessRow && isset($sessRow->user_id) && $sessRow->user_id == ($tokenData['user_id'] ?? null)) {
+                                                $sessionOk = true;
+                                            } else {
+                                                // Log detalhado para depuração: sessão encontrada mas não corresponde
+                                                Log::channel('security')->debug('Sessão encontrada mas não corresponde ao user_id do token', [
+                                                    'session_id' => $sessionId,
+                                                    'session_user_id' => $sessRow->user_id ?? null,
+                                                    'token_user_id' => $tokenData['user_id'] ?? null,
+                                                    'payload_snippet' => isset($sessRow->payload) ? substr($sessRow->payload, 0, 300) : null,
+                                                ]);
+                                            
+                                            // tentar extrair user_id do payload
+                                            if ($sessRow && !empty($sessRow->payload)) {
+                                                $decoded = @base64_decode($sessRow->payload, true);
+                                                $maybe = $decoded !== false ? @json_decode($decoded, true) : null;
+                                                if (is_array($maybe) && !empty($maybe['user_id']) && $maybe['user_id'] == ($tokenData['user_id'] ?? null)) {
+                                                    $sessionOk = true;
+                                                } else {
+                                                    $maybe2 = @unserialize($sessRow->payload);
+                                                    if (is_array($maybe2) && !empty($maybe2['user_id']) && $maybe2['user_id'] == ($tokenData['user_id'] ?? null)) {
+                                                        $sessionOk = true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if ($sessionOk) {
+                                // Existe sessão ativa para o mesmo usuário: não invalidar o cache — manter token para a sessão atual
+                                Log::channel('security')->info('Remember token deletado do DB, mas sessão ativa detectada — mantendo token em cache para a sessão atual', [
+                                    'user_id' => $tokenData['user_id'] ?? 'N/A',
+                                    'token_preview' => substr($token, 0, 10) . '...'
+                                ]);
+                                // Marcar que agora não está mais persisted (apenas para sessão atual)
+                                $tokenData['persisted'] = false;
+                                // Regravar no cache até expires_at
+                                try {
+                                    $expiresAt = Carbon::parse($tokenData['expires_at']);
+                                    Cache::put($cacheKey, $tokenData, $expiresAt);
+                                } catch (\Throwable $e) {
+                                    Cache::put($cacheKey, $tokenData, now()->addMinutes($this->expirationMinutes));
+                                }
+                                // continuar validação abaixo
+                            } else {
+                                // Sem sessão válida: invalidar cache
+                                Cache::forget($cacheKey);
+                                Log::channel('security')->info('Token em cache inválido: não existe na tabela remember_tokens', [
+                                    'token_preview' => substr($token, 0, 10) . '...'
+                                ]);
+                                return null;
+                            }
+                        } catch (\Exception $e) {
+                            // se qualquer erro, falhar fechado
+                            Cache::forget($cacheKey);
+                            Log::channel('security')->info('Erro verificando sessão antes de invalidar token em cache', [
+                                'error' => $e->getMessage(),
+                                'token_preview' => substr($token, 0, 10) . '...'
+                            ]);
+                            return null;
+                        }
+                    }
+                } catch (\Exception $e) {
+                    Log::channel('security')->warning('Erro ao verificar remember_tokens durante validação', [
+                        'error' => $e->getMessage(),
+                        'token_preview' => substr($token, 0, 10) . '...'
                     ]);
                     return null;
                 }

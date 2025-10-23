@@ -12,27 +12,46 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Auth\CacheTokenService;
 use App\Models\Usuario;
+use App\Models\RememberToken;
+use Carbon\Carbon;
 
 
 Route::get('/', function (Request $request) {
-   
+    // Se já existe sessão ativa, não tocar no remember_token — redireciona direto
+    if ($request->session()->has('user_id') || Auth::check()) {
+        // Assegura que o guard do Laravel conheça o usuário caso apenas a sessão personalizada exista
+        if (!Auth::check() && $request->session()->has('user_id')) {
+            $usr = Usuario::find($request->session()->get('user_id'));
+            if ($usr) {
+                Auth::setUser($usr);
+            }
+        }
+        return redirect()->route('gerenciamento');
+    }
+
     $remember = $request->cookie('remember_token');
     if ($remember) {
         try {
-            /** @var CacheTokenService $tokenService */
-            $tokenService = app(CacheTokenService::class);
-            $data = $tokenService->validateToken($remember);
-            if ($data && !empty($data['user_id'])) {
-                $user = Usuario::find($data['user_id']);
-                if ($user) {
-                    
-                    $request->session()->put('user_id', $user->id);
-                    Auth::setUser($user);
-                    return redirect()->route('gerenciamento');
+            // Primeiro: checar explicitamente na tabela remember_tokens (hash) — só aceitar se existir e não expirado
+            $tokenHash = hash_hmac('sha256', $remember, config('app.key'));
+            $rememberRow = RememberToken::where('token_hash', $tokenHash)->first();
+            if (!$rememberRow || ($rememberRow->expires_at && Carbon::parse($rememberRow->expires_at)->isPast())) {
+                // Token do navegador não existe no DB ou expirou: não redirecionar automaticamente
+                logger()->info('Cookie remember_token presente no navegador, mas não existe/expirou no DB — não redirecionando automaticamente');
+            } else {
+                /** @var CacheTokenService $tokenService */
+                $tokenService = app(CacheTokenService::class);
+                $data = $tokenService->validateToken($remember);
+                if ($data && !empty($data['user_id'])) {
+                    $user = Usuario::find($data['user_id']);
+                    if ($user) {
+                        $request->session()->put('user_id', $user->id);
+                        Auth::setUser($user);
+                        return redirect()->route('gerenciamento');
+                    }
                 }
             }
         } catch (\Exception $e) {
-            
             logger()->warning('Erro ao validar remember_token na rota /: ' . $e->getMessage());
         }
     }
