@@ -8,9 +8,34 @@ use App\Http\Controllers\Auth\ProdutoController;
 use App\Http\Controllers\Auth\VendasController; // ✅ ADICIONAR IMPORT
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\FiadoController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Auth\CacheTokenService;
+use App\Models\Usuario;
 
-// ✅ ROTAS PÚBLICAS - SEM MIDDLEWARE
-Route::get('/', function () {
+
+Route::get('/', function (Request $request) {
+   
+    $remember = $request->cookie('remember_token');
+    if ($remember) {
+        try {
+            /** @var CacheTokenService $tokenService */
+            $tokenService = app(CacheTokenService::class);
+            $data = $tokenService->validateToken($remember);
+            if ($data && !empty($data['user_id'])) {
+                $user = Usuario::find($data['user_id']);
+                if ($user) {
+                    
+                    $request->session()->put('user_id', $user->id);
+                    Auth::setUser($user);
+                    return redirect()->route('gerenciamento');
+                }
+            }
+        } catch (\Exception $e) {
+            
+            logger()->warning('Erro ao validar remember_token na rota /: ' . $e->getMessage());
+        }
+    }
     return view('home');
 })->name('home');
 
