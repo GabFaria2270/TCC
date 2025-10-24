@@ -5,6 +5,17 @@
 
     RewriteEngine On
 
+    # Ensure XML files (sitemap) are served with the correct content type
+    <IfModule mod_mime.c>
+        AddType application/xml .xml
+    </IfModule>
+    <IfModule mod_headers.c>
+        <FilesMatch "\.xml$">
+            Header set Content-Type "application/xml; charset=UTF-8"
+            Header set Cache-Control "public, max-age=3600"
+        </FilesMatch>
+    </IfModule>
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
