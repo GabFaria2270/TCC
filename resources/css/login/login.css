@@ -407,6 +407,74 @@ html:has(body.loginf) {
     transform: scale(1.05);
 }
 
+
+.switch-remember {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 8px;
+        }
+
+        .switch-remember input[type="checkbox"] {
+            display: none;
+        }
+
+        .switch-remember .slider {
+            width: 32px;
+            height: 20px;
+            background: #b80e93;
+            border-radius: 12px;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .switch-remember .slider::before {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            background: #000000;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+        }
+
+        .switch-remember input:checked+.slider {
+            background: #7c3aed;
+        }
+
+        .switch-remember input:checked+.slider::before {
+            transform: translateX(12px);
+            background: #7c3aed;
+        }
+
+        .switch-remember .checkmark {
+            position: absolute;
+            top: 2px;
+            left: 8px;
+            width: 16px;
+            height: 16px;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .switch-remember input:checked+.slider .checkmark {
+            opacity: 1;
+        }
+
+        .switch-remember .label-text {
+            font-size: 1rem;
+            color: #ffffff;
+            font-weight: 500;
+        }
 /* Corrige preenchimento automático para manter o ícone visível */
 input:-webkit-autofill {
     background-clip: text;
