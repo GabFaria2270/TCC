@@ -6,18 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mais Conectado - Conexão simples para pequenos negócios</title>
     <meta name="description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
-    <link rel="icon" href="/logo.png">
-            <script type="application/ld+json" src="/organization.json"></script>
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MaisConectado">
+    <meta property="og:title" content="Mais Conectado - Conexão simples para pequenos negócios">
+    <meta property="og:description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mais Conectado - Conexão simples para pequenos negócios">
+    <meta name="twitter:description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <link rel="icon" href="/logo.jpg">
+    <script type="application/ld+json" src="/organization.json"></script>
     @vite(['resources/css/app.css', 'resources/css/home/home.css', 'resources/js/app.js', 'resources/js/home/home.js'])
 </head>
 
 <body>
-    <div class="home-logo-container">
-      <img src="/logo.png" alt="Mais Conectado - Conexão simples para pequenos negócios" class="home-logo">
-      <h1>maisconectado</h1>
-      <p>Conexão simples para pequenos negócios</p>
-    </div>
-
     <!-- Seção de Navegação -->
     <section id="nav">
         @include('components.navbar')
@@ -516,30 +520,6 @@
     <section id="footer">
         @include('components.footer')
     </section>
-
-    <style>
-        .home-logo-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          margin-top: 40px;
-        }
-        .home-logo {
-          width: 180px;
-          height: auto;
-          margin-bottom: 16px;
-        }
-        h1 {
-          font-size: 2.2rem;
-          font-weight: bold;
-          color: #2d3748;
-          margin-bottom: 8px;
-        }
-        p {
-          font-size: 1.1rem;
-          color: #4a5568;
-        }
-    </style>
 </body>
 
 </html>

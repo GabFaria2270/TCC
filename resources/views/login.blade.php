@@ -5,6 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <meta name="description" content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="MaisConectado">
+    <meta property="og:title" content="Login — MaisConectado">
+    <meta property="og:description" content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
+    <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Login — MaisConectado">
+    <meta name="twitter:description" content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
+    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     @vite(['resources/css/app.css', 'resources/css/login/login.css', 'resources/js/app.js', 'resources/js/login/login.js'])
 </head>
 

@@ -8,7 +8,44 @@
     <title inertia>Gerenciamento</title>
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/set.tsx'])
-    @inertiaHead
+        @inertiaHead
+        <!-- SEO: Schema.org (JSON-LD) + Open Graph / Twitter cards -->
+        <meta name="description" content="Sistema de gerenciamento e conexão para comércios locais. Simples, rápido e seguro.">
+        <link rel="canonical" href="{{ url()->current() }}">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="MaisConectado">
+        <meta property="og:title" content="MaisConectado — conecte-se">
+        <meta property="og:description" content="Sistema de gerenciamento e conexão para comércios locais.">
+        <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+        <meta property="og:url" content="https://maisconectado.alwaysdata.net/">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="MaisConectado — conecte-se">
+        <meta name="twitter:description" content="Sistema de gerenciamento e conexão para comércios locais.">
+    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "MaisConectado",
+            "url": "https://maisconectado.alwaysdata.net/",
+            "logo": "https://maisconectado.alwaysdata.net/logo.jpg",
+            "sameAs": []
+        }
+        </script>
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "url": "https://maisconectado.alwaysdata.net/",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://maisconectado.alwaysdata.net/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+        </script>
     <script>
         // Aplicação antecipada do tema para evitar flicker
         (function() {
