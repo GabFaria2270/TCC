@@ -17,28 +17,12 @@ use Carbon\Carbon;
 
 
 Route::get('/', function (Request $request) {
-    // Se já existe sessão ativa, não tocar no remember_token — redireciona direto
-    if ($request->session()->has('user_id') || Auth::check()) {
-        // Assegura que o guard do Laravel conheça o usuário caso apenas a sessão personalizada exista
-        if (!Auth::check() && $request->session()->has('user_id')) {
-            $usr = Usuario::find($request->session()->get('user_id'));
-            if ($usr) {
-                Auth::setUser($usr);
-            }
-        }
-        return redirect()->route('gerenciamento');
-    }
-
     $remember = $request->cookie('remember_token');
     if ($remember) {
         try {
-            // Primeiro: checar explicitamente na tabela remember_tokens (hash) — só aceitar se existir e não expirado
             $tokenHash = hash_hmac('sha256', $remember, config('app.key'));
             $rememberRow = RememberToken::where('token_hash', $tokenHash)->first();
-            if (!$rememberRow || ($rememberRow->expires_at && Carbon::parse($rememberRow->expires_at)->isPast())) {
-                // Token do navegador não existe no DB ou expirou: não redirecionar automaticamente
-                logger()->info('Cookie remember_token presente no navegador, mas não existe/expirou no DB — não redirecionando automaticamente');
-            } else {
+            if ($rememberRow && (!$rememberRow->expires_at || !Carbon::parse($rememberRow->expires_at)->isPast())) {
                 /** @var CacheTokenService $tokenService */
                 $tokenService = app(CacheTokenService::class);
                 $data = $tokenService->validateToken($remember);

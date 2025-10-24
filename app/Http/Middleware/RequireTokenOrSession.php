@@ -51,12 +51,12 @@ class RequireTokenOrSession
             Log::channel('security')->debug('Não foi possível iniciar sessão no middleware: ' . $e->getMessage());
         }
 
-        // Tenta restaurar usuário via sessão DB caso não esteja autenticado
+        // 1. Prioriza restauração via sessão/cache
         $usuario = null;
         if ($request->session()->has('user_id')) {
             $usuario = Usuario::find($request->session()->get('user_id'));
             if ($usuario) {
-                // Usuário restaurado via sessão
+                Auth::setUser($usuario);
                 Log::channel('security')->info('Usuário restaurado via sessão DB personalizada', [
                     'user_id' => $usuario->id,
                     'session_id' => $request->session()->getId()
@@ -118,22 +118,27 @@ class RequireTokenOrSession
             }
         }
 
-        // Se não restaurou via sessão, tenta via remember_token
-        if (!$usuario && $request->cookies->has('remember_token')) {
+        // 2. Só tenta remember_token se NÃO houver sessão/cache
+        $loginViaRememberToken = false;
+        if (!$usuario && !Auth::check() && $request->cookies->has('remember_token')) {
             $rememberToken = $request->cookie('remember_token');
             $data = $this->tokenService->validateToken($rememberToken);
             if ($data) {
                 $usuario = Usuario::find($data['user_id']);
                 if ($usuario) {
-                    // Vincula usuário à sessão
                     $request->session()->put('user_id', $usuario->id);
-                    // Garante que Auth reconheça o usuário como autenticado
                     Auth::setUser($usuario);
+                    $loginViaRememberToken = true;
                     Log::channel('security')->info('Usuário autenticado via remember_token', [
                         'user_id' => $usuario->id,
                         'token_preview' => substr($rememberToken,0,10).'...'
                     ]);
                 }
+            } else {
+                // Token inválido: apenas remove o cookie, NÃO mexe na sessão/cache
+                cookie()->queue(cookie('remember_token', '', -1, '/', null, false, true, false, 'Lax'));
+                Log::channel('security')->info('remember_token inválido removido, mas sessão/cached login mantido');
+                // Não retorna deny, apenas segue o fluxo normal
             }
         }
 
@@ -217,6 +222,13 @@ class RequireTokenOrSession
                     ]);
                 }
             }
+        }
+
+        // Redireciona para gerenciamento APENAS se login foi via remember_token e está na home
+        $routeName = $request->route()?->getName();
+        $path = trim($request->path(), '/');
+        if ($loginViaRememberToken && ($routeName === 'home' || $path === '' || $path === '/' || $path === 'home')) {
+            return redirect()->route('gerenciamento');
         }
 
         return $next($request);
