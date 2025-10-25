@@ -108,7 +108,7 @@ body.nav-open {
     margin: 0 auto;
     padding: 0 2rem;
     display: grid;
-    grid-template-columns: max-content 1fr max-content;
+    grid-template-columns: 120px 1fr max-content;
     align-items: center;
     width: 100%;
     height: var(--nav-height);
@@ -118,6 +118,9 @@ body.nav-open {
 .navbar-brand {
     grid-column: 1;
     justify-self: start;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
 }
 .navbar-menu {
     grid-column: 2;
@@ -132,6 +135,13 @@ body.nav-open {
 }
 
 /* Logo - apenas ícone */
+.navbar-logo {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: height 0.3s, width 0.3s;
+}
 .navbar-brand a {
     display: flex;
     align-items: center;
