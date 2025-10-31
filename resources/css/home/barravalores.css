@@ -86,7 +86,7 @@
    │ 🎴 CARDS INDIVIDUAIS - APARÊNCIA E COMPORTAMENTO               │
    └─────────────────────────────────────────────────────────────────┘ */
 .valor1 {
-    background: var(--bg-light); /* ← COR DE FUNDO DOS CARDS */
+    background: #fff; /* Fundo branco para modo claro */
     border: 1px solid var(--border-light); /* ← BORDA DOS CARDS */
     border-radius: 16px; /* ← ARREDONDAMENTO DOS CARDS */
     padding: 1.8rem; /* ← ESPAÇO INTERNO DOS CARDS */
@@ -100,6 +100,7 @@
     align-items: center;
     justify-content: flex-start;
     box-shadow: var(--shadow-sm); /* ← SOMBRA DOS CARDS */
+    color: #2d3748; /* Texto escuro para contraste */
 }
 
 /* ┌─────────────────────────────────────────────────────────────────┐
@@ -146,7 +147,7 @@
 .valor-titulo {
     font-size: 1.4rem; /* ← TAMANHO DO TÍTULO */
     font-weight: 700;
-    color: var(--color-white);
+    color: #2d3748; /* Título escuro */
     margin-bottom: 1rem; /* ← ESPAÇO ABAIXO DO TÍTULO */
     line-height: 1.3;
     text-align: center;
@@ -155,7 +156,7 @@
 .valor-descricao {
     font-size: 1rem; /* ← TAMANHO DA DESCRIÇÃO */
     line-height: 1.6;
-    color: var(--white-90);
+    color: #4a5568; /* Descrição escura */
     margin: 0;
     text-align: center;
     flex: 1;
