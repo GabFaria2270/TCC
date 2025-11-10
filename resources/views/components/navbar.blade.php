@@ -2,8 +2,9 @@
     <div class="navbar-container">
         <!-- Logo apenas com ícone -->
         <div class="navbar-brand">
-            <a href="/" aria-label="Página inicial">
-                <i class="bi bi-shop-window"></i>
+            <a href="/" aria-label="Página inicial" class="d-flex align-items-center gap-2">
+                <i class="bi bi-shop-window fs-4"></i>
+                <span class="navbar-title fw-semibold fs-5">Mais Conectado</span>
             </a>
         </div>
         
