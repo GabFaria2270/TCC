@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\Request;
 
 class RelatorioController
 {
@@ -12,20 +12,24 @@ class RelatorioController
     {
         // Busca vendas com cliente e usuário
         $vendas = \App\Models\Venda::with(['cliente', 'usuario', 'itens.produto'])
-            ->orderBy('id', 'asc')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->get()
-            ->map(function($venda) {
+            ->map(function ($venda) {
                 return [
                     'id' => $venda->id,
                     'data' => optional($venda->created_at)->format('d/m/Y H:i'),
+                    'data_iso' => optional($venda->created_at)->toIso8601String(),
                     'cliente' => optional($venda->cliente)->nome ?? '-',
                     'usuario' => optional($venda->usuario)->NOME ?? '-',
-                    'total' => number_format($venda->total, 2, ',', '.'),
-                    'desconto' => number_format($venda->desconto, 2, ',', '.'),
+                    'total' => (float) $venda->total,
+                    'total_formatado' => 'R$ ' . number_format((float) $venda->total, 2, ',', '.'),
+                    'desconto' => (float) $venda->desconto,
+                    'desconto_formatado' => 'R$ ' . number_format((float) $venda->desconto, 2, ',', '.'),
                     'forma_pagamento' => $venda->forma_pagamento,
                     'status' => $venda->status,
                     'observacoes' => $venda->observacoes,
-                    'itens' => $venda->itens->map(function($item) {
+                    'itens' => $venda->itens->map(function ($item) {
                         return [
                             'produto' => optional($item->produto)->nome ?? '-',
                             'quantidade' => $item->quantidade,
@@ -39,12 +43,14 @@ class RelatorioController
         // Busca global de movimentos de estoque
         $movimentos = \App\Models\MovimentoEstoque::with(['produto', 'usuario'])
             ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->limit(200)
             ->get()
-            ->map(function($m) {
+            ->map(function ($m) {
                 return [
                     'id' => $m->id,
                     'data' => optional($m->created_at)->format('d/m/Y H:i'),
+                    'created_at_iso' => optional($m->created_at)->toIso8601String(),
                     'produto' => optional($m->produto)->nome ?? '-',
                     'tipo' => $m->tipo,
                     'quantidade' => (int) $m->quantidade_movimentada,
@@ -61,8 +67,13 @@ class RelatorioController
 
     public function exportExcel(Request $request)
     {
-        // Você pode adicionar filtros do request se desejar
-        return \Maatwebsite\Excel\Facades\Excel::download(
+        $excel = app()->make('excel');
+
+        if (!method_exists($excel, 'download')) {
+            abort(500, 'Serviço de exportação indisponível.');
+        }
+
+        return $excel->download(
             new \App\Exports\VendasExport(),
             'relatorio_vendas_' . now()->format('Ymd_His') . '.xlsx'
         );
