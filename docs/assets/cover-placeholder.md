@@ -1,0 +1,1 @@
+(Substitua este arquivo por uma imagem `cover.png` mostrando a tela inicial do sistema Mais Conectado.)
