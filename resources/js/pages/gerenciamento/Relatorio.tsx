@@ -72,6 +72,8 @@ interface MovimentoEstoque {
     produto: string;
     tipo: string; // entrada, saida, ajuste
     quantidade: number;
+    quantidade_anterior?: number | null;
+    quantidade_atual?: number | null;
     usuario: string;
     motivo?: string;
 }
@@ -125,7 +127,7 @@ function FormaPagamentoBadge({ tipo }: { tipo: string }) {
     switch (tipo) {
         case 'dinheiro':
             return (
-                <span className="badge bg-success">
+                <span className="badge text-bg-success">
                     <i className="bi bi-cash-coin me-1"></i>
                     Dinheiro
                 </span>
@@ -133,7 +135,7 @@ function FormaPagamentoBadge({ tipo }: { tipo: string }) {
         case 'pix':
         case 'PIX':
             return (
-                <span className="badge bg-info">
+                <span className="badge text-bg-info">
                     <i className="bi bi-qr-code me-1"></i>
                     PIX
                 </span>
@@ -141,7 +143,7 @@ function FormaPagamentoBadge({ tipo }: { tipo: string }) {
         case 'debito':
         case 'cartao_debito':
             return (
-                <span className="badge bg-primary">
+                <span className="badge text-bg-primary">
                     <i className="bi bi-credit-card-2-front me-1"></i>
                     Débito
                 </span>
@@ -149,7 +151,7 @@ function FormaPagamentoBadge({ tipo }: { tipo: string }) {
         case 'credito':
         case 'cartao_credito':
             return (
-                <span className="badge bg-warning">
+                <span className="badge text-bg-warning text-dark">
                     <i className="bi bi-credit-card me-1"></i>
                     Crédito
                 </span>
@@ -157,14 +159,14 @@ function FormaPagamentoBadge({ tipo }: { tipo: string }) {
         case 'conta_fiada':
         case 'fiado':
             return (
-                <span className="badge bg-secondary">
+                <span className="badge text-bg-secondary">
                     <i className="bi bi-wallet2 me-1"></i>
                     Conta Fiada
                 </span>
             );
         default:
             return (
-                <span className="badge bg-light text-dark">
+                <span className="badge text-bg-light text-dark">
                     <i className="bi bi-question-circle me-1"></i>
                     {tipo || 'Não informado'}
                 </span>
@@ -172,24 +174,35 @@ function FormaPagamentoBadge({ tipo }: { tipo: string }) {
     }
 }
 
+const STATUS_CONFIG: Record<string, { badgeClass: string; label: string }> = {
+    concluida: { badgeClass: 'text-bg-success', label: '✅ Concluída' },
+    pendente: { badgeClass: 'text-bg-warning', label: '⏳ Pendente' },
+    cancelada: { badgeClass: 'text-bg-danger', label: '❌ Cancelada' },
+};
+
+function normalizarStatus(status?: string) {
+    const value = (status ?? '').toLowerCase();
+    if (value === 'conta_fiada') return 'pendente';
+    return value;
+}
+
+function statusInfo(status?: string) {
+    const normalized = normalizarStatus(status);
+    const config = STATUS_CONFIG[normalized];
+    return {
+        normalized,
+        badgeClass: config?.badgeClass ?? 'text-bg-info',
+        label: config?.label ?? (normalized || '—'),
+    };
+}
+
 // Badge de status igual ao VendasList
 function StatusBadge({ status }: { status: string }) {
-    let badgeClass = 'bg-info';
-    let statusLabel = status;
-    if (status === 'concluida') {
-        badgeClass = 'bg-success';
-        statusLabel = '✅ Concluída';
-    } else if (status === 'pendente' || status === 'conta_fiada') {
-        badgeClass = 'bg-warning';
-        statusLabel = '⏳ Pendente';
-    } else if (status === 'cancelada') {
-        badgeClass = 'bg-danger';
-        statusLabel = '❌ Cancelada';
-    }
-    return <span className={`badge ${badgeClass}`}>{statusLabel}</span>;
+    const info = statusInfo(status);
+    return <span className={`badge ${info.badgeClass}`}>{info.label}</span>;
 }
 import { Head } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ObservacaoModal from '../../components/ObservacaoModal';
 import { exportarParaExcel } from '../../exports/ExcelExport';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
@@ -223,11 +236,24 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
     const [filtroDataInicio, setFiltroDataInicio] = useState('');
     const [filtroDataFim, setFiltroDataFim] = useState('');
     const [filtroTipo, setFiltroTipo] = useState('');
+    const [filtroStatus, setFiltroStatus] = useState('');
+    const [filtroPagamento, setFiltroPagamento] = useState('');
     const [loading, setLoading] = useState(false);
     const [resultados, setResultados] = useState<RelatorioItem[]>([]);
     const [movimentosFiltrados, setMovimentosFiltrados] = useState<MovimentoEstoque[]>([]);
     const [erro, setErro] = useState<string | null>(null);
     const [modalObs, setModalObs] = useState<{ show: boolean; texto: string; itens: Item[] }>({ show: false, texto: '', itens: [] });
+    const currencyFormatter = useMemo(() => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }), []);
+    const resumoVendas = useMemo(() => {
+        const quantidade = resultados.length;
+        const totalFaturado = resultados.reduce((acc, item) => acc + Number(item.total ?? 0), 0);
+        const totalDescontos = resultados.reduce((acc, item) => acc + Number(item.desconto ?? 0), 0);
+        return {
+            quantidade,
+            totalFaturado,
+            totalDescontos,
+        };
+    }, [resultados]);
 
     useEffect(() => {
         h1Ref.current?.focus();
@@ -256,6 +282,15 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
         return timestampOrNull(dataIso, fallback) ?? 0;
     }
 
+    function normalizarPagamento(valor?: string) {
+        const val = (valor ?? '').toLowerCase();
+        if (val === '') return '';
+        if (val === 'cartao_debito') return 'debito';
+        if (val === 'cartao_credito') return 'credito';
+        if (val === 'fiado') return 'conta_fiada';
+        return val;
+    }
+
     function ordenarVendas(lista: RelatorioItem[]) {
         return [...lista].sort((a, b) => timestampFrom(b.data_iso, b.data) - timestampFrom(a.data_iso, a.data));
     }
@@ -273,7 +308,12 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
     }, [movimentosEstoque]);
 
     useEffect(() => {
-        setFiltroTipo('');
+        if (tabela === 'estoque') {
+            setFiltroStatus('');
+            setFiltroPagamento('');
+        } else {
+            setFiltroTipo('');
+        }
     }, [tabela]);
 
     function buscarRelatorio() {
@@ -295,6 +335,12 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
                 if (filtroDataInicio || filtroDataFim) {
                     filtrados = filtrados.filter((item) => dentroDoPeriodo(timestampOrNull(item.data_iso, item.data)));
                 }
+                if (filtroStatus) {
+                    filtrados = filtrados.filter((item) => normalizarStatus(item.status) === filtroStatus);
+                }
+                if (filtroPagamento) {
+                    filtrados = filtrados.filter((item) => normalizarPagamento(item.forma_pagamento) === filtroPagamento);
+                }
                 setResultados(filtrados);
             } else {
                 let filtrados = ordenarMovimentos(movimentosEstoque);
@@ -314,6 +360,8 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
         setFiltroDataInicio('');
         setFiltroDataFim('');
         setFiltroTipo('');
+        setFiltroStatus('');
+        setFiltroPagamento('');
         setResultados(ordenarVendas(dados));
         setMovimentosFiltrados(ordenarMovimentos(movimentosEstoque));
         setErro(null);
@@ -325,22 +373,24 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
                 Data: mov.data,
                 Produto: mov.produto,
                 Tipo: mov.tipo,
-                Quantidade: mov.quantidade,
-                Usuário: mov.usuario,
+                'Qtd Anterior': mov.quantidade_anterior ?? '',
+                'Qtd Movimentada': mov.quantidade,
+                'Qtd Atual': mov.quantidade_atual ?? '',
+                Responsável: mov.usuario || '-',
                 Motivo: mov.motivo ?? '-',
             }));
-            await exportarParaExcel(dadosExportar, 'movimentos_estoque.xlsx');
+            await exportarParaExcel(dadosExportar, 'movimentos_estoque_filtrado.xlsx');
             return;
         }
 
         const dadosExportar = resultados.map((item) => ({
             Data: item.data,
             Cliente: item.cliente,
-            Usuário: item.usuario,
+            Responsável: item.usuario || '-',
             'Total (R$)': item.total_formatado,
             'Desconto (R$)': item.desconto_formatado,
             'Forma de Pagamento': item.forma_pagamento,
-            Status: item.status,
+            Status: statusInfo(item.status).label,
             Observações: item.observacoes,
         }));
         await exportarParaExcel(dadosExportar, 'relatorio_vendas.xlsx');
@@ -376,80 +426,154 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
 
                 {/* Filtros */}
                 <div className="card filtros-card fade-in elemento-relatorio-2 mb-4 border-0 shadow-sm">
-                    <div className="card-body row g-3">
-                        <div className="col-md-3 col-12">
-                            <label htmlFor="filtro-data-inicio" className="form-label">
-                                Data início
-                            </label>
-                            <input
-                                id="filtro-data-inicio"
-                                type="date"
-                                className="form-control"
-                                value={filtroDataInicio}
-                                onChange={(e) => setFiltroDataInicio(e.target.value)}
-                            />
-                        </div>
-                        <div className="col-md-3 col-12">
-                            <label htmlFor="filtro-data-fim" className="form-label">
-                                Data fim
-                            </label>
-                            <input
-                                id="filtro-data-fim"
-                                type="date"
-                                className="form-control"
-                                value={filtroDataFim}
-                                onChange={(e) => setFiltroDataFim(e.target.value)}
-                            />
-                        </div>
-                        {tabela === 'estoque' && (
-                            <div className="col-md-3 col-12">
-                                <label htmlFor="filtro-tipo" className="form-label">
-                                    Tipo de movimento
+                    <div className="card-body">
+                        <div className="row g-3">
+                            <div className="col-md-6 col-lg-3 col-12">
+                                <label htmlFor="filtro-data-inicio" className="form-label">
+                                    Data início
                                 </label>
-                                <select id="filtro-tipo" className="form-select" value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)}>
-                                    <option value="">Todos</option>
-                                    <option value="entrada">Entrada</option>
-                                    <option value="saida">Saída</option>
-                                    <option value="ajuste">Ajuste</option>
-                                </select>
+                                <input
+                                    id="filtro-data-inicio"
+                                    type="date"
+                                    className="form-control"
+                                    value={filtroDataInicio}
+                                    onChange={(e) => setFiltroDataInicio(e.target.value)}
+                                />
                             </div>
-                        )}
-                        <div className="col-md-3 d-flex align-items-end col-12 gap-2">
-                            <button className="btn btn-primary w-100" onClick={buscarRelatorio} disabled={loading}>
-                                {loading ? (
-                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-                                ) : (
-                                    <i className="bi bi-search" />
-                                )}{' '}
-                                Buscar
-                            </button>
-                            <button className="btn btn-outline-secondary w-100" onClick={limparFiltros} disabled={loading}>
-                                Limpar
-                            </button>
+                            <div className="col-md-6 col-lg-3 col-12">
+                                <label htmlFor="filtro-data-fim" className="form-label">
+                                    Data fim
+                                </label>
+                                <input
+                                    id="filtro-data-fim"
+                                    type="date"
+                                    className="form-control"
+                                    value={filtroDataFim}
+                                    onChange={(e) => setFiltroDataFim(e.target.value)}
+                                />
+                            </div>
+                            {tabela === 'vendas' && (
+                                <>
+                                    <div className="col-md-6 col-lg-3 col-12">
+                                        <label htmlFor="filtro-status" className="form-label">
+                                            Status
+                                        </label>
+                                        <select
+                                            id="filtro-status"
+                                            className="form-select"
+                                            value={filtroStatus}
+                                            onChange={(e) => setFiltroStatus(e.target.value)}
+                                        >
+                                            <option value="">Todos os status</option>
+                                            <option value="concluida">✅ Concluída</option>
+                                            <option value="pendente">⏳ Pendente (inclui Conta Fiada)</option>
+                                            <option value="cancelada">❌ Cancelada</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-md-6 col-lg-3 col-12">
+                                        <label htmlFor="filtro-pagamento" className="form-label">
+                                            Forma de pagamento
+                                        </label>
+                                        <select
+                                            id="filtro-pagamento"
+                                            className="form-select"
+                                            value={filtroPagamento}
+                                            onChange={(e) => setFiltroPagamento(e.target.value)}
+                                        >
+                                            <option value="">Todas as formas</option>
+                                            <option value="dinheiro">💵 Dinheiro</option>
+                                            <option value="pix">⚡ PIX</option>
+                                            <option value="debito">💳 Débito</option>
+                                            <option value="credito">📄 Crédito</option>
+                                            <option value="conta_fiada">📔 Conta Fiada</option>
+                                        </select>
+                                    </div>
+                                </>
+                            )}
+                            {tabela === 'estoque' && (
+                                <div className="col-md-6 col-lg-3 col-12">
+                                    <label htmlFor="filtro-tipo" className="form-label">
+                                        Tipo de movimento
+                                    </label>
+                                    <select
+                                        id="filtro-tipo"
+                                        className="form-select"
+                                        value={filtroTipo}
+                                        onChange={(e) => setFiltroTipo(e.target.value)}
+                                    >
+                                        <option value="">Todos</option>
+                                        <option value="entrada">Entrada</option>
+                                        <option value="saida">Saída</option>
+                                        <option value="ajuste">Ajuste</option>
+                                    </select>
+                                </div>
+                            )}
+                            <div className="col-md-6 col-lg-3 d-flex align-items-end col-12 gap-2">
+                                <button className="btn btn-primary w-100" onClick={buscarRelatorio} disabled={loading}>
+                                    {loading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                                    ) : (
+                                        <i className="bi bi-search" />
+                                    )}{' '}
+                                    Buscar
+                                </button>
+                                <button className="btn btn-outline-secondary w-100" onClick={limparFiltros} disabled={loading}>
+                                    Limpar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                {tabela === 'vendas' && (
+                    <div className="row g-3 elemento-relatorio-2 mb-4">
+                        <div className="col-md-6 col-xl-4 col-12">
+                            <div className="card h-100 border-0 shadow-sm">
+                                <div className="card-body">
+                                    <span className="text-uppercase text-secondary small">Total faturado</span>
+                                    <h4 className="fw-bold mt-2 mb-0">{currencyFormatter.format(resumoVendas.totalFaturado)}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-6 col-xl-4 col-12">
+                            <div className="card h-100 border-0 shadow-sm">
+                                <div className="card-body">
+                                    <span className="text-uppercase text-secondary small">Total de descontos</span>
+                                    <h4 className="fw-bold text-danger mt-2 mb-0">{currencyFormatter.format(resumoVendas.totalDescontos)}</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-6 col-xl-4 col-12">
+                            <div className="card h-100 border-0 shadow-sm">
+                                <div className="card-body">
+                                    <span className="text-uppercase text-secondary small">Quantidade de vendas</span>
+                                    <h4 className="fw-bold mt-2 mb-0">{resumoVendas.quantidade}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Tabela dinâmica */}
                 {tabela === 'vendas' ? (
                     <div className="card fade-in elemento-relatorio-3 border-0 shadow-sm">
-                        <div className="card-header d-flex justify-content-between align-items-center bg-body-tertiary border-0">
-                            <strong>Resultados</strong>
-                            <div className="small text-secondary">Exibe os dados conforme filtros selecionados</div>
+                        <div className="card-header bg-body">
+                            <h5 className="mb-0">
+                                <i className="bi bi-receipt-cutoff me-2"></i>
+                                Histórico ({resultados.length} vendas)
+                            </h5>
                         </div>
                         <div className="table-responsive scroll-shadow">
                             <table className="table-hover vendas-table data-table mb-0 table align-middle">
                                 <thead>
                                     <tr>
-                                        <th style={{ minWidth: 140 }}>Data/Hora</th>
-                                        <th style={{ minWidth: 180 }}>Cliente</th>
-                                        <th style={{ minWidth: 140 }}>Total</th>
-                                        <th style={{ minWidth: 150 }}>Pagamento</th>
-                                        <th style={{ minWidth: 130 }}>Status</th>
-                                        <th style={{ minWidth: 140 }}>Usuário</th>
-                                        <th className="text-center" style={{ width: 90 }}>
-                                            Ações
-                                        </th>
+                                        <th>Data/Hora</th>
+                                        <th>Cliente</th>
+                                        <th>Total</th>
+                                        <th>Pagamento</th>
+                                        <th>Status</th>
+                                        <th>Responsável</th>
+                                        <th className="text-center">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -462,53 +586,74 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
                                     )}
                                     {!erro && resultados.length === 0 && !loading && (
                                         <tr>
-                                            <td colSpan={7} className="estado-vazio">
-                                                <i className="bi bi-clipboard-data display-6 d-block mb-2"></i>
-                                                Nenhum resultado encontrado.
+                                            <td colSpan={7} className="estado-vazio" style={{ padding: 0 }}>
+                                                <div className="text-muted p-5 text-center">
+                                                    <i className="bi bi-receipt display-4 d-block mb-3"></i>
+                                                    <h5 className="mb-0">Nenhuma venda encontrada</h5>
+                                                </div>
                                             </td>
                                         </tr>
                                     )}
                                     {!erro &&
                                         resultados.map((item) => {
-                                            const status = item.status === 'conta_fiada' ? 'pendente' : item.status;
                                             const possuiDesconto = (item.desconto ?? 0) > 0;
                                             const totalFormatado = item.total_formatado ?? `R$ ${(item.total ?? 0).toFixed(2).replace('.', ',')}`;
                                             const descontoFormatado =
                                                 item.desconto_formatado ?? `R$ ${(item.desconto ?? 0).toFixed(2).replace('.', ',')}`;
+                                            const dataIso = normalizarIso(item.data_iso, item.data);
+                                            const exibicaoData = dataIso
+                                                ? new Date(dataIso).toLocaleString('pt-BR', {
+                                                      day: '2-digit',
+                                                      month: '2-digit',
+                                                      year: 'numeric',
+                                                      hour: '2-digit',
+                                                      minute: '2-digit',
+                                                  })
+                                                : item.data;
+
                                             return (
                                                 <tr key={item.id}>
-                                                    <td>{item.data}</td>
-                                                    <td>
+                                                    <td data-label="Data/Hora">{exibicaoData}</td>
+                                                    <td data-label="Cliente">
                                                         {item.cliente && item.cliente !== '-' ? (
-                                                            item.cliente
+                                                            <div className="cliente-nome">{item.cliente}</div>
                                                         ) : (
                                                             <span className="text-muted">Venda avulsa</span>
                                                         )}
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Total">
                                                         <strong className="text-success">{totalFormatado}</strong>
                                                         {possuiDesconto && (
                                                             <small className="d-block text-muted">Desconto: {descontoFormatado}</small>
                                                         )}
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Pagamento">
                                                         <FormaPagamentoBadge tipo={item.forma_pagamento} />
                                                     </td>
-                                                    <td>
-                                                        <StatusBadge status={status} />
+                                                    <td data-label="Status">
+                                                        <StatusBadge status={item.status} />
                                                     </td>
-                                                    <td>{item.usuario}</td>
-                                                    <td className="text-center">
+                                                    <td data-label="Responsável">
+                                                        {item.usuario && item.usuario !== '-' ? (
+                                                            item.usuario
+                                                        ) : (
+                                                            <span className="text-muted">Não informado</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="text-center" data-label="Ações">
                                                         <button
-                                                            className="btn btn-sm btn-outline-primary d-flex flex-column align-items-center justify-content-center"
-                                                            style={{ minWidth: 56, minHeight: 56, lineHeight: 1.1 }}
+                                                            className="btn btn-sm btn-outline-primary d-inline-flex align-items-center"
                                                             onClick={() =>
-                                                                setModalObs({ show: true, texto: item.observacoes, itens: item.itens || [] })
+                                                                setModalObs({
+                                                                    show: true,
+                                                                    texto: item.observacoes,
+                                                                    itens: item.itens || [],
+                                                                })
                                                             }
                                                             title="Ver observação completa"
                                                         >
-                                                            <i className="bi bi-eye" style={{ fontSize: 18 }}></i>
-                                                            <span style={{ fontSize: 14, marginTop: 2 }}>Abrir</span>
+                                                            <i className="bi bi-eye"></i>
+                                                            <span className="ms-2">Abrir</span>
                                                         </button>
                                                     </td>
                                                 </tr>

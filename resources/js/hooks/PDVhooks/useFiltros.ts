@@ -26,6 +26,12 @@ const normalizar = (s: string) =>
               .toLowerCase()
         : '';
 
+const normalizarStatus = (status?: string) => {
+    const value = (status ?? '').toLowerCase();
+    if (value === 'conta_fiada') return 'pendente';
+    return value;
+};
+
 export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosReturn => {
     const [filtroStatus, setFiltroStatus] = useState('');
     const [filtroCliente, setFiltroCliente] = useState('');
@@ -53,7 +59,7 @@ export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosRetu
         const hasClienteSelecionado = !!filtroCliente;
 
         return vendas.filter((venda) => {
-            const statusOk = !filtroStatus || venda.status === filtroStatus;
+            const statusOk = !filtroStatus || normalizarStatus(venda.status) === filtroStatus;
 
             const vClienteId = getVendaClienteId(venda);
 

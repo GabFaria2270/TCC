@@ -51,7 +51,8 @@ class VendaService
                             'id' => $venda->usuario->id,
                             'nome' => $venda->usuario->NOME ?? ($venda->usuario->name ?? 'Usuário'),
                         ] : null,
-                        'created_at' => $venda->created_at->format('d/m/Y H:i'),
+                        'created_at' => optional($venda->created_at)->toIso8601String(),
+                        'created_at_formatado' => optional($venda->created_at)->format('d/m/Y H:i'),
                         'observacoes' => $venda->observacoes,
                     ];
                 });
@@ -70,7 +71,7 @@ class VendaService
                         'categoria' => $produto->categoria ? [
                             'nome' => $produto->categoria->nome
                         ] : null,
-                        'estoque' => [ 'quantidade' => (int) ($produto->estoque->quantidade ?? 0) ],
+                        'estoque' => ['quantidade' => (int) ($produto->estoque->quantidade ?? 0)],
                     ];
                 });
 
@@ -185,8 +186,8 @@ class VendaService
                 'troco' => $troco,
                 'status' => $status,
                 // ✅ se veio observação do usuário, preserva e adiciona a descrição dos itens ao final
-                'observacoes' => isset($dados['observacoes']) && trim((string)$dados['observacoes']) !== ''
-                    ? (trim((string)$dados['observacoes']) . ' | ' . $observacoesAuto)
+                'observacoes' => isset($dados['observacoes']) && trim((string) $dados['observacoes']) !== ''
+                    ? (trim((string) $dados['observacoes']) . ' | ' . $observacoesAuto)
                     : $observacoesAuto,
             ]);
 
@@ -358,7 +359,7 @@ class VendaService
     {
         try {
             $user = $request->user();
-            $venda = \App\Models\Venda::with(['itens.produto','cliente','usuario'])
+            $venda = \App\Models\Venda::with(['itens.produto', 'cliente', 'usuario'])
                 ->where('comercio_id', $user->comercio->id)
                 ->where('id', $id)
                 ->first();

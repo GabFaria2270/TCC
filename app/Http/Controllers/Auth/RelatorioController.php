@@ -54,6 +54,8 @@ class RelatorioController
                     'produto' => optional($m->produto)->nome ?? '-',
                     'tipo' => $m->tipo,
                     'quantidade' => (int) $m->quantidade_movimentada,
+                    'quantidade_anterior' => $m->quantidade_anterior !== null ? (int) $m->quantidade_anterior : null,
+                    'quantidade_atual' => $m->quantidade_atual !== null ? (int) $m->quantidade_atual : null,
                     'usuario' => optional($m->usuario)->NOME ?? '-',
                     'motivo' => $m->motivo,
                 ];

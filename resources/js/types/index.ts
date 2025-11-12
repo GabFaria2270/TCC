@@ -39,6 +39,7 @@ export interface Venda {
     cliente?: Cliente;
     itens: ItemVenda[];
     created_at: string;
+    created_at_formatado?: string;
     observacoes?: string;
 }
 
