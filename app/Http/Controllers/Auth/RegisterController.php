@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\DB; // não usado após remover vinculação de sessão
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -53,16 +53,22 @@ class RegisterController extends Controller
                 $usuario = $result['user'];
                 $this->logRegistrationSuccess($usuario, $request);
 
-                // Autentica usuário e garante sessão
-                // Não habilitar "remember" automaticamente no cadastro.
-                // O token remember deve ser criado apenas quando o usuário marcar o checkbox no login.
+                // Autentica usuário e garante sessão exclusiva
                 Auth::login($usuario);
                 if ($request->hasSession()) {
-                    if (!$request->session()->isStarted()) {
-                        $request->session()->start();
+                    $session = $request->session();
+                    if (!$session->isStarted()) {
+                        $session->start();
                     }
-                    $request->session()->regenerate();
+                    $session->regenerate();
+                    $sessionId = $session->getId();
+                    $session->put('user_id', $usuario->id);
+                    $this->vincularSessaoExistente($sessionId, $usuario->id, $usuario->EMAIL);
+                    $this->encerrarOutrasSessoes($usuario->id, $sessionId);
                 }
+
+                // Limpa vestígios de sessão anterior do navegador
+                cookie()->queue(cookie('remember_token', '', -1, '/', null, false, true, false, 'Lax'));
 
                 // Gera token via cache e define cookie httpOnly
                 $tokenData = $this->tokenService->getTokenData($usuario);
@@ -117,8 +123,6 @@ class RegisterController extends Controller
         }
     }
 
-    // Removida vinculação de sessão no cadastro: login é feito apenas na tela de login
-
     /**
      * LOGS DE AUDITORIA
      */
@@ -169,5 +173,49 @@ class RegisterController extends Controller
             'line' => $e->getLine(),
             'timestamp' => now(),
         ]);
+    }
+
+    private function vincularSessaoExistente(string $sessionId, int $userId, string $email): void
+    {
+        try {
+            DB::table('sessions')
+                ->where('id', $sessionId)
+                ->update([
+                    'user_id' => $userId,
+                    'last_activity' => now()->timestamp,
+                ]);
+
+            Log::channel('security')->info('Sessão vinculada durante cadastro', [
+                'session_id' => $sessionId,
+                'user_id' => $userId,
+                'user_email' => $email,
+            ]);
+        } catch (\Throwable $e) {
+            Log::channel('security')->warning('Falha ao vincular sessão no cadastro', [
+                'session_id' => $sessionId,
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    private function encerrarOutrasSessoes(int $userId, string $currentSessionId): void
+    {
+        try {
+            DB::table('sessions')
+                ->where('user_id', $userId)
+                ->where('id', '!=', $currentSessionId)
+                ->delete();
+
+            Log::channel('security')->info('Sessões antigas removidas após cadastro', [
+                'user_id' => $userId,
+                'session_id' => $currentSessionId,
+            ]);
+        } catch (\Throwable $e) {
+            Log::channel('security')->warning('Falha ao limpar sessões antigas após cadastro', [
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

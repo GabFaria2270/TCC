@@ -3,23 +3,41 @@
 namespace App\Exports;
 
 use App\Models\Venda;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class VendasExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithEvents
 {
+    private ?int $comercioId;
+
+    private ?Collection $cachedCollection = null;
+
+    public function __construct(?int $comercioId = null)
+    {
+        $this->comercioId = $comercioId;
+    }
+
     public function collection()
     {
-        // Você pode adicionar filtros aqui se desejar
-        return Venda::with(['cliente', 'usuario'])
+        if ($this->cachedCollection instanceof Collection) {
+            return $this->cachedCollection;
+        }
+
+        $this->cachedCollection = Venda::with(['cliente', 'usuario'])
+            ->when($this->comercioId !== null, function ($query) {
+                $query->where('comercio_id', $this->comercioId);
+            })
             ->orderBy('id', 'asc')
             ->get();
+
+        return $this->cachedCollection;
     }
 
     public function headings(): array
@@ -84,7 +102,7 @@ class VendasExport implements FromCollection, WithHeadings, WithMapping, WithSty
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function(AfterSheet $event) {
+            AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $vendas = $this->collection();
                 $row = 2;
