@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Services\Auth\SessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +23,10 @@ use Inertia\Response;
  */
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(private SessionService $sessionService)
+    {
+    }
+
     /**
      * Show the login page - NÃO USADO
      * Você usa LoginController->show()
@@ -78,8 +82,7 @@ class AuthenticatedSessionController extends Controller
 
         // LOGOUT SEGURO
         Auth::guard('web')->logout();
-        $request->session()->invalidate(); // Invalida sessão atual
-        $request->session()->regenerateToken(); // Regenera CSRF token
+        $this->sessionService->unlinkSession($request, true);
 
         return redirect()->route('home')->with('success', 'Logout realizado com sucesso!');
     }

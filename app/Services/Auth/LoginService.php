@@ -3,17 +3,16 @@
 namespace App\Services\Auth;
 
 use App\Models\Usuario;
-use App\Services\Auth\CacheTokenService; 
+use App\Services\Auth\CacheTokenService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class LoginService
 {
-    protected CacheTokenService $tokenService; 
+    protected CacheTokenService $tokenService;
 
-    public function __construct(CacheTokenService $tokenService) 
+    public function __construct(CacheTokenService $tokenService)
     {
         $this->tokenService = $tokenService;
     }
@@ -23,9 +22,9 @@ class LoginService
      */
     public function attempt(array $credentials, Request $request): array
     {
-    $email = $credentials['EMAIL'];
-    $password = $credentials['SENHA_HASH'];
-    $remember = $credentials['remember'] ?? false;
+        $email = $credentials['EMAIL'];
+        $password = $credentials['SENHA_HASH'];
+        $remember = $credentials['remember'] ?? false;
 
         // BUSCA USUÁRIO
         $usuario = Usuario::byEmail($email)->first();
@@ -50,10 +49,6 @@ class LoginService
                 'reason' => 'invalid_password'
             ];
         }
-
-        // LOGIN BEM-SUCEDIDO (sem Auth padrão)
-        // Vincula usuário à sessão manualmente
-        $request->session()->put('user_id', $usuario->id);
 
         // Gera token de sessão para API/gerenciamento
         // Se "remember" for verdadeiro, gerar um token com TTL estendido e reusar para o cookie remember_token
