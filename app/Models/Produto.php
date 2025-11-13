@@ -5,24 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * Modelo Produto
- *
- * Propriedades expostas via atributos do Eloquent (acessadas magicamente),
- * declaradas aqui para ajudar o analisador estático (Intelephense/PHP LS)
- * e evitar avisos de propriedades indefinidas em outros arquivos.
+ * Model Produto
  *
  * @property int $id
  * @property string $nome
- * @property float|string $preco
+ * @property float $preco
+ * @property string|null $foto_path
  * @property int|null $estoque_minimo
  * @property int $categoria_id
  * @property int $comercio_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\Categoria|null $categoria
+ * @property-read \App\Models\Categoria $categoria
+ * @property-read \App\Models\Comercio $comercio
  * @property-read \App\Models\Estoque|null $estoque
- * @mixin \Eloquent
+ * @property-read bool $ativo
  */
 class Produto extends Model
 {
@@ -45,40 +48,56 @@ class Produto extends Model
         'estoque_minimo' => 'integer',
         'categoria_id' => 'integer',
         'comercio_id' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    public function categoria()
+    /**
+     * Relacionamento: Produto pertence a uma categoria.
+     */
+    public function categoria(): BelongsTo
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
-    public function comercio()
+    /**
+     * Relacionamento: Produto pertence a um comércio.
+     */
+    public function comercio(): BelongsTo
     {
         return $this->belongsTo(Comercio::class, 'comercio_id');
     }
 
-    public function estoque()
+    /**
+     * Relacionamento: Produto possui um registro de estoque.
+     */
+    public function estoque(): HasOne
     {
         return $this->hasOne(Estoque::class, 'produto_id');
     }
 
-    public function scopeByComercio($query, int $comercioId)
+    /**
+     * Scope: Filtra produtos por comércio.
+     */
+    public function scopeByComercio(Builder $query, int $comercioId): Builder
     {
         return $query->where('comercio_id', $comercioId);
     }
 
-    public function scopeOrderByNome($query)
+    /**
+     * Scope: Ordena produtos por nome.
+     */
+    public function scopeOrderByNome(Builder $query): Builder
     {
         return $query->orderBy('nome');
     }
 
     /**
-     * Accessor para determinar se o produto está ativo
-     * Um produto está ativo se não foi excluído logicamente
+     * Accessor: Verifica se o produto está ativo (não deletado).
      */
     public function getAtivoAttribute(): bool
     {
-        // Evita acessar atributo mágico diretamente (melhor para analisadores estáticos)
         return !$this->trashed();
     }
 }

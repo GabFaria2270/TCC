@@ -6,113 +6,105 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * MODEL USUARIO - CORRIGIDO PARA SESSIONS
+ * Model Usuario
+ * 
+ * Representa um usuário do sistema com autenticação.
+ * 
+ * @property int $id
+ * @property string $NOME
+ * @property string $EMAIL
+ * @property string $SENHA_HASH
+ * @property string $PERFIL
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Comercio|null $comercio
  */
 class Usuario extends Authenticatable
 {
     use HasFactory, Notifiable;
 
     protected $table = 'usuario';
-    protected $primaryKey = 'id'; // ✅ CORRIGIDO: usa 'id' das migrations
-    public $timestamps = true; // ✅ ATIVADO: migrations têm timestamps
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = ['NOME', 'EMAIL', 'SENHA_HASH', 'PERFIL'];
     protected $hidden = ['SENHA_HASH'];
 
     /**
-     * ✅ CONFIGURAÇÃO CORRIGIDA PARA SESSÕES
+     * Retorna a senha do usuário para autenticação.
      */
-    public function getAuthPassword()
+    public function getAuthPassword(): string
     {
         return $this->SENHA_HASH;
     }
 
-    public function getAuthIdentifierName()
+    /**
+     * Retorna o nome do campo usado como identificador de autenticação.
+     */
+    public function getAuthIdentifierName(): string
     {
-        return 'EMAIL'; // Campo para login
-    }
-
-    public function getAuthIdentifier()
-    {
-        return $this->id; // ✅ CORRIGIDO: RETORNA ID NUMÉRICO
+        return 'EMAIL';
     }
 
     /**
-     * CAST AUTOMÁTICO
+     * Retorna o identificador único do usuário.
+     */
+    public function getAuthIdentifier(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Casts de atributos.
      */
     protected $casts = [
         'EMAIL' => 'string',
-    'PERFIL' => 'string',
+        'PERFIL' => 'string',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
-     * MUTATOR AUTOMÁTICO
+     * Mutator: Hash automático de senha ao atribuir.
      */
-    public function setSenhaHashAttribute($value)
+    public function setSenhaHashAttribute(string $value): void
     {
         $this->attributes['SENHA_HASH'] = Hash::make($value);
     }
 
     /**
-     * SCOPES
+     * Scope: Filtra por email (case-insensitive).
      */
-    public function scopeByEmail($query, $email)
+    public function scopeByEmail(Builder $query, string $email): Builder
     {
         return $query->where('EMAIL', strtolower($email));
     }
 
-    public function scopeByPerfil($query, $perfil)
+    /**
+     * Scope: Filtra por perfil (case-insensitive).
+     */
+    public function scopeByPerfil(Builder $query, string $perfil): Builder
     {
         return $query->where('PERFIL', strtolower($perfil));
     }
 
     /**
-     * RELACIONAMENTOS
+     * Relacionamento: Um usuário possui um comércio.
      */
-    public function comercio()
+    public function comercio(): HasOne
     {
         return $this->hasOne(Comercio::class, 'usuario_id');
     }
 
-    public function scopeWithComercio($query)
+    /**
+     * Scope: Carrega relacionamento de comércio.
+     */
+    public function scopeWithComercio(Builder $query): Builder
     {
         return $query->with('comercio');
-    }
-
-    /**
-     * ✅ MÉTODO PARA VINCULAR SESSÃO AO USUÁRIO
-     */
-    public function linkCurrentSession(Request $request): bool
-    {
-        $sessionId = $request->session()->getId();
-        if (!$sessionId) return false;
-
-        try {
-            // ✅ CORRIGIDO: Usa json_encode + base64_encode
-            $sessionData = json_encode($request->session()->all());
-            
-            return (bool) DB::table('sessions')->updateOrInsert(
-                ['id' => $sessionId],
-                [
-                    'user_id' => $this->getKey(), // ✅ USA user_id
-                    'ip_address' => $request->ip(),
-                    'user_agent' => substr((string) $request->userAgent(), 0, 500),
-                    'last_activity' => time(),
-                    'payload' => base64_encode($sessionData), // ✅ CORRIGIDO
-                ]
-            );
-        } catch (\Exception $e) {
-            Log::error('Erro ao vincular sessão', [
-                'user_id' => $this->id,
-                'session_id' => $sessionId,
-                'error' => $e->getMessage()
-            ]);
-            return false;
-        }
     }
 }

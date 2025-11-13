@@ -602,27 +602,50 @@ class CacheTokenService
     // ===================== Helpers internos =====================
 
     /**
-     * Remove todos os tokens do usuário na tabela de cache (DB driver)
+     * Remove todos os tokens do usuário específico (apenas dele)
      */
     private function revokeAllTokensForUser(int $userId): void
     {
         try {
-            // Remove possíveis chaves de cache auth_token:*
+            // 1. Remove tokens da tabela remember_tokens para este usuário
+            RememberToken::where('user_id', $userId)->delete();
+
+            // 2. Remove do cache apenas os tokens DESTE usuário
+            // Como não temos índice direto user_id->token no cache, precisamos:
+            // a) Pegar todos os tokens em cache
+            // b) Verificar quais pertencem a este user_id
+            // c) Remover apenas esses
+            
             $rows = DB::table('cache')
-                ->select('key')
+                ->select('key', 'value')
                 ->where('key', 'like', '%auth_token:%')
                 ->get();
 
+            $removed = 0;
             foreach ($rows as $row) {
                 $baseKey = $this->baseAuthTokenKey($row->key);
-                if (!$baseKey) continue;
-                if (str_starts_with($baseKey, 'auth_token:')) {
-                    Cache::forget($baseKey);
+                if (!$baseKey || !str_starts_with($baseKey, 'auth_token:')) {
+                    continue;
+                }
+
+                // Decodificar o valor do cache para verificar user_id
+                try {
+                    $decoded = @unserialize($row->value);
+                    if (is_array($decoded) && isset($decoded['user_id']) && $decoded['user_id'] == $userId) {
+                        Cache::forget($baseKey);
+                        $removed++;
+                    }
+                } catch (\Throwable $e) {
+                    // Se não conseguir decodificar, ignorar
+                    continue;
                 }
             }
 
-            // Remove registros da tabela remember_tokens para o usuário
-            RememberToken::where('user_id', $userId)->delete();
+            Log::channel('security')->info('🗑️ Tokens antigos revogados', [
+                'user_id' => $userId,
+                'tokens_removed' => $removed
+            ]);
+
         } catch (\Exception $e) {
             Log::channel('security')->warning('⚠️ Falha ao revogar tokens antigos do usuário', [
                 'user_id' => $userId,
