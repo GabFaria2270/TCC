@@ -108,7 +108,8 @@ Route::middleware(['require.token'])->group(function () {
             ->name('fiado.historico');
         // ROTA DE RELATÓRIO
         Route::get('relatorio', [\App\Http\Controllers\Auth\RelatorioController::class, 'index'])->name('relatorio.index');
-    Route::get('relatorio/exportar-excel', [\App\Http\Controllers\Auth\RelatorioController::class, 'exportExcel'])->name('relatorio.exportarExcel');
+        Route::post('relatorio/buscar', [\App\Http\Controllers\Auth\RelatorioController::class, 'filter'])->name('relatorio.filter');
+        Route::get('relatorio/exportar-excel', [\App\Http\Controllers\Auth\RelatorioController::class, 'exportExcel'])->name('relatorio.exportarExcel');
     });
 });
 

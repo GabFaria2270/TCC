@@ -4,7 +4,9 @@ interface Item {
 	produto: string;
 	quantidade: number;
 	valor_unitario: number;
+	valor_unitario_formatado: string;
 	subtotal: number;
+	subtotal_formatado: string;
 }
 
 interface ObservacaoModalProps {
@@ -45,8 +47,8 @@ const ObservacaoModal: React.FC<ObservacaoModalProps> = ({ show, onClose, texto,
 											<tr key={idx}>
 												<td>{item.produto}</td>
 												<td>{item.quantidade}</td>
-												<td>R$ {item.valor_unitario}</td>
-												<td>R$ {item.subtotal}</td>
+												<td>{item.valor_unitario_formatado}</td>
+												<td>{item.subtotal_formatado}</td>
 											</tr>
 										))}
 									</tbody>

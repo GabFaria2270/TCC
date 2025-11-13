@@ -122,6 +122,27 @@ function MovimentosEstoqueTable({ movimentos }: { movimentos: MovimentoEstoque[]
         </div>
     );
 }
+
+function PaginationControls({ meta, onChange, disabled = false }: { meta: PaginacaoMeta | null; onChange: (page: number) => void; disabled?: boolean }) {
+    if (!meta || meta.last_page <= 1) return null;
+
+    const previousDisabled = disabled || meta.current_page <= 1;
+    const nextDisabled = disabled || meta.current_page >= meta.last_page;
+
+    return (
+        <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+            <button className="btn btn-outline-secondary" type="button" disabled={previousDisabled} onClick={() => onChange(meta.current_page - 1)}>
+                <i className="bi bi-arrow-left-short me-1" /> Anterior
+            </button>
+            <div className="text-secondary small">
+                Página {meta.current_page} de {meta.last_page} · {meta.total} registros
+            </div>
+            <button className="btn btn-outline-secondary" type="button" disabled={nextDisabled} onClick={() => onChange(meta.current_page + 1)}>
+                Próxima <i className="bi bi-arrow-right-short ms-1" />
+            </button>
+        </div>
+    );
+}
 // Badge visual igual ao VendasList
 function FormaPagamentoBadge({ tipo }: { tipo: string }) {
     switch (tipo) {
@@ -211,7 +232,9 @@ interface Item {
     produto: string;
     quantidade: number;
     valor_unitario: number;
+    valor_unitario_formatado: string;
     subtotal: number;
+    subtotal_formatado: string;
 }
 
 interface RelatorioItem {
@@ -230,6 +253,24 @@ interface RelatorioItem {
     itens?: Item[];
 }
 
+interface RelatorioResumo {
+    quantidade: number;
+    totalFaturado: number;
+    totalDescontos: number;
+}
+
+interface MovimentoResumo {
+    quantidade: number;
+    totalMovimentado: number;
+}
+
+interface PaginacaoMeta {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
 export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dados?: RelatorioItem[]; movimentosEstoque?: MovimentoEstoque[] }) {
     const [tabela, setTabela] = useState<'vendas' | 'estoque'>('vendas');
     const h1Ref = useRef<HTMLHeadingElement>(null);
@@ -241,19 +282,18 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
     const [loading, setLoading] = useState(false);
     const [resultados, setResultados] = useState<RelatorioItem[]>([]);
     const [movimentosFiltrados, setMovimentosFiltrados] = useState<MovimentoEstoque[]>([]);
+    const [paginacaoVendas, setPaginacaoVendas] = useState<PaginacaoMeta | null>(null);
+    const [paginacaoMovimentos, setPaginacaoMovimentos] = useState<PaginacaoMeta | null>(null);
+    const [resumoVendas, setResumoVendas] = useState<RelatorioResumo>({ quantidade: 0, totalFaturado: 0, totalDescontos: 0 });
+    const [resumoMovimentos, setResumoMovimentos] = useState<MovimentoResumo | null>(null);
     const [erro, setErro] = useState<string | null>(null);
     const [modalObs, setModalObs] = useState<{ show: boolean; texto: string; itens: Item[] }>({ show: false, texto: '', itens: [] });
     const currencyFormatter = useMemo(() => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }), []);
-    const resumoVendas = useMemo(() => {
-        const quantidade = resultados.length;
-        const totalFaturado = resultados.reduce((acc, item) => acc + Number(item.total ?? 0), 0);
-        const totalDescontos = resultados.reduce((acc, item) => acc + Number(item.desconto ?? 0), 0);
-        return {
-            quantidade,
-            totalFaturado,
-            totalDescontos,
-        };
-    }, [resultados]);
+    const csrfToken = useMemo(() => {
+        if (typeof document === 'undefined') return '';
+        const meta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
+        return meta?.content ?? '';
+    }, []);
 
     useEffect(() => {
         h1Ref.current?.focus();
@@ -291,6 +331,26 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
         return val;
     }
 
+    function calcularResumoVendas(lista: RelatorioItem[]): RelatorioResumo {
+        const quantidade = lista.length;
+        const totalFaturado = lista.reduce((acc, item) => acc + Number(item.total ?? 0), 0);
+        const totalDescontos = lista.reduce((acc, item) => acc + Number(item.desconto ?? 0), 0);
+        return {
+            quantidade,
+            totalFaturado,
+            totalDescontos,
+        };
+    }
+
+    function calcularResumoMovimentos(lista: MovimentoEstoque[]): MovimentoResumo {
+        const quantidade = lista.length;
+        const totalMovimentado = lista.reduce((acc, item) => acc + Number(item.quantidade ?? 0), 0);
+        return {
+            quantidade,
+            totalMovimentado,
+        };
+    }
+
     function ordenarVendas(lista: RelatorioItem[]) {
         return [...lista].sort((a, b) => timestampFrom(b.data_iso, b.data) - timestampFrom(a.data_iso, a.data));
     }
@@ -300,11 +360,27 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
     }
 
     useEffect(() => {
-        setResultados(ordenarVendas(dados));
+        const vendasOrdenadas = ordenarVendas(dados);
+        setResultados(vendasOrdenadas);
+        setResumoVendas(calcularResumoVendas(vendasOrdenadas));
+        setPaginacaoVendas({
+            current_page: 1,
+            last_page: 1,
+            per_page: vendasOrdenadas.length || 1,
+            total: vendasOrdenadas.length,
+        });
     }, [dados]);
 
     useEffect(() => {
-        setMovimentosFiltrados(ordenarMovimentos(movimentosEstoque));
+        const movimentosOrdenados = ordenarMovimentos(movimentosEstoque);
+        setMovimentosFiltrados(movimentosOrdenados);
+        setResumoMovimentos(calcularResumoMovimentos(movimentosOrdenados));
+        setPaginacaoMovimentos({
+            current_page: 1,
+            last_page: 1,
+            per_page: movimentosOrdenados.length || 1,
+            total: movimentosOrdenados.length,
+        });
     }, [movimentosEstoque]);
 
     useEffect(() => {
@@ -314,46 +390,87 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
         } else {
             setFiltroTipo('');
         }
+        setErro(null);
     }, [tabela]);
 
-    function buscarRelatorio() {
+    async function buscarRelatorio(page = 1) {
         setLoading(true);
         setErro(null);
-        setTimeout(() => {
-            const inicioTs = filtroDataInicio ? Date.parse(`${filtroDataInicio}T00:00:00`) : null;
-            const fimTs = filtroDataFim ? Date.parse(`${filtroDataFim}T23:59:59.999`) : null;
 
-            const dentroDoPeriodo = (ts: number | null) => {
-                if (ts === null) return false;
-                if (inicioTs !== null && ts < inicioTs) return false;
-                if (fimTs !== null && ts > fimTs) return false;
-                return true;
-            };
+        const payload: Record<string, unknown> = {
+            tabela,
+            data_inicio: filtroDataInicio || null,
+            data_fim: filtroDataFim || null,
+            page,
+        };
 
-            if (tabela === 'vendas') {
-                let filtrados = ordenarVendas(dados);
-                if (filtroDataInicio || filtroDataFim) {
-                    filtrados = filtrados.filter((item) => dentroDoPeriodo(timestampOrNull(item.data_iso, item.data)));
-                }
-                if (filtroStatus) {
-                    filtrados = filtrados.filter((item) => normalizarStatus(item.status) === filtroStatus);
-                }
-                if (filtroPagamento) {
-                    filtrados = filtrados.filter((item) => normalizarPagamento(item.forma_pagamento) === filtroPagamento);
-                }
-                setResultados(filtrados);
-            } else {
-                let filtrados = ordenarMovimentos(movimentosEstoque);
-                if (filtroDataInicio || filtroDataFim) {
-                    filtrados = filtrados.filter((item) => dentroDoPeriodo(timestampOrNull(item.created_at_iso, item.data)));
-                }
-                if (filtroTipo) {
-                    filtrados = filtrados.filter((mov) => mov.tipo === filtroTipo);
-                }
-                setMovimentosFiltrados(filtrados);
+        if (tabela === 'vendas') {
+            if (filtroStatus) payload.status = filtroStatus;
+            if (filtroPagamento) payload.forma_pagamento = filtroPagamento;
+        } else if (filtroTipo) {
+            payload.tipo_movimento = filtroTipo;
+        }
+
+        const body = JSON.stringify(
+            Object.fromEntries(
+                Object.entries(payload).filter(([, value]) => value !== null && value !== '')
+            )
+        );
+
+        try {
+            const response = await fetch('/gerenciamento/relatorio/buscar', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                credentials: 'same-origin',
+                body,
+            });
+
+            const json = await response.json().catch(() => null);
+
+            if (!response.ok || !json) {
+                throw new Error(json?.message ?? 'Falha ao carregar os relatórios.');
             }
+
+            if (!json.success) {
+                throw new Error(json.message ?? 'Não foi possível carregar os relatórios.');
+            }
+
+            if (json.tabela === 'estoque') {
+                const lista: MovimentoEstoque[] = Array.isArray(json.data) ? json.data : [];
+                setMovimentosFiltrados(lista);
+                setPaginacaoMovimentos(json.meta ?? null);
+                setResumoMovimentos(
+                    json.resumo
+                        ? {
+                              quantidade: Number(json.resumo.quantidade ?? 0),
+                              totalMovimentado: Number(json.resumo.total_movimentado ?? 0),
+                          }
+                        : calcularResumoMovimentos(lista)
+                );
+            } else {
+                const lista: RelatorioItem[] = Array.isArray(json.data) ? json.data : [];
+                setResultados(lista);
+                setPaginacaoVendas(json.meta ?? null);
+                setResumoVendas(
+                    json.resumo
+                        ? {
+                              quantidade: Number(json.resumo.quantidade ?? 0),
+                              totalFaturado: Number(json.resumo.total_faturado ?? 0),
+                              totalDescontos: Number(json.resumo.total_descontos ?? 0),
+                          }
+                        : calcularResumoVendas(lista)
+                );
+            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Erro inesperado ao buscar relatórios.';
+            setErro(message);
+        } finally {
             setLoading(false);
-        }, 500);
+        }
     }
 
     function limparFiltros() {
@@ -362,8 +479,24 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
         setFiltroTipo('');
         setFiltroStatus('');
         setFiltroPagamento('');
-        setResultados(ordenarVendas(dados));
-        setMovimentosFiltrados(ordenarMovimentos(movimentosEstoque));
+        const vendasOrdenadas = ordenarVendas(dados);
+        const movimentosOrdenados = ordenarMovimentos(movimentosEstoque);
+        setResultados(vendasOrdenadas);
+        setResumoVendas(calcularResumoVendas(vendasOrdenadas));
+        setPaginacaoVendas({
+            current_page: 1,
+            last_page: 1,
+            per_page: vendasOrdenadas.length || 1,
+            total: vendasOrdenadas.length,
+        });
+        setMovimentosFiltrados(movimentosOrdenados);
+        setResumoMovimentos(calcularResumoMovimentos(movimentosOrdenados));
+        setPaginacaoMovimentos({
+            current_page: 1,
+            last_page: 1,
+            per_page: movimentosOrdenados.length || 1,
+            total: movimentosOrdenados.length,
+        });
         setErro(null);
     }
 
@@ -509,7 +642,7 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
                                 </div>
                             )}
                             <div className="col-md-6 col-lg-3 d-flex align-items-end col-12 gap-2">
-                                <button className="btn btn-primary w-100" onClick={buscarRelatorio} disabled={loading}>
+                                <button className="btn btn-primary w-100" onClick={() => buscarRelatorio(1)} disabled={loading}>
                                     {loading ? (
                                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
                                     ) : (
@@ -662,9 +795,13 @@ export default function Relatorio({ dados = [], movimentosEstoque = [] }: { dado
                                 </tbody>
                             </table>
                         </div>
+                        <PaginationControls meta={paginacaoVendas} onChange={buscarRelatorio} disabled={loading} />
                     </div>
                 ) : (
-                    <MovimentosEstoqueTable movimentos={movimentosFiltrados} />
+                    <>
+                        <MovimentosEstoqueTable movimentos={movimentosFiltrados} />
+                        <PaginationControls meta={paginacaoMovimentos} onChange={buscarRelatorio} disabled={loading} />
+                    </>
                 )}
             </div>
         </GerenciamentoLayout>
