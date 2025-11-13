@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro</title>
-    <meta name="description" content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
+    <title>Cadastro | Sistema de Gerenciamento de Vendas e Estoque</title>
+    <meta name="description" content="Crie sua conta e comece a usar o MaisConectado: gerenciamento de vendas, controle de estoque, PDV online, fiado e gestão de clientes para comércio local.">
+    <meta name="keywords" content="cadastro gerenciamento de vendas, cadastro controle de estoque, cadastro comércio local, criar conta PDV online">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">

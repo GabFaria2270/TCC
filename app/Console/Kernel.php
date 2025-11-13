@@ -11,7 +11,7 @@ class Kernel extends ConsoleKernel
      * Defina os comandos Artisan do aplicativo.
      */
     protected $commands = [
-        // ...adicione comandos personalizados aqui...
+        \App\Console\Commands\PruneAuthData::class,
     ];
 
     /**
@@ -19,10 +19,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Limpeza automática do cache e sessões
+        // Limpeza automática (mantém rotina existente + prune customizado)
         $schedule->command('cache:prune-stale-tags')->daily();
         $schedule->command('cache:clear')->weekly();
-        $schedule->command('session:prune')->daily();
+        // Comando customizado para limpar sessões, cache e tokens remember
+        $schedule->command('auth:prune')->hourly()->withoutOverlapping();
     }
 
     /**
