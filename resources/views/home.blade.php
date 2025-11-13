@@ -4,20 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mais Conectado - Conexão simples para pequenos negócios</title>
-    <meta name="description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <title>Gerenciamento de Vendas, Controle de Estoque e Comércio Local | MaisConectado</title>
+    <meta name="description" content="Gerencie vendas, controle de estoque, clientes, fiado e PDV online em um único sistema para comércio local.">
+    <meta name="keywords" content="gerenciamento de vendas, controle de estoque, comércio local, gestão de clientes, PDV online, sistema fiado, relatórios de vendas">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">
-    <meta property="og:title" content="Mais Conectado - Conexão simples para pequenos negócios">
-    <meta property="og:description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <meta property="og:title" content="Gerenciamento de Vendas e Estoque | MaisConectado">
+    <meta property="og:description" content="Controle de estoque, vendas, clientes e fiado em um só lugar.">
     <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Mais Conectado - Conexão simples para pequenos negócios">
-    <meta name="twitter:description" content="Sistema moderno para gestão de comércio, clientes e vendas. Simples, rápido e seguro.">
+    <meta name="twitter:title" content="Gerenciamento de Vendas e Controle de Estoque">
+    <meta name="twitter:description" content="PDV online, fiado seguro, gestão de clientes e relatórios de vendas.">
     <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     <link rel="icon" href="/logo.jpg">
-    <script type="application/ld+json" src="/organization.json"></script>
+    @include('components.seo.software_app_jsonld', [
+        'appName' => 'MaisConectado',
+        'appDescription' => 'Sistema web para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.',
+        'appUrl' => 'https://maisconectado.alwaysdata.net/',
+        'price' => '0',
+        'currency' => 'BRL'
+    ])
     @vite(['resources/css/app.css', 'resources/css/home/home.css', 'resources/js/app.js', 'resources/js/home/home.js'])
 </head>
 
@@ -126,9 +133,9 @@
 
 
     <!-- Seção dos Cards Principais -->
-    <section class="section-cards-principais" id="principais">
+    <section class="section-cards-principais" id="principais" data-seo-topics="gerenciamento-de-vendas controle-de-estoque gestao-de-clientes comercio-local pdv-online">
         <div class="container-escrita">
-            <span class="escrita">Sobre nossa empresa</span>
+            <span class="escrita">Gerenciamento de Vendas e Comércio Local</span>
         </div>
         <div class="cards-principais-grid">
             <article class="card-principal">
@@ -136,7 +143,7 @@
                     <img src="{{ asset('img/cadr1.jpg') }}" alt="Nossa Missão" loading="lazy">
                 </div>
                 <div class="card-content">
-                    <h3 class="card-title">Nossa Missão</h3>
+                    <h3 class="card-title">Nossa Missão em Gestão e Controle</h3>
                     <p class="card-description">
                         Oferecer produtos de qualidade excepcional com atendimento personalizado,
                         construindo relacionamentos duradouros baseados na confiança e satisfação
@@ -153,7 +160,7 @@
                     <img src="{{ asset('img/mulher da tela inicial.png') }}" alt="Nossa Visão" loading="lazy">
                 </div>
                 <div class="card-content">
-                    <h3 class="card-title">Nossa Visão</h3>
+                    <h3 class="card-title">Visão: Comércio Local Inteligente</h3>
                     <p class="card-description">
                         Ser reconhecido como o melhor estabelecimento comercial da região,
                         inovando constantemente para atender às necessidades de nossa comunidade
@@ -170,7 +177,7 @@
                     <img src="{{ asset('img/testedeimg.jpeg') }}" alt="Nossos Valores" loading="lazy">
                 </div>
                 <div class="card-content">
-                    <h3 class="card-title">Nossos Valores</h3>
+                    <h3 class="card-title">Valores na Gestão de Clientes</h3>
                     <p class="card-description">
                         Integridade, qualidade, respeito e transparência são os pilares que
                         sustentam nossa empresa e orientam todas as nossas decisões e ações
