@@ -5,17 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro | Sistema de Gerenciamento de Vendas e Estoque</title>
-    <meta name="description" content="Crie sua conta e comece a usar o MaisConectado: gerenciamento de vendas, controle de estoque, PDV online, fiado e gestão de clientes para comércio local.">
-    <meta name="keywords" content="cadastro gerenciamento de vendas, cadastro controle de estoque, cadastro comércio local, criar conta PDV online">
+    <meta name="description"
+        content="Crie sua conta e comece a usar o MaisConectado: gerenciamento de vendas, controle de estoque, PDV online, fiado e gestão de clientes para comércio local.">
+    <meta name="keywords"
+        content="cadastro gerenciamento de vendas, cadastro controle de estoque, cadastro comércio local, criar conta PDV online">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">
     <meta property="og:title" content="Cadastro — MaisConectado">
-    <meta property="og:description" content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
+    <meta property="og:description"
+        content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
     <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cadastro — MaisConectado">
-    <meta name="twitter:description" content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
+    <meta name="twitter:description"
+        content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
     <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     @vite(['resources/css/app.css', 'resources/css/cadastro/cadastro.css', 'resources/js/app.js', 'resources/js/cadastro/cadastro.js'])
 </head>

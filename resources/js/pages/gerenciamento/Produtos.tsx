@@ -92,6 +92,39 @@ function hideFiltersInUrl() {
     }
 }
 
+function useMediaQuery(query: string): boolean {
+    const getMatches = (q: string): boolean => {
+        if (typeof window === 'undefined') {
+            return false;
+        }
+        return window.matchMedia(q).matches;
+    };
+
+    const [matches, setMatches] = useState<boolean>(() => getMatches(query));
+
+    useEffect(() => {
+        const mediaQueryList = window.matchMedia(query);
+        const listener = (event: MediaQueryListEvent) => setMatches(event.matches);
+        setMatches(mediaQueryList.matches);
+
+        try {
+            mediaQueryList.addEventListener('change', listener);
+        } catch {
+            mediaQueryList.addListener(listener);
+        }
+
+        return () => {
+            try {
+                mediaQueryList.removeEventListener('change', listener);
+            } catch {
+                mediaQueryList.removeListener(listener);
+            }
+        };
+    }, [query]);
+
+    return matches;
+}
+
 export default function Produtos({ produtos = [], categorias = [], error, filters }: Props) {
     const h1Ref = useRef<HTMLHeadingElement>(null);
     // =========================================================
@@ -182,6 +215,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         // Limpa qualquer query string inicial
         hideFiltersInUrl();
     }, []);
+
+    const isDesktop = useMediaQuery('(min-width: 768px)');
 
     // =========================================================
     // Derivados (useMemo): normalização e ordenação local
@@ -578,8 +613,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* Filtros e controles                                   */}
                 {/* ===================================================== */}
                 <div className="card filtros-card fade-in mb-4 border-0 shadow-sm">
-                    <div className="card-body row g-1 align-items-end">
-                        <div className="col">
+                    <div className="card-body row g-2 g-md-3 align-items-end produtos-filtros">
+                        <div className="col-md-6 col-xl-3 col-12">
                             <label htmlFor="filtro-busca" className="form-label">
                                 Buscar
                             </label>
@@ -600,7 +635,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 />
                             </div>
                         </div>
-                        <div className="col-auto">
+                        <div className="col-md-6 col-xl-3 col-12">
                             <label htmlFor="filtro-categoria" className="form-label">
                                 Categoria
                             </label>
@@ -622,7 +657,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ))}
                             </select>
                         </div>
-                        <div className="col-auto">
+                        <div className="col-md-4 col-xl-2 col-6">
                             <label htmlFor="per-page" className="form-label">
                                 Por página
                             </label>
@@ -630,9 +665,9 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 id="per-page"
                                 className="form-select"
                                 value={perPage}
-                                onChange={(e) => {
-                                    setPerPage(e.target.value);
-                                    navegarComFiltros({ page: 1, perPage: Number(e.target.value) });
+                                onChange={(event) => {
+                                    setPerPage(event.target.value);
+                                    navegarComFiltros({ page: 1, perPage: Number(event.target.value) });
                                 }}
                             >
                                 {[10, 15, 25, 50, 100].map((n) => (
@@ -642,24 +677,24 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ))}
                             </select>
                         </div>
-                        <div className="d-flex align-items-end col-auto">
-                            <div className="form-check ms-2">
+                        <div className="col-sm-6 col-md-4 col-xl-2 d-flex align-items-end col-12">
+                            <div className="form-check d-flex align-items-center ms-sm-1 ms-md-2 mb-0 gap-2">
                                 <input
-                                    className="form-check-input"
+                                    className="form-check-input mt-0"
                                     type="checkbox"
                                     id="only-low"
                                     checked={onlyLow}
-                                    onChange={(e) => {
-                                        setOnlyLow(e.target.checked);
-                                        navegarComFiltros({ page: 1, onlyLow: e.target.checked || undefined });
+                                    onChange={(event) => {
+                                        setOnlyLow(event.target.checked);
+                                        navegarComFiltros({ page: 1, onlyLow: event.target.checked || undefined });
                                     }}
                                 />
-                                <label className="form-check-label" htmlFor="only-low">
+                                <label className="form-check-label mb-0" htmlFor="only-low">
                                     Baixos
                                 </label>
                             </div>
                         </div>
-                        <div className="d-flex align-items-end justify-content-end col-auto">
+                        <div className="col-md-4 col-xl-2 d-flex align-items-end justify-content-end col-12">
                             <button className="btn btn-outline-secondary" type="button" onClick={handleClearFilters}>
                                 Limpar filtros
                             </button>
@@ -675,129 +710,204 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                         <strong>Produtos cadastrados</strong>
                         <div className="small text-secondary">Atualizados em tempo real conforme cadastros</div>
                     </div>
-                    <div className="table-responsive scroll-shadow">
-                        <table className="table-hover table-striped data-table mb-0 table align-middle">
-                            <thead>
-                                <tr>
-                                    <th role="button" onClick={() => toggleSort('nome')} className="user-select-none">
-                                        Produto {renderSortIcon('nome')}
-                                    </th>
-                                    <th className="user-select-none">Categoria</th>
-                                    <th role="button" onClick={() => toggleSort('preco')} className="user-select-none text-end">
-                                        Preço {renderSortIcon('preco')}
-                                    </th>
-                                    <th role="button" onClick={() => toggleSort('quantidade')} className="user-select-none text-end">
-                                        Estoque {renderSortIcon('quantidade')}
-                                    </th>
-                                    <th role="button" onClick={() => toggleSort('updated_at')} className="user-select-none">
-                                        Atualizado em {renderSortIcon('updated_at')}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {produtosArray.length === 0 ? (
+                    {isDesktop ? (
+                        <div className="table-responsive scroll-shadow">
+                            <table className="table-hover data-table mb-0 table align-middle">
+                                <thead>
                                     <tr>
-                                        <td colSpan={5} className="estado-vazio">
-                                            <i className="bi bi-box-seam display-6 d-block mb-2"></i>
-                                            Nenhum produto encontrado.{' '}
-                                            {produtosArray.length === 0 ? (
-                                                <button className="btn btn-link p-0" type="button" onClick={abrirModalCriar}>
-                                                    Cadastre o primeiro produto
-                                                </button>
-                                            ) : null}
-                                        </td>
+                                        <th role="button" onClick={() => toggleSort('nome')} className="user-select-none">
+                                            Produto {renderSortIcon('nome')}
+                                        </th>
+                                        <th className="user-select-none">Categoria</th>
+                                        <th role="button" onClick={() => toggleSort('preco')} className="user-select-none text-end">
+                                            Preço {renderSortIcon('preco')}
+                                        </th>
+                                        <th role="button" onClick={() => toggleSort('quantidade')} className="user-select-none text-end">
+                                            Estoque {renderSortIcon('quantidade')}
+                                        </th>
+                                        <th role="button" onClick={() => toggleSort('updated_at')} className="user-select-none">
+                                            Atualizado em {renderSortIcon('updated_at')}
+                                        </th>
                                     </tr>
-                                ) : (
-                                    produtosOrdenados.map((produto) => {
-                                        const min = produto.estoque_minimo ?? 0;
-                                        const qtd = produto.estoque?.quantidade ?? 0;
-                                        // Considera "baixo" quando quantidade <= mínimo, mesmo que mínimo seja 0
-                                        const isLow = qtd <= min;
-                                        return (
-                                            <tr key={produto.id} className={isLow ? 'table-warning' : ''}>
-                                                <td data-label="Produto">
-                                                    <div className="fw-semibold">{produto.nome}</div>
-                                                    <small className="text-secondary">ID: {produto.id}</small>
-                                                </td>
-                                                <td data-label="Categoria">
-                                                    {produto.categoria?.nome ? (
-                                                        <span className="badge text-bg-secondary">{produto.categoria.nome}</span>
-                                                    ) : (
-                                                        '—'
-                                                    )}
-                                                </td>
-                                                <td className="text-end" data-label="Preço">
-                                                    {currencyFormatter.format(Number(produto.preco ?? 0))}
-                                                </td>
-                                                <td className="text-end" data-label="Estoque">
-                                                    {produto.estoque?.quantidade ?? 0}
-                                                    {isLow && <span className="badge text-bg-warning ms-2">Baixo</span>}
-                                                </td>
-                                                <td data-label="Atualizado em">
-                                                    <div className="d-flex align-items-center justify-content-between">
-                                                        <span>{new Date(produto.updated_at).toLocaleString('pt-BR')}</span>
-                                                        <div className="d-flex ms-3 flex-wrap gap-2">
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-secondary btn-sm px-3"
-                                                                title="Editar"
-                                                                aria-label="Editar produto"
-                                                                onClick={() => abrirModalEditar(produto)}
-                                                            >
-                                                                <i className="bi bi-pencil"></i>
-                                                                <span className="d-none d-sm-inline ms-2">Editar</span>
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-outline-primary btn-sm px-3"
-                                                                title="Movimentar estoque"
-                                                                aria-label="Movimentar estoque do produto"
-                                                                onClick={() => abrirModalEstoque(produto)}
-                                                            >
-                                                                <i className="bi bi-arrow-left-right"></i>
-                                                                <span className="d-none d-sm-inline ms-2">Movimentar</span>
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-outline-info btn-sm px-3"
-                                                                title="Histórico de estoque"
-                                                                aria-label="Ver histórico de estoque"
-                                                                onClick={() =>
-                                                                    router.get(
-                                                                        `/gerenciamento/produtos/${produto.id}/historico`,
-                                                                        {},
-                                                                        { preserveScroll: true },
-                                                                    )
-                                                                }
-                                                            >
-                                                                <i className="bi bi-clock-history"></i>
-                                                                <span className="d-none d-sm-inline ms-2">Histórico</span>
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-outline-danger btn-sm px-3"
-                                                                title="Excluir"
-                                                                aria-label="Excluir produto"
-                                                                onClick={() => {
-                                                                    setProdutoSelecionado(produto);
-                                                                    setShowDeleteConfirm(true);
-                                                                }}
-                                                            >
-                                                                <i className="bi bi-trash"></i>
-                                                                <span className="d-none d-sm-inline ms-2">Excluir</span>
-                                                            </button>
+                                </thead>
+                                <tbody>
+                                    {produtosArray.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={5} className="estado-vazio">
+                                                <i className="bi bi-box-seam display-6 d-block mb-2"></i>
+                                                Nenhum produto encontrado.{' '}
+                                                {produtosArray.length === 0 ? (
+                                                    <button className="btn btn-link p-0" type="button" onClick={abrirModalCriar}>
+                                                        Cadastre o primeiro produto
+                                                    </button>
+                                                ) : null}
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        produtosOrdenados.map((produto) => {
+                                            const min = produto.estoque_minimo ?? 0;
+                                            const qtd = produto.estoque?.quantidade ?? 0;
+                                            const isLow = qtd <= min;
+                                            return (
+                                                <tr key={produto.id} className={isLow ? 'table-warning' : ''}>
+                                                    <td data-label="Produto">
+                                                        <div className="fw-semibold">{produto.nome}</div>
+                                                    </td>
+                                                    <td data-label="Categoria">
+                                                        {produto.categoria?.nome ? (
+                                                            <span className="badge text-bg-secondary">{produto.categoria.nome}</span>
+                                                        ) : (
+                                                            '—'
+                                                        )}
+                                                    </td>
+                                                    <td className="text-end" data-label="Preço">
+                                                        {currencyFormatter.format(Number(produto.preco ?? 0))}
+                                                    </td>
+                                                    <td className="text-end" data-label="Estoque">
+                                                        {produto.estoque?.quantidade ?? 0}
+                                                        {isLow && <span className="badge text-bg-warning ms-2">Baixo</span>}
+                                                    </td>
+                                                    <td data-label="Atualizado em">
+                                                        <div className="d-flex align-items-center justify-content-between">
+                                                            <span>{new Date(produto.updated_at).toLocaleString('pt-BR')}</span>
+                                                            <div className="d-flex ms-3 flex-wrap gap-2">
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-secondary btn-sm px-3"
+                                                                    title="Editar"
+                                                                    aria-label="Editar produto"
+                                                                    onClick={() => abrirModalEditar(produto)}
+                                                                >
+                                                                    <i className="bi bi-pencil"></i>
+                                                                    <span className="d-none d-sm-inline ms-2">Editar</span>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-outline-primary btn-sm px-3"
+                                                                    title="Movimentar estoque"
+                                                                    aria-label="Movimentar estoque do produto"
+                                                                    onClick={() => abrirModalEstoque(produto)}
+                                                                >
+                                                                    <i className="bi bi-arrow-left-right"></i>
+                                                                    <span className="d-none d-sm-inline ms-2">Movimentar</span>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-outline-danger btn-sm px-3"
+                                                                    title="Excluir"
+                                                                    aria-label="Excluir produto"
+                                                                    onClick={() => {
+                                                                        setProdutoSelecionado(produto);
+                                                                        setShowDeleteConfirm(true);
+                                                                    }}
+                                                                >
+                                                                    <i className="bi bi-trash"></i>
+                                                                    <span className="d-none d-sm-inline ms-2">Excluir</span>
+                                                                </button>
+                                                            </div>
                                                         </div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="produtos-card-list d-flex flex-column gap-3 p-3">
+                            {produtosArray.length === 0 ? (
+                                <div className="text-muted py-5 text-center">
+                                    <i className="bi bi-box-seam display-6 d-block mb-2"></i>
+                                    Nenhum produto encontrado.
+                                    {produtosArray.length === 0 ? (
+                                        <div className="mt-2">
+                                            <button className="btn btn-link p-0" type="button" onClick={abrirModalCriar}>
+                                                Cadastre o primeiro produto
+                                            </button>
+                                        </div>
+                                    ) : null}
+                                </div>
+                            ) : (
+                                produtosOrdenados.map((produto) => {
+                                    const min = produto.estoque_minimo ?? 0;
+                                    const qtd = produto.estoque?.quantidade ?? 0;
+                                    const isLow = qtd <= min;
+                                    const precoFormatado = currencyFormatter.format(Number(produto.preco ?? 0));
+                                    const atualizadoEm = new Date(produto.updated_at).toLocaleString('pt-BR');
+                                    return (
+                                        <div key={produto.id} className={`card border-0 shadow-sm ${isLow ? 'border-warning-subtle border' : ''}`}>
+                                            <div className="card-body d-flex flex-column gap-2 p-3">
+                                                <div className="d-flex justify-content-between align-items-start gap-3">
+                                                    <div className="min-w-0">
+                                                        <h5 className="text-break mb-1">{produto.nome}</h5>
+                                                        <div className="small text-secondary">ID: {produto.id}</div>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                                    <div className="text-end">
+                                                        <span className="badge text-bg-primary fs-6">{precoFormatado}</span>
+                                                        {isLow && <div className="badge text-bg-warning text-dark d-block mt-2">Estoque baixo</div>}
+                                                    </div>
+                                                </div>
+                                                <div className="small text-secondary d-flex align-items-center text-break">
+                                                    <i className="bi bi-tag me-2" aria-hidden="true"></i>
+                                                    Categoria:
+                                                    {produto.categoria?.nome ? (
+                                                        <span className="badge text-bg-secondary ms-2">{produto.categoria.nome}</span>
+                                                    ) : (
+                                                        <span className="ms-2">Sem categoria</span>
+                                                    )}
+                                                </div>
+                                                <div className="small text-secondary d-flex align-items-center">
+                                                    <i className="bi bi-box-seam me-2" aria-hidden="true"></i>
+                                                    Estoque:
+                                                    <span className="fw-semibold text-body ms-2">{qtd}</span>
+                                                    {min > 0 && <span className="text-muted ms-2">mín: {min}</span>}
+                                                </div>
+                                                <div className="small text-secondary d-flex align-items-center text-break">
+                                                    <i className="bi bi-clock-history me-2" aria-hidden="true"></i>
+                                                    Atualizado em {atualizadoEm}
+                                                </div>
+                                                <div className="d-flex mt-3 flex-wrap gap-2">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-primary flex-fill"
+                                                        title="Editar"
+                                                        aria-label="Editar produto"
+                                                        onClick={() => abrirModalEditar(produto)}
+                                                    >
+                                                        <i className="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-success flex-fill"
+                                                        title="Movimentar estoque"
+                                                        aria-label="Movimentar estoque do produto"
+                                                        onClick={() => abrirModalEstoque(produto)}
+                                                    >
+                                                        <i className="bi bi-arrow-left-right"></i>
+                                                    </button>
 
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-danger flex-fill"
+                                                        title="Excluir"
+                                                        aria-label="Excluir produto"
+                                                        onClick={() => {
+                                                            setProdutoSelecionado(produto);
+                                                            setShowDeleteConfirm(true);
+                                                        }}
+                                                    >
+                                                        <i className="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                    )}
+                </div>
                 {/* ===================================================== */}
                 {/* Paginação                                              */}
                 {/* ===================================================== */}

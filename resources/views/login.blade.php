@@ -5,17 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Gerencie Vendas, Estoque e Clientes</title>
-    <meta name="description" content="Acesse o sistema MaisConectado para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.">
+    <meta name="description"
+        content="Acesse o sistema MaisConectado para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.">
     <meta name="keywords" content="login gerenciamento de vendas, login controle de estoque, login comércio local">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">
     <meta property="og:title" content="Login — MaisConectado">
-    <meta property="og:description" content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
+    <meta property="og:description"
+        content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
     <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Login — MaisConectado">
-    <meta name="twitter:description" content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
+    <meta name="twitter:description"
+        content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
     <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
     @vite(['resources/css/app.css', 'resources/css/login/login.css', 'resources/js/app.js', 'resources/js/login/login.js'])
 </head>
@@ -81,14 +84,16 @@
                                     @endforeach
                                 </div>
 
-                                <div class="form-login-group" style="position: relative;">
+                                <div class="form-login-group">
                                     <label for="SENHA_HASH" class="form-login-label">Senha</label>
-                                    <input type="password" class="form-login-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required autocomplete="current-password" minlength="12"
-                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
-                                    <span id="toggleSenha" class="eye-icon">
-                                        <i class="bi bi-eye-slash"></i>
-                                    </span>
+                                    <div class="form-login-input-wrapper">
+                                        <input type="password" class="form-login-input" id="SENHA_HASH"
+                                            name="SENHA_HASH" required autocomplete="current-password" minlength="12"
+                                            {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
+                                        <span id="toggleSenha" class="eye-icon">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </span>
+                                    </div>
                                     @foreach ($errors->get('SENHA_HASH') as $message)
                                         <div class="form-login-error">{{ $message }}</div>
                                     @endforeach

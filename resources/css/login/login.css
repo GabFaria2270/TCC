@@ -171,6 +171,16 @@ html:has(body.loginf) {
 .form-login-input:hover {
     box-shadow: none;
 }
+.form-login-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.form-login-input-wrapper .form-login-input {
+    flex: 1 1 auto;
+    padding-right: 2.75rem;
+}
 
 /* Mensagem de erro */
 .form-login-error {
@@ -387,10 +397,11 @@ html:has(body.loginf) {
 }
 
 /* Ícone de olho personalizado (tema escuro) */
-.eye-icon {
+.form-login-input-wrapper .eye-icon {
     position: absolute;
     right: 14px;
-    top: 37px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
     font-size: 1.3rem;
     color: var(--white-90);
@@ -401,80 +412,79 @@ html:has(body.loginf) {
         transform 0.15s;
     z-index: 2;
 }
-.eye-icon:hover {
+.form-login-input-wrapper .eye-icon:hover {
     color: var(--color-white);
     opacity: 1;
-    transform: scale(1.05);
+    transform: translateY(-50%) scale(1.05);
 }
 
-
 .switch-remember {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            gap: 8px;
-        }
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 8px;
+}
 
-        .switch-remember input[type="checkbox"] {
-            display: none;
-        }
+.switch-remember input[type='checkbox'] {
+    display: none;
+}
 
-        .switch-remember .slider {
-            width: 32px;
-            height: 20px;
-            background: #b80e93;
-            border-radius: 12px;
-            position: relative;
-            transition: background 0.3s;
-        }
+.switch-remember .slider {
+    width: 32px;
+    height: 20px;
+    background: #b80e93;
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.3s;
+}
 
-        .switch-remember .slider::before {
-            content: "";
-            position: absolute;
-            left: 2px;
-            top: 2px;
-            width: 16px;
-            height: 16px;
-            background: #000000;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s;
-        }
+.switch-remember .slider::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
+    background: #000000;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s;
+}
 
-        .switch-remember input:checked+.slider {
-            background: #7c3aed;
-        }
+.switch-remember input:checked + .slider {
+    background: #7c3aed;
+}
 
-        .switch-remember input:checked+.slider::before {
-            transform: translateX(12px);
-            background: #7c3aed;
-        }
+.switch-remember input:checked + .slider::before {
+    transform: translateX(12px);
+    background: #7c3aed;
+}
 
-        .switch-remember .checkmark {
-            position: absolute;
-            top: 2px;
-            left: 8px;
-            width: 16px;
-            height: 16px;
-            stroke: #fff;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
+.switch-remember .checkmark {
+    position: absolute;
+    top: 2px;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
 
-        .switch-remember input:checked+.slider .checkmark {
-            opacity: 1;
-        }
+.switch-remember input:checked + .slider .checkmark {
+    opacity: 1;
+}
 
-        .switch-remember .label-text {
-            font-size: 1rem;
-            color: #ffffff;
-            font-weight: 500;
-        }
+.switch-remember .label-text {
+    font-size: 1rem;
+    color: #ffffff;
+    font-weight: 500;
+}
 /* Corrige preenchimento automático para manter o ícone visível */
 input:-webkit-autofill {
     background-clip: text;
@@ -483,11 +493,10 @@ input:-webkit-autofill {
 }
 
 /* Ajusta o posicionamento do ícone para preenchimento automático */
-input:-webkit-autofill + .eye-icon {
-    position: absolute;
+.form-login-input-wrapper input:-webkit-autofill + .eye-icon {
     right: 14px;
-    top: 37px; /* Define uma posição fixa para evitar deslocamento */
-    transform: none;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 2;
 }
 
@@ -656,6 +665,10 @@ input:-webkit-autofill + .eye-icon {
         margin-bottom: 1.1rem;
         padding: 0.7rem 1rem;
         transition: border-color 0.2s;
+    }
+    .form-login-input-wrapper .form-login-input {
+        flex: 1 1 auto;
+        padding-right: 2.75rem;
     }
     .form-login-input:focus {
         border-color: #6b2ba6;

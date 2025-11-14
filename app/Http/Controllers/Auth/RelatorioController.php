@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Exports\VendasExport;
 use App\Models\MovimentoEstoque;
 use App\Models\Venda;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,17 +24,17 @@ class RelatorioController
 
         if (!$comercioId) {
             return Inertia::render('gerenciamento/Relatorio', [
-                'dados' => [],
-                'movimentosEstoque' => [],
+                'initialVendas' => $this->emptyVendasPayload(),
+                'initialMovimentos' => $this->emptyMovimentosPayload(),
             ]);
         }
 
-        $vendas = $this->buildVendasDataset($comercioId);
-        $movimentos = $this->buildMovimentosDataset($comercioId);
+        $vendas = $this->buildVendasResponse($comercioId, []);
+        $movimentos = $this->buildMovimentosResponse($comercioId, []);
 
         return Inertia::render('gerenciamento/Relatorio', [
-            'dados' => $vendas,
-            'movimentosEstoque' => $movimentos,
+            'initialVendas' => $vendas,
+            'initialMovimentos' => $movimentos,
         ]);
     }
 
@@ -59,6 +60,26 @@ class RelatorioController
             'page' => 'nullable|integer|min:1',
             'per_page' => 'nullable|integer|min:5|max:100',
         ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $inicio = $request->input('data_inicio');
+            $fim = $request->input('data_fim');
+
+            if (!$inicio || !$fim) {
+                return;
+            }
+
+            try {
+                $dataInicio = Carbon::parse($inicio)->startOfDay();
+                $dataFim = Carbon::parse($fim)->endOfDay();
+
+                if ($dataInicio->gt($dataFim)) {
+                    $validator->errors()->add('data_fim', 'A data final deve ser posterior ou igual à data inicial.');
+                }
+            } catch (\Exception $e) {
+                // As regras de data já tratam formatos inválidos.
+            }
+        });
 
         if ($validator->fails()) {
             return response()->json([
@@ -99,44 +120,80 @@ class RelatorioController
         );
     }
 
-    private function buildVendasDataset(int $comercioId): array
+    private function filterVendas(int $comercioId, array $filters): JsonResponse
     {
-        return Venda::with(['cliente', 'usuario', 'itens.produto'])
-            ->where('comercio_id', $comercioId)
-            ->orderByDesc('created_at')
-            ->orderByDesc('id')
-            ->limit(50)
-            ->get()
-            ->map(fn (Venda $venda) => $this->formatVenda($venda))
-            ->values()
-            ->all();
+        $payload = $this->buildVendasResponse($comercioId, $filters);
+
+        return response()->json(array_merge([
+            'success' => true,
+            'tabela' => 'vendas',
+        ], $payload));
     }
 
-    private function buildMovimentosDataset(int $comercioId): array
+    private function filterMovimentos(int $comercioId, array $filters): JsonResponse
     {
-        return MovimentoEstoque::with([
-                'produto' => function ($query) {
-                    $query->withTrashed();
-                },
-                'usuario',
-            ])
-            ->whereHas('produto', function ($query) use ($comercioId) {
-                $query->withTrashed()->where('comercio_id', $comercioId);
-            })
-            ->orderByDesc('created_at')
-            ->orderByDesc('id')
-            ->limit(200)
-            ->get()
-            ->map(fn (MovimentoEstoque $movimento) => $this->formatMovimento($movimento))
-            ->values()
-            ->all();
+        $payload = $this->buildMovimentosResponse($comercioId, $filters);
+
+        return response()->json(array_merge([
+            'success' => true,
+            'tabela' => 'estoque',
+        ], $payload));
     }
-    
-    private function filterVendas(int $comercioId, array $filters): JsonResponse
+
+    private function buildVendasResponse(int $comercioId, array $filters): array
     {
         $perPage = max(5, min(100, (int) ($filters['per_page'] ?? 25)));
         $page = max(1, (int) ($filters['page'] ?? 1));
 
+        $query = $this->prepareVendasQuery($comercioId, $filters);
+
+        $summaryQuery = clone $query;
+
+        $paginator = $query
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        $dados = $paginator->getCollection()
+            ->map(fn(Venda $venda) => $this->formatVenda($venda))
+            ->values()
+            ->all();
+
+        return [
+            'data' => $dados,
+            'meta' => $this->formatPaginatorMeta($paginator),
+            'resumo' => $this->resumoVendas($summaryQuery),
+        ];
+    }
+
+    private function buildMovimentosResponse(int $comercioId, array $filters): array
+    {
+        $perPage = max(5, min(100, (int) ($filters['per_page'] ?? 25)));
+        $page = max(1, (int) ($filters['page'] ?? 1));
+
+        $query = $this->prepareMovimentosQuery($comercioId, $filters);
+
+        $summaryQuery = clone $query;
+
+        $paginator = $query
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        $dados = $paginator->getCollection()
+            ->map(fn(MovimentoEstoque $movimento) => $this->formatMovimento($movimento))
+            ->values()
+            ->all();
+
+        return [
+            'data' => $dados,
+            'meta' => $this->formatPaginatorMeta($paginator),
+            'resumo' => $this->resumoMovimentos($summaryQuery),
+        ];
+    }
+
+    private function prepareVendasQuery(int $comercioId, array $filters): Builder
+    {
         $query = Venda::with(['cliente', 'usuario', 'itens.produto'])
             ->where('comercio_id', $comercioId);
 
@@ -156,37 +213,16 @@ class RelatorioController
             $query->whereIn('forma_pagamento', $pagamentos);
         }
 
-        $summaryQuery = clone $query;
-
-        $paginator = $query
-            ->orderByDesc('created_at')
-            ->orderByDesc('id')
-            ->paginate($perPage, ['*'], 'page', $page);
-
-        $dados = $paginator->getCollection()
-            ->map(fn (Venda $venda) => $this->formatVenda($venda))
-            ->values()
-            ->all();
-
-        return response()->json([
-            'success' => true,
-            'tabela' => 'vendas',
-            'data' => $dados,
-            'meta' => $this->formatPaginatorMeta($paginator),
-            'resumo' => $this->resumoVendas($summaryQuery),
-        ]);
+        return $query;
     }
 
-    private function filterMovimentos(int $comercioId, array $filters): JsonResponse
+    private function prepareMovimentosQuery(int $comercioId, array $filters): Builder
     {
-        $perPage = max(5, min(100, (int) ($filters['per_page'] ?? 25)));
-        $page = max(1, (int) ($filters['page'] ?? 1));
-
         $query = MovimentoEstoque::with([
-                'produto' => fn ($q) => $q->withTrashed(),
-                'usuario',
-            ])
-            ->whereHas('produto', function ($builder) use ($comercioId) {
+            'produto' => fn($q) => $q->withTrashed(),
+            'usuario',
+        ])
+            ->whereHas('produto', function (Builder $builder) use ($comercioId) {
                 $builder->withTrashed()->where('comercio_id', $comercioId);
             });
 
@@ -202,25 +238,42 @@ class RelatorioController
             $query->where('tipo', $filters['tipo_movimento']);
         }
 
-        $summaryQuery = clone $query;
+        return $query;
+    }
 
-        $paginator = $query
-            ->orderByDesc('created_at')
-            ->orderByDesc('id')
-            ->paginate($perPage, ['*'], 'page', $page);
+    private function emptyVendasPayload(): array
+    {
+        return [
+            'data' => [],
+            'meta' => $this->emptyMeta(),
+            'resumo' => [
+                'quantidade' => 0,
+                'total_faturado' => 0,
+                'total_descontos' => 0,
+            ],
+        ];
+    }
 
-        $dados = $paginator->getCollection()
-            ->map(fn (MovimentoEstoque $movimento) => $this->formatMovimento($movimento))
-            ->values()
-            ->all();
+    private function emptyMovimentosPayload(): array
+    {
+        return [
+            'data' => [],
+            'meta' => $this->emptyMeta(),
+            'resumo' => [
+                'quantidade' => 0,
+                'total_movimentado' => 0,
+            ],
+        ];
+    }
 
-        return response()->json([
-            'success' => true,
-            'tabela' => 'estoque',
-            'data' => $dados,
-            'meta' => $this->formatPaginatorMeta($paginator),
-            'resumo' => $this->resumoMovimentos($summaryQuery),
-        ]);
+    private function emptyMeta(): array
+    {
+        return [
+            'current_page' => 1,
+            'last_page' => 1,
+            'per_page' => 0,
+            'total' => 0,
+        ];
     }
 
     private function formatVenda(Venda $venda): array
