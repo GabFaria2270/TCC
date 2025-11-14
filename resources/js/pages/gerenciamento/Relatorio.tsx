@@ -451,6 +451,12 @@ export default function Relatorio({
         h1Ref.current?.focus();
     }, []);
 
+    const filtroDataClass = `relatorio-filtro col-12 col-md-6 ${tabela === 'vendas' ? 'col-lg-2 col-xl-2' : 'col-lg-3 col-xl-3'}`;
+    const filtroStatusClass = `relatorio-filtro col-12 col-md-6 ${tabela === 'vendas' ? 'col-lg-3 col-xl-3' : 'col-lg-3 col-xl-3'}`;
+    const filtroPagamentoClass = `relatorio-filtro col-12 col-md-6 ${tabela === 'vendas' ? 'col-lg-2 col-xl-2' : 'col-lg-3 col-xl-3'}`;
+    const filtroTipoClass = 'relatorio-filtro col-12 col-md-6 col-lg-3 col-xl-3';
+    const filtroAcoesClass = `relatorio-filtro col-12 col-md-6 ${tabela === 'vendas' ? 'col-lg-3 col-xl-3' : 'col-lg-3 col-xl-3'}`;
+
     function normalizarIso(dataIso?: string, dataTexto?: string) {
         if (dataIso) return dataIso;
         if (!dataTexto) return undefined;
@@ -750,7 +756,7 @@ export default function Relatorio({
 
     async function coletarRegistrosCompletos(alvo: 'vendas' | 'estoque'): Promise<RelatorioItem[] | MovimentoEstoque[]> {
         const itens: Array<RelatorioItem | MovimentoEstoque> = [];
-        const pageSize = 150;
+        const pageSize = 100;
         let page = 1;
         let lastPage = 1;
 
@@ -1029,7 +1035,7 @@ export default function Relatorio({
                 <div className="card filtros-card fade-in elemento-relatorio-2 mb-4 border-0 shadow-sm">
                     <div className="card-body">
                         <div className="relatorio-filtros row g-2 g-md-3 align-items-end">
-                            <div className="relatorio-filtro col-md-6 col-xl-3 col-12">
+                            <div className={filtroDataClass}>
                                 <label htmlFor="filtro-data-inicio" className="form-label">
                                     Data início
                                 </label>
@@ -1041,7 +1047,7 @@ export default function Relatorio({
                                     onChange={(e) => setFiltroDataInicio(e.target.value)}
                                 />
                             </div>
-                            <div className="relatorio-filtro col-md-6 col-xl-3 col-12">
+                            <div className={filtroDataClass}>
                                 <label htmlFor="filtro-data-fim" className="form-label">
                                     Data fim
                                 </label>
@@ -1055,7 +1061,7 @@ export default function Relatorio({
                             </div>
                             {tabela === 'vendas' && (
                                 <>
-                                    <div className="relatorio-filtro col-md-6 col-xl-3 col-12">
+                                    <div className={filtroStatusClass}>
                                         <label htmlFor="filtro-status" className="form-label">
                                             Status
                                         </label>
@@ -1071,7 +1077,7 @@ export default function Relatorio({
                                             <option value="cancelada">❌ Cancelada</option>
                                         </select>
                                     </div>
-                                    <div className="relatorio-filtro col-md-6 col-xl-3 col-12">
+                                    <div className={filtroPagamentoClass}>
                                         <label htmlFor="filtro-pagamento" className="form-label">
                                             Forma de pagamento
                                         </label>
@@ -1092,7 +1098,7 @@ export default function Relatorio({
                                 </>
                             )}
                             {tabela === 'estoque' && (
-                                <div className="relatorio-filtro col-md-6 col-xl-3 col-12">
+                                <div className={filtroTipoClass}>
                                     <label htmlFor="filtro-tipo" className="form-label">
                                         Tipo de movimento
                                     </label>
@@ -1109,7 +1115,7 @@ export default function Relatorio({
                                     </select>
                                 </div>
                             )}
-                            <div className="relatorio-filtro col-md-6 col-xl-3 col-12">
+                            <div className={filtroAcoesClass}>
                                 <div className="relatorio-filtro-acoes justify-content-xl-end">
                                     <button className="btn btn-primary" onClick={() => buscarRelatorio(1)} disabled={loading}>
                                         {loading ? (
