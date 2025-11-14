@@ -24,7 +24,6 @@ storage/framework/
 storage/app/public/
 
 # Build e arquivos temporários
-public/build/
 public/hot
 public/storage/
 npm-debug.log
