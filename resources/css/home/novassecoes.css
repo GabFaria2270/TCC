@@ -66,11 +66,14 @@
 }
 
 .stat-number {
-    font-size: 3rem;
+    font-size: clamp(1.4rem, 2vw, 1.95rem);
     font-weight: 800;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
-    line-height: 1;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
 }
 
 .stat-label {

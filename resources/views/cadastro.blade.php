@@ -96,14 +96,16 @@
                                 </div>
 
                                 <!-- Campo de Senha -->
-                                <div class="form-cadastro-group" style="position: relative;">
+                                <div class="form-cadastro-group">
                                     <label for="SENHA_HASH" class="form-cadastro-label">Senha</label>
-                                    <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
-                                        required minlength="12" placeholder="Mínimo 12 caracteres"
-                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
-                                    <span id="toggleSenha" class="eye-icon">
-                                        <i class="bi bi-eye-slash"></i>
-                                    </span>
+                                    <div class="form-cadastro-input-wrapper">
+                                        <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
+                                            required minlength="12" placeholder="Mínimo 12 caracteres"
+                                            {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
+                                        <span id="toggleSenha" class="eye-icon">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </span>
+                                    </div>
                                     @error('SENHA_HASH')
                                         @if (!str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>
@@ -112,16 +114,18 @@
                                 </div>
 
                                 <!-- Campo de Confirmar Senha -->
-                                <div class="form-cadastro-group" style="position: relative;">
+                                <div class="form-cadastro-group">
                                     <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirmar
                                         Senha</label>
-                                    <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
-                                        name="SENHA_HASH_confirmation" required minlength="12"
-                                        placeholder="Digite a senha novamente"
-                                        {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
-                                    <span id="toggleSenhaConfirm" class="eye-icon">
-                                        <i class="bi bi-eye-slash"></i>
-                                    </span>
+                                    <div class="form-cadastro-input-wrapper">
+                                        <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
+                                            name="SENHA_HASH_confirmation" required minlength="12"
+                                            placeholder="Digite a senha novamente"
+                                            {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
+                                        <span id="toggleSenhaConfirm" class="eye-icon">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </span>
+                                    </div>
                                     @error('SENHA_HASH')
                                         @if (str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>

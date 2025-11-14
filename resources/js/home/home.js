@@ -84,6 +84,9 @@ class AnimationManager {
 
     animateNumbers(elements) {
         elements.forEach((element) => {
+            if (element.dataset.static === 'true') {
+                return;
+            }
             const finalCount = parseFloat(element.dataset.count || element.textContent);
             const isDecimal = finalCount % 1 !== 0;
             let currentCount = 0;

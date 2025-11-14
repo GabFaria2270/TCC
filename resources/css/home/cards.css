@@ -403,10 +403,10 @@
     text-transform: uppercase;
     letter-spacing: 0.07em;
     box-shadow: 0 4px 16px rgba(102, 126, 234, 0.45);
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
-    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
     text-align: center;
 }
 
@@ -477,11 +477,10 @@
         padding: 0.8rem 1.5rem;
         font-size: 1.13rem;
         border-radius: 26px;
-        width: 200px;
-        min-width: 200px;
-        max-width: 200px;
-        box-sizing: border-box;
-        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
     }
 
     .vantagem-card:hover .vantagem-image img {

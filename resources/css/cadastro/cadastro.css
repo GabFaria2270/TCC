@@ -125,6 +125,19 @@ html:has(body.cadastrof) {
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12) inset;
 }
 
+.form-cadastro-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.form-cadastro-input-wrapper .form-cadastro-input {
+    flex: 1 1 auto;
+    padding-right: 2.75rem;
+    margin-bottom: 0;
+}
+
 /* Botão de cadastro */
 .form-cadastro-button {
     width: 100%;
@@ -448,10 +461,16 @@ html:has(body.cadastrof) {
     height: 80px;
 }
 
-.eye-icon {
+.form-cadastro-input-wrapper .eye-icon {
     position: absolute;
     right: 14px;
-    top: 37px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    line-height: 0;
     cursor: pointer;
     font-size: 1.3rem;
     color: var(--white-90);
@@ -463,7 +482,7 @@ html:has(body.cadastrof) {
     z-index: 2;
 }
 
-.eye-icon:hover {
+.form-cadastro-input-wrapper .eye-icon:hover {
     color: var(--color-white);
     opacity: 1;
     transform: scale(1.05);
@@ -477,11 +496,13 @@ input:-webkit-autofill {
 }
 
 /* Ajusta o posicionamento do ícone para preenchimento automático */
-input:-webkit-autofill + .eye-icon {
-    position: absolute;
+.form-cadastro-input-wrapper input:-webkit-autofill + .eye-icon {
     right: 14px;
-    top: 37px; /* Define uma posição fixa para evitar deslocamento */
+    top: 0;
+    bottom: 0;
     transform: none;
+    height: 100%;
+    line-height: 0;
     z-index: 2;
 }
 
@@ -702,9 +723,12 @@ input:-webkit-autofill + .eye-icon {
         color: #fff;
         font-size: 1.05rem;
         border-radius: 10px;
-        margin-bottom: 1.1rem;
+        margin-bottom: 0;
         padding: 0.7rem 1rem;
         transition: border-color 0.2s;
+    }
+    .form-cadastro-group {
+        margin-bottom: 1.1rem;
     }
     .form-cadastro-input:focus {
         border-color: #6b2ba6;

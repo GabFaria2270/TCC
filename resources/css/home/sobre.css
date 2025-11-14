@@ -85,41 +85,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    height: 4px;
+    width: 100%;
+    height: 6px;
     background: linear-gradient(90deg, var(--secondary-blue), var(--secondary-blue-dark));
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-}
-
-.sobre-text:hover::before {
-    transform: scaleX(1);
-}
-
-.sobre-titulo {
-    font-size: 1.5rem; /* Tamanho do título */
-    font-weight: 700; /* Negrito */
-    color: var(--color-white); /* Texto branco */
-    margin: 0 0 0.75rem 0; /* Mantém o título mais próximo do parágrafo */
-    display: block; /* Garante comportamento de bloco */
-}
-
-.sobre-titulo::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--secondary-blue), var(--secondary-blue-dark));
-    border-radius: 2px;
-}
-
-.sobre-descricao {
-    font-size: 1rem; /* Tamanho do texto */
-    line-height: 1.6; /* Altura da linha */
-    color: var(--white-80); /* Texto branco com opacidade */
-    margin-bottom: 0.75rem; /* Espaçamento reduzido para permitir subtexto */
 }
 
 /* Texto secundário/menor logo abaixo da descrição principal */
@@ -143,6 +111,7 @@
 
 .sobre-escrita-detalhe {
     text-align: justify;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .sobre-destaque {
@@ -180,47 +149,56 @@
 }
 
 .sobre-stats {
-    display: flex;
-    gap: 1.2rem; /* Espaçamento entre as estatísticas */
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
     margin-top: 2rem;
-    flex-wrap: nowrap;
-    justify-content: center;
-    row-gap: 0;
+    align-items: stretch;
 }
 
 .stat-mini {
-    text-align: center;
-    padding: 0.6rem;
-    background: rgba(59, 130, 246, 0.08);
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    gap: 0.35rem;
+    padding: 1.1rem 1.3rem 1.25rem;
+    border-radius: 18px;
+    background: rgba(40, 56, 80, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 15px 35px rgba(3, 6, 16, 0.35);
+    transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    min-height: 138px;
+    justify-content: flex-start;
+    position: relative;
 }
 
 .stat-mini:hover {
-    background: rgba(59, 130, 246, 0.12);
-    transform: translateY(-5px);
+    transform: translateY(-6px);
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(28, 44, 66, 0.98);
+    box-shadow: 0 20px 40px rgba(6, 12, 28, 0.55);
+}
+
+.stat-mini::before {
+    content: '';
+    width: 34px;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--secondary-blue), var(--secondary-blue-dark));
+    margin-bottom: 0.55rem;
 }
 
 .stat-mini-number {
-    font-size: 2rem; /* Tamanho do número */
-    font-weight: 700; /* Negrito */
-    color: var(--secondary-blue); /* Cor azul */
-    margin-bottom: 0.5rem;
-    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .stat-mini-label {
-    font-size: 0.9rem; /* Tamanho do rótulo */
-    color: var(--text-secondary); /* Cor cinza */
-    font-weight: 500;
+    font-size: 0.93rem;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.45;
 }
 
 /* ===================================================================
@@ -238,8 +216,7 @@
     }
 
     .sobre-stats {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -267,24 +244,11 @@
     }
 
     .sobre-stats {
-        flex-wrap: nowrap;
-        gap: 0.3rem;
-        row-gap: 0;
-        overflow-x: unset;
-        -webkit-overflow-scrolling: unset;
+        grid-template-columns: 1fr;
     }
 
     .stat-mini {
-        padding: 0.28rem;
-        width: 95px;
-        min-width: 95px;
-        max-width: 95px;
-        box-sizing: border-box;
-        margin: 0;
-    }
-
-    .stat-mini-number {
-        font-size: 1.18rem;
+        min-height: unset;
     }
 }
 
@@ -359,6 +323,10 @@
     text-align: center;
     color: var(--color-white);
     margin-bottom: 1.5rem;
+}
+
+.container-sobre .container-escrita .escrita {
+    color: #fff;
 }
 
 /* ===================================================================
