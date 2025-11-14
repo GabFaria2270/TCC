@@ -172,6 +172,22 @@
     opacity: 0.7;
 }
 
+/* ------------------------------------------------------------------
+   📐 LAYOUT GERAL DO PDV
+   ------------------------------------------------------------------ */
+
+.vendas-container {
+    align-items: stretch;
+}
+
+.vendas-container > [class*='col-'] {
+    display: flex;
+}
+
+.vendas-container > [class*='col-'] > * {
+    flex: 1 1 auto;
+}
+
 /* Scroll com sombra */
 .scroll-shadow {
     position: relative;
@@ -301,6 +317,18 @@
 [data-bs-theme='dark'] .produto-card .card-text {
     color: var(--theme-text-secondary);
 }
+[data-bs-theme='dark'] .produtos-scroll-area {
+    background-color: transparent;
+}
+[data-bs-theme='dark'] .produtos-scroll-area::-webkit-scrollbar-track {
+    background: #1f2430;
+}
+[data-bs-theme='dark'] .produtos-scroll-area::-webkit-scrollbar-thumb {
+    background: #3a4252;
+}
+[data-bs-theme='dark'] .produtos-scroll-hint {
+    background: linear-gradient(180deg, rgba(21, 25, 34, 0), rgba(21, 25, 34, 0.9) 60%);
+}
 [data-bs-theme='dark'] .carrinho-container {
     background: var(--theme-surface-1);
 }
@@ -357,6 +385,39 @@
     background: white;
     position: relative;
     overflow: hidden;
+}
+
+.produtos-scroll-area {
+    min-height: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+    padding-bottom: 0.5rem;
+}
+
+.produtos-scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.produtos-scroll-area::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.produtos-scroll-area::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.produtos-scroll-area::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.produtos-scroll-hint {
+    position: sticky;
+    bottom: 0;
+    padding: 0.5rem 0.25rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 60%);
 }
 
 .produto-card::before {
@@ -861,6 +922,10 @@
 
     .carrinho-lista {
         max-height: 250px;
+    }
+
+    .produtos-scroll-area {
+        max-height: 60vh;
     }
 
     .modal-dialog {
