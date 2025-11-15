@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Toast from '../components/Toast';
 import { useAppearance, type Appearance } from '../hooks/use-appearance';
 import type { SharedProps } from '../types/inertia';
@@ -37,6 +37,9 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
     const { appearance, updateAppearance } = useAppearance();
     const [isDesktop, setIsDesktop] = useState<boolean>(() => getInitialIsDesktop());
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => getInitialIsDesktop());
+    const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
+    const [logoutMessage, setLogoutMessage] = useState<string>('');
+    const logoutFormRef = useRef<HTMLFormElement | null>(null);
 
     // Estado inicial já carregado acima (evita salto visual)
 
@@ -99,6 +102,19 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         setSidebarOpen(false);
     };
 
+    const handleLogout = () => {
+        if (isLoggingOut) {
+            return;
+        }
+        setLogoutMessage('Encerrando sessão com segurança...');
+        setIsLoggingOut(true);
+        if (logoutFormRef.current) {
+            logoutFormRef.current.submit();
+        } else {
+            window.location.assign('/logout');
+        }
+    };
+
     const sidebarStateClass = isDesktop ? 'is-open' : sidebarOpen ? 'is-open' : 'is-closed';
 
     const renderSidebar = () => (
@@ -138,6 +154,24 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                     <span className="large-icon">📊</span>
                     <span className="sidebar-label">Relatório</span>
                 </Link>
+            </div>
+            <div className="border-top mt-auto p-3">
+                <button
+                    type="button"
+                    className="btn btn-outline-danger d-flex align-items-center justify-content-center w-100 gap-2"
+                    onClick={() => {
+                        handleLogout();
+                        closeSidebar();
+                    }}
+                    disabled={isLoggingOut}
+                >
+                    {isLoggingOut ? (
+                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                    ) : (
+                        <i className="bi bi-box-arrow-right" aria-hidden="true" />
+                    )}
+                    <span className="fw-semibold">Sair</span>
+                </button>
             </div>
         </nav>
     );
@@ -189,6 +223,21 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                         <div className="text-end">
                             <div className="fw-semibold">Olá, {user?.NOME ?? 'Usuário'}</div>
                             <small className="text-secondary">Perfil: {user?.PERFIL ?? '—'}</small>
+                            <div className="mt-2">
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2"
+                                    onClick={handleLogout}
+                                    disabled={isLoggingOut}
+                                >
+                                    {isLoggingOut ? (
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                                    ) : (
+                                        <i className="bi bi-box-arrow-right" aria-hidden="true" />
+                                    )}
+                                    <span>Sair</span>
+                                </button>
+                            </div>
                         </div>
                     </header>
 
@@ -230,11 +279,17 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
                                 </button>
                             </div>
                         </div>
+                        <div className="visually-hidden" aria-live="polite">
+                            {isLoggingOut ? logoutMessage : ''}
+                        </div>
                         {children}
                     </section>
                 </main>
             </div>
             <TourGuideShepherd userId={user?.id} />
+            <form ref={logoutFormRef} method="POST" action="/logout" className="d-none">
+                <input type="hidden" name="_token" value={props.csrf_token ?? ''} />
+            </form>
         </>
     );
 }

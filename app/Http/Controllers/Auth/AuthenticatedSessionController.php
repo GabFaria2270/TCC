@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\Auth\CacheTokenService;
 use App\Services\Auth\SessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -23,7 +25,7 @@ use Inertia\Response;
  */
 class AuthenticatedSessionController extends Controller
 {
-    public function __construct(private SessionService $sessionService)
+    public function __construct(private SessionService $sessionService, private CacheTokenService $tokenService)
     {
     }
 
@@ -68,9 +70,24 @@ class AuthenticatedSessionController extends Controller
      * Destroy session - USADO PARA LOGOUT
      * Único método que você utiliza deste controller
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request): RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $usuario = Auth::user();
+
+        $authToken = $request->cookie('auth_token');
+        $rememberToken = $request->cookie('remember_token');
+
+        if ($authToken) {
+            $this->tokenService->revokeToken($authToken);
+            Cookie::queue(Cookie::forget('auth_token'));
+        }
+
+        if ($rememberToken) {
+            if (!$authToken || $rememberToken !== $authToken) {
+                $this->tokenService->revokeToken($rememberToken);
+            }
+            Cookie::queue(Cookie::forget('remember_token'));
+        }
 
         // LOG DE LOGOUT - Auditoria de sessões
         Log::channel('security')->info('Logout realizado (Controller)', [
@@ -83,6 +100,10 @@ class AuthenticatedSessionController extends Controller
         // LOGOUT SEGURO
         Auth::guard('web')->logout();
         $this->sessionService->unlinkSession($request, true);
+
+        if ($request->header('X-Inertia')) {
+            return Inertia::location(route('home'));
+        }
 
         return redirect()->route('home')->with('success', 'Logout realizado com sucesso!');
     }
