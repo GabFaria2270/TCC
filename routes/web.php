@@ -110,6 +110,10 @@ Route::middleware(['require.token'])->group(function () {
         Route::get('relatorio', [\App\Http\Controllers\Auth\RelatorioController::class, 'index'])->name('relatorio.index');
         Route::post('relatorio/buscar', [\App\Http\Controllers\Auth\RelatorioController::class, 'filter'])->name('relatorio.filter');
         Route::get('relatorio/exportar-excel', [\App\Http\Controllers\Auth\RelatorioController::class, 'exportExcel'])->name('relatorio.exportarExcel');
+
+        // Logout dentro do escopo de gerenciamento (POST por segurança)
+        Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+            ->name('gerenciamento.logout');
     });
 });
 

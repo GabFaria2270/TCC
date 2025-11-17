@@ -64,6 +64,50 @@ class SessionService
     }
 
     /**
+     * Remove do banco a sessão atual e, opcionalmente, todas as sessões do usuário.
+     * Útil para garantir que não reste sessão persistida após o logout.
+     */
+    public function terminateStoredSessions(Request $request, ?int $userId = null, bool $deleteAllForUser = false): void
+    {
+        try {
+            $currentSessionId = null;
+            if ($request->hasSession()) {
+                if (method_exists($request->session(), 'isStarted') && !$request->session()->isStarted()) {
+                    $request->session()->start();
+                }
+                $currentSessionId = $request->session()->getId();
+            }
+
+            if ($currentSessionId) {
+                DB::table('sessions')->where('id', $currentSessionId)->delete();
+            } else {
+                // Tenta obter pelo cookie caso o handler ainda não tenha iniciado
+                $sessionCookie = config('session.cookie', 'laravel_session');
+                $cookieId = $request->cookie($sessionCookie);
+                if ($cookieId) {
+                    DB::table('sessions')->where('id', $cookieId)->delete();
+                }
+            }
+
+            if ($deleteAllForUser && $userId) {
+                DB::table('sessions')->where('user_id', $userId)->delete();
+            }
+
+            Log::channel('security')->info('Sessões persistidas encerradas no banco', [
+                'current_session_deleted' => (bool) $currentSessionId,
+                'user_id' => $userId,
+                'delete_all_for_user' => $deleteAllForUser,
+            ]);
+        } catch (\Throwable $e) {
+            Log::channel('security')->warning('Falha ao encerrar sessões persistidas no banco', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    
+
+    /**
      * Remove a vinculação da sessão ao usuário.
      * 
      * @param Request $request
@@ -95,6 +139,38 @@ class SessionService
         } catch (\Exception $e) {
             Log::error('Erro ao desvincular sessão', [
                 'session_id' => $request->session()->getId(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Remove registros da tabela sessions relacionados à sessão atual e, opcionalmente, ao usuário.
+     */
+    public function purgeStoredSessions(?string $sessionId = null, ?int $userId = null, bool $purgeAllUserSessions = false): bool
+    {
+        try {
+            if ($sessionId) {
+                DB::table('sessions')->where('id', $sessionId)->delete();
+            }
+
+            if ($userId) {
+                $query = DB::table('sessions')->where('user_id', $userId);
+
+                if (!$purgeAllUserSessions && $sessionId) {
+                    $query->where('id', '!=', $sessionId);
+                }
+
+                $query->delete();
+            }
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::warning('Erro ao remover sessão persistida', [
+                'session_id' => $sessionId,
+                'user_id' => $userId,
                 'error' => $e->getMessage(),
             ]);
 

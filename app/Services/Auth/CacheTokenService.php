@@ -366,6 +366,14 @@ class CacheTokenService
     }
 
     /**
+     * Revoga todos os tokens vinculados ao usuário informado.
+     */
+    public function revokeTokensForUser(int $userId): void
+    {
+        $this->revokeAllTokensForUser($userId);
+    }
+
+    /**
      * Indica se deve renovar (<= 15 min restantes)
      */
     public function shouldRefresh(array $tokenData): bool
@@ -604,7 +612,7 @@ class CacheTokenService
     /**
      * Remove todos os tokens do usuário específico (apenas dele)
      */
-    private function revokeAllTokensForUser(int $userId): void
+    public function revokeAllTokensForUser(int $userId): void
     {
         try {
             // 1. Remove tokens da tabela remember_tokens para este usuário
@@ -653,6 +661,8 @@ class CacheTokenService
             ]);
         }
     }
+
+    
 
     /**
      * Extrai token do request atual (Authorization Bearer ou cookie)

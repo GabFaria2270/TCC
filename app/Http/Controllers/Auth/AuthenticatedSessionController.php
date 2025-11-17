@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Services\Auth\CacheTokenService;
 use App\Services\Auth\SessionService;
+use App\Services\Auth\LogoutService;
+use App\Http\Requests\Auth\LogoutRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +27,7 @@ use Inertia\Response;
  */
 class AuthenticatedSessionController extends Controller
 {
-    public function __construct(private SessionService $sessionService, private CacheTokenService $tokenService)
+    public function __construct(private SessionService $sessionService, private CacheTokenService $tokenService, private LogoutService $logoutService)
     {
     }
 
@@ -70,36 +72,17 @@ class AuthenticatedSessionController extends Controller
      * Destroy session - USADO PARA LOGOUT
      * Único método que você utiliza deste controller
      */
-    public function destroy(Request $request): RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function destroy(LogoutRequest $request): RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $usuario = Auth::user();
+        $this->logoutService->handle($request);
 
-        $authToken = $request->cookie('auth_token');
-        $rememberToken = $request->cookie('remember_token');
-
-        if ($authToken) {
-            $this->tokenService->revokeToken($authToken);
-            Cookie::queue(Cookie::forget('auth_token'));
-        }
-
-        if ($rememberToken) {
-            if (!$authToken || $rememberToken !== $authToken) {
-                $this->tokenService->revokeToken($rememberToken);
-            }
-            Cookie::queue(Cookie::forget('remember_token'));
-        }
-
-        // LOG DE LOGOUT - Auditoria de sessões
         Log::channel('security')->info('Logout realizado (Controller)', [
             'user_id' => $usuario->id ?? 'N/A',
             'email' => $usuario->EMAIL ?? 'N/A',
             'ip' => $request->ip(),
             'timestamp' => now(),
         ]);
-
-        // LOGOUT SEGURO
-        Auth::guard('web')->logout();
-        $this->sessionService->unlinkSession($request, true);
 
         if ($request->header('X-Inertia')) {
             return Inertia::location(route('home'));
