@@ -84,10 +84,12 @@ class AuthenticatedSessionController extends Controller
             'timestamp' => now(),
         ]);
 
+        $redirectRoute = route('login');
+
         if ($request->header('X-Inertia')) {
-            return Inertia::location(route('home'));
+            return Inertia::location($redirectRoute);
         }
 
-        return redirect()->route('home')->with('success', 'Logout realizado com sucesso!');
+        return redirect($redirectRoute)->with('success', 'Logout realizado com sucesso!');
     }
 }

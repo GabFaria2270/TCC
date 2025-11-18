@@ -69,7 +69,12 @@ class LoginService
                     'perfil' => $usuario->PERFIL,
                 ]
             ];
-            cookie()->queue(cookie('remember_token', $rememberToken, 43200, '/', null, false, true, false, 'Lax')); // 30 dias
+            $secure = (bool) config('session.secure', false);
+            $sameSiteCfg = config('session.same_site');
+            $defaultSameSite = 'lax';
+            $sameSite = $sameSiteCfg ? strtolower($sameSiteCfg) : $defaultSameSite;
+            $path = config('session.path', '/');
+            cookie()->queue(cookie('remember_token', $rememberToken, 43200, $path, config('session.domain'), $secure, true, false, $sameSite)); // 30 dias
         } else {
             $tokenData = $this->tokenService->getTokenData($usuario);
         }

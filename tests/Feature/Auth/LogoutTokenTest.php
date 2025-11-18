@@ -28,7 +28,7 @@ it('revoga tokens de autenticação e remember no logout', function () {
         ->withCookie('remember_token', $token)
         ->post(route('logout'));
 
-    $response->assertRedirect(route('home'));
+    $response->assertRedirect(route('login'));
     $response->assertCookieExpired('auth_token');
     $response->assertCookieExpired('remember_token');
 

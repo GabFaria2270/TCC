@@ -80,10 +80,12 @@ class LoginController extends Controller
                 // ✅ NÃO GERAR TOKEN DE NOVO: usar o retornado do service
                 $tokenData = $result['token_data'] ?? $this->tokenService->getTokenData($usuario);
 
-                // Define cookie do token
-                cookie()->queue(
-                    cookie('auth_token', $tokenData['token'], 1440, '/', null, false, true, false, 'Lax')
-                );
+                // Define cookie do token (usando config para consistência)
+                $secure = (bool) config('session.secure', false);
+                $sameSiteCfg = config('session.same_site');
+                $sameSite = $sameSiteCfg ? strtolower($sameSiteCfg) : 'lax';
+                $path = config('session.path', '/');
+                cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, $path, config('session.domain'), $secure, true, false, $sameSite));
 
                 // Limpa rate limiting
                 \App\Http\Middleware\LoginRateLimiting::clearRateLimit($request);

@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Toast from '../components/Toast';
 import { useAppearance, type Appearance } from '../hooks/use-appearance';
@@ -108,11 +108,23 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
         }
         setLogoutMessage('Encerrando sessão com segurança...');
         setIsLoggingOut(true);
-        if (logoutFormRef.current) {
-            logoutFormRef.current.submit();
-        } else {
-            window.location.assign('/logout');
-        }
+
+        router.post(
+            '/logout',
+            { all_devices: true },
+            {
+                preserveScroll: false,
+                onSuccess: () => {
+                    setLogoutMessage('Sessão encerrada. Redirecionando...');
+                },
+                onError: () => {
+                    setLogoutMessage('Falha ao encerrar sessão. Tente novamente.');
+                },
+                onFinish: () => {
+                    setIsLoggingOut(false);
+                },
+            },
+        );
     };
 
     const sidebarStateClass = isDesktop ? 'is-open' : sidebarOpen ? 'is-open' : 'is-closed';
@@ -289,6 +301,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
             <TourGuideShepherd userId={user?.id} />
             <form ref={logoutFormRef} method="POST" action="/logout" className="d-none">
                 <input type="hidden" name="_token" value={props.csrf_token ?? ''} />
+                <input type="hidden" name="all_devices" value="true" />
             </form>
         </>
     );

@@ -60,10 +60,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    // ✅ LOGOUT: Usa AuthenticatedSessionController (único que você usa dele)
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
 });
+
+// ✅ LOGOUT: acessível para sessões validadas via middleware customizado
+Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware(['require.token'])
+    ->name('logout');
 
 // Refresh Token via Cache
 Route::post('/refresh-token', function (Request $request) {
@@ -71,10 +73,10 @@ Route::post('/refresh-token', function (Request $request) {
     if (!$user) {
         return response()->json(['success' => false, 'message' => 'Não autenticado'], 401);
     }
-    
+
     $tokenService = app(\App\Services\Auth\CacheTokenService::class);
     $tokenData = $tokenService->getTokenData($user);
-    
+
     return response()->json([
         'success' => true,
         'auth' => $tokenData,

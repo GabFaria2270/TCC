@@ -144,12 +144,17 @@ class RequireTokenOrSession
 
             $existingToken = $request->cookie('auth_token');
 
+            $secure = (bool) config('session.secure', false);
+            $sameSiteCfg = config('session.same_site');
+            $sameSite = $sameSiteCfg ? strtolower($sameSiteCfg) : 'lax';
+            $path = config('session.path', '/');
+
             if ($existingToken) {
                 $validData = $this->tokenService->validateToken($existingToken);
                 if ($validData) {
                     // Cookie ausente mas token válido no cache? Regrava o MESMO token no cookie
                     if (!$request->cookies->has('auth_token')) {
-                        cookie()->queue(cookie('auth_token', $existingToken, 1440, '/', null, false, true, false, 'Lax'));
+                        cookie()->queue(cookie('auth_token', $existingToken, 1440, $path, config('session.domain'), $secure, true, false, $sameSite));
                         Log::channel('security')->debug('Regravado cookie com token já válido (sem gerar novo)', [
                             'user_id' => Auth::id()
                         ]);
@@ -158,7 +163,7 @@ class RequireTokenOrSession
                     // Token inválido/removido: gerar um novo único
                     if ($authUsuario) {
                         $tokenData = $this->tokenService->getTokenData($authUsuario);
-                        cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, '/', null, false, true, false, 'Lax'));
+                        cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, $path, config('session.domain'), $secure, true, false, $sameSite));
                         Log::channel('security')->info('Token regenerado (inválido/removido)', [
                             'user_id' => $authUsuario->id
                         ]);
@@ -170,14 +175,14 @@ class RequireTokenOrSession
                 if ($headerToken) {
                     $validData = $this->tokenService->validateToken($headerToken);
                     if ($validData) {
-                        cookie()->queue(cookie('auth_token', $headerToken, 1440, '/', null, false, true, false, 'Lax'));
+                        cookie()->queue(cookie('auth_token', $headerToken, 1440, $path, config('session.domain'), $secure, true, false, $sameSite));
                         Log::channel('security')->debug('Cookie ausente, mas header Bearer válido - regravado', [
                             'user_id' => Auth::id()
                         ]);
                     } else {
                         if ($authUsuario) {
                             $tokenData = $this->tokenService->getTokenData($authUsuario);
-                            cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, '/', null, false, true, false, 'Lax'));
+                            cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, $path, config('session.domain'), $secure, true, false, $sameSite));
                             Log::channel('security')->info('Cookie e header inválidos - gerado novo token', [
                                 'user_id' => $authUsuario->id
                             ]);
@@ -187,7 +192,7 @@ class RequireTokenOrSession
                     // Sem cookie e sem header: gerar um novo
                     if ($authUsuario) {
                         $tokenData = $this->tokenService->getTokenData($authUsuario);
-                        cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, '/', null, false, true, false, 'Lax'));
+                        cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, $path, config('session.domain'), $secure, true, false, $sameSite));
                         Log::channel('security')->info('Token ausente em cookie e header - gerado novo', [
                             'user_id' => $authUsuario->id
                         ]);
