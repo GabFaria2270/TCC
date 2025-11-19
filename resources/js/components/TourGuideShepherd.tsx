@@ -513,6 +513,10 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
         // Salva o índice do passo atual ao avançar
         const advanceStep = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
+            // Não avançar quando o clique for no ícone de fechar (X) do Shepherd
+            if (target.closest('.shepherd-cancel-icon')) {
+                return;
+            }
             const currentStep = tour.getCurrentStep();
             if (target.closest('.shepherd-button')) {
                 if (target.textContent?.trim() === 'Cancelar') return;
