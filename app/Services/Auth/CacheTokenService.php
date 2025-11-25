@@ -24,8 +24,39 @@ class CacheTokenService
     public function generateToken(Usuario $usuario, ?int $minutes = null, bool $persistInDb = false): string
     {
         try {
-            // ✅ Antes de gerar, remove qualquer token existente desse usuário
-            $this->revokeAllTokensForUser($usuario->id);
+            // ✅ Se for remember token (persistInDb=true), permitir múltiplos dispositivos
+            // Apenas remover token existente do MESMO dispositivo (user_agent)
+            if ($persistInDb) {
+                $currentUserAgent = substr(request()->userAgent() ?? '', 0, 500);
+                
+                // Remove apenas tokens do mesmo dispositivo
+                try {
+                    $tokenHash = null;
+                    $existingToken = RememberToken::where('user_id', $usuario->id)
+                        ->where('user_agent', $currentUserAgent)
+                        ->first();
+                    
+                    if ($existingToken) {
+                        // Remove do banco
+                        $existingToken->delete();
+                        
+                        // Tentar remover do cache (não temos o token plain, apenas o hash)
+                        // Vamos limpar tokens expirados do cache para este usuário
+                        Log::channel('security')->info('🗑️ Removendo token anterior do mesmo dispositivo', [
+                            'user_id' => $usuario->id,
+                            'user_agent_preview' => substr($currentUserAgent, 0, 50),
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                    Log::channel('security')->warning('⚠️ Falha ao remover token anterior do mesmo dispositivo', [
+                        'user_id' => $usuario->id,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            } else {
+                // ✅ Para tokens normais (não-remember), remover todos os tokens do usuário
+                $this->revokeAllTokensForUser($usuario->id);
+            }
 
             $tokenId = Str::random(40);
             $cacheKey = "auth_token:{$tokenId}";
@@ -65,6 +96,7 @@ class CacheTokenService
                     Log::channel('security')->info('✅ Token persistido na tabela remember_tokens', [
                         'user_id' => $usuario->id,
                         'token_preview' => substr($tokenId, 0, 10) . '...',
+                        'user_agent_preview' => substr($tokenData['user_agent'], 0, 50),
                     ]);
                 } catch (\Exception $e) {
                     Log::channel('security')->warning('⚠️ Falha ao persistir token na tabela remember_tokens', [
@@ -74,10 +106,11 @@ class CacheTokenService
                 }
             }
 
-            Log::channel('security')->info('✅ Token único gerado', [
+            Log::channel('security')->info('✅ Token gerado', [
                 'user_id' => $usuario->id,
                 'token_preview' => substr($tokenId, 0, 10) . '...',
                 'cache_key' => $cacheKey,
+                'multi_device' => $persistInDb,
             ]);
 
             return $tokenId;

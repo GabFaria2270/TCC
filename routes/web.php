@@ -22,17 +22,38 @@ Route::get('/', function (Request $request) {
         try {
             $tokenHash = hash_hmac('sha256', $remember, config('app.key'));
             $rememberRow = RememberToken::where('token_hash', $tokenHash)->first();
+            
+            // Verifica se o token existe, não expirou E pertence ao mesmo dispositivo
             if ($rememberRow && (!$rememberRow->expires_at || !Carbon::parse($rememberRow->expires_at)->isPast())) {
-                /** @var CacheTokenService $tokenService */
-                $tokenService = app(CacheTokenService::class);
-                $data = $tokenService->validateToken($remember);
-                if ($data && !empty($data['user_id'])) {
-                    $user = Usuario::find($data['user_id']);
-                    if ($user) {
-                        $request->session()->put('user_id', $user->id);
-                        Auth::setUser($user);
-                        return redirect()->route('gerenciamento');
+                // Verificar se o user_agent e IP correspondem ao dispositivo atual
+                $currentUserAgent = substr($request->userAgent() ?? '', 0, 500);
+                $currentIp = $request->ip();
+                
+                // Validar apenas se for o mesmo dispositivo (user_agent corresponde)
+                // IP pode variar em redes móveis, então priorizamos user_agent
+                $isSameDevice = $rememberRow->user_agent === $currentUserAgent;
+                
+                if ($isSameDevice) {
+                    /** @var CacheTokenService $tokenService */
+                    $tokenService = app(CacheTokenService::class);
+                    $data = $tokenService->validateToken($remember);
+                    if ($data && !empty($data['user_id'])) {
+                        $user = Usuario::find($data['user_id']);
+                        if ($user) {
+                            // Atualizar last_used_at do token
+                            $rememberRow->update(['last_used_at' => now()]);
+                            
+                            $request->session()->put('user_id', $user->id);
+                            Auth::setUser($user);
+                            return redirect()->route('gerenciamento');
+                        }
                     }
+                } else {
+                    // Token existe mas é de outro dispositivo - não fazer login automático
+                    logger()->info('Remember token de outro dispositivo detectado', [
+                        'stored_user_agent' => substr($rememberRow->user_agent, 0, 50),
+                        'current_user_agent' => substr($currentUserAgent, 0, 50),
+                    ]);
                 }
             }
         } catch (\Exception $e) {

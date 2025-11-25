@@ -35,7 +35,7 @@
     </section>
 
     <!-- Conteúdo do carousel  -->
-    <section class="section-home main-content">
+    <section class="section-home main-content" id="inicio">
         <div id="mainCarousel" class="carousel slide carousel-fade home-carousel" data-bs-ride="carousel"
             data-bs-touch="true" data-bs-pause="hover" data-bs-interval="5000" aria-roledescription="carousel"
             aria-label="Destaques">
