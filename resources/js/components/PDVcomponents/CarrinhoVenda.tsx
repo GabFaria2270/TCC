@@ -24,11 +24,13 @@ interface CarrinhoVendaProps {
     calcularSubtotal: () => number;
     calcularTotal: () => number;
     finalizarVenda: () => void;
+    cancelarVenda: () => void;
+    cancelandoVenda: boolean;
     abrirModalCliente: () => void;
     addNotification: (notification: any) => void;
 }
 
-export default function CarrinhoVenda(props: any) {
+export default function CarrinhoVenda(props: CarrinhoVendaProps) {
     const {
         carrinho,
         clientesAtualizados,
@@ -48,8 +50,11 @@ export default function CarrinhoVenda(props: any) {
         calcularSubtotal,
         calcularTotal,
         finalizarVenda,
+        cancelarVenda,
+        cancelandoVenda,
         addNotification,
     } = props;
+    const carrinhoEmProcesso = loadingVenda || cancelandoVenda;
     
     // ✅ estado de texto do combobox (campo de busca/seleção)
     const [clienteQuery, setClienteQuery] = useState<string>('');
@@ -107,7 +112,7 @@ export default function CarrinhoVenda(props: any) {
     };
 
     return (
-            <div className={`card carrinho-container h-100 ${loadingVenda ? 'loading' : ''}`}>
+            <div className={`card carrinho-container h-100 ${carrinhoEmProcesso ? 'loading' : ''}`}>
                 <div className="card-header carrinho-header text-white">
                     <h5 className="mb-0">
                         <i className="bi bi-cart me-2"></i>
@@ -409,33 +414,40 @@ export default function CarrinhoVenda(props: any) {
                                 </div>
                             </div>
 
-                            {/* Botão Finalizar */}
-                            <button
-                                className={`btn btn-finalizar-venda w-100 ${loadingVenda ? 'processing' : ''}`}
-                                onClick={finalizarVenda}
-                                disabled={loadingVenda || carrinho.length === 0}
-                            >
-                                {loadingVenda ? (
-                                    <>
-                                        <div className="spinner-border spinner-border-sm me-2" role="status">
-                                            <span className="visually-hidden">Processando...</span>
-                                        </div>
-                                        <span className="processing-text">
-                                            Processando venda
-                                            <span className="dots">
-                                                <span>.</span>
-                                                <span>.</span>
-                                                <span>.</span>
-                                            </span>
-                                        </span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="bi bi-check-circle me-2"></i>
-                                        Finalizar Venda
-                                    </>
-                                )}
-                            </button>
+                            {/* Botões de ação */}
+                            <div className="d-flex flex-column gap-2">
+                                <button
+                                    type="button"
+                                    className={`btn btn-finalizar-venda w-100 ${loadingVenda ? 'processing' : ''}`}
+                                    onClick={finalizarVenda}
+                                    disabled={loadingVenda || cancelandoVenda || carrinho.length === 0}
+                                >
+                                    {loadingVenda ? (
+                                        <span className="fw-semibold">Processando venda...</span>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-check-circle me-2"></i>
+                                            Finalizar Venda
+                                        </>
+                                    )}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={`btn btn-finalizar-venda btn-cancelar-venda w-100 ${cancelandoVenda ? 'processing' : ''}`}
+                                    onClick={cancelarVenda}
+                                    disabled={cancelandoVenda || loadingVenda || carrinho.length === 0}
+                                >
+                                    {cancelandoVenda ? (
+                                        <span className="fw-semibold">Cancelando venda...</span>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-x-circle me-2"></i>
+                                            Cancelar Venda
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </>
                     )}
                 </div>

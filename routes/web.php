@@ -117,6 +117,8 @@ Route::middleware(['require.token'])->group(function () {
             ->name('vendas.index');
         Route::post('vendas', [VendasController::class, 'store'])
             ->name('vendas.store');
+        Route::post('vendas/cancelar-aberta', [VendasController::class, 'storeCancelada'])
+            ->name('vendas.storeCancelada');
         Route::get('vendas/{venda}', [VendasController::class, 'show'])
             ->name('vendas.show');
         Route::get('vendas/{venda}/edit', [VendasController::class, 'edit'])
@@ -125,6 +127,8 @@ Route::middleware(['require.token'])->group(function () {
             ->name('vendas.update');
         Route::delete('vendas/{venda}', [VendasController::class, 'destroy'])
             ->name('vendas.destroy');
+        Route::post('vendas/{venda}/cancelar', [VendasController::class, 'cancelar'])
+            ->name('vendas.cancelar');
         Route::get('fiado/historico', [FiadoController::class, 'historico'])
             ->name('fiado.historico');
         // ROTA DE RELATÓRIO

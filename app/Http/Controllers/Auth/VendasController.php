@@ -42,6 +42,9 @@ class VendasController extends Controller
                     'valor_insuficiente' => __('validation.pdv_valor_insuficiente'),
                     'produto_ja_no_carrinho' => __('validation.pdv_produto_ja_no_carrinho'),
                     'cliente_obrigatorio' => __('validation.pdv_cliente_obrigatorio'),
+                    'venda_cancelada' => __('validation.pdv_venda_cancelada'),
+                    'erro_cancelar' => __('validation.pdv_erro_cancelar'),
+                    'venda_ja_cancelada' => __('validation.pdv_venda_ja_cancelada'),
                 ],
             ]);
         }
@@ -66,6 +69,9 @@ class VendasController extends Controller
                 'valor_insuficiente' => __('validation.pdv_valor_insuficiente'),
                 'produto_ja_no_carrinho' => __('validation.pdv_produto_ja_no_carrinho'),
                 'cliente_obrigatorio' => __('validation.pdv_cliente_obrigatorio'),
+                'venda_cancelada' => __('validation.pdv_venda_cancelada'),
+                'erro_cancelar' => __('validation.pdv_erro_cancelar'),
+                'venda_ja_cancelada' => __('validation.pdv_venda_ja_cancelada'),
             ],
         ]);
     }
@@ -81,6 +87,24 @@ class VendasController extends Controller
 
         if ($resultado['success']) {
             return redirect()->back()->with('success', __('validation.pdv_venda_processada'));
+        }
+
+        return back()
+            ->withErrors($resultado['errors'] ?? [])
+            ->withInput();
+    }
+
+    /**
+     * Store a canceled venda (registrada diretamente como cancelada).
+     */
+    public function storeCancelada(VendaRequest $request)
+    {
+        $validated = $request->validated();
+
+        $resultado = $this->vendaService->criarCancelada($validated, $request);
+
+        if ($resultado['success']) {
+            return redirect()->back()->with('success', __('validation.pdv_venda_cancelada'));
         }
 
         return back()
@@ -116,13 +140,37 @@ class VendasController extends Controller
      */
     public function destroy(Request $request, int $id)
     {
+        return $this->processarCancelamento($request, $id);
+    }
+
+    public function cancelar(Request $request, int $id)
+    {
+        return $this->processarCancelamento($request, $id);
+    }
+
+    private function processarCancelamento(Request $request, int $id)
+    {
         $resultado = $this->vendaService->cancelar($id, $request);
 
         if ($resultado['success']) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => __('validation.pdv_venda_cancelada'),
+                ]);
+            }
+
             return redirect()->back()->with('success', __('validation.pdv_venda_cancelada'));
         }
 
-        return back()
-            ->with('error', $resultado['errors']['system'] ?? 'Erro ao cancelar venda');
+        $mensagemErro = $resultado['errors']['system'] ?? __('validation.pdv_erro_cancelar');
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $mensagemErro,
+                'errors' => $resultado['errors'] ?? [],
+            ], 422);
+        }
+
+        return back()->with('error', $mensagemErro);
     }
 }
