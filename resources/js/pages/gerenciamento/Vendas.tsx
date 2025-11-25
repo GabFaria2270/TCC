@@ -7,6 +7,7 @@ import NotificationContainer from '../../components/PDVcomponents/NotificationCo
 import VendasList from '../../components/PDVcomponents/VendasList';
 import ProdutosList from '../../components/ProdutosList';
 import { useBuscaProdutos } from '../../hooks/PDVhooks/useBuscaProdutos';
+import { useCancelarVenda } from '../../hooks/PDVhooks/useCancelarVenda';
 import useCarrinho from '../../hooks/PDVhooks/useCarrinho'; // ✅ CORRIGIDO: default import
 import { useFiltros } from '../../hooks/PDVhooks/useFiltros';
 import { useFinalizarVenda } from '../../hooks/PDVhooks/useFinalizarVenda';
@@ -34,6 +35,9 @@ interface Props {
         valor_insuficiente: string;
         produto_ja_no_carrinho: string;
         cliente_obrigatorio: string;
+        venda_cancelada: string;
+        erro_cancelar: string;
+        venda_ja_cancelada: string;
     };
 }
 
@@ -63,6 +67,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     const [showVendaModal, setShowVendaModal] = useState(false);
     const [vendaDetalhes, setVendaDetalhes] = useState<any | null>(null);
     const [loadingDetalhes, setLoadingDetalhes] = useState(false);
+    const [cancelandoVenda, setCancelandoVenda] = useState(false);
     // Hooks para funcionalidades
     const { notifications, addNotification, removeNotification } = useNotifications();
     const { finalizarVenda: executarFinalizacao } = useFinalizarVenda();
@@ -89,6 +94,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         calcularTroco,
         getDadosVenda,
     } = useCarrinho(messages);
+    const { cancelarVenda } = useCancelarVenda();
     // Lista de clientes usada no carrinho (atualiza após criar novo cliente)
     const [clientesAtualizados, setClientesAtualizados] = useState<typeof clientes>(clientes);
     // Sincroniza quando o prop 'clientes' mudar
@@ -165,6 +171,21 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         setShowVendaModal(false);
         setVendaDetalhes(null);
     };
+
+    const cancelarVendaAtual = () =>
+        cancelarVenda({
+            carrinho,
+            calcularTotal,
+            formaPagamento,
+            valorRecebido,
+            clienteSelecionado,
+            getDadosVenda,
+            limparCarrinho,
+            setCancelandoVenda,
+            setAbaAtiva,
+            addNotification,
+            messages,
+        });
     return (
         <GerenciamentoLayout title="Vendas">
             <Head title="Vendas" />
@@ -220,7 +241,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                     </div>
                 ) : null}
                 {abaAtiva === 'nova' ? (
-                    <div className={`row fade-in vendas-container ${loadingVenda ? 'processing' : ''}`}>
+                    <div className={`row fade-in vendas-container ${loadingVenda || cancelandoVenda ? 'processing' : ''}`}>
                         <div className="col-lg-8 mb-lg-0 col-12 mb-3">
                             <ProdutosList
                                 busca={busca}
@@ -252,6 +273,8 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                                 calcularSubtotal={calcularSubtotal}
                                 calcularTotal={calcularTotal}
                                 finalizarVenda={finalizarVenda}
+                                cancelarVenda={cancelarVendaAtual}
+                                cancelandoVenda={cancelandoVenda}
                                 abrirModalCliente={abrirModalCliente}
                                 addNotification={addNotification}
                             />

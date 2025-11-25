@@ -239,6 +239,105 @@ class VendaService
         }
     }
 
+    public function criarCancelada(array $dados, $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = $request->user();
+            $comercio = $user->comercio;
+
+            if (!$comercio) {
+                return [
+                    'success' => false,
+                    'errors' => ['system' => 'Comércio não encontrado']
+                ];
+            }
+
+            $erros = $this->validarItens($dados['itens'], $comercio->id);
+            if (!empty($erros)) {
+                return [
+                    'success' => false,
+                    'errors' => $erros
+                ];
+            }
+
+            $subtotal = 0;
+            $itensProcessados = [];
+
+            foreach ($dados['itens'] as $item) {
+                $produto = Produto::where('id', $item['produto_id'])
+                    ->where('comercio_id', $comercio->id)
+                    ->first();
+
+                if (!$produto) {
+                    throw new Exception("Produto ID {$item['produto_id']} não encontrado");
+                }
+
+                $subtotalItem = $item['quantidade'] * $item['preco_unitario'];
+                $subtotal += $subtotalItem;
+
+                $itensProcessados[] = [
+                    'produto' => $produto,
+                    'quantidade' => $item['quantidade'],
+                    'preco_unitario' => $item['preco_unitario'],
+                    'subtotal' => $subtotalItem,
+                ];
+            }
+
+            $desconto = $dados['desconto'] ?? 0;
+            $total = $subtotal - $desconto;
+
+            $troco = null;
+            if ($dados['forma_pagamento'] === 'dinheiro' && isset($dados['valor_recebido'])) {
+                $troco = max(0, $dados['valor_recebido'] - $total);
+            }
+
+            $observacoesAuto = $this->montarObservacoesDaVenda($itensProcessados, $total, $desconto);
+
+            $venda = Venda::create([
+                'comercio_id' => $comercio->id,
+                'usuario_id' => $user->id,
+                'cliente_id' => $dados['cliente_id'] ?? null,
+                'subtotal' => $subtotal,
+                'desconto' => $desconto,
+                'total' => $total,
+                'forma_pagamento' => $dados['forma_pagamento'],
+                'valor_recebido' => $dados['valor_recebido'] ?? null,
+                'troco' => $troco,
+                'status' => 'cancelada',
+                'observacoes' => isset($dados['observacoes']) && trim((string) $dados['observacoes']) !== ''
+                    ? (trim((string) $dados['observacoes']) . ' | ' . $observacoesAuto)
+                    : $observacoesAuto,
+            ]);
+
+            foreach ($itensProcessados as $itemData) {
+                ItemVenda::create([
+                    'venda_id' => $venda->id,
+                    'produto_id' => $itemData['produto']->id,
+                    'quantidade' => $itemData['quantidade'],
+                    'preco_unitario' => $itemData['preco_unitario'],
+                    'subtotal' => $itemData['subtotal'],
+                ]);
+            }
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'data' => [
+                    'venda' => $venda,
+                ]
+            ];
+        } catch (Exception $e) {
+            DB::rollBack();
+            return [
+                'success' => false,
+                'errors' => ['system' => __('validation.pdv_erro_cancelar')]
+            ];
+        }
+    }
+
     private function validarItens(array $itens, int $comercioId): array
     {
         $erros = [];

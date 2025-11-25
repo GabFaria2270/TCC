@@ -37,11 +37,15 @@ export default function VendaDetalhesModal({
     venda,
     fechar,
     loading = false,
+    onCancelar,
+    cancelando = false,
 }: {
     show: boolean;
     venda: Venda | null;
     loading?: boolean;
     fechar: () => void;
+    onCancelar?: (venda: Venda) => void;
+    cancelando?: boolean;
 }) {
     if (!show) return null;
 
@@ -169,8 +173,25 @@ export default function VendaDetalhesModal({
                             </div>
                         </div>
 
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={fechar}>
+                        <div className="modal-footer flex-column flex-md-row w-100 gap-2">
+                            {venda && venda.status !== 'cancelada' && onCancelar && (
+                                <button
+                                    type="button"
+                                    className={`btn btn-finalizar-venda btn-cancelar-venda w-100 ${cancelando ? 'processing' : ''}`}
+                                    onClick={() => onCancelar(venda)}
+                                    disabled={cancelando}
+                                >
+                                    {cancelando ? (
+                                        <span className="fw-semibold">Cancelando venda...</span>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-x-circle me-2"></i>
+                                            Cancelar venda
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                            <button type="button" className="btn btn-secondary w-100" onClick={fechar}>
                                 Fechar
                             </button>
                         </div>
