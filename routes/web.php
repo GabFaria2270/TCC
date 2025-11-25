@@ -22,17 +22,17 @@ Route::get('/', function (Request $request) {
         try {
             $tokenHash = hash_hmac('sha256', $remember, config('app.key'));
             $rememberRow = RememberToken::where('token_hash', $tokenHash)->first();
-            
+
             // Verifica se o token existe, não expirou E pertence ao mesmo dispositivo
             if ($rememberRow && (!$rememberRow->expires_at || !Carbon::parse($rememberRow->expires_at)->isPast())) {
                 // Verificar se o user_agent e IP correspondem ao dispositivo atual
                 $currentUserAgent = substr($request->userAgent() ?? '', 0, 500);
                 $currentIp = $request->ip();
-                
+
                 // Validar apenas se for o mesmo dispositivo (user_agent corresponde)
                 // IP pode variar em redes móveis, então priorizamos user_agent
                 $isSameDevice = $rememberRow->user_agent === $currentUserAgent;
-                
+
                 if ($isSameDevice) {
                     /** @var CacheTokenService $tokenService */
                     $tokenService = app(CacheTokenService::class);
@@ -42,7 +42,7 @@ Route::get('/', function (Request $request) {
                         if ($user) {
                             // Atualizar last_used_at do token
                             $rememberRow->update(['last_used_at' => now()]);
-                            
+
                             $request->session()->put('user_id', $user->id);
                             Auth::setUser($user);
                             return redirect()->route('gerenciamento');

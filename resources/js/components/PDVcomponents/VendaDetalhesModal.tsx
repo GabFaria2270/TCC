@@ -173,7 +173,7 @@ export default function VendaDetalhesModal({
                             </div>
                         </div>
 
-                        <div className="modal-footer flex-column flex-md-row gap-2 w-100">
+                        <div className="modal-footer flex-column flex-md-row w-100 gap-2">
                             {venda && venda.status !== 'cancelada' && onCancelar && (
                                 <button
                                     type="button"

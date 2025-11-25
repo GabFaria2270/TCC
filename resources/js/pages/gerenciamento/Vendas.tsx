@@ -7,11 +7,11 @@ import NotificationContainer from '../../components/PDVcomponents/NotificationCo
 import VendasList from '../../components/PDVcomponents/VendasList';
 import ProdutosList from '../../components/ProdutosList';
 import { useBuscaProdutos } from '../../hooks/PDVhooks/useBuscaProdutos';
+import { useCancelarVenda } from '../../hooks/PDVhooks/useCancelarVenda';
 import useCarrinho from '../../hooks/PDVhooks/useCarrinho'; // ✅ CORRIGIDO: default import
 import { useFiltros } from '../../hooks/PDVhooks/useFiltros';
 import { useFinalizarVenda } from '../../hooks/PDVhooks/useFinalizarVenda';
 import { useNotifications } from '../../hooks/PDVhooks/useNotifications';
-import { useCancelarVenda } from '../../hooks/PDVhooks/useCancelarVenda';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 
 import type { Cliente, Produto, Venda } from '../../types';
