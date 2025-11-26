@@ -173,6 +173,74 @@ html:has(body.cadastrof) {
     backdrop-filter: blur(6px);
 }
 
+/* ===================================================================
+   INDICADOR DE REQUISITOS DA SENHA
+   =================================================================== */
+.password-requirements {
+    margin-top: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.15);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease;
+}
+
+.password-requirements.show {
+    opacity: 1;
+    max-height: 300px;
+    margin-top: 0.75rem;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.requirement-item i {
+    font-size: 0.75rem;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.requirement-item.valid {
+    color: #86efac;
+}
+
+.requirement-item.valid i {
+    color: #22c55e;
+}
+
+.requirement-item.valid i::before {
+    content: '\f26b'; /* bi-check-circle-fill */
+}
+
+.requirement-item.invalid {
+    color: #fca5a5;
+}
+
+.requirement-item.invalid i {
+    color: #ef4444;
+}
+
+.requirement-item.invalid i::before {
+    content: '\f659'; /* bi-x-circle-fill */
+}
+
+.requirement-item span {
+    flex: 1;
+    line-height: 1.4;
+}
+
+
 /* Página principal - já redefinido acima */
 
 /* Lado Esquerdo: Formulário */

@@ -106,6 +106,31 @@
                                             <i class="bi bi-eye-slash"></i>
                                         </span>
                                     </div>
+                                    
+                                    <!-- Indicador de requisitos da senha -->
+                                    <div class="password-requirements" id="passwordRequirements">
+                                        <div class="requirement-item" data-requirement="length">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Mínimo de 12 caracteres</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="uppercase">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos uma letra maiúscula</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="lowercase">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos uma letra minúscula</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="number">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos um número</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="special">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos um caractere especial (@$!%*?&)</span>
+                                        </div>
+                                    </div>
+                                    
                                     @error('SENHA_HASH')
                                         @if (!str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>
