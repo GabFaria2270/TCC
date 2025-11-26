@@ -7,41 +7,7 @@
     <title>Definir nova senha | MaisConectado</title>
     <meta name="description" content="Escolha uma nova senha para continuar usando o MaisConectado.">
     <link rel="canonical" href="{{ url()->current() }}">
-    @vite(['resources/css/app.css', 'resources/css/login/login.css', 'resources/js/app.js', 'resources/js/login/login.js', 'resources/js/auth/reset-password.js'])
-    <style>
-        .form-login-messages .alert {
-            border-radius: 14px;
-            padding: 0.9rem 1.1rem;
-            border: 1px solid transparent;
-            color: #f8fafc;
-            font-size: 0.95rem;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(14px);
-        }
-
-        .form-login-messages .alert strong {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 1rem;
-        }
-
-        .form-login-messages .alert-success {
-            border-color: rgba(34, 197, 94, 0.45);
-            background: linear-gradient(120deg, rgba(45, 212, 191, 0.2), rgba(34, 197, 94, 0.2));
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.25);
-        }
-
-        .form-login-messages .alert-danger {
-            border-color: rgba(248, 113, 113, 0.55);
-            background: linear-gradient(120deg, rgba(248, 113, 113, 0.15), rgba(239, 68, 68, 0.18));
-            box-shadow: 0 12px 32px rgba(239, 68, 68, 0.28);
-        }
-
-        .form-login-support {
-            color: #f8fafc;
-            opacity: 0.9;
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/css/login/login.css', 'resources/css/auth/reset-password.css', 'resources/js/app.js', 'resources/js/login/login.js', 'resources/js/auth/reset-password.js'])
 </head>
 
 <body class="loginf">
@@ -150,7 +116,7 @@
                             </form>
 
                             <div class="login-link">
-                                <span>Lembrou   a senha?</span>
+                                <span>Lembrou a senha?</span>
                                 <a href="{{ route('login') }}" class="form-login-link"><i
                                         class="bi bi-box-arrow-in-right"></i> Tela de login</a>
                             </div>
