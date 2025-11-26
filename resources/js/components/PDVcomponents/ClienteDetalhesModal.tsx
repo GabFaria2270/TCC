@@ -2,6 +2,7 @@ import ModalPortal from '../common/ModalPortal';
 
 // Importe a interface Cliente do local correto
 import type { Cliente } from '../../pages/gerenciamento/Clientes';
+import { formatarTelefone } from '../../utils/formatters';
 
 interface Props {
     cliente: Cliente;
@@ -31,7 +32,10 @@ export default function ClienteDetalhesModal({ cliente, fechar }: Props) {
                                 <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">{cliente.email}</dd>
                                 <dt className="col-sm-4 cliente-detalhes-label">Telefone</dt>
                                 <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">
-                                    {cliente.telefone_formatado || cliente.telefone || 'Não informado'}
+                                    {(() => {
+                                        const telefone = cliente.telefone_formatado || cliente.telefone;
+                                        return telefone ? formatarTelefone(telefone) : 'Não informado';
+                                    })()}
                                 </dd>
                                 <dt className="col-sm-4 cliente-detalhes-label">Saldo</dt>
                                 <dd className="col-sm-8 cliente-detalhes-text cliente-detalhes-value text-break">

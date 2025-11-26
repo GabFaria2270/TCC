@@ -6,6 +6,8 @@ import ClienteEditModal from '../../components/PDVcomponents/ClienteEditModal';
 import ClienteTabela from '../../components/PDVcomponents/ClienteTabela';
 import ConfirmarPagamentoModal from '../../components/PDVcomponents/ConfirmarPagamentoModal';
 import HistoricoContaFiada from '../../components/PDVcomponents/HistoricoContaFiada';
+import NotificationContainer from '../../components/PDVcomponents/NotificationContainer';
+import { useNotifications } from '../../hooks/PDVhooks/useNotifications';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 
 export interface Cliente {
@@ -34,6 +36,7 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
     const [search, setSearch] = useState('');
     const [filtroStatus, setFiltroStatus] = useState(''); // Novo estado para filtro de status
     const [loading, setLoading] = useState(false);
+    const { notifications, addNotification, removeNotification } = useNotifications();
 
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
@@ -154,6 +157,7 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
     return (
         <GerenciamentoLayout title="Clientes">
             <Head title="Clientes" />
+            <NotificationContainer notifications={notifications} onRemove={removeNotification} />
             {/* Cabeçalho, busca e contador */}
             <div className="clientes-header elemento-clientes-1">
                 <div className="clientes-header-content elemento-clientes-2">
@@ -254,6 +258,11 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
                     onClose={fecharModal}
                     onSuccess={() => {
                         fecharModal();
+                        addNotification({
+                            type: 'success',
+                            title: 'Cliente',
+                            message: 'Cliente atualizado com sucesso!',
+                        });
                         router.get('/gerenciamento/clientes');
                     }}
                 />

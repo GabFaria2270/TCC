@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Cliente } from '../../pages/gerenciamento/Clientes';
+import { formatarTelefone } from '../../utils/formatters';
 
 // --- INTERFACE DE PROPS ---
 interface Props {
@@ -89,6 +90,12 @@ const renderEmptyState = (isTable: boolean = false) => {
 /**
  * Renderiza a Tabela para Desktop
  */
+const formatarContato = (cliente: Cliente) => {
+    const telefoneOriginal = cliente.telefone_formatado || cliente.telefone;
+    if (!telefoneOriginal) return 'Não informado';
+    return formatarTelefone(telefoneOriginal);
+};
+
 const TabelaDesktop = ({ clientes, abrirDetalhes, abrirConfirmarPagamento, abrirModal }: Props) => (
     <div className="clientes-table-container table-responsive scroll-shadow fade-in">
         <table className="table-hover data-table clientes-table mb-0 table align-middle">
@@ -114,9 +121,7 @@ const TabelaDesktop = ({ clientes, abrirDetalhes, abrirConfirmarPagamento, abrir
                               <td data-label="Contato">
                                   <div className="cliente-contato">
                                       <div className="cliente-email">{cliente.email}</div>
-                                      <small className="cliente-telefone">
-                                          {cliente.telefone_formatado || cliente.telefone || 'Não informado'}
-                                      </small>
+                                      <small className="cliente-telefone">{formatarContato(cliente)}</small>
                                   </div>
                               </td>
                               <td data-label="Conta Fiada">{getSaldoBadge(cliente.conta_fiada)}</td>
@@ -181,7 +186,7 @@ const CardsMobile = ({ clientes, abrirDetalhes, abrirConfirmarPagamento, abrirMo
                               </div>
                               <div className="small text-muted">
                                   <i className="bi bi-telephone me-2" style={{ width: '1.2rem' }}></i>
-                                  {cliente.telefone_formatado || cliente.telefone || 'Não informado'}
+                                  {formatarContato(cliente)}
                               </div>
                               <div className="small text-muted mt-1">
                                   <i className="bi bi-calendar-event me-2" style={{ width: '1.2rem' }}></i>
