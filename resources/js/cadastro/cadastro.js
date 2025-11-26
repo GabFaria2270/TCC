@@ -61,13 +61,14 @@ class RegisterSystem {
             this.validatePasswordRequirements(passwordInput.value);
         });
 
-        // Mantém os requisitos visíveis se ainda não estiver válido ao perder o foco
-        passwordInput.addEventListener('blur', () => {
-            const allValid = this.checkAllRequirements(passwordInput.value);
-            if (allValid) {
-                setTimeout(() => {
+        // Esconde os requisitos apenas quando outro campo de input recebe foco
+        document.addEventListener('focusin', (e) => {
+            // Se o foco foi para outro elemento que não seja o campo de senha
+            if (e.target !== passwordInput && e.target.tagName === 'INPUT') {
+                const allValid = this.checkAllRequirements(passwordInput.value);
+                if (allValid) {
                     requirementsContainer.classList.remove('show');
-                }, 300);
+                }
             }
         });
     }
@@ -78,7 +79,7 @@ class RegisterSystem {
             uppercase: /[A-Z]/.test(password),
             lowercase: /[a-z]/.test(password),
             number: /[0-9]/.test(password),
-            special: /[@$!%*?&]/.test(password)
+            special: /[@$!%*?&#]/.test(password)
         };
 
         // Atualiza cada requisito visualmente

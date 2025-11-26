@@ -127,7 +127,7 @@
                                         </div>
                                         <div class="requirement-item" data-requirement="special">
                                             <i class="bi bi-circle"></i>
-                                            <span>Pelo menos um caractere especial (@$!%*?&)</span>
+                                            <span>Pelo menos um caractere especial (@$!%*?&#)</span>
                                         </div>
                                     </div>
                                     
