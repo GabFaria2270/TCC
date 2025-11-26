@@ -479,6 +479,8 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
 
         steps.forEach((step) => tour.addStep(step));
 
+        let tourDismissed = false;
+
         // Função para iniciar ou continuar o tour
         const startOrContinueTour = (forcedIndex?: number) => {
             const storedIndex = getSavedStepIndex();
@@ -504,6 +506,7 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
 
         // Marca como finalizado ao completar ou cancelar
         const finalizarTour = () => {
+            tourDismissed = true;
             safeSet(finalizadoKey, 'true');
             clearStepIndex();
         };
@@ -512,6 +515,9 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
 
         // Salva o índice do passo atual ao avançar
         const advanceStep = (e: MouseEvent) => {
+            if (tourDismissed || (typeof (tour as any).isActive === 'function' && !(tour as any).isActive())) {
+                return;
+            }
             const target = e.target as HTMLElement;
             // Não avançar quando o clique for no ícone de fechar (X) do Shepherd
             if (target.closest('.shepherd-cancel-icon')) {

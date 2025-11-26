@@ -101,6 +101,28 @@
                                             <i class="bi bi-eye-slash"></i>
                                         </span>
                                     </div>
+                                    <div class="password-requirements" id="passwordRequirements">
+                                        <div class="requirement-item" data-requirement="length">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Mínimo de 12 caracteres</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="uppercase">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos uma letra maiúscula</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="lowercase">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos uma letra minúscula</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="number">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos um número</span>
+                                        </div>
+                                        <div class="requirement-item" data-requirement="special">
+                                            <i class="bi bi-circle"></i>
+                                            <span>Pelo menos um caractere especial (@$!%*?&#)</span>
+                                        </div>
+                                    </div>
                                     @error('password')
                                         <div class="form-login-error">{{ $message }}</div>
                                     @enderror
@@ -122,17 +144,13 @@
                                     @enderror
                                 </div>
 
-                                <p class="form-login-support">
-                                    Use ao menos 12 caracteres com letras maiúsculas, minúsculas, números e símbolos.
-                                </p>
-
                                 <button type="submit" class="form-login-button">
                                     Salvar nova senha
                                 </button>
                             </form>
 
                             <div class="login-link">
-                                <span>Voltar para</span>
+                                <span>Lembrou   a senha?</span>
                                 <a href="{{ route('login') }}" class="form-login-link"><i
                                         class="bi bi-box-arrow-in-right"></i> Tela de login</a>
                             </div>

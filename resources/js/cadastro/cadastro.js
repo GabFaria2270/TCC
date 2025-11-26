@@ -53,12 +53,29 @@ class RegisterSystem {
 
         // Mostra os requisitos quando o campo recebe foco
         passwordInput.addEventListener('focus', () => {
-            requirementsContainer.classList.add('show');
+            if (passwordInput.value.length > 0) {
+                requirementsContainer.classList.add('show');
+            } else {
+                requirementsContainer.classList.remove('show');
+            }
+            this.validatePasswordRequirements(passwordInput.value);
         });
 
         // Valida em tempo real conforme o usuário digita
         passwordInput.addEventListener('input', () => {
+            if (passwordInput.value.length > 0) {
+                requirementsContainer.classList.add('show');
+            } else {
+                requirementsContainer.classList.remove('show');
+            }
             this.validatePasswordRequirements(passwordInput.value);
+        });
+
+        // Esconde quando sai do campo sem digitar nada
+        passwordInput.addEventListener('blur', () => {
+            if (passwordInput.value.length === 0) {
+                requirementsContainer.classList.remove('show');
+            }
         });
 
         // Esconde os requisitos apenas quando outro campo de input recebe foco
@@ -66,11 +83,18 @@ class RegisterSystem {
             // Se o foco foi para outro elemento que não seja o campo de senha
             if (e.target !== passwordInput && e.target.tagName === 'INPUT') {
                 const allValid = this.checkAllRequirements(passwordInput.value);
-                if (allValid) {
+                if (allValid || passwordInput.value.length === 0) {
                     requirementsContainer.classList.remove('show');
                 }
             }
         });
+
+        if (passwordInput.value.length > 0) {
+            requirementsContainer.classList.add('show');
+        } else {
+            requirementsContainer.classList.remove('show');
+        }
+        this.validatePasswordRequirements(passwordInput.value);
     }
 
     validatePasswordRequirements(password) {
@@ -79,11 +103,11 @@ class RegisterSystem {
             uppercase: /[A-Z]/.test(password),
             lowercase: /[a-z]/.test(password),
             number: /[0-9]/.test(password),
-            special: /[@$!%*?&#]/.test(password)
+            special: /[@$!%*?&#]/.test(password),
         };
 
         // Atualiza cada requisito visualmente
-        Object.keys(requirements).forEach(key => {
+        Object.keys(requirements).forEach((key) => {
             const element = document.querySelector(`[data-requirement="${key}"]`);
             if (element) {
                 element.classList.remove('valid', 'invalid');
@@ -98,7 +122,7 @@ class RegisterSystem {
 
     checkAllRequirements(password) {
         const requirements = this.validatePasswordRequirements(password);
-        return Object.values(requirements).every(valid => valid);
+        return Object.values(requirements).every((valid) => valid);
     }
 }
 

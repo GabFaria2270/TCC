@@ -28,6 +28,9 @@ class LoginRateLimitingCounter {
 
     start() {
         this.findElements();
+        if (!this.elements.loginForm) {
+            return;
+        }
         const persisted = this.checkPersistedState();
         if (!persisted && this.elements.alert && this.isAlertVisible()) {
             this.processServerAlert();
@@ -44,7 +47,7 @@ class LoginRateLimitingCounter {
             loginForm: document.getElementById('loginForm'),
             loginButton: document.querySelector('.form-login-button') || document.getElementById('loginButton'),
             emailInput: document.getElementById('EMAIL'),
-            senhaInput: document.getElementById('SENHA_HASH')
+            senhaInput: document.getElementById('SENHA_HASH'),
         };
     }
 
@@ -88,11 +91,14 @@ class LoginRateLimitingCounter {
     }
 
     createAlertElement(remainingSeconds = 60) {
-        const formContainer = document.querySelector('.form-login-body') ||
+        const formContainer =
+            document.querySelector('.form-login-body') ||
             document.querySelector('.form-login-container') ||
             document.querySelector('#loginForm')?.parentElement;
         if (!formContainer) return;
-        formContainer.insertAdjacentHTML('afterbegin', `
+        formContainer.insertAdjacentHTML(
+            'afterbegin',
+            `
             <div class="rate-limit-alert" id="rateLimitAlert">
                 <div class="rate-limit-content">
                     <i class="bi bi-exclamation-triangle-fill"></i>
@@ -105,7 +111,8 @@ class LoginRateLimitingCounter {
                     </div>
                 </div>
             </div>
-        `);
+        `,
+        );
         this.elements.alert = document.getElementById('rateLimitAlert');
         this.elements.countdown = document.getElementById('countdown');
         this.elements.progressFill = document.getElementById('progressFill');
@@ -161,12 +168,8 @@ class LoginRateLimitingCounter {
     }
 
     disableForm() {
-        const els = [
-            this.elements.emailInput,
-            this.elements.senhaInput,
-            this.elements.loginButton
-        ];
-        els.forEach(el => {
+        const els = [this.elements.emailInput, this.elements.senhaInput, this.elements.loginButton];
+        els.forEach((el) => {
             if (el) {
                 el.disabled = true;
                 el.addEventListener('focus', this.handleManualEnable);
@@ -179,12 +182,8 @@ class LoginRateLimitingCounter {
     }
 
     enableForm() {
-        const els = [
-            this.elements.emailInput,
-            this.elements.senhaInput,
-            this.elements.loginButton
-        ];
-        els.forEach(el => {
+        const els = [this.elements.emailInput, this.elements.senhaInput, this.elements.loginButton];
+        els.forEach((el) => {
             if (el) {
                 el.disabled = false;
                 el.removeEventListener('focus', this.handleManualEnable);
@@ -208,25 +207,26 @@ class LoginRateLimitingCounter {
 
     saveState(seconds) {
         try {
-            localStorage.setItem('rateLimitState', JSON.stringify({
-                blockedUntil: Date.now() + (seconds * 1000),
-                seconds,
-                timestamp: Date.now()
-            }));
+            localStorage.setItem(
+                'rateLimitState',
+                JSON.stringify({
+                    blockedUntil: Date.now() + seconds * 1000,
+                    seconds,
+                    timestamp: Date.now(),
+                }),
+            );
         } catch {}
     }
 
     checkManualChanges() {
-        const els = [
-            this.elements.emailInput,
-            this.elements.senhaInput,
-            this.elements.loginButton
-        ];
+        const els = [this.elements.emailInput, this.elements.senhaInput, this.elements.loginButton];
         // Se algum campo foi reabilitado manualmente
-        if (els.some(el => el && !el.disabled)) {
+        if (els.some((el) => el && !el.disabled)) {
             this.handleManualEnable();
             // Força todos a ficarem desabilitados novamente
-            els.forEach(el => { if (el) el.disabled = true; });
+            els.forEach((el) => {
+                if (el) el.disabled = true;
+            });
             if (this.elements.loginButton) this.elements.loginButton.textContent = 'Aguarde...';
         }
     }
@@ -254,7 +254,7 @@ class LoginRateLimitingCounter {
 if (document.getElementById('loginForm') || document.querySelector('.form-login')) {
     const loginRateLimiter = new LoginRateLimitingCounter();
     window.loginRateLimiter = loginRateLimiter;
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.ctrlKey && e.shiftKey && e.key === 'L') {
             loginRateLimiter.forceReset();
         }

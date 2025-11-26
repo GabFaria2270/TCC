@@ -97,7 +97,7 @@
                                 </p>
 
                                 <button type="submit" class="form-login-button">
-                                    Enviar link de redefinição
+                                    Enviar link de recuperação
                                 </button>
                             </form>
 

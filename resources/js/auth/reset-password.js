@@ -1,5 +1,61 @@
 import LoaderSystem from '../reultilizaveis/loader-system.js';
 
+const getPasswordRequirementStatus = (password) => ({
+    length: password.length >= 12,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[@$!%*?&#]/.test(password),
+});
+
+const updatePasswordRequirementIndicators = (password, container) => {
+    const statuses = getPasswordRequirementStatus(password);
+
+    Object.entries(statuses).forEach(([rule, isValid]) => {
+        const element = container.querySelector(`[data-requirement="${rule}"]`);
+        if (!element) {
+            return;
+        }
+
+        element.classList.remove('valid', 'invalid');
+        if (password.length > 0) {
+            element.classList.add(isValid ? 'valid' : 'invalid');
+        }
+    });
+
+    return statuses;
+};
+
+const setupPasswordRequirements = () => {
+    const passwordInput = document.getElementById('password');
+    const requirementsContainer = document.getElementById('passwordRequirements');
+
+    if (!passwordInput || !requirementsContainer) {
+        return;
+    }
+
+    const validate = () => updatePasswordRequirementIndicators(passwordInput.value, requirementsContainer);
+
+    passwordInput.addEventListener('focus', () => {
+        requirementsContainer.classList.add('show');
+        validate();
+    });
+
+    passwordInput.addEventListener('input', validate);
+
+    document.addEventListener('focusin', (event) => {
+        if (event.target === passwordInput || event.target.tagName !== 'INPUT') {
+            return;
+        }
+
+        const statuses = validate();
+        const allValid = statuses && Object.values(statuses).every(Boolean);
+        if (allValid) {
+            requirementsContainer.classList.remove('show');
+        }
+    });
+};
+
 const toggleVisibility = (toggleId, inputId) => {
     const toggle = document.getElementById(toggleId);
     const input = document.getElementById(inputId);
@@ -35,6 +91,7 @@ const initResetPassword = () => {
         new LoaderSystem(formId, loaderId);
         toggleVisibility('togglePassword', 'password');
         toggleVisibility('togglePasswordConfirm', 'password_confirmation');
+        setupPasswordRequirements();
     }
 };
 
