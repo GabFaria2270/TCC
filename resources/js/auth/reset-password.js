@@ -35,13 +35,38 @@ const setupPasswordRequirements = () => {
     }
 
     const validate = () => updatePasswordRequirementIndicators(passwordInput.value, requirementsContainer);
-
-    passwordInput.addEventListener('focus', () => {
+    const showRequirements = () => {
         requirementsContainer.classList.add('show');
         validate();
+    };
+    const hideRequirements = () => {
+        requirementsContainer.classList.remove('show');
+    };
+    const syncInitialState = () => {
+        if (document.activeElement === passwordInput || passwordInput.value.length > 0) {
+            showRequirements();
+        } else {
+            hideRequirements();
+        }
+    };
+
+    passwordInput.addEventListener('focus', () => {
+        showRequirements();
     });
 
-    passwordInput.addEventListener('input', validate);
+    passwordInput.addEventListener('input', () => {
+        if (passwordInput.value.length === 0) {
+            hideRequirements();
+            return;
+        }
+        showRequirements();
+    });
+
+    passwordInput.addEventListener('blur', () => {
+        if (passwordInput.value.length === 0) {
+            hideRequirements();
+        }
+    });
 
     document.addEventListener('focusin', (event) => {
         if (event.target === passwordInput || event.target.tagName !== 'INPUT') {
@@ -51,9 +76,12 @@ const setupPasswordRequirements = () => {
         const statuses = validate();
         const allValid = statuses && Object.values(statuses).every(Boolean);
         if (allValid) {
-            requirementsContainer.classList.remove('show');
+            hideRequirements();
         }
     });
+
+    // Garante que o estado inicial respeite autofocus/preenchimento prévio
+    syncInitialState();
 };
 
 const toggleVisibility = (toggleId, inputId) => {
