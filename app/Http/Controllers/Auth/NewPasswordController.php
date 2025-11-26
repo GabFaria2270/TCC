@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
@@ -20,8 +21,11 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): View
     {
+        $email = $this->resolveEmailFromCode($request->query('code'))
+            ?? $request->query('email');
+
         return view('auth.reset-password', [
-            'email' => $request->email,
+            'email' => $email,
             'token' => $request->route('token'),
         ]);
     }
@@ -82,5 +86,23 @@ class NewPasswordController extends Controller
         DB::table($table)
             ->where('email', strtolower($email))
             ->delete();
+    }
+
+    private function resolveEmailFromCode(?string $code): ?string
+    {
+        if (empty($code)) {
+            return null;
+        }
+
+        try {
+            $decoded = base64_decode($code, true);
+            if ($decoded === false) {
+                return null;
+            }
+
+            return Crypt::decryptString($decoded);
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 }

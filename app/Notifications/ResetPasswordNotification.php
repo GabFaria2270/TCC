@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
 class ResetPasswordNotification extends Notification
@@ -23,7 +24,11 @@ class ResetPasswordNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $expiry = config('auth.passwords.users.expire', 60);
-        $resetUrl = url(route('password.reset', ['token' => $this->token, 'email' => $notifiable->EMAIL], false));
+        $emailPayload = base64_encode(Crypt::encryptString(strtolower((string) $notifiable->EMAIL)));
+        $resetUrl = url(route('password.reset', [
+            'token' => $this->token,
+            'code' => $emailPayload,
+        ], false));
 
         return (new MailMessage)
             ->subject('Redefina sua senha | ' . config('app.name'))

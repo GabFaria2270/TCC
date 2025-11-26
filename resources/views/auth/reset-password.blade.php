@@ -73,6 +73,11 @@
                                 @endif
                             </div>
 
+                            @php
+                                $resolvedEmail = old('email', $email);
+                                $emailLocked = filled($resolvedEmail);
+                            @endphp
+
                             <form method="POST" action="{{ route('password.store') }}" class="form-reset"
                                 id="resetPasswordForm">
                                 @csrf
@@ -82,7 +87,9 @@
                                 <div class="form-login-group">
                                     <label for="email" class="form-login-label">E-mail</label>
                                     <input type="email" class="form-login-input" id="email" name="email"
-                                        required autocomplete="email" value="{{ $email }}" readonly>
+                                        required autocomplete="email" value="{{ $resolvedEmail }}"
+                                        placeholder="Digite o e-mail cadastrado"
+                                        @if ($emailLocked) readonly aria-readonly="true" @endif>
                                 </div>
 
                                 <div class="form-login-group">

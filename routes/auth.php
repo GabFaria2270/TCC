@@ -28,17 +28,17 @@ Route::middleware('guest')->group(function () {
         ->middleware('login.rate.limit'); // ✅ USA SEU MIDDLEWARE
 
     // Reset de senha (padrão Laravel - pode manter)
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    Route::get('recuperar-acesso', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+    Route::post('recuperar-acesso', [PasswordResetLinkController::class, 'store'])
         ->middleware('throttle:2,1')
         ->name('password.email');
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+    Route::get('recuperar-senha/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
+    Route::post('recuperar-senha', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
 
