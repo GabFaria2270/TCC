@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Log;
 use App\Notifications\ResetPasswordNotification;
 
 /**
@@ -34,6 +35,11 @@ class Usuario extends Authenticatable
 
     protected $fillable = ['NOME', 'EMAIL', 'SENHA_HASH', 'PERFIL'];
     protected $hidden = ['SENHA_HASH'];
+
+    /**
+     * Guarda o último token atribuído pela infraestrutura do Laravel.
+     */
+    protected ?string $rememberTokenValue = null;
 
     /**
      * Retorna a senha do usuário para autenticação.
@@ -131,5 +137,58 @@ class Usuario extends Authenticatable
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPasswordNotification($token));
+    }
+
+    /**
+     * Recupera o token "remember me" registrado mais recentemente.
+     */
+    public function getRememberToken(): ?string
+    {
+        return $this->rememberTokenValue;
+    }
+
+    /**
+     * Persiste ou revoga tokens na tabela dedicada sem exigir coluna no usuário.
+     */
+    public function setRememberToken($value): void
+    {
+        $this->rememberTokenValue = $value ? (string) $value : null;
+
+        if (!$this->getKey()) {
+            return;
+        }
+
+        try {
+            RememberToken::where('user_id', $this->getKey())->delete();
+
+            if (empty($value)) {
+                return;
+            }
+
+            $request = null;
+            try {
+                $request = request();
+            } catch (\Throwable $e) {
+                // Sem request disponível (ex.: CLI/artisan).
+            }
+
+            $ip = $request?->ip();
+            $userAgent = $request ? substr((string) $request->userAgent(), 0, 512) : null;
+            $ttlMinutes = (int) config('auth.remember_token_ttl', 43200);
+
+            RememberToken::create([
+                'user_id' => $this->getKey(),
+                'token_hash' => hash_hmac('sha256', (string) $value, config('app.key')),
+                'ip_address' => $ip,
+                'user_agent' => $userAgent,
+                'expires_at' => now()->addMinutes($ttlMinutes),
+                'last_used_at' => now(),
+            ]);
+        } catch (\Throwable $e) {
+            Log::channel('security')->warning('Falha ao sincronizar remember token customizado', [
+                'user_id' => $this->getKey(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
