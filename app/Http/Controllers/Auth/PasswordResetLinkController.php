@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 
 class PasswordResetLinkController extends Controller
@@ -32,6 +33,8 @@ class PasswordResetLinkController extends Controller
 
         $email = strtolower((string) $request->input('email'));
 
+        $this->purgeExistingToken($email);
+
         $status = Password::sendResetLink([
             'email' => $email,
             'EMAIL' => $email,
@@ -44,5 +47,14 @@ class PasswordResetLinkController extends Controller
         return back()->withErrors([
             'email' => __($status),
         ]);
+    }
+
+    private function purgeExistingToken(string $email): void
+    {
+        $table = config('auth.passwords.users.table', 'password_reset_tokens');
+
+        DB::table($table)
+            ->where('email', $email)
+            ->delete();
     }
 }
