@@ -184,6 +184,24 @@
       "_cnpj-formatter-DBfm7InR.js"
     ]
   },
+  "resources/js/auth/forgot-password.js": {
+    "file": "assets/forgot-password-p5QAEd2-.js",
+    "name": "forgot-password",
+    "src": "resources/js/auth/forgot-password.js",
+    "isEntry": true,
+    "imports": [
+      "_loader-system-9B1aX_n9.js"
+    ]
+  },
+  "resources/js/auth/reset-password.js": {
+    "file": "assets/reset-password-C7MInl62.js",
+    "name": "reset-password",
+    "src": "resources/js/auth/reset-password.js",
+    "isEntry": true,
+    "imports": [
+      "_loader-system-9B1aX_n9.js"
+    ]
+  },
   "resources/js/cadastro/cadastro.js": {
     "file": "assets/cadastro-C-7RyHID.js",
     "name": "cadastro",

@@ -15,6 +15,8 @@ export default defineConfig({
                 'resources/js/login/login.js',
                 'resources/css/cadastro/cadastro.css',
                 'resources/js/cadastro/cadastro.js',
+                'resources/js/auth/forgot-password.js',
+                'resources/js/auth/reset-password.js',
                 'resources/js/set.tsx',
             ],
             ssr: 'resources/js/ssr.tsx',
