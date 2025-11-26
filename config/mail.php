@@ -113,4 +113,6 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'brand_logo_url' => env('MAIL_BRAND_LOGO_URL'),
+
 ];

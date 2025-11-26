@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Notifications\ResetPasswordNotification;
 
 /**
  * Model Usuario
@@ -106,5 +107,29 @@ class Usuario extends Authenticatable
     public function scopeWithComercio(Builder $query): Builder
     {
         return $query->with('comercio');
+    }
+
+    /**
+     * Garante que as notificações por email usem o campo correto.
+     */
+    public function routeNotificationForMail(): string
+    {
+        return (string) $this->EMAIL;
+    }
+
+    /**
+     * Informa ao broker qual email usar durante o reset de senha.
+     */
+    public function getEmailForPasswordReset(): string
+    {
+        return (string) $this->EMAIL;
+    }
+
+    /**
+     * Dispara email customizado de reset.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

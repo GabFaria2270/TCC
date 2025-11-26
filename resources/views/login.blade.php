@@ -97,6 +97,12 @@
                                     @foreach ($errors->get('SENHA_HASH') as $message)
                                         <div class="form-login-error">{{ $message }}</div>
                                     @endforeach
+                                    @if (Route::has('password.request'))
+                                        <div class="login-link mt-2">
+                                            <a href="{{ route('password.request') }}" class="form-login-link"><i
+                                                    class="bi bi-key"></i> Esqueceu sua senha?</a>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <!-- CHECKBOX LEMBRAR-ME -->

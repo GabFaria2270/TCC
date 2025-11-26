@@ -217,7 +217,7 @@ class VendaService
                     DB::beginTransaction();
                     $this->atualizarContaFiada((int) $dados['cliente_id'], $total, $venda->id); // ✅ CORRIGIDO: Passa ID da venda
                     DB::commit();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     DB::rollBack();
                     // Não falha a venda, apenas registra o erro
                 }
@@ -376,7 +376,7 @@ class VendaService
         $quantidadeAtual = $quantidadeAnterior - $quantidade;
 
         if ($quantidadeAtual < 0) {
-            throw new \Exception(__('validation.pdv_estoque_insuficiente', [
+            throw new Exception(__('validation.pdv_estoque_insuficiente', [
                 'disponivel' => $quantidadeAnterior
             ]) . " para {$produto->nome}");
         }
@@ -385,7 +385,7 @@ class VendaService
         $estoque->update(['quantidade' => $quantidadeAtual]);
 
         // Mantém o registro do movimento (auditoria)
-        \App\Models\MovimentoEstoque::create([
+        MovimentoEstoque::create([
             'produto_id' => $produto->id,
             'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,
@@ -458,7 +458,7 @@ class VendaService
     {
         try {
             $user = $request->user();
-            $venda = \App\Models\Venda::with(['itens.produto', 'cliente', 'usuario'])
+            $venda = Venda::with(['itens.produto', 'cliente', 'usuario'])
                 ->where('comercio_id', $user->comercio->id)
                 ->where('id', $id)
                 ->first();
@@ -548,7 +548,7 @@ class VendaService
         $estoque->update(['quantidade' => $quantidadeAtual]);
 
         // Registra movimento de entrada por cancelamento
-        \App\Models\MovimentoEstoque::create([
+        MovimentoEstoque::create([
             'produto_id' => $produto->id,
             'usuario_id' => $usuario->id,
             'venda_id' => $venda->id,
