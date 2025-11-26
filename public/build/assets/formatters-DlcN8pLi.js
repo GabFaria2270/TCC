@@ -1,0 +1,1 @@
+function d(e){return e=e.replace(/\D/g,""),e.length<=10?e.replace(/(\d{2})(\d{4})(\d{0,4})/,"($1) $2-$3").replace(/-$/,""):e.replace(/(\d{2})(\d{5})(\d{0,4})/,"($1) $2-$3").replace(/-$/,"")}function t(e){return e=e.replace(/\D/g,""),e=(parseInt(e,10)/100).toFixed(2)+"",e=e.replace(".",","),e=e.replace(/(\d)(?=(\d{3})+(?!\d))/g,"$1."),e}export{t as a,d as f};
