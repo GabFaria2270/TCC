@@ -115,4 +115,6 @@ return [
 
     'brand_logo_url' => env('MAIL_BRAND_LOGO_URL'),
 
+    'inline_logo_max_kb' => env('MAIL_INLINE_LOGO_MAX_KB', 25),
+
 ];

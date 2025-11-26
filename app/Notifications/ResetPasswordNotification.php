@@ -60,8 +60,21 @@ class ResetPasswordNotification extends Notification
             return null;
         }
 
+        $maxBytes = (int) config('mail.inline_logo_max_kb', 25) * 1024;
+        $fileSize = filesize($path);
+
+        if ($fileSize === false || $fileSize > $maxBytes) {
+            return null; // avoid embedding large base64 blocks that Gmail corts
+        }
+
         $mime = mime_content_type($path) ?: 'image/png';
-        $encoded = base64_encode(file_get_contents($path));
+        $contents = file_get_contents($path);
+
+        if ($contents === false) {
+            return null;
+        }
+
+        $encoded = base64_encode($contents);
 
         if ($encoded === false) {
             return null;
