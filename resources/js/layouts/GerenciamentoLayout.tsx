@@ -132,7 +132,7 @@ export default function GerenciamentoLayout({ children, title }: { children: Rea
     const renderSidebar = () => (
         <nav id="sidebar" className={`sidebar ${sidebarStateClass}`} aria-label="Navegação principal" aria-hidden={!isDesktop && !sidebarOpen}>
             <div className="border-bottom d-flex align-items-center justify-content-between p-3">
-                <div className="brand-title">Mercearia Fácil</div>
+                <div className="brand-title">Mais Conectado</div>
                 {!isDesktop && (
                     <button
                         id="sidebarClose"
