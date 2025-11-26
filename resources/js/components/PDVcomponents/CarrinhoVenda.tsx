@@ -58,6 +58,7 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
 
     // ✅ estado de texto do combobox (campo de busca/seleção)
     const [clienteQuery, setClienteQuery] = useState<string>('');
+    const [descontoTexto, setDescontoTexto] = useState('0,00');
 
     // ✅ Sincroniza o texto do combobox quando o cliente selecionado muda externamente (ex: após criar cliente)
     useEffect(() => {
@@ -68,6 +69,10 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
             setClienteQuery('');
         }
     }, [clienteSelecionado]);
+
+    useEffect(() => {
+        setDescontoTexto(desconto.toFixed(2).replace('.', ','));
+    }, [desconto]);
 
     // Adicionar função para converter moeda formatada para número
     const converterMoedaParaNumero = (valorFormatado: string): number => {
@@ -377,13 +382,26 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
                             <div className="input-group input-group-sm">
                                 <span className="input-group-text">R$</span>
                                 <input
-                                    type="number"
+                                    type="text"
                                     className="form-control"
-                                    step="0.01"
-                                    min="0"
-                                    max={calcularSubtotal()}
-                                    value={desconto}
-                                    onChange={(e) => setDesconto(parseFloat(e.target.value) || 0)}
+                                    inputMode="decimal"
+                                    value={descontoTexto}
+                                    onChange={(e) => {
+                                        const valor = e.target.value;
+                                        if (valor === '') {
+                                            setDescontoTexto('');
+                                            setDesconto(0);
+                                            return;
+                                        }
+                                        const formatado = formatarMoeda(valor);
+                                        setDescontoTexto(formatado);
+                                        const numero = converterMoedaParaNumero(formatado);
+                                        const subtotal = calcularSubtotal();
+                                        const descontoAjustado = Math.min(numero, subtotal);
+                                        setDesconto(Number(descontoAjustado.toFixed(2)));
+                                    }}
+                                    placeholder="0,00"
+                                    style={{ textAlign: 'right' }}
                                 />
                             </div>
                         </div>

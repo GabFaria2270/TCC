@@ -1,7 +1,20 @@
 import { useForm } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { Cliente } from '../../pages/gerenciamento/Clientes';
-import { formatarMoeda, formatarTelefone } from '../../utils/formatters';
+import { formatarTelefone } from '../../utils/formatters';
+
+const gerarDescricaoCarrinho = (itens: any[] = []) => {
+    if (!itens || itens.length === 0) {
+        return 'Produtos da compra: venda sem itens';
+    }
+    const itensDescricao = itens
+        .map((item) => {
+            const precoTotal = (item.quantidade * item.preco_unitario).toFixed(2).replace('.', ',');
+            return `${item.produto.nome} (${item.quantidade}x) = R$ ${precoTotal}`;
+        })
+        .join(', ');
+    return `Produtos da compra: ${itensDescricao}`;
+};
 
 interface ClienteFormProps {
     cliente?: Cliente;
@@ -13,28 +26,15 @@ interface ClienteFormProps {
 }
 
 export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinhoItens = [], embed = false }: ClienteFormProps) {
+    const descricaoBase = useMemo(() => gerarDescricaoCarrinho(carrinhoItens), [carrinhoItens]);
     const { data, setData, processing, errors, reset } = useForm({
         nome: cliente?.nome || '',
         email: cliente?.email || '',
         telefone: cliente?.telefone_formatado || cliente?.telefone || '',
-        saldo_inicial: modo === 'edit' ? String(cliente?.conta_fiada?.saldo ?? '') : '',
-        descricao: '',
+        descricao: modo === 'create' ? descricaoBase : cliente?.conta_fiada?.descricao || '',
     });
 
     const [isLoading, setIsLoading] = useState(false);
-
-    const gerarDescricaoAutomatica = () => {
-        if (!carrinhoItens || carrinhoItens.length === 0) {
-            return 'Produtos da compra: venda sem itens';
-        }
-        const itensDescricao = carrinhoItens
-            .map((item) => {
-                const precoTotal = (item.quantidade * item.preco_unitario).toFixed(2).replace('.', ',');
-                return `${item.produto.nome} (${item.quantidade}x) = R$ ${precoTotal}`;
-            })
-            .join(', ');
-        return `Produtos da compra: ${itensDescricao}`;
-    };
 
     useEffect(() => {
         if (modo === 'edit' && cliente) {
@@ -42,34 +42,37 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                 nome: cliente.nome,
                 email: cliente.email,
                 telefone: cliente.telefone_formatado || cliente.telefone || '',
-                saldo_inicial: String(cliente.conta_fiada?.saldo ?? ''),
                 descricao: cliente.conta_fiada?.descricao || '',
             });
         } else if (modo === 'create') {
-            const descricaoAutomatica = gerarDescricaoAutomatica();
-            reset();
-            setData('descricao', descricaoAutomatica);
+            setData({
+                nome: '',
+                email: '',
+                telefone: '',
+                descricao: descricaoBase,
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cliente, modo, carrinhoItens]);
+    }, [cliente, modo, descricaoBase]);
 
-    function normalizarMoeda(valor: string) {
-        if (!valor) return '';
-        let v = valor.replace(/\./g, '');
-        v = v.replace(',', '.');
-        return v;
-    }
+    useEffect(() => {
+        if (modo === 'create') {
+            setData('descricao', descricaoBase);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [descricaoBase, modo]);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         if (modo === 'create') {
+            const descricao = data.descricao && data.descricao.trim() !== '' ? data.descricao : descricaoBase;
             const dadosParaEnvio = {
                 nome: data.nome,
                 email: data.email,
                 telefone: data.telefone,
-                descricao: data.descricao,
+                descricao,
             };
 
             fetch('/gerenciamento/clientes', {
@@ -112,11 +115,7 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                 nome: data.nome,
                 email: data.email,
                 telefone: data.telefone,
-                descricao: data.descricao,
             };
-            if (data.saldo_inicial && data.saldo_inicial.trim() !== '') {
-                dadosParaEnvio.saldo_inicial = normalizarMoeda(data.saldo_inicial);
-            }
 
             fetch(`/gerenciamento/clientes/${cliente?.id}`, {
                 method: 'PUT',
@@ -132,7 +131,7 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                 .then((resp) => {
                     if (resp.success) {
                         reset();
-                        onSuccess(cliente);
+                        onSuccess(resp.cliente as Cliente);
                     } else {
                         console.error('Erro na edição:', resp);
                         alert(resp.message || 'Erro ao editar cliente');
@@ -208,57 +207,33 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
                         />
                         {errors.telefone && <div className="cliente-form-error">{errors.telefone}</div>}
                     </div>
-                    {modo === 'edit' && (
-                        <div className="col-md-6 mb-3">
-                            <label htmlFor="saldo_inicial" className="form-label">
-                                Saldo da Conta Fiada
-                            </label>
-                            <div className="input-group">
-                                <span className="input-group-text">R$</span>
-                                <input
-                                    type="text"
-                                    className={`form-control ${errors.saldo_inicial ? 'is-invalid' : ''}`}
-                                    id="saldo_inicial"
-                                    value={data.saldo_inicial}
-                                    onChange={(e) => setData('saldo_inicial', formatarMoeda(e.target.value))}
-                                    placeholder="0,00"
-                                />
-                            </div>
-                            {errors.saldo_inicial && <div className="invalid-feedback d-block">{errors.saldo_inicial}</div>}
-                        </div>
-                    )}
                 </div>
 
-                <div className="row">
-                    <div className="col-12 mb-3">
-                        <label htmlFor="descricao" className="form-label">
-                            Descrição da Conta <span className="text-muted">(opcional)</span>
-                        </label>
-                        <textarea
-                            className="form-control"
-                            id="descricao"
-                            rows={3}
-                            value={data.descricao}
-                            onChange={(e) => setData('descricao', e.target.value)}
-                            placeholder={
-                                modo === 'create'
-                                    ? 'Gerado automaticamente com base nos produtos do carrinho (você pode editar)'
-                                    : 'Ex: Compras do mês, Produtos diversos, etc...'
-                            }
-                            maxLength={500}
-                            disabled={processing || isLoading}
-                            style={{}}
-                        />
-                        <div className="form-text">
-                            <small className="text-muted">
-                                {modo === 'create'
-                                    ? 'Esta descrição foi gerada automaticamente com base nos produtos do carrinho.'
-                                    : 'Descreva o que foi comprado ou o motivo do saldo.'}
-                            </small>
+                {modo === 'create' && (
+                    <div className="row">
+                        <div className="col-12 mb-3">
+                            <label htmlFor="descricao" className="form-label">
+                                Descrição da Conta <span className="text-muted">(opcional)</span>
+                            </label>
+                            <textarea
+                                className="form-control"
+                                id="descricao"
+                                rows={3}
+                                value={data.descricao}
+                                onChange={(e) => setData('descricao', e.target.value)}
+                                placeholder="Gerado automaticamente com base nos produtos do carrinho (você pode editar)"
+                                maxLength={500}
+                                disabled={processing || isLoading}
+                            />
+                            <div className="form-text">
+                                <small className="text-muted">
+                                    Esta descrição foi gerada automaticamente com base nos produtos do carrinho.
+                                </small>
+                            </div>
+                            {errors.descricao && <div className="invalid-feedback d-block">{errors.descricao}</div>}
                         </div>
-                        {errors.descricao && <div className="invalid-feedback d-block">{errors.descricao}</div>}
                     </div>
-                </div>
+                )}
             </div>
 
             <div className="modal-footer">

@@ -421,7 +421,8 @@ class VendaService
         }
 
         // ✅ MONTAR DESCRIÇÃO BONITA E INTUITIVA
-        $dataFormatada = now()->format('d/m/Y \à\s H:i');
+        $timezone = config('app.timezone', 'America/Sao_Paulo');
+        $dataFormatada = now($timezone)->format('d/m/Y \à\s H:i');
         $valorFormatado = 'R$ ' . number_format($valor, 2, ',', '.');
 
         if ($produtosDescricao) {

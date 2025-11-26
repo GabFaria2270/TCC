@@ -28,7 +28,23 @@ class ClienteRequest extends FormRequest
                 // Adiciona validação de unicidade para o comércio
                 function ($attribute, $value, $fail) {
                     $comercioId = auth()->user()->comercio->id ?? null;
-                    if ($comercioId && \App\Models\Cliente::where('email', $value)->where('comercio_id', $comercioId)->exists()) {
+                    $clienteRoute = $this->route('cliente');
+                    $clienteId = null;
+
+                    if ($clienteRoute) {
+                        $clienteId = is_object($clienteRoute) && isset($clienteRoute->id)
+                            ? $clienteRoute->id
+                            : (is_numeric($clienteRoute) ? (int) $clienteRoute : null);
+                    }
+
+                    $query = \App\Models\Cliente::where('email', $value)
+                        ->where('comercio_id', $comercioId);
+
+                    if ($clienteId) {
+                        $query->where('id', '!=', $clienteId);
+                    }
+
+                    if ($comercioId && $query->exists()) {
                         $fail(__('validation.cliente_email_exists'));
                     }
                 },
