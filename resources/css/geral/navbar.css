@@ -140,7 +140,9 @@ body.nav-open {
     width: 100px;
     border-radius: 50%;
     object-fit: cover;
-    transition: height 0.3s, width 0.3s;
+    transition:
+        height 0.3s,
+        width 0.3s;
 }
 .navbar-brand a {
     display: flex;
@@ -473,7 +475,7 @@ body.nav-open {
         display: block;
         position: fixed;
         inset: 0;
-        background: transparent;
+        background: transparent; /* overlay totalmente transparente */
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
@@ -486,6 +488,7 @@ body.nav-open {
     .navbar-overlay.active {
         opacity: 1;
         visibility: visible;
+        pointer-events: auto;
     }
 
     .navbar-toggle {

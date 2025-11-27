@@ -613,8 +613,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* Filtros e controles                                   */}
                 {/* ===================================================== */}
                 <div className="card filtros-card fade-in mb-4 border-0 shadow-sm">
-                    <div className="card-body row g-2 g-md-3 align-items-end produtos-filtros">
-                        <div className="col-md-6 col-xl-3 col-12">
+                    <div className="card-body produtos-filtros-grid">
+                        <div className="filtro-item">
                             <label htmlFor="filtro-busca" className="form-label">
                                 Buscar
                             </label>
@@ -635,7 +635,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 />
                             </div>
                         </div>
-                        <div className="col-md-6 col-xl-3 col-12">
+                        <div className="filtro-item">
                             <label htmlFor="filtro-categoria" className="form-label">
                                 Categoria
                             </label>
@@ -657,7 +657,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ))}
                             </select>
                         </div>
-                        <div className="col-md-4 col-xl-2 col-6">
+                        <div className="filtro-item filtro-per-page">
                             <label htmlFor="per-page" className="form-label">
                                 Por página
                             </label>
@@ -677,25 +677,23 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                 ))}
                             </select>
                         </div>
-                        <div className="col-sm-6 col-md-4 col-xl-2 d-flex align-items-end col-12">
-                            <div className="form-check d-flex align-items-center ms-sm-1 ms-md-2 mb-0 gap-2">
-                                <input
-                                    className="form-check-input mt-0"
-                                    type="checkbox"
-                                    id="only-low"
-                                    checked={onlyLow}
-                                    onChange={(event) => {
-                                        setOnlyLow(event.target.checked);
-                                        navegarComFiltros({ page: 1, onlyLow: event.target.checked || undefined });
-                                    }}
-                                />
-                                <label className="form-check-label mb-0" htmlFor="only-low">
-                                    Baixos
-                                </label>
-                            </div>
+                        <div className="filtro-item filtro-baixos">
+                            <button
+                                type="button"
+                                className={`btn btn-outline-warning btn-baixos ${onlyLow ? 'active' : ''}`}
+                                aria-pressed={onlyLow}
+                                onClick={() => {
+                                    const next = !onlyLow;
+                                    setOnlyLow(next);
+                                    navegarComFiltros({ page: 1, onlyLow: next || undefined });
+                                }}
+                            >
+                                <i className="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                                <span>Baixo estoque</span>
+                            </button>
                         </div>
-                        <div className="col-md-4 col-xl-2 d-flex align-items-end justify-content-end col-12">
-                            <button className="btn btn-outline-secondary" type="button" onClick={handleClearFilters}>
+                        <div className="filtro-item filtro-limpar">
+                            <button className="btn btn-outline-secondary btn-limpar-filtros" type="button" onClick={handleClearFilters}>
                                 Limpar filtros
                             </button>
                         </div>

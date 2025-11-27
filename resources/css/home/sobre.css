@@ -303,6 +303,7 @@
 
     .sobre-descricao {
         color: #cbd5e1;
+        text-align: justify;
     }
 
     .stat-mini {

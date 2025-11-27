@@ -251,7 +251,7 @@
                     <div class="sobre-destaque">
                         <p>Facilitar o acesso à tecnologia para pessoas que ainda encontram barreiras em seu uso, com uma
                             ferramenta totalmente voltada à rotina do comércio local.</p>
-                        <p>⭐ Compromisso com a acessibilidade em cada recurso do sistema.</p>
+                        <p>Compromisso com a acessibilidade em cada recurso do sistema.</p>
                     </div>
                     <div class="sobre-stats">
                         <div class="stat-mini">

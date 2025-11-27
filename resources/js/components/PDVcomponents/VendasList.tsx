@@ -185,7 +185,7 @@ const TabelaDesktop = ({ vendasFiltradas, abrirDetalhes }: VendasListProps) => (
         <div className="card-header bg-body">
             <h5 className="mb-0">
                 <i className="bi bi-receipt-cutoff me-2"></i>
-                Histórico ({vendasFiltradas.length} vendas)
+                Histórico do dia ({vendasFiltradas.length} vendas)
             </h5>
         </div>
         <div className="card-body p-0">

@@ -941,13 +941,6 @@ html.theme-transition .btn {
     width: 100%;
 }
 
-@media (min-width: 1200px) {
-    .btn-limpar-filtros {
-        width: auto;
-        min-width: 140px;
-    }
-}
-
 /* Grid personalizado dos filtros de produtos */
 .produtos-filtros-grid {
     display: grid;
@@ -959,13 +952,75 @@ html.theme-transition .btn {
     width: 100%;
 }
 
-.produtos-filtros-grid .filtro-baixos .btn {
+.produtos-filtros-grid .filtro-baixos {
+    display: flex;
+    align-items: flex-end;
+}
+
+.produtos-filtros-grid .filtro-baixos .btn-baixos {
     width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    border-width: 2px;
+    background-color: transparent;
+    color: var(--bs-warning);
+}
+
+/* Corrige ativação visual do botão Baixo Estoque */
+.btn-baixos {
+    background-color: transparent !important;
+    color: var(--bs-warning) !important;
+    border-color: var(--bs-warning) !important;
+    box-shadow: none !important;
+    transition:
+        background-color 0.2s,
+        color 0.2s;
+}
+
+.btn-baixos.active {
+    background-color: var(--bs-warning) !important;
+    color: #1f1f1f !important;
+    border-color: var(--bs-warning) !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+}
+
+[data-bs-theme='dark'] .btn-baixos.active {
+    color: #151515 !important;
+}
+
+.btn-baixos.active:hover,
+.btn-baixos.active:focus,
+.btn-baixos.active:active {
+    background-color: var(--bs-warning) !important;
+    color: #151515 !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+}
+
+.btn-baixos.active {
+    background-color: var(--bs-warning);
+    border-color: var(--bs-warning);
+    color: #1f1f1f;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+[data-bs-theme='dark'] .btn-baixos.active {
+    color: #151515;
+}
+
+.btn-baixos.active:hover,
+.btn-baixos.active:focus,
+.btn-baixos.active:active {
+    background-color: var(--bs-warning);
+    color: #151515;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
 }
 
 @media (min-width: 1200px) {
     .produtos-filtros-grid {
-        grid-template-columns: minmax(260px, 2fr) minmax(220px, 1fr) minmax(150px, 0.7fr) minmax(170px, 0.8fr) auto;
+        grid-template-columns: minmax(260px, 2fr) minmax(220px, 1.2fr) minmax(220px, 1fr) minmax(150px, 0.6fr) auto;
         align-items: end;
     }
 
@@ -975,5 +1030,10 @@ html.theme-transition .btn {
 
     .produtos-filtros-grid .filtro-baixos {
         justify-self: stretch;
+    }
+
+    .btn-limpar-filtros {
+        width: auto;
+        min-width: 140px;
     }
 }

@@ -57,9 +57,16 @@ export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosRetu
     // Filtro final
     const vendasFiltradas = useMemo(() => {
         const hasClienteSelecionado = !!filtroCliente;
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
 
         return vendas.filter((venda) => {
             const statusOk = !filtroStatus || normalizarStatus(venda.status) === filtroStatus;
+
+            // Filtra por data do dia
+            const dataVenda = new Date(venda.created_at);
+            dataVenda.setHours(0, 0, 0, 0);
+            const mesmoDia = dataVenda.getTime() === hoje.getTime();
 
             const vClienteId = getVendaClienteId(venda);
 
@@ -97,7 +104,7 @@ export const useFiltros = (vendas: Venda[], clientes: Cliente[]): UseFiltrosRetu
                 }
             }
 
-            return statusOk && clienteOk;
+            return statusOk && clienteOk && mesmoDia;
         });
     }, [vendas, filtroStatus, filtroCliente, filtroClienteTexto, matchingClienteIds, selectedCliente]);
 

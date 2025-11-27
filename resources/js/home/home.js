@@ -262,6 +262,15 @@ const setupNavbar = () => {
             if (e.key === 'Escape') closeMenu();
         });
 
+        // Fecha ao clicar fora do menu (overlay)
+        if (overlay) {
+            overlay.addEventListener('click', (e) => {
+                // Só fecha se clicar diretamente no overlay, não em elementos filhos
+                if (e.target === overlay && menu.classList.contains('active')) {
+                    closeMenu();
+                }
+            });
+        }
     }
 };
 

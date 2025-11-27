@@ -1,5 +1,7 @@
 import { router } from '@inertiajs/react';
 
+import type { Notification } from './useNotifications';
+
 interface CancelarVendaParams {
     carrinho: any[];
     calcularTotal: () => number;
@@ -10,7 +12,7 @@ interface CancelarVendaParams {
     limparCarrinho: () => void;
     setCancelandoVenda: (loading: boolean) => void;
     setAbaAtiva: (aba: 'lista' | 'nova') => void;
-    addNotification: (notification: { type: string; title: string; message: string }) => void;
+    addNotification: (notification: Omit<Notification, 'id'>) => void;
     messages: {
         carrinho_vazio: string;
         venda_cancelada: string;
