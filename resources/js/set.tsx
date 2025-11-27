@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 import { initializeScrollLockObserver } from './utils/scrollLockObserver';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = 'Mais Conectado';
 
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,

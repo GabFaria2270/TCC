@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="home-hide-scrollbar">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Vendas, Controle de Estoque e Comércio Local | MaisConectado</title>
-    <meta name="description" content="Gerencie vendas, controle de estoque, clientes, fiado e PDV online em um único sistema para comércio local.">
-    <meta name="keywords" content="gerenciamento de vendas, controle de estoque, comércio local, gestão de clientes, PDV online, sistema fiado, relatórios de vendas">
+    <title>Mais Conectado</title>
+    <meta name="description"
+        content="Gerencie vendas, controle de estoque, clientes, fiado e PDV online em um único sistema para comércio local.">
+    <meta name="keywords"
+        content="gerenciamento de vendas, controle de estoque, comércio local, gestão de clientes, PDV online, sistema fiado, relatórios de vendas">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">
@@ -21,15 +23,16 @@
     <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
     @include('components.seo.software_app_jsonld', [
         'appName' => 'MaisConectado',
-        'appDescription' => 'Sistema web para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.',
+        'appDescription' =>
+            'Sistema web para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.',
         'appUrl' => 'https://maisconectado.alwaysdata.net/',
         'price' => '0',
-        'currency' => 'BRL'
+        'currency' => 'BRL',
     ])
     @vite(['resources/css/app.css', 'resources/css/home/home.css', 'resources/js/app.js', 'resources/js/home/home.js'])
 </head>
 
-<body>
+<body class="home-hide-scrollbar">
     <!-- Seção de Navegação -->
     <section id="nav">
         @include('components.navbar')
@@ -101,8 +104,8 @@
                     <div class="home-carousel__item">
                         <picture class="home-carousel__media">
                             <img src="{{ asset('img/carrossel_IMG3.jpg') }}"
-                                class="home-carousel__image home-carousel__image--comecar" alt="Ilustração do carrossel"
-                                loading="lazy">
+                                class="home-carousel__image home-carousel__image--comecar"
+                                alt="Ilustração do carrossel" loading="lazy">
                         </picture>
                         <span class="home-carousel__overlay" aria-hidden="true"></span>
                         <div class="home-carousel__content">
@@ -121,11 +124,13 @@
                 </div>
             </div>
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel"
+                data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Anterior</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel"
+                data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Próximo</span>
             </button>
@@ -134,7 +139,8 @@
 
 
     <!-- Seção dos Cards Principais -->
-    <section class="section-cards-principais" id="principais" data-seo-topics="gestao-simplificada missao-visao-valores inclusao-digital mei comercio-local">
+    <section class="section-cards-principais" id="principais"
+        data-seo-topics="gestao-simplificada missao-visao-valores inclusao-digital mei comercio-local">
         <div class="container-escrita">
             <span class="escrita">Gestão Simplificada para o Comércio Local</span>
         </div>
@@ -210,8 +216,10 @@
                     <ul class="vantagem-lista">
                         <li><i class="bi bi-check-circle-fill"></i>Controle digital de contas a prazo (fiado).</li>
                         <li><i class="bi bi-check-circle-fill"></i>Gestão de vendas e estoque simplificada.</li>
-                        <li><i class="bi bi-check-circle-fill"></i>Interface intuitiva e adaptada para a terceira idade.</li>
-                        <li><i class="bi bi-check-circle-fill"></i>Tutoriais e ajuda interativa para facilitar o aprendizado.</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Interface intuitiva e adaptada para a terceira
+                            idade.</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Tutoriais e ajuda interativa para facilitar o
+                            aprendizado.</li>
                     </ul>
                 </div>
                 <div class="vantagem-footer">
@@ -233,7 +241,8 @@
                     o dia a dia de pequenos comércios.
                 </p>
                 <p class="sobre-escrita-detalhe">
-                    Propomos substituir os cadernos por um controle digital de vendas, contas a prazo e estoque, tudo com
+                    Propomos substituir os cadernos por um controle digital de vendas, contas a prazo e estoque, tudo
+                    com
                     uma interface intuitiva e de fácil entendimento. Nossa plataforma é dedicada a oferecer a melhor
                     ferramenta de gestão para o seu negócio, com foco total na usabilidade para o público sênior.
                 </p>
@@ -249,7 +258,8 @@
                     </p>
                     <p class="sobre-subtexto">Nosso Propósito</p>
                     <div class="sobre-destaque">
-                        <p>Facilitar o acesso à tecnologia para pessoas que ainda encontram barreiras em seu uso, com uma
+                        <p>Facilitar o acesso à tecnologia para pessoas que ainda encontram barreiras em seu uso, com
+                            uma
                             ferramenta totalmente voltada à rotina do comércio local.</p>
                         <p>Compromisso com a acessibilidade em cada recurso do sistema.</p>
                     </div>

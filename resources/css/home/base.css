@@ -68,3 +68,14 @@ button:hover {
     background: var(--secondary-blue);
     border-radius: 2px;
 }
+
+/* Esconder a barra de rolagem visualmente na Home, mantendo a rolagem funcional */
+.home-hide-scrollbar,
+html.home-hide-scrollbar {
+    -ms-overflow-style: none; /* IE 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+.home-hide-scrollbar::-webkit-scrollbar,
+html.home-hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}

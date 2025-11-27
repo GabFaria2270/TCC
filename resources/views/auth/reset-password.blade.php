@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Definir nova senha | MaisConectado</title>
+    <title>Definir nova senha | Mais Conectado</title>
     <meta name="description" content="Escolha uma nova senha para continuar usando o MaisConectado.">
     <link rel="canonical" href="{{ url()->current() }}">
     @vite(['resources/css/app.css', 'resources/css/login/login.css', 'resources/css/auth/reset-password.css', 'resources/js/app.js', 'resources/js/login/login.js', 'resources/js/auth/reset-password.js'])

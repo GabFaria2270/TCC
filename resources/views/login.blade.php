@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Gerencie Vendas, Estoque e Clientes</title>
+    <title>Login | Mais Conectado</title>
     <meta name="description"
         content="Acesse o sistema MaisConectado para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.">
     <meta name="keywords" content="login gerenciamento de vendas, login controle de estoque, login comércio local">

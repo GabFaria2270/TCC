@@ -839,7 +839,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 <div className="d-flex justify-content-between align-items-start gap-3">
                                                     <div className="min-w-0">
                                                         <h5 className="text-break mb-1">{produto.nome}</h5>
-                                                        <div className="small text-secondary">ID: {produto.id}</div>
                                                     </div>
                                                     <div className="text-end">
                                                         <span className="badge text-bg-primary fs-6">{precoFormatado}</span>

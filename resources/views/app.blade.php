@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="hide-scrollbar">
 
 <head>
     <meta charset="utf-8">
@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
     <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
-    <title inertia>Gerenciamento de Vendas, Controle de Estoque e Comércio Local | MaisConectado</title>
+    <title inertia>Mais Conectado</title>
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/set.tsx'])
     @routes
@@ -112,7 +112,7 @@
         })();
     </script>
 
-<body class="bg-body-tertiary layout-gerenciamento"
+<body class="bg-body-tertiary layout-gerenciamento hide-scrollbar"
     data-seo-topics="gerenciamento-de-vendas controle-de-estoque comercio-local gestao-de-clientes pdv-online">
     <noscript>
         <div style="margin:1rem; padding:0.75rem; border:1px solid #ccc; background:#fff; color:#333;">

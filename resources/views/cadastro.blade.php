@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="hide-scrollbar">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro | Sistema de Gerenciamento de Vendas e Estoque</title>
+    <title>Cadastro | Mais Conectado</title>
     <meta name="description"
         content="Crie sua conta e comece a usar o MaisConectado: gerenciamento de vendas, controle de estoque, PDV online, fiado e gestão de clientes para comércio local.">
     <meta name="keywords"
@@ -26,7 +26,7 @@
     @vite(['resources/css/app.css', 'resources/css/cadastro/cadastro.css', 'resources/js/app.js', 'resources/js/cadastro/cadastro.js'])
 </head>
 
-<body class="cadastrof">
+<body class="cadastrof hide-scrollbar">
     <!--botão de sair-->
     <div class="containerS">
         <div class="Cbutton">
@@ -101,14 +101,14 @@
                                 <div class="form-cadastro-group">
                                     <label for="SENHA_HASH" class="form-cadastro-label">Senha</label>
                                     <div class="form-cadastro-input-wrapper">
-                                        <input type="password" class="form-cadastro-input" id="SENHA_HASH" name="SENHA_HASH"
-                                            required minlength="12" placeholder="Mínimo 12 caracteres"
+                                        <input type="password" class="form-cadastro-input" id="SENHA_HASH"
+                                            name="SENHA_HASH" required minlength="12" placeholder="Mínimo 12 caracteres"
                                             {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                         <span id="toggleSenha" class="eye-icon">
                                             <i class="bi bi-eye-slash"></i>
                                         </span>
                                     </div>
-                                    
+
                                     <!-- Indicador de requisitos da senha -->
                                     <div class="password-requirements" id="passwordRequirements">
                                         <div class="requirement-item" data-requirement="length">
@@ -132,7 +132,7 @@
                                             <span>Pelo menos um caractere especial (@$!%*?&#)</span>
                                         </div>
                                     </div>
-                                    
+
                                     @error('SENHA_HASH')
                                         @if (!str_contains($message, 'confere'))
                                             <div class="form-cadastro-error">{{ $message }}</div>
@@ -145,9 +145,9 @@
                                     <label for="SENHA_HASH_confirmation" class="form-cadastro-label">Confirmar
                                         Senha</label>
                                     <div class="form-cadastro-input-wrapper">
-                                        <input type="password" class="form-cadastro-input" id="SENHA_HASH_confirmation"
-                                            name="SENHA_HASH_confirmation" required minlength="12"
-                                            placeholder="Digite a senha novamente"
+                                        <input type="password" class="form-cadastro-input"
+                                            id="SENHA_HASH_confirmation" name="SENHA_HASH_confirmation" required
+                                            minlength="12" placeholder="Digite a senha novamente"
                                             {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                         <span id="toggleSenhaConfirm" class="eye-icon">
                                             <i class="bi bi-eye-slash"></i>
