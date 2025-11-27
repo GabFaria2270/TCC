@@ -140,7 +140,7 @@
         <div class="cards-principais-grid">
             <article class="card-principal">
                 <div class="card-image">
-                    <img src="{{ asset('img/cadr1.jpg') }}" alt="Nossa Missão" loading="lazy">
+                    <img src="{{ asset('img/01.jpg') }}" alt="Nossa Missão" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Nossa Missão: Inclusão Digital</h3>
@@ -156,7 +156,7 @@
 
             <article class="card-principal">
                 <div class="card-image">
-                    <img src="{{ asset('img/mulher da tela inicial.png') }}" alt="Nossa Visão" loading="lazy">
+                    <img src="{{ asset('img/02.jpg') }}" alt="Nossa Visão" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Nossa Visão: Fortalecer o MEI</h3>
@@ -172,7 +172,7 @@
 
             <article class="card-principal">
                 <div class="card-image">
-                    <img src="{{ asset('img/testedeimg.jpeg') }}" alt="Nossos Valores" loading="lazy">
+                    <img src="{{ asset('img/03.jpg') }}" alt="Nossos Valores" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">Nossos Valores: Acessibilidade</h3>
@@ -196,7 +196,7 @@
         </div>
         <div class="vantagem-card">
             <div class="vantagem-image">
-                <img src="{{ asset('img/testedeimg.jpeg') }}" alt="Nossos Diferenciais" loading="lazy">
+                <img src="{{ asset('img/04.jpg') }}" alt="Nossos Diferenciais" loading="lazy">
             </div>
             <div class="vantagem-content">
                 <h2 class="vantagem-titulo">Acessibilidade e Eficiência</h2>
@@ -363,81 +363,6 @@
     </section>
 
     <!-- Nova Seção: Depoimentos -->
-    <section class="section-testimonials" id="depoimentos">
-        <div class="container-escrita">
-            <span class="escrita">Feito para o Comerciante Local</span>
-        </div>
-        <div class="testimonials-container">
-            <div class="testimonial-card">
-                <div class="testimonial-content">
-                    <p>"Tenho dificuldade com tecnologia e preciso de um sistema fácil para gerenciar minhas contas a
-                        prazo."</p>
-                </div>
-                <div class="testimonial-author">
-                    <div class="author-avatar">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="author-info">
-                        <h5>Empreendedor Local</h5>
-                        <span>Foco em contas a prazo</span>
-                    </div>
-                </div>
-                <div class="testimonial-rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                </div>
-            </div>
-
-            <div class="testimonial-card">
-                <div class="testimonial-content">
-                    <p>"Usar cadernos toma muito tempo. Quero algo digital que seja simples e controle meu estoque e minhas
-                        vendas."</p>
-                </div>
-                <div class="testimonial-author">
-                    <div class="author-avatar">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="author-info">
-                        <h5>Dono de Comércio</h5>
-                        <span>Busca gestão completa</span>
-                    </div>
-                </div>
-                <div class="testimonial-rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                </div>
-            </div>
-
-            <div class="testimonial-card">
-                <div class="testimonial-content">
-                    <p>"Preciso de uma ferramenta que me dê autonomia para organizar minhas finanças, sem depender de
-                        ajuda."</p>
-                </div>
-                <div class="testimonial-author">
-                    <div class="author-avatar">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <div class="author-info">
-                        <h5>Microempreendedor Sênior</h5>
-                        <span>Autonomia no dia a dia</span>
-                    </div>
-                </div>
-                <div class="testimonial-rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Nova Seção: Serviços/Funcionalidades -->
     <section class="section-services" id="servicos">

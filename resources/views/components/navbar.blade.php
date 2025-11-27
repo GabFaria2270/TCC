@@ -9,11 +9,37 @@
         </div>
         
         <!-- Menu centralizado -->
-        <div class="navbar-menu" id="navbarMenu">
-            <a href="#inicio" class="nav-link">Início</a>
-            <a href="#estatisticas" class="nav-link">Funcionalidades</a>
-            <a href="#sobre" class="nav-link">Sobre</a>
-            <a href="#valores" class="nav-link">Métricas</a>
+        <div class="navbar-menu" id="navbarMenu" aria-hidden="true">
+            <div class="navbar-mobile-header">
+                <div class="navbar-mobile-brand">
+                    <span class="navbar-mobile-icon" aria-hidden="true">
+                        <i class="bi bi-shop-window"></i>
+                    </span>
+                    <div>
+                        <p class="navbar-mobile-title">Mais Conectado</p>
+                        <span class="navbar-mobile-subtitle">Menu principal</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navbar-links">
+                <a href="#inicio" class="nav-link">
+                    <span class="nav-link-icon" aria-hidden="true">🏠</span>
+                    <span class="nav-link-text">Início</span>
+                </a>
+                <a href="#estatisticas" class="nav-link">
+                    <span class="nav-link-icon" aria-hidden="true">🧰</span>
+                    <span class="nav-link-text">Funcionalidades</span>
+                </a>
+                <a href="#sobre" class="nav-link">
+                    <span class="nav-link-icon" aria-hidden="true">📘</span>
+                    <span class="nav-link-text">Sobre</span>
+                </a>
+                <a href="#valores" class="nav-link">
+                    <span class="nav-link-icon" aria-hidden="true">📊</span>
+                    <span class="nav-link-text">Métricas</span>
+                </a>
+            </div>
         </div>
         
         <!-- Botão mobile -->
@@ -24,3 +50,5 @@
         </button>
     </div>
 </nav>
+
+<div class="navbar-overlay" id="navbarOverlay" aria-hidden="true"></div>

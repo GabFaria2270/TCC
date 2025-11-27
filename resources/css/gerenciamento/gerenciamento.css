@@ -925,3 +925,55 @@ html.theme-transition .btn {
 [data-bs-theme='dark'] .data-table thead th {
     background-color: var(--theme-surface-2) !important;
 }
+
+/* Botão filtro "Baixos": não alterar cor ao passar o mouse */
+#only-low + label.btn-outline-warning:hover,
+#only-low + label.btn-outline-warning:focus,
+#only-low + label.btn-outline-warning:active,
+#only-low:checked + label.btn-outline-warning:hover {
+    background-color: transparent !important;
+    color: var(--bs-warning) !important;
+    border-color: var(--bs-warning) !important;
+    box-shadow: none !important;
+}
+
+.btn-limpar-filtros {
+    width: 100%;
+}
+
+@media (min-width: 1200px) {
+    .btn-limpar-filtros {
+        width: auto;
+        min-width: 140px;
+    }
+}
+
+/* Grid personalizado dos filtros de produtos */
+.produtos-filtros-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.produtos-filtros-grid .filtro-item {
+    width: 100%;
+}
+
+.produtos-filtros-grid .filtro-baixos .btn {
+    width: 100%;
+}
+
+@media (min-width: 1200px) {
+    .produtos-filtros-grid {
+        grid-template-columns: minmax(260px, 2fr) minmax(220px, 1fr) minmax(150px, 0.7fr) minmax(170px, 0.8fr) auto;
+        align-items: end;
+    }
+
+    .produtos-filtros-grid .filtro-limpar {
+        justify-self: end;
+    }
+
+    .produtos-filtros-grid .filtro-baixos {
+        justify-self: stretch;
+    }
+}
