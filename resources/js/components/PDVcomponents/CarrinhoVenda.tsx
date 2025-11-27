@@ -58,7 +58,15 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
 
     // ✅ estado de texto do combobox (campo de busca/seleção)
     const [clienteQuery, setClienteQuery] = useState<string>('');
-    const [descontoTexto, setDescontoTexto] = useState('0,00');
+    const [descontoTexto, setDescontoTexto] = useState('');
+
+    const formatarNumeroParaTexto = (valor: number) => {
+        if (!valor) return '';
+        return valor
+            .toFixed(2)
+            .replace('.', ',')
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+    };
 
     // ✅ Sincroniza o texto do combobox quando o cliente selecionado muda externamente (ex: após criar cliente)
     useEffect(() => {
@@ -71,7 +79,11 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
     }, [clienteSelecionado]);
 
     useEffect(() => {
-        setDescontoTexto(desconto.toFixed(2).replace('.', ','));
+        if (!desconto) {
+            setDescontoTexto('');
+            return;
+        }
+        setDescontoTexto(formatarNumeroParaTexto(desconto));
     }, [desconto]);
 
     // Adicionar função para converter moeda formatada para número
@@ -112,6 +124,28 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
         // Aplicar formatação de moeda
         const valorFormatado = formatarMoeda(valor);
         setValorRecebido(valorFormatado);
+    };
+
+    const handleDescontoChange = (valor: string) => {
+        if (valor === '' || valor === '0') {
+            setDescontoTexto('');
+            setDesconto(0);
+            return;
+        }
+
+        const formatado = formatarMoeda(valor);
+        let numero = converterMoedaParaNumero(formatado);
+        const subtotal = calcularSubtotal();
+        const descontoAjustado = Math.min(numero, subtotal);
+
+        if (descontoAjustado !== numero) {
+            numero = descontoAjustado;
+            setDescontoTexto(formatarNumeroParaTexto(descontoAjustado));
+        } else {
+            setDescontoTexto(formatado);
+        }
+
+        setDesconto(Number(descontoAjustado.toFixed(2)));
     };
 
     return (
@@ -379,26 +413,24 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
                         {/* Desconto */}
                         <div className="mb-3">
                             <label className="form-label small">Desconto</label>
-                            <div className="input-group input-group-sm">
+                            <div className="input-group">
                                 <span className="input-group-text">R$</span>
                                 <input
                                     type="text"
                                     className="form-control"
                                     inputMode="decimal"
                                     value={descontoTexto}
-                                    onChange={(e) => {
-                                        const valor = e.target.value;
-                                        if (valor === '') {
+                                    onChange={(e) => handleDescontoChange(e.target.value)}
+                                    onFocus={(e) => {
+                                        if (e.target.value === '0,00' || e.target.value === '0') {
+                                            setDescontoTexto('');
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        if (e.target.value === '' || e.target.value === '0') {
                                             setDescontoTexto('');
                                             setDesconto(0);
-                                            return;
                                         }
-                                        const formatado = formatarMoeda(valor);
-                                        setDescontoTexto(formatado);
-                                        const numero = converterMoedaParaNumero(formatado);
-                                        const subtotal = calcularSubtotal();
-                                        const descontoAjustado = Math.min(numero, subtotal);
-                                        setDesconto(Number(descontoAjustado.toFixed(2)));
                                     }}
                                     placeholder="0,00"
                                     style={{ textAlign: 'right' }}

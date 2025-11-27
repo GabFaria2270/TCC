@@ -18,7 +18,12 @@
   padding: 2rem 1.5rem 1.5rem 1.5rem;
   min-width: 240px;
   max-width: 380px;
-  width: 92vw;
+  width: min(92vw, 380px);
+  max-height: min(80vh, 420px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -221,4 +226,71 @@
 
 body.tour-open {
   overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+  .tour-glass {
+    padding: 1.5rem 1.2rem 1.15rem;
+    line-height: 1.55;
+    font-size: 1rem;
+  }
+  .tour-glass .shepherd-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.35rem;
+  }
+  .tour-glass .shepherd-text {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 576px) {
+  .tour-glass {
+    width: calc(100vw - 1.5rem);
+    min-width: auto;
+    border-radius: 18px;
+    padding: 1.25rem 1rem 0.95rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  }
+  .tour-glass .shepherd-title {
+    font-size: 1.05rem;
+    padding: 0.4rem 0.85rem;
+  }
+  .tour-glass .shepherd-text {
+    font-size: 0.97rem;
+  }
+  .tour-glass .shepherd-cancel-icon {
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: 1.2rem;
+    top: 0.45rem;
+    right: 0.45rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .tour-glass {
+    padding: 1rem 0.85rem 0.85rem;
+    border-radius: 16px;
+    border-width: 1px;
+  }
+  .tour-glass .shepherd-title {
+    font-size: 1rem;
+  }
+  .tour-glass .shepherd-text {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .tour-glass {
+    width: calc(100vw - 1rem);
+    max-height: 70vh;
+  }
+}
+
+@media (max-height: 640px) {
+  .tour-glass {
+    max-height: 65vh;
+  }
 }

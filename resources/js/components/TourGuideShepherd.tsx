@@ -10,6 +10,11 @@ type TourGuideShepherdProps = {
     userId?: number | string;
 };
 
+type ExtendedStepOptions = StepOptions & {
+    popperOptions?: Record<string, unknown>;
+    modalOverlayOpeningPadding?: number;
+};
+
 export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {}) {
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -32,6 +37,73 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
         const STEP_KEY_BASE = 'tourGuiadoStepIndex';
         const finalizadoKey = `${FINAL_KEY_BASE}${suffix}`;
         const stepKey = `${STEP_KEY_BASE}${suffix}`;
+
+        const smallScreenQuery = window.matchMedia('(max-width: 768px)');
+        const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const mediaAddListener = (query: MediaQueryList, handler: (event: MediaQueryListEvent | MediaQueryList) => void) => {
+            if (typeof query.addEventListener === 'function') {
+                query.addEventListener('change', handler as (event: MediaQueryListEvent) => void);
+            } else if (typeof query.addListener === 'function') {
+                query.addListener(handler as (this: MediaQueryList, ev: MediaQueryListEvent) => void);
+            }
+        };
+        const mediaRemoveListener = (query: MediaQueryList, handler: (event: MediaQueryListEvent | MediaQueryList) => void) => {
+            if (typeof query.removeEventListener === 'function') {
+                query.removeEventListener('change', handler as (event: MediaQueryListEvent) => void);
+            } else if (typeof query.removeListener === 'function') {
+                query.removeListener(handler as (this: MediaQueryList, ev: MediaQueryListEvent) => void);
+            }
+        };
+        const isSmallScreen = () => smallScreenQuery.matches;
+        const prefersReducedMotion = () => reducedMotionQuery.matches;
+        const scrollToTarget = (element?: Element | null) => {
+            if (!element || typeof (element as HTMLElement).scrollIntoView !== 'function') {
+                return;
+            }
+            try {
+                (element as HTMLElement).scrollIntoView({
+                    behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+                    block: isSmallScreen() ? 'center' : 'nearest',
+                    inline: 'center',
+                });
+            } catch {
+                (element as HTMLElement).scrollIntoView();
+            }
+        };
+        const popperModifiers = [
+            {
+                name: 'offset',
+                options: {
+                    offset: () => [0, isSmallScreen() ? 8 : 14],
+                },
+            },
+            {
+                name: 'preventOverflow',
+                options: {
+                    boundary: document.body,
+                    padding: 12,
+                },
+            },
+            {
+                name: 'flip',
+                options: {
+                    fallbackPlacements: ['bottom', 'top', 'right', 'left'],
+                },
+            },
+        ];
+        const toggleBodyScrollLock = (locked: boolean) => {
+            const shouldLock = locked && !isSmallScreen();
+            document.body.classList.toggle('tour-open', shouldLock);
+        };
+        const syncBodyLockWithViewport = () => {
+            if (!document.body.classList.contains('tour-open')) {
+                return;
+            }
+            if (isSmallScreen()) {
+                document.body.classList.remove('tour-open');
+            }
+        };
+        mediaAddListener(smallScreenQuery, syncBodyLockWithViewport);
 
         const safeGet = (key: string) => {
             try {
@@ -100,18 +172,60 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
             });
         }
 
+        let sidebarForcedOpen = false;
+        const isSidebarVisible = () => {
+            const sidebar = document.getElementById('sidebar');
+            return sidebar?.classList.contains('is-open');
+        };
+        const ensureSidebarOpenForTour = async () => {
+            if (!isSmallScreen()) return;
+            if (isSidebarVisible()) return;
+            const toggleBtn = document.getElementById('sidebarToggle') as HTMLButtonElement | null;
+            if (toggleBtn) {
+                sidebarForcedOpen = true;
+                toggleBtn.click();
+                try {
+                    await waitForElement('#sidebar.is-open', 1500);
+                } catch {
+                    sidebarForcedOpen = false;
+                }
+            }
+        };
+        const releaseSidebarIfForced = () => {
+            if (!sidebarForcedOpen || !isSmallScreen()) return;
+            const closeBtn = document.getElementById('sidebarClose') as HTMLButtonElement | null;
+            if (closeBtn) {
+                closeBtn.click();
+            } else {
+                document.getElementById('sidebar')?.classList.remove('is-open');
+            }
+            sidebarForcedOpen = false;
+        };
+
+        const handleNavbarStepShow = (selector: string) => () => ensureSidebarOpenForTour().then(() => waitForElement(selector));
+        const handleNavbarStepHide = () => releaseSidebarIfForced();
+
         const tour: ShepherdTour = new Shepherd.Tour({
             defaultStepOptions: {
                 classes: 'shepherd-theme-arrows tour-glass rainbow-card',
                 scrollTo: true,
+                scrollToHandler: scrollToTarget,
                 cancelIcon: { enabled: true },
                 canClickTarget: false,
-            },
+                modalOverlayOpeningPadding: 8,
+                popperOptions: {
+                    modifiers: popperModifiers,
+                },
+            } as ExtendedStepOptions,
             useModalOverlay: true,
         });
         shepherdTourRef.current = tour;
+        const handleStepShow = () => {
+            requestAnimationFrame(() => toggleBodyScrollLock(true));
+        };
+        tour.on('show', handleStepShow);
 
-        const steps: StepOptions[] = [
+        const steps: ExtendedStepOptions[] = [
             // Navbar Home
             {
                 id: 'navbar-home',
@@ -125,8 +239,9 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
                             window.location.href = '/gerenciamento';
                             return new Promise((resolve) => setTimeout(resolve, 800));
                         }
-                        return waitForElement('.btn-tour-inicio');
+                        return handleNavbarStepShow('.btn-tour-inicio')();
                     },
+                    hide: handleNavbarStepHide,
                 },
             },
             // Botão diminuir texto
@@ -271,7 +386,8 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
                 text: 'Aqui você pode registrar e acompanhar todas as vendas realizadas no sistema. Clique para explorar!',
                 buttons: [],
                 when: {
-                    show: () => waitForElement('.btn-tour-vendas'),
+                    show: handleNavbarStepShow('.btn-tour-vendas'),
+                    hide: handleNavbarStepHide,
                 },
             },
             // Elementos da página Vendas (ajustados para classes reais)
@@ -325,7 +441,8 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
                 text: 'Aqui você cadastra, edita e acompanha todos os produtos da sua mercearia. Clique para ver mais!',
                 buttons: [],
                 when: {
-                    show: () => waitForElement('.btn-tour-produtos'),
+                    show: handleNavbarStepShow('.btn-tour-produtos'),
+                    hide: handleNavbarStepHide,
                 },
             },
             {
@@ -378,7 +495,8 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
                 text: 'Aqui você gerencia todos os seus clientes, acompanha fiados e pode cadastrar novos. Clique para conhecer!',
                 buttons: [],
                 when: {
-                    show: () => waitForElement('.btn-tour-clientes'),
+                    show: handleNavbarStepShow('.btn-tour-clientes'),
+                    hide: handleNavbarStepHide,
                 },
             },
             {
@@ -437,7 +555,8 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
                 text: 'Aqui você pode gerar relatórios completos de vendas, estoque e muito mais. Clique para acessar!',
                 buttons: [],
                 when: {
-                    show: () => waitForElement('.btn-tour-relatorio'),
+                    show: handleNavbarStepShow('.btn-tour-relatorio'),
+                    hide: handleNavbarStepHide,
                 },
             },
             {
@@ -509,6 +628,8 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
             tourDismissed = true;
             safeSet(finalizadoKey, 'true');
             clearStepIndex();
+            toggleBodyScrollLock(false);
+            releaseSidebarIfForced();
         };
         tour.on('complete', finalizarTour);
         tour.on('cancel', finalizarTour);
@@ -589,13 +710,17 @@ export default function TourGuideShepherd({ userId }: TourGuideShepherdProps = {
         return () => {
             document.body.removeEventListener('click', advanceStep);
             window.removeEventListener('popstate', onPopState);
+            mediaRemoveListener(smallScreenQuery, syncBodyLockWithViewport);
             if (typeof (tour as any).off === 'function') {
+                (tour as any).off('show', handleStepShow);
                 (tour as any).off('complete', finalizarTour);
                 (tour as any).off('cancel', finalizarTour);
             }
             if (shepherdTourRef.current === tour) {
                 shepherdTourRef.current = null;
             }
+            toggleBodyScrollLock(false);
+            releaseSidebarIfForced();
             tour.cancel();
         };
     }, [userId]);

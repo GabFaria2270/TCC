@@ -6,6 +6,7 @@
 @import './geral/footer.css';
 @import './login/login.css';
 @import './gerenciamento/gerenciamento.css';
+@import './gerenciamento/tour-glass.css';
 @import './cadastro/cadastro.css';
 @import './home/animacoes.css';
 @import './gerenciamento/clientes.css';
