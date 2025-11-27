@@ -86,6 +86,10 @@ class VendasController extends Controller
         $resultado = $this->vendaService->criar($validated, $request);
 
         if ($resultado['success']) {
+            if ($this->isPdvInline($request)) {
+                return redirect()->back();
+            }
+
             return redirect()->back()->with('success', __('validation.pdv_venda_processada'));
         }
 
@@ -104,6 +108,10 @@ class VendasController extends Controller
         $resultado = $this->vendaService->criarCancelada($validated, $request);
 
         if ($resultado['success']) {
+            if ($this->isPdvInline($request)) {
+                return redirect()->back();
+            }
+
             return redirect()->back()->with('success', __('validation.pdv_venda_cancelada'));
         }
 
@@ -172,5 +180,10 @@ class VendasController extends Controller
         }
 
         return back()->with('error', $mensagemErro);
+    }
+
+    private function isPdvInline(Request $request): bool
+    {
+        return filter_var($request->header('X-PDV-Inline'), FILTER_VALIDATE_BOOLEAN);
     }
 }

@@ -10,6 +10,8 @@
     <meta name="keywords"
         content="cadastro gerenciamento de vendas, cadastro controle de estoque, cadastro comércio local, criar conta PDV online">
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">
     <meta property="og:title" content="Cadastro — MaisConectado">

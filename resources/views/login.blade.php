@@ -9,6 +9,8 @@
         content="Acesse o sistema MaisConectado para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.">
     <meta name="keywords" content="login gerenciamento de vendas, login controle de estoque, login comércio local">
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MaisConectado">
     <meta property="og:title" content="Login — MaisConectado">

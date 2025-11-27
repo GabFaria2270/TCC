@@ -94,6 +94,9 @@ export const useFinalizarVenda = () => {
         try {
             await router.post('/gerenciamento/vendas', dados, {
                 preserveScroll: true,
+                headers: {
+                    'X-PDV-Inline': 'true',
+                },
                 onSuccess: () => {
                     addNotification({
                         type: 'success',

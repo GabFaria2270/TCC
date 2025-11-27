@@ -17,7 +17,8 @@
     <meta name="twitter:title" content="Gerenciamento de Vendas e Controle de Estoque">
     <meta name="twitter:description" content="PDV online, fiado seguro, gestão de clientes e relatórios de vendas.">
     <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
-    <link rel="icon" href="/logo.jpg">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
     @include('components.seo.software_app_jsonld', [
         'appName' => 'MaisConectado',
         'appDescription' => 'Sistema web para gerenciamento de vendas, controle de estoque, PDV online e gestão de clientes.',

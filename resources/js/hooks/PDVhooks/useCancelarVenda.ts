@@ -83,6 +83,9 @@ export const useCancelarVenda = () => {
 
         router.post('/gerenciamento/vendas/cancelar-aberta', payload, {
             preserveScroll: true,
+            headers: {
+                'X-PDV-Inline': 'true',
+            },
             onSuccess: () => {
                 addNotification({
                     type: 'success',

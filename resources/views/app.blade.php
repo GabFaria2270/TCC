@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
     <title inertia>Gerenciamento de Vendas, Controle de Estoque e Comércio Local | MaisConectado</title>
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/set.tsx'])
