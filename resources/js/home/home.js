@@ -262,15 +262,20 @@ const setupNavbar = () => {
             if (e.key === 'Escape') closeMenu();
         });
 
-        // Fecha ao clicar fora do menu (overlay)
-        if (overlay) {
-            overlay.addEventListener('click', (e) => {
-                // Só fecha se clicar diretamente no overlay, não em elementos filhos
-                if (e.target === overlay && menu.classList.contains('active')) {
-                    closeMenu();
-                }
-            });
-        }
+        // Fecha ao clicar fora do menu: listener global (overlay não intercepta mais)
+        const outsideClickHandler = (e) => {
+            if (!menu.classList.contains('active')) return;
+            const target = e.target;
+            // se o clique for no toggle ou dentro do menu, ignorar
+            if (menu.contains(target) || toggle.contains(target)) return;
+            // caso contrário, fechar o menu
+            closeMenu();
+        };
+
+        document.addEventListener('click', outsideClickHandler);
+
+        // Remover listener ao destruir (não usado aqui, mas bom para futuros hooks)
+        // OBS: mantido sem remoção; se for necessário, podemos armazenar referências.
     }
 };
 
