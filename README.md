@@ -67,7 +67,6 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 
 - CRUD completo com filtros persistidos em sessão (busca livre, categoria, ordenação, somente baixo estoque).
 - Movimentos de estoque (entrada, saída e ajuste) com motivo opcional e registro em `movimentos_estoque` para auditoria.
-- Histórico por produto paginado com saldo anterior/atual, evitando divergências e permitindo rastreio de cada ajuste.
 
 ### Vendas & PDV
 
@@ -199,7 +198,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
       <div align="center">
       <img src="docs/assets/screens/relatorios.gif" alt="Tela de relatórios" width="800" />
       </div>
-  
+
 ### Tour guiado
 
 - Passeio interativo baseado em Shepherd evidencia os pontos críticos do painel (dashboard, vendas, clientes, produtos e relatórios).
