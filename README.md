@@ -124,7 +124,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Formulário completo para usuário + comércio em um único fluxo, com validação mínima de 12 caracteres para senha + complexidade.
 - Interface split screen com ilustração para reforçar confiança no onboarding.
       <div align="center">
-      <img src="docs/assets/screens/cadastro.gif" alt="Tela de cadastro" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/cadastro.gif" alt="Tela de cadastro" width="800" />
       </div>
 
 ### Login
@@ -132,7 +132,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Campo “Lembrar-me” conectado ao middleware híbrido (sessão + token persistente).
 - Acesso rápido a recuperação de senha e CTA para cadastro.
       <div align="center">
-      <img src="docs/assets/screens/login.gif" alt="Tela de login" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/login.gif" alt="Tela de login" width="800" />
       </div>
 
 ### Esqueci minha senha
@@ -140,7 +140,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Página enxuta que confirma sucesso/erros e explica o que acontece com o link enviado.
 - Loader inclusivo e CTA para retornar ao login caso a pessoa lembre o acesso.
       <div align="center">
-      <img src="docs/assets/screens/forgot-password.gif" alt="Tela de solicitação de recuperação" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/forgot-password.gif" alt="Tela de solicitação de recuperação" width="800" />
       </div>
 
 ### Redefinir senha
@@ -148,7 +148,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Validação em tempo real dos critérios (tamanho, maiúscula, número, especial) + botões para mostrar/ocultar senha.
 - Bloqueia o campo de e-mail, o link já contém o endereço verificado via token codificado.
       <div align="center">
-      <img src="docs/assets/screens/reset-password.gif" alt="Tela de redefinição" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/reset-password.gif" alt="Tela de redefinição" width="800" />
       </div>
 
 ### Dashboard
@@ -156,7 +156,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Cards com resumo do dia, alerta de estoque crítico e painel de fiado com maior devedor.
 - Botões de acessibilidade (A-/A+) e modo escuro fixos no topo, presentes em todas as páginas.
       <div align="center">
-      <img src="docs/assets/screens/dashboard.gif" alt="Dashboard do comércio" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/dashboard.gif" alt="Dashboard do comércio" width="800" />
       </div>
 
 ### Histórico de Vendas
@@ -164,7 +164,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Filtros instantâneos por status e cliente, com botão para iniciar nova venda.
 - Layout consistente com letras ampliadas e contraste alto.
       <div align="center">
-      <img src="docs/assets/screens/vendas-lista.gif" alt="Histórico de vendas" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/vendas-lista.gif" alt="Histórico de vendas" width="800" />
       </div>
 
 ### PDV
@@ -172,7 +172,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Dupla coluna: produtos com busca por nome/categoria e carrinho com totais.
 - Etiquetas exibem estoque em tempo real e alertas de “baixo estoque”.
       <div align="center">
-      <img src="docs/assets/screens/vendas-pdv.gif" alt="PDV com carrinho" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/vendas-pdv.gif" alt="PDV com carrinho" width="800" />
       </div>
 
 ### Clientes
@@ -180,7 +180,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Foco em contas fiadas, com badge de saldo e ações rápidas (ver, pagar, editar).
 - Botão “Histórico Fiadas” exibe modal alimentado por `/auth/fiado`.
       <div align="center">
-      <img src="docs/assets/screens/clientes.gif" alt="Gestão de clientes" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/clientes.gif" alt="Gestão de clientes" width="800" />
       </div>
 
 ### Produtos
@@ -188,7 +188,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Tabela com ordenação, filtros por categoria e destaque para “Baixo estoque”.
 - Ações agrupadas (editar, ajustar estoque, excluir) com feedback Inertia.
       <div align="center">
-      <img src="docs/assets/screens/produtos.gif" alt="Gestão de produtos" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/produtos.gif" alt="Gestão de produtos" width="800" />
       </div>
 
 ### Relatórios
@@ -196,23 +196,23 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Cards com totais e histórico tabular com status.
 - Botões "Vendas" x "Movimentos" página dupla no mesmo layout.
       <div align="center">
-      <img src="docs/assets/screens/relatorios.gif" alt="Tela de relatórios" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/relatorios.gif" alt="Tela de relatórios" width="800" />
       </div>
 
 ### Tour guiado
 
 - Passeio interativo baseado em Shepherd evidencia os pontos críticos do painel (dashboard, vendas, clientes, produtos e relatórios).
 - Para novos dispositivos ele roda automaticamente uma vez graças ao controle em `localStorage`.
-  <div align="center">
-  <img src="docs/assets/screens/tour.gif" alt="Tour guiado pelo painel" width="800" />
-  </div>
+    <div align="center">
+    <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/tour.gif" alt="Tour guiado pelo painel" width="800" />
+    </div>
 
 ### E-mail de recuperação
 
 - Layout escuro responsivo com botão CTA e fallback em texto para copiar o link.
 - Personaliza avatar e informa o tempo de expiração configurado em `config/auth.php`.
       <div align="center">
-      <img src="docs/assets/screens/email.png" alt="E-mail de redefinição" width="800" />
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/email.png" alt="E-mail de redefinição" width="800" />
       </div>
 
 ## 🚀 Tecnologias Principais
@@ -275,7 +275,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Imagens e ilustrações usam `object-fit` + `loading="lazy"`; o primeiro banner tem `fetchpriority="high"` para evitar atrasos em conexões móveis.
 
 <div align="center">
-  <img src="docs/assets/screens/responsividade.gif" alt="Animação demonstrando a responsividade do sistema" width="300" />
+  <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/responsividade.gif" alt="Animação demonstrando a responsividade do sistema" width="300" />
 </div>
 
 ## 📊 Relatórios em Página Dupla
