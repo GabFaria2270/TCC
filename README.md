@@ -203,9 +203,9 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 
 - Passeio interativo baseado em Shepherd evidencia os pontos críticos do painel (dashboard, vendas, clientes, produtos e relatórios).
 - Para novos dispositivos ele roda automaticamente uma vez graças ao controle em `localStorage`.
-      <div align="center">
-        <img src="docs/assets/screens/tour.gif" alt="Tour guiado pelo painel" width="800" />
-      </div>
+  <div align="center">
+  <img src="docs/assets/screens/tour.gif" alt="Tour guiado pelo painel" width="800" />
+  </div>
 
 ### E-mail de recuperação
 
@@ -275,7 +275,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Imagens e ilustrações usam `object-fit` + `loading="lazy"`; o primeiro banner tem `fetchpriority="high"` para evitar atrasos em conexões móveis.
 
 <div align="center">
-  <img src="docs/assets/screens/responsividade.gif" alt="Animação demonstrando a responsividade do sistema" width="800" />
+  <img src="docs/assets/screens/responsividade.gif" alt="Animação demonstrando a responsividade do sistema" width="400" />
 </div>
 
 ## 📊 Relatórios em Página Dupla
