@@ -17,12 +17,12 @@
     <meta property="og:title" content="Cadastro — MaisConectado">
     <meta property="og:description"
         content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
-    <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta property="og:image" content="{{ asset('img/logo-maisconectado.png') }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cadastro — MaisConectado">
     <meta name="twitter:description"
         content="Crie sua conta no MaisConectado — gerenciamento simples para comércios locais.">
-    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta name="twitter:image" content="{{ asset('img/logo-maisconectado.png') }}">
     @vite(['resources/css/app.css', 'resources/css/cadastro/cadastro.css', 'resources/js/app.js', 'resources/js/cadastro/cadastro.js'])
 </head>
 

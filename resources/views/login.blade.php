@@ -16,12 +16,12 @@
     <meta property="og:title" content="Login — MaisConectado">
     <meta property="og:description"
         content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
-    <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta property="og:image" content="{{ asset('img/logo-maisconectado.png') }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Login — MaisConectado">
     <meta name="twitter:description"
         content="Acesse sua conta MaisConectado — gerencie vendas e clientes com segurança.">
-    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta name="twitter:image" content="{{ asset('img/logo-maisconectado.png') }}">
     @vite(['resources/css/app.css', 'resources/css/login/login.css', 'resources/js/app.js', 'resources/js/login/login.js'])
 </head>
 
