@@ -88,8 +88,7 @@
                             <div class="home-carousel__glass">
                                 <div class="home-carousel__text">
                                     <h5>Fiado seguro e transparente</h5>
-                                    <p>Controle de crédito sem dor de cabeça: limites, parcelas e histórico sempre à
-                                        vista.</p>
+                                    <p>Controle de crédito sem dor de cabeça: limites e histórico sempre à vista.</p>
                                 </div>
                                 <div class="botoes-carrossel">
                                     <a class="btn-cadastro-carrossel" href="{{ route('cadastro') }}">Cadastrar</a>

@@ -1,9 +1,27 @@
 <div align="center">
 	<img src="docs/assets/cover.jpeg" alt="Mais Conectado - Tela inicial" width="960" />
+	
 	<h1>Mais Conectado</h1>
-	<p><strong>Conexão simples para pequenos negócios</strong></p>
-	<p>Gestão de produtos, clientes, vendas e crédito fiado de forma moderna, rápida e acessível.</p>
-	<p><a href="https://maisconectado.alwaysdata.net" target="_blank">Acessar DEMO online</a></p>
+	
+	<p>
+		<img src="https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 11" />
+		<img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2" />
+		<img src="https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow?style=for-the-badge" alt="Status" />
+	</p>
+
+    <p><strong>Conexão simples para pequenos negócios</strong></p>
+    <p>Gestão de produtos, clientes, vendas e crédito fiado de forma moderna, rápida e acessível.</p>
+
+    <p>
+    	<a href="https://maisconectado.alwaysdata.net" target="_blank"><strong>🔗 Acessar DEMO online</strong></a>
+    </p>
+
+    <p>
+    	<em>Credenciais de Teste:</em><br>
+    	<strong>Email:</strong> admin@teste.com<br>
+    	<strong>Senha:</strong> admin123
+    </p>
+
 </div>
 
 ## 📚 Índice
@@ -15,9 +33,8 @@
 - [Telas & UX](#-telas--ux)
 - [Responsividade & Acessibilidade](#-responsividade--acessibilidade)
 - [Relatórios em Página Dupla](#-relatórios-em-página-dupla)
-- [Arquitetura e Serviços](#-arquitetura-em-alto-nível)
-- [Segurança e Sessão](#-segurança--visão-geral)
-- [Testes e Instalação](#-testes-rápidos)
+- [Arquitetura, Serviços e Segurança](#-arquitetura-serviços-e-segurança)
+- [Testes e Instalação](#-testes--instalação)
 - [SEO, Próximas melhorias e Licença](#-seo--indexação)
 
 ## 💡 Ideia do Projeto
@@ -35,8 +52,8 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Controle de produtos, estoque e movimentações
 - Cadastro e gestão de clientes
 - Sistema de vendas com itens e totalização
-- Módulo de crédito fiado transparente (limites, histórico, parcelas)
-- Autenticação com fluxo de sessão + token "lembre-me" otimizado
+- Módulo de crédito fiado transparente (limites configuráveis, histórico, saldo em aberto)
+- Autenticação com fluxo de sessão + token "lembrar-me" otimizado
 - SEO preparado (sitemap.xml, robots.txt, meta tags, JSON-LD Organization)
 
 ## 🧩 Funcionalidades Principais
@@ -55,7 +72,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 
 ### Vendas & PDV
 
-- Carrinho inline com feedback traduzido (mensagens em `validation.php`) e validações de estoque antes da conclusão.
+- Carrinho inline com feedback (mensagens em `validation.php`) e validações de estoque antes da conclusão.
 - Suporte a diferentes formas de pagamento (`dinheiro`, `pix`, `cartao_debito`, `cartao_credito`, `conta_fiada`).
 - Cancelamento controlado (JSON ou página) e modo PDV rápido via header `X-PDV-Inline` para operações em fluxo.
 
@@ -68,7 +85,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 ### Crédito fiado
 
 - Consolida até 200 registros recentes de vendas fiadas, exibindo status pago/pendente por cliente.
-- Dashboard destaca maior devedor, total emprestado e quantidade de clientes com saldo em aberto.
+- Dashboard destaca maior devedor, total e quantidade de clientes com saldo em aberto.
 - Serviço `ClienteService` controla limites, descrição de crédito e bloqueios quando necessário.
 
 ### Relatórios e exportações
@@ -83,16 +100,16 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Serviços dedicados (`LoginService`, `CacheTokenService`, `SessionService`) lidam com renovação/ revogação de tokens.
 - Logs centralizados no canal `security` com contexto (user_id, IP) permitem auditoria posterior.
 
-### Configurações do usuário
+### Sessões e autenticação
 
-- Tela de perfil com verificação de e-mail, troca de senha e exclusão de conta (com `current_password`).
-- Middleware de autenticação híbrida garante que sessão ativa tenha prioridade sobre token persistente.
+- Fluxo de login/logout personalizado garante que apenas o responsável pelo comércio mantenha acesso;
+- Middleware de autenticação híbrida garante que sessão ativa tenha prioridade sobre token persistente, evitando logins conflitantes entre dispositivos.
 
 ### Recuperação de acesso
 
 - Fluxo dividido entre `PasswordResetLinkController` (solicita o link) e `NewPasswordController` (confirma nova senha).
 - Tokens são revogados antes de enviar um novo e limpos assim que a senha é redefinida para impedir links antigos.
-- Requisitos fortes (mínimo 12 caracteres + complexidade) exibidos em tempo real e `CacheTokenService` invalida sessões após a troca.
+- Requisitos fortes (mínimo 12 caracteres + complexidade) exibidos em tempo real e `CacheTokenService` revoga tokens persistidos para impedir logins antigos.
 
 ## 🧭 Fluxos Principais
 
@@ -102,151 +119,135 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 4. **Crédito fiado**: escolha forma de pagamento `conta_fiada`, saldo é atualizado em `conta_fiada` e aparece no painel/relatório; quitação zera saldo e cria log.
 5. **Auditoria diária**: relatórios filtram vendas/estoque do período, permitem exportar XLSX e comparar com indicadores do dashboard para fechamento do caixa.
 
-## 📸 Telas & UX
+## 📸 Telas & UX (`docs/assets/screens/`)
 
-> Coloque as capturas em `docs/assets/screens/` com os nomes indicados abaixo para que o README as exiba automaticamente.
+### Cadastro
 
-### Cadastro (`docs/assets/screens/cadastro.png`)
-
-- Formulário completo para usuário + comércio em um único fluxo, com validação mínima de 12 caracteres para senha.
+- Formulário completo para usuário + comércio em um único fluxo, com validação mínima de 12 caracteres para senha + complexidade.
 - Interface split screen com ilustração para reforçar confiança no onboarding.
-  <div align="center">
-  	<img src="docs/assets/screens/cadastro.png" alt="Tela de cadastro" width="800" />
-  </div>
+      <div align="center">
+      <img src="docs/assets/screens/cadastro.gif" alt="Tela de cadastro" width="800" />
+      </div>
 
-### Login (`docs/assets/screens/login.png`)
+### Login
 
 - Campo “Lembrar-me” conectado ao middleware híbrido (sessão + token persistente).
 - Acesso rápido a recuperação de senha e CTA para cadastro.
-  <div align="center">
-  	<img src="docs/assets/screens/login.png" alt="Tela de login" width="800" />
-  </div>
+      <div align="center">
+      <img src="docs/assets/screens/login.gif" alt="Tela de login" width="800" />
+      </div>
 
-### Esqueci minha senha (`docs/assets/screens/forgot-password.png`)
+### Esqueci minha senha
 
 - Página enxuta que confirma sucesso/erros e explica o que acontece com o link enviado.
 - Loader inclusivo e CTA para retornar ao login caso a pessoa lembre o acesso.
-  <div align="center">
-  	<img src="docs/assets/screens/forgot-password.png" alt="Tela de solicitação de recuperação" width="800" />
-  </div>
+      <div align="center">
+      <img src="docs/assets/screens/forgot-password.gif" alt="Tela de solicitação de recuperação" width="800" />
+      </div>
 
-### Redefinir senha (`docs/assets/screens/reset-password.png`)
+### Redefinir senha
 
 - Validação em tempo real dos critérios (tamanho, maiúscula, número, especial) + botões para mostrar/ocultar senha.
-- Bloqueia o campo de e-mail quando o link já contém o endereço verificado via token codificado.
-  <div align="center">
-  	<img src="docs/assets/screens/reset-password.png" alt="Tela de redefinição" width="800" />
-  </div>
+- Bloqueia o campo de e-mail, o link já contém o endereço verificado via token codificado.
+      <div align="center">
+      <img src="docs/assets/screens/reset-password.gif" alt="Tela de redefinição" width="800" />
+      </div>
 
-### Dashboard (`docs/assets/screens/dashboard.png`)
+### Dashboard
 
 - Cards com resumo do dia, alerta de estoque crítico e painel de fiado com maior devedor.
-- Botões de acessibilidade (A-/A+) e modo escuro fixos no topo.
-  <div align="center">
-  	<img src="docs/assets/screens/dashboard.png" alt="Dashboard do comércio" width="800" />
-  </div>
+- Botões de acessibilidade (A-/A+) e modo escuro fixos no topo, presentes em todas as páginas.
+      <div align="center">
+      <img src="docs/assets/screens/dashboard.gif" alt="Dashboard do comércio" width="800" />
+      </div>
 
-### Histórico de Vendas (`docs/assets/screens/vendas-lista.png`)
+### Histórico de Vendas
 
 - Filtros instantâneos por status e cliente, com botão para iniciar nova venda.
 - Layout consistente com letras ampliadas e contraste alto para ambientes com pouca luz.
-  <div align="center">
-  	<img src="docs/assets/screens/vendas-lista.png" alt="Histórico de vendas" width="800" />
-  </div>
+      <div align="center">
+      <img src="docs/assets/screens/vendas-lista.gif" alt="Histórico de vendas" width="800" />
+      </div>
 
-### PDV (`docs/assets/screens/vendas-pdv.png`)
+### PDV
 
 - Dupla coluna: produtos com busca por nome/categoria e carrinho com totais.
 - Etiquetas exibem estoque em tempo real e alertas de “baixo estoque”.
-  <div align="center">
-  	<img src="docs/assets/screens/vendas-pdv.png" alt="PDV com carrinho" width="800" />
-  </div>
+      <div align="center">
+      <img src="docs/assets/screens/vendas-pdv.gif" alt="PDV com carrinho" width="800" />
+      </div>
 
-### Clientes (`docs/assets/screens/clientes.png`)
+### Clientes
 
 - Foco em contas fiadas, com badge de saldo e ações rápidas (ver, pagar, editar).
 - Botão “Histórico Fiadas” exibe modal alimentado por `/auth/fiado`.
-  <div align="center">
-  	<img src="docs/assets/screens/clientes.png" alt="Gestão de clientes" width="800" />
-  </div>
+      <div align="center">
+      <img src="docs/assets/screens/clientes.gif" alt="Gestão de clientes" width="800" />
+      </div>
 
-### Produtos (`docs/assets/screens/produtos.png`)
+### Produtos
 
 - Tabela com ordenação, filtros por categoria e destaque para “Baixo estoque”.
 - Ações agrupadas (editar, ajustar estoque, excluir) com feedback Inertia.
-  <div align="center">
-  	<img src="docs/assets/screens/produtos.png" alt="Gestão de produtos" width="800" />
-  </div>
+      <div align="center">
+      <img src="docs/assets/screens/produtos.gif" alt="Gestão de produtos" width="800" />
+      </div>
 
-### Relatórios (`docs/assets/screens/relatorios.png`)
+### Relatórios
 
-- Cards com totais e histórico tabular com status colorido.
-- Botões "Vendas" x "Movimentos" simulam página dupla no mesmo layout.
-  <div align="center">
-  	<img src="docs/assets/screens/relatorios.png" alt="Tela de relatórios" width="800" />
-  </div>
+- Cards com totais e histórico tabular com status.
+- Botões "Vendas" x "Movimentos" página dupla no mesmo layout.
+      <div align="center">
+      <img src="docs/assets/screens/relatorios.gif" alt="Tela de relatórios" width="800" />
+      </div>
 
-### E-mail de recuperação (`docs/assets/screens/email-reset.png`)
+### E-mail de recuperação
 
 - Layout escuro responsivo com botão CTA e fallback em texto para copiar o link.
-- Personaliza avatar (logo ou inicial do app) e informa o tempo de expiração configurado em `config/auth.php`.
-  <div align="center">
-  	<img src="docs/assets/screens/email-reset.png" alt="E-mail de redefinição" width="800" />
-  </div>
-
-## 🧰 Serviços internos e camadas
-
-- `App\Services\Auth\ProdutoService` e `EstoqueService`: encapsulam regras de negócio de cadastro e movimentação, garantindo consistência transacional.
-- `VendaService`: concentra cálculo de carrinho, persistência de itens e integração com estoque/fiado.
-- `ClienteService`: aplica políticas de crédito e responde em JSON para uso em modais SPA.
-- `CacheTokenService`, `SessionService`, `LoginService` e `LogoutService`: orquestram sessão, token "lembre-me" e invalidação centralizada.
-- `VendasExport`: utiliza Laravel Excel para gerar planilhas com cabeçalhos amigáveis e timezone ajustado.
+- Personaliza avatar e informa o tempo de expiração configurado em `config/auth.php`.
+      <div align="center">
+      <img src="docs/assets/screens/email.png" alt="E-mail de redefinição" width="800" />
+      </div>
 
 ## 🚀 Tecnologias Principais
 
-| Camada          | Stack                            |
-| --------------- | -------------------------------- |
-| Backend         | Laravel 12, PHP 8+               |
-| Frontend        | Blade + Vite (modular CSS/JS)    |
-| Build           | Vite + ESBuild                   |
-| Testes          | Pest / PHPUnit                   |
-| Cache / Sessões | Laravel Cache / Session          |
-| SEO             | Sitemap, Robots, Structured Data |
+| Camada           | Stack                             |
+| ---------------- | --------------------------------- |
+| Backend          | Laravel 12, PHP 8.2+              |
+| Frontend         | Blade + Vite (modular CSS/JS)     |
+| Build            | Vite + ESBuild                    |
+| Testes           | Pest / PHPUnit                    |
+| Cache / Sessões  | Laravel Cache / Session           |
+| SEO              | Sitemap, Robots, Structured Data  |
 
-## 🧱 Arquitetura em Alto Nível
+## 🏛 Arquitetura, Serviços e Segurança
 
-Estruturada em camadas claras para facilitar manutenção e evolução:
+**Arquitetura em camadas**
 
-- Entrada (HTTP): controllers simples + middlewares que aplicam autenticação, limites e cabeçalhos.
-- Serviços: encapsulam regras de negócio (ex.: autenticação e emissão controlada de tokens) sem expor detalhes internos.
-- Persistência: modelos representam entidades centrais (usuários, vendas, itens, categorias, crédito). Nomes e estrutura são deliberadamente abstraídos aqui para evitar exposição de detalhes sensíveis.
-- Interface: templates Blade/CSS modular com Vite para build rápido.
-- Infra: provedores registram singletons e configurações.
+- Entrada (HTTP) com controllers enxutos e middlewares que cuidam de autenticação, limites e cabeçalhos defensivos.
+- Serviços concentram regras de negócio e mantêm modelos focados nas entidades centrais (usuários, vendas, itens, categorias, crédito).
+- Interface baseada em Blade + Vite com assets modulares; provedores registram singletons e integrações compartilhadas.
 
-## 🔐 Segurança — Visão Geral
+**Serviços e componentes principais**
 
-- Cabeçalhos reforçados (anti XSS, clickjacking, sniffing) e política de referência restritiva.
-- Política de segurança de conteúdo (CSP) pronta para produção (descomentável) reduz superfícies de ataque.
-- Limites de tentativas para login e cadastro mitigam força bruta.
-- Autenticação híbrida: sessão tem precedência; token persistente só reativa acesso se válido.
-- Cookies com bandeiras seguras (HttpOnly / SameSite) para redução de riscos de CSRF.
-- Nunca expõe diretamente nomes de tabelas ou estruturas sensíveis no material público.
+- `ProdutoService` + `EstoqueService`: cadastros, validações e auditoria de movimentações.
+- `VendaService`: cálculo de carrinho, persistência de itens, integração estoque/fiado e cancelamentos consistentes.
+- `ClienteService`: políticas de crédito, respostas em JSON para o front Inertia e logs de ações administrativas.
+- `CacheTokenService`, `SessionService`, `LoginService`, `LogoutService`: autenticação híbrida, renovação/revogação de tokens e limpeza de sessões após reset de senha.
+- `VendasExport`: geração de planilhas Excel (timezone PT-BR) para contabilidade e análises externas.
 
-## 🔄 Sessão, Cache e "Lembre-se de mim"
+**Sessões, cache e tokens persistentes**
 
-Fluxo desenhado para estabilidade e mínima fricção:
+- Sessão ativa tem prioridade; tokens "lembrar-me" recriam o login apenas quando não há usuário autenticado.
+- Apenas um token ativo por usuário, com renovação e revogação automática durante logouts ou redefinição de senha.
+- Cache reduz leituras no banco e mantém o fluxo estável mesmo após quedas de conexão.
 
-- Recuperação prioritária via sessão ativa; evita recomputações desnecessárias.
-- Token persistente atua como camada secundária (lembrar acesso) sem sobrescrever sessão válida.
-- Renovação e revogação controladas para garantir apenas um token efetivo por usuário.
-- Cache reduz leitura de banco e acelera validações sem expor segredos.
+**Controles de segurança**
 
-## 🛡️ Proteção contra Ataques
-
-- Mitigação de força bruta (limites temporários por IP em pontos sensíveis).
-- Minimização de riscos de fixation mantendo fluxo previsível de sessão.
-- Cabeçalhos defensivos e CSP (ativável) para reduzir XSS / Injection de conteúdo.
-- Proteções padrão do framework para CSRF somadas a SameSite.
+- Cabeçalhos reforçados (anti-XSS, clickjacking, sniffing) e Content-Security-Policy pronta para produção.
+- Limites de tentativas em login/cadastro e mitigação de fixation preservam a integridade das sessões.
+- Cookies com HttpOnly/SameSite somados às proteções CSRF do Laravel.
+- Logs no canal `security` registram user_id, IP e contexto de ações sensíveis para auditoria.
 
 ## 📱 Responsividade & Acessibilidade
 
@@ -266,7 +267,7 @@ Fluxo desenhado para estabilidade e mínima fricção:
 
 - Tokens de cor respeitam WCAG AA tanto no tema claro quanto escuro.
 - Imagens e ilustrações usam `object-fit` + `loading="lazy"`; o primeiro banner tem `fetchpriority="high"` para evitar atrasos em conexões móveis.
-- Vídeo de demonstração (`docs/assets/responsividade.mp4`) mostra o comportamento mobile; <a href="docs/assets/responsividade.mp4">assista aqui</a> para ver a transição dos layouts.
+- Vídeo de demonstração (`docs/assets/responsividade.mp4`) mostra o comportamento mobile; <a href="docs/assets/responsividade.mp4">assista aqui</a> para ver a transição dos layouts (Baixe o RAW).
 
 ## 📊 Relatórios em Página Dupla
 
@@ -275,116 +276,91 @@ Fluxo desenhado para estabilidade e mínima fricção:
 - A troca de aba reaproveita o estado atual, evitando round-trips desnecessárias; apenas o dataset exibido muda.
 - Exportação para Excel respeita o contexto corrente e inclui timezone/localização PT-BR para números e datas.
 
-## 📷 Imagem de Capa
-
-O arquivo atual (`docs/assets/cover.jpeg`) já é usado no topo do README. Sempre que quiser atualizar o visual, gere um screenshot em 1920x1080 e substitua essa imagem.
-
-Para o preview social do GitHub (imagem exibida ao compartilhar o link do repositório), crie `docs/assets/social-preview.png` em 1280x640 e configure em **Settings > Social preview**.
-
 ## 🗂️ Estrutura Simplificada
 
-```
-public/            # Arquivos públicos (index.php, sitemap, favicon, logo)
-resources/views/   # Blade templates (home, login, cadastro, componentes)
-resources/css/     # Estilos segmentados (home, navbar, etc.)
-app/Models/        # Modelos: Produto, Categoria, Cliente, Venda...
-app/Http/Middleware/RequireTokenOrSession.php  # Middleware otimizado de sessão/token
-database/migrations/  # Estrutura das tabelas
-tests/            # Testes Pest / PHPUnit
-```
+- `public/` – Arquivos públicos (`index.php`, `sitemap.xml`, favicon, logo)
+- `resources/views/` – Templates Blade (home, login, cadastro, componentes)
+- `resources/css/` – Estilos segmentados (home, navbar, etc.)
+- `app/Models/` – Modelos (`Produto`, `Categoria`, `Cliente`, `Venda`...)
+- `app/Http/Middleware/RequireTokenOrSession.php` – Middleware otimizado de sessão/token
+- `database/migrations/` – Estrutura das tabelas
+- `tests/` – Testes Pest / PHPUnit
 
-## 🔐 Fluxo de Autenticação "Lembre-me"
+## 🧪 Instalação
 
-1. Sessão ativa sempre tem prioridade
-2. Token persistente só recria sessão se válido e usuário não estiver autenticado
-3. Invalidar token não força logout imediato se sessão estável existir
-4. Middleware unifica lógica (verificação cache + DB)
-
-## 🧪 Testes Rápidos
-
-Execute a suíte básica:
+**Configuração rápida**
 
 ```bash
-php artisan test
-```
-
-Ou com Pest:
-
-```bash
-./vendor/bin/pest
-```
-
-## ⚙️ Instalação
-
-```bash
-git clone <repo>
+git clone https://github.com/GabFaria2270/TCC.git
 cd TCC
 composer install
 cp .env.example .env
 php artisan key:generate
-php artisan migrate --seed
+php artisan migrate
+php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
 npm install
-npm run build   # ou npm run dev para ambiente de desenvolvimento
+npm run dev
 php artisan serve
 ```
 
 ## 🌐 SEO & Indexação
 
-- `public/sitemap.xml` gera estrutura para indexação
-- `public/robots.txt` permite crawl geral
-- JSON-LD em `public/organization.json` descreve a marca
-- Meta tags otimizadas na `home.blade.php`
-- Social preview configurável (Settings > Social preview) usando `docs/assets/social-preview.png` (1280x640)
+- `public/sitemap.xml` gera estrutura para indexação.
+- `public/robots.txt` permite crawl geral.
+- JSON-LD em `public/organization.json` descreve a marca.
+- Meta tags otimizadas em `resources/views/home.blade.php`.
+- Social preview configurável (Settings > Social preview) usando `docs/assets/social-preview.png` (1280x640).
 
-## ⚙️ Ativação da CSP em Produção
-
-No middleware de cabeçalhos, descomente a linha da Content-Security-Policy e ajuste domínios confiáveis (origem própria + CDNs usados).
-
-## © Direitos Autorais & Uso
-
+© Direitos Autorais & Licença de Uso
 © 2025 Pablo Braz & Gabriel Faria. Todos os direitos reservados.
 
-Este repositório é disponibilizado para fins educacionais e avaliação técnica. Qualquer reutilização comercial, distribuição ou derivação significativa dos arquivos exige autorização explícita dos autores.
+Este repositório contém código proprietário desenvolvido como parte de um Trabalho de Conclusão de Curso. Ele é disponibilizado publicamente apenas para fins de:
 
-> Aviso: não autorizado para operação em ambientes produtivos ou manipulação de dados reais sem supervisão e contratos específicos. Utilize somente para estudos, demonstrações e análises acadêmicas.
+Avaliação acadêmica e técnica.
 
-Contato para permissões e dúvidas:
+Demonstração de portfólio (Source Available).
 
-- Pablo Braz: pbraz0460@gmail.com
-- Gabriel Faria: gabrielfariadossantos1382007@gmail.com
+Restrições:
 
-Ao clonar ou reutilizar partes do código, mantenha este aviso e referências de autoria.
+🚫 É proibida a comercialização deste software ou de partes dele.
 
-## 🛠 Próximas Melhorias Sugeridas
+🚫 É proibida a redistribuição ou criação de trabalhos derivados sem a permissão expressa por escrito dos autores.
 
-- Painel analítico (gráficos de vendas e estoque)
-- API REST para integrações externas
-- Filas (queue) para notificações e e-mails
-- Internacionalização completa (multi-idioma)
-- Integração com APIs de pagamento de parceiros (PIX/maquininhas) para automatizar a etapa de cobrança nas vendas
-- Login com Google (OAuth 2.0) e demais provedores sociais para reduzir atrito no acesso
-- Aplicativo/PWA offline-first para registrar vendas mesmo sem internet e sincronizar depois
-- Integração com impressoras fiscais/NFC-e para adequação a legislações estaduais
+🚫 Não autorizado para uso em ambientes de produção comercial.
 
-## 🤝 Contribuição
+Para dúvidas ou solicitações de uso:
 
-Pull requests são bem-vindos. Abra uma issue com contexto claro. Mantenha padrão PSR-12 e escreva pelo menos um teste para novas regras de negócio.
+Pablo Braz: pbraz0460@gmail.com
 
-## 📄 Licença
+Gabriel Faria: gabrielfariadossantos1382007@gmail.com
 
-MIT. Sinta-se livre para usar e adaptar com atribuição.
+🛠 Próximas Melhorias
+Painel analítico (gráficos de vendas e estoque)
 
-## 🧾 Créditos
+API REST para integrações externas
 
+Filas (queue) para notificações e e-mails
+
+Internacionalização completa (multi-idioma)
+
+Integração com APIs de pagamento de parceiros (PIX/maquininhas) para automatizar a etapa de cobrança nas vendas
+
+Login com Google (OAuth 2.0) e demais provedores sociais para reduzir atrito no acesso
+
+Aplicativo/PWA offline-first para registrar vendas mesmo sem internet e sincronizar depois
+
+Integração com impressoras fiscais/NFC-e para adequação a legislações estaduais
+
+🧾 Créditos
 Baseado em arquitetura Laravel moderna + ajustes personalizados para fluxo de sessão/token e SEO.
 
-### Contexto acadêmico
+Contexto acadêmico
+Curso: MTec PI Desenvolvimento de Sistemas
 
-- **Curso:** MTec PI Desenvolvimento de Sistemas
-- **Instituição:** ETEC Dr. Nelson Alves Vianna (Tietê/SP)
-- **Orientadores:** Daniel Formigari Guerrero e Thomas Galuci Evangelista
-- **Menções honrosas:** Professores Eliton Camargo de Oliveira e Anderson Ascenção Donaire, fundamentais para a nossa formação técnica
+Instituição: ETEC Dr. Nelson Alves Vianna (Tietê/SP)
 
----
+Orientadores: Daniel Formigari Guerrero e Thomas Galuci Evangelista
 
-Se este projeto ajudou você, considere dar uma ⭐ no repositório!
+Menções honrosas: Professores Eliton Camargo de Oliveira e Anderson Ascenção Donaire, fundamentais para a nossa formação técnica
+
+Se este projeto ajudou você a entender melhor o desenvolvimento Laravel, considere dar uma ⭐ no repositório!
