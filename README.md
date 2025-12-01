@@ -203,9 +203,9 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 
 - Passeio interativo baseado em Shepherd evidencia os pontos críticos do painel (dashboard, vendas, clientes, produtos e relatórios).
 - Para novos dispositivos ele roda automaticamente uma vez graças ao controle em `localStorage`.
-    <div align="center">
-      <img src="docs/assets/screens/tour.gif" alt="Tour guiado pelo painel" width="800" />
-    </div>
+      <div align="center">
+        <img src="docs/assets/screens/tour.gif" alt="Tour guiado pelo painel" width="800" />
+      </div>
 
 ### E-mail de recuperação
 
@@ -214,7 +214,6 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
       <div align="center">
       <img src="docs/assets/screens/email.png" alt="E-mail de redefinição" width="800" />
       </div>
-
 
 ## 🚀 Tecnologias Principais
 
@@ -274,7 +273,10 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 
 - Tokens de cor respeitam WCAG AA tanto no tema claro quanto escuro.
 - Imagens e ilustrações usam `object-fit` + `loading="lazy"`; o primeiro banner tem `fetchpriority="high"` para evitar atrasos em conexões móveis.
-- Vídeo de demonstração (`docs/assets/responsividade.mp4`) mostra o comportamento mobile; <a href="docs/assets/responsividade.mp4">assista aqui</a> para ver a transição dos layouts (Baixe o RAW).
+
+<div align="center">
+  <img src="docs/assets/screens/responsividade.gif" alt="Animação demonstrando a responsividade do sistema" width="800" />
+</div>
 
 ## 📊 Relatórios em Página Dupla
 
@@ -318,56 +320,42 @@ php artisan serve
 - Meta tags otimizadas em `resources/views/home.blade.php`.
 - Social preview configurável (Settings > Social preview) usando `docs/assets/social-preview.png` (1280x640).
 
-© Direitos Autorais & Licença de Uso
+## © Direitos Autorais & Licença de Uso
+
 © 2025 Pablo Braz & Gabriel Faria. Todos os direitos reservados.
 
-Este repositório contém código proprietário desenvolvido como parte de um Trabalho de Conclusão de Curso. Ele é disponibilizado publicamente apenas para fins de:
+Este repositório contém código proprietário desenvolvido como parte de um Trabalho de Conclusão de Curso. Ele é disponibilizado publicamente apenas para:
 
-Avaliação acadêmica e técnica.
+- Avaliação acadêmica e técnica
+- Demonstração de portfólio (_source available_)
 
-Demonstração de portfólio (Source Available).
+**Restrições**
 
-Restrições:
+- 🚫 Comercialização deste software ou de partes dele
+- 🚫 Redistribuição ou criação de trabalhos derivados sem autorização expressa
+- 🚫 Uso em ambientes de produção comercial
 
-🚫 É proibida a comercialização deste software ou de partes dele.
+**Contato para autorizações**
 
-🚫 É proibida a redistribuição ou criação de trabalhos derivados sem a permissão expressa por escrito dos autores.
+- Pablo Braz — `pbraz0460@gmail.com`
+- Gabriel Faria — `gabrielfariadossantos1382007@gmail.com`
 
-🚫 Não autorizado para uso em ambientes de produção comercial.
+## 🛠 Próximas Melhorias
 
-Para dúvidas ou solicitações de uso:
+- Painel analítico (gráficos de vendas e estoque)
+- API REST para integrações externas
+- Filas (queue) para notificações e e-mails
+- Internacionalização completa (multi-idioma)
+- Integração com APIs de pagamento (PIX/maquininhas)
+- Login com Google (OAuth 2.0) e outros provedores
+- Aplicativo/PWA _offline-first_ para registrar vendas sem internet
+- Integração com impressoras fiscais/NFC-e
 
-Pablo Braz: pbraz0460@gmail.com
+## 🧾 Créditos
 
-Gabriel Faria: gabrielfariadossantos1382007@gmail.com
-
-🛠 Próximas Melhorias
-Painel analítico (gráficos de vendas e estoque)
-
-API REST para integrações externas
-
-Filas (queue) para notificações e e-mails
-
-Internacionalização completa (multi-idioma)
-
-Integração com APIs de pagamento de parceiros (PIX/maquininhas) para automatizar a etapa de cobrança nas vendas
-
-Login com Google (OAuth 2.0) e demais provedores sociais para reduzir atrito no acesso
-
-Aplicativo/PWA offline-first para registrar vendas mesmo sem internet e sincronizar depois
-
-Integração com impressoras fiscais/NFC-e para adequação a legislações estaduais
-
-🧾 Créditos
-Baseado em arquitetura Laravel moderna + ajustes personalizados para fluxo de sessão/token e SEO.
-
-Contexto acadêmico
-Curso: MTec PI Desenvolvimento de Sistemas
-
-Instituição: ETEC Dr. Nelson Alves Vianna (Tietê/SP)
-
-Orientadores: Daniel Formigari Guerrero e Thomas Galuci Evangelista
-
-Menções honrosas: Professores Eliton Camargo de Oliveira e Anderson Ascenção Donaire, fundamentais para a nossa formação técnica
+- Baseado em arquitetura Laravel moderna com ajustes personalizados para sessão/token e SEO.
+- **Curso:** MTec PI Desenvolvimento de Sistemas — ETEC Dr. Nelson Alves Vianna (Tietê/SP)
+- **Orientadores:** Daniel Formigari Guerrero e Thomas Galuci Evangelista
+- **Menções honrosas:** Professores Eliton Camargo de Oliveira e Anderson Ascenção Donaire
 
 Se este projeto ajudou você a entender melhor o desenvolvimento Laravel, considere dar uma ⭐ no repositório!
