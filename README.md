@@ -275,7 +275,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - Imagens e ilustrações usam `object-fit` + `loading="lazy"`; o primeiro banner tem `fetchpriority="high"` para evitar atrasos em conexões móveis.
 
 <div align="center">
-  <img src="docs/assets/screens/responsividade.gif" alt="Animação demonstrando a responsividade do sistema" width="400" />
+  <img src="docs/assets/screens/responsividade.gif" alt="Animação demonstrando a responsividade do sistema" width="300" />
 </div>
 
 ## 📊 Relatórios em Página Dupla
