@@ -14,11 +14,11 @@
     <meta property="og:site_name" content="MaisConectado">
     <meta property="og:title" content="Gerenciamento de Vendas e Estoque | MaisConectado">
     <meta property="og:description" content="Controle de estoque, vendas, clientes e fiado em um só lugar.">
-    <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta property="og:image" content="{{ asset('img/logo-maisconectado.png') }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Gerenciamento de Vendas e Controle de Estoque">
     <meta name="twitter:description" content="PDV online, fiado seguro, gestão de clientes e relatórios de vendas.">
-    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta name="twitter:image" content="{{ asset('img/logo-maisconectado.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
     <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
     @include('components.seo.software_app_jsonld', [
