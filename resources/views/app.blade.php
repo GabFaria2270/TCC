@@ -5,8 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" type="image/png" href="{{ asset('img/logo-maisconectado.png') }}">
-    <link rel="shortcut icon" href="{{ asset('img/logo-maisconectado.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+    <meta name="theme-color" content="#0f172a">
     <title inertia>Mais Conectado</title>
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/set.tsx'])
@@ -23,12 +27,12 @@
     <meta property="og:title" content="Gerenciamento de Vendas e Controle de Estoque | MaisConectado">
     <meta property="og:description"
         content="Gerencie vendas, estoque, clientes e fiado em um só lugar com o MaisConectado.">
-    <meta property="og:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta property="og:image" content="{{ asset('img/logo-maisconectado.png') }}">
     <meta property="og:url" content="https://maisconectado.alwaysdata.net/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Gerenciamento de Vendas e Estoque | MaisConectado">
     <meta name="twitter:description" content="Controle de estoque, vendas, PDV online e clientes para comércio local.">
-    <meta name="twitter:image" content="https://maisconectado.alwaysdata.net/logo.jpg">
+    <meta name="twitter:image" content="{{ asset('img/logo-maisconectado.png') }}">
 
     <script type="application/ld+json">
         {
@@ -36,7 +40,7 @@
             "@type": "Organization",
             "name": "MaisConectado",
             "url": "https://maisconectado.alwaysdata.net/",
-            "logo": "https://maisconectado.alwaysdata.net/logo.jpg",
+            "logo": "{{ asset('img/logo-maisconectado.png') }}",
             "sameAs": [],
             "description": "Plataforma para gerenciamento de vendas, controle de estoque, gestão de clientes e fiado seguro.",
             "brand": {
