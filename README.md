@@ -3,25 +3,24 @@
 	
 	<h1>Mais Conectado</h1>
 	
-	<p>
-		<img src="https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 11" />
+	<p align="center">
+		<img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12" />
 		<img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2" />
 		<img src="https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow?style=for-the-badge" alt="Status" />
 	</p>
 
-    <p><strong>Conexão simples para pequenos negócios</strong></p>
-    <p>Gestão de produtos, clientes, vendas e crédito fiado de forma moderna, rápida e acessível.</p>
-
-    <p>
-    	<a href="https://maisconectado.alwaysdata.net" target="_blank"><strong>🔗 Acessar DEMO online</strong></a>
-    </p>
-
-    <p>
-    	<em>Credenciais de Teste:</em><br>
-    	<strong>Email:</strong> admin@teste.com<br>
-    	<strong>Senha:</strong> admin123
-    </p>
-
+	<p><strong>Conexão simples para pequenos negócios</strong></p>
+	<p>Gestão de produtos, clientes, vendas e crédito fiado de forma moderna, rápida e acessível.</p>
+	
+	<p>
+		<a href="https://maisconectado.alwaysdata.net" target="_blank"><strong>🔗 Acessar DEMO online</strong></a>
+	</p>
+	
+	<p>
+		<em>Credenciais de Teste:</em><br>
+		<strong>Email:</strong> admin@teste.com<br>
+		<strong>Senha:</strong> admin123
+	</p>
 </div>
 
 ## 📚 Índice
