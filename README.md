@@ -1,26 +1,26 @@
 <div align="center">
-	<img src="docs/assets/cover.jpeg" alt="Mais Conectado - Tela inicial" width="960" />
-	
-	<h1>Mais Conectado</h1>
-	
-	<p align="center">
-		<img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12" />
-		<img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2" />
-		<img src="https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow?style=for-the-badge" alt="Status" />
-	</p>
+<img src="docs/assets/cover.jpeg" alt="Mais Conectado - Tela inicial" width="960" />
 
-	<p><strong>Conexão simples para pequenos negócios</strong></p>
-	<p>Gestão de produtos, clientes, vendas e crédito fiado de forma moderna, rápida e acessível.</p>
-	
-	<p>
-		<a href="https://maisconectado.alwaysdata.net" target="_blank"><strong>🔗 Acessar DEMO online</strong></a>
-	</p>
-	
-	<p>
-		<em>Credenciais de Teste:</em><br>
-		<strong>Email:</strong> admin@teste.com<br>
-		<strong>Senha:</strong> admin123
-	</p>
+<h1>Mais Conectado</h1>
+
+<p align="center">
+<img src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12" />
+<img src="https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2" />
+<img src="https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow?style=for-the-badge" alt="Status" />
+</p>
+
+<p><strong>Conexão simples para pequenos negócios</strong></p>
+<p>Gestão de produtos, clientes, vendas e crédito fiado de forma moderna, rápida e acessível.</p>
+
+<p>
+<a href="https://maisconectado.alwaysdata.net" target="_blank"><strong>🔗 Acessar DEMO online</strong></a>
+</p>
+
+<p>
+<em>Credenciais de Teste:</em><br>
+<strong>Email:</strong> teste@teste.com<br>
+<strong>Senha:</strong> Teste1234567$
+</p>
 </div>
 
 ## 📚 Índice
@@ -199,6 +199,14 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
       <div align="center">
       <img src="docs/assets/screens/relatorios.gif" alt="Tela de relatórios" width="800" />
       </div>
+  
+### Tour guiado
+
+- Passeio interativo baseado em Shepherd evidencia os pontos críticos do painel (dashboard, vendas, clientes, produtos e relatórios).
+- Para novos dispositivos ele roda automaticamente uma vez graças ao controle em `localStorage`.
+    <div align="center">
+      <img src="docs/assets/screens/tour.gif" alt="Tour guiado pelo painel" width="800" />
+    </div>
 
 ### E-mail de recuperação
 
@@ -207,6 +215,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
       <div align="center">
       <img src="docs/assets/screens/email.png" alt="E-mail de redefinição" width="800" />
       </div>
+
 
 ## 🚀 Tecnologias Principais
 
