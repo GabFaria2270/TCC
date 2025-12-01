@@ -162,7 +162,7 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 ### Histórico de Vendas
 
 - Filtros instantâneos por status e cliente, com botão para iniciar nova venda.
-- Layout consistente com letras ampliadas e contraste alto para ambientes com pouca luz.
+- Layout consistente com letras ampliadas e contraste alto.
       <div align="center">
       <img src="docs/assets/screens/vendas-lista.gif" alt="Histórico de vendas" width="800" />
       </div>
