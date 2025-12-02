@@ -41,4 +41,13 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI', env('APP_URL') . '/auth/google/callback'),
     ],
 
+    'mercadopago' => [
+        'mode' => env('MERCADOPAGO_MODE', 'sandbox'),
+        'public_key' => env('MERCADOPAGO_PUBLIC_KEY'),
+        'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
+        'app_id' => env('MERCADOPAGO_APP_ID'),
+        'integrator_id' => env('MERCADOPAGO_INTEGRATOR_ID'),
+        'provider' => env('PAYMENT_PROVIDER', 'mercadopago'),
+    ],
+
 ];

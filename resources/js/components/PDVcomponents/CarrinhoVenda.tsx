@@ -3,20 +3,20 @@ import React, { useEffect, useState } from 'react';
 import type { Cliente, ItemVenda } from '../../types';
 import { formatarMoeda } from '../../utils/formatters';
 
-// Primeiro, vou corrigir a interface para aceitar valorRecebido como string
 interface CarrinhoVendaProps {
     carrinho: ItemVenda[];
     clienteSelecionado: Cliente | null;
     clientesAtualizados: Cliente[];
     desconto: number;
     formaPagamento: string;
-    valorRecebido: string; // ✅ CORRIGIDO: string em vez de number
+    valorRecebido: string;
     observacoes: string;
     loadingVenda: boolean;
+    paymentFeedback: any | null;
     setClienteSelecionado: (cliente: Cliente | null) => void;
     setDesconto: (desconto: number) => void;
     setFormaPagamento: (forma: string) => void;
-    setValorRecebido: (valor: string) => void; // ✅ CORRIGIDO: string em vez de number
+    setValorRecebido: (valor: string) => void;
     setObservacoes: (obs: string) => void;
     editarQuantidade: (produtoId: number, novaQuantidade: number, onNotification?: (notification: any) => void) => void;
     removerDoCarrinho: (produtoId: number, onNotification?: (notification: any) => void) => void;
@@ -53,10 +53,15 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
         cancelarVenda,
         cancelandoVenda,
         addNotification,
+        paymentFeedback,
     } = props;
-    const carrinhoEmProcesso = loadingVenda || cancelandoVenda;
 
-    // ✅ estado de texto do combobox (campo de busca/seleção)
+    const carrinhoEmProcesso = loadingVenda || cancelandoVenda;
+    const paymentData = paymentFeedback?.payment;
+    const aguardandoGateway = Boolean(
+        paymentData && !['approved', 'cancelled', 'rejected', 'refunded'].includes((paymentData.status || '').toLowerCase())
+    );
+
     const [clienteQuery, setClienteQuery] = useState<string>('');
     const [descontoTexto, setDescontoTexto] = useState('');
 
@@ -68,11 +73,12 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
             .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
     };
 
-    // ✅ Sincroniza o texto do combobox quando o cliente selecionado muda externamente (ex: após criar cliente)
     useEffect(() => {
         if (clienteSelecionado) {
-            const lbl = clienteSelecionado.email ? `${clienteSelecionado.nome} - ${clienteSelecionado.email}` : clienteSelecionado.nome;
-            setClienteQuery(lbl);
+            const label = clienteSelecionado.email
+                ? `${clienteSelecionado.nome} - ${clienteSelecionado.email}`
+                : clienteSelecionado.nome;
+            setClienteQuery(label);
         } else {
             setClienteQuery('');
         }
@@ -86,48 +92,35 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
         setDescontoTexto(formatarNumeroParaTexto(desconto));
     }, [desconto]);
 
-    // Adicionar função para converter moeda formatada para número
     const converterMoedaParaNumero = (valorFormatado: string): number => {
-        if (!valorFormatado || valorFormatado === '') return 0;
+        if (!valorFormatado) return 0;
 
-        // Remove "R$", espaços, pontos de milhares e converte vírgula para ponto
-        const numeroLimpo = valorFormatado
-            .replace(/R\$\s?/g, '')
-            .replace(/\./g, '')
-            .replace(',', '.');
-
+        const numeroLimpo = valorFormatado.replace(/R\$\s?/g, '').replace(/\./g, '').replace(',', '.');
         const numero = parseFloat(numeroLimpo);
-        return isNaN(numero) ? 0 : numero; // ✅ Evita NaN
+        return Number.isNaN(numero) ? 0 : numero;
     };
 
-    // Adicionar função para calcular o troco
     const calcularTroco = (): number => {
         const valorRecebidoNumero = converterMoedaParaNumero(valorRecebido);
         const totalVenda = calcularTotal();
 
-        if (valorRecebidoNumero > totalVenda) {
-            return valorRecebidoNumero - totalVenda;
-        }
-        return 0;
+        return valorRecebidoNumero > totalVenda ? valorRecebidoNumero - totalVenda : 0;
     };
 
-    // Corrigir a função handleValorRecebidoChange
     const handleValorRecebidoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const valor = e.target.value;
 
-        // Se o campo estiver vazio ou for apenas "0", limpar
-        if (valor === '' || valor === '0') {
+        if (!valor || valor === '0') {
             setValorRecebido('');
             return;
         }
 
-        // Aplicar formatação de moeda
         const valorFormatado = formatarMoeda(valor);
         setValorRecebido(valorFormatado);
     };
 
     const handleDescontoChange = (valor: string) => {
-        if (valor === '' || valor === '0') {
+        if (!valor || valor === '0') {
             setDescontoTexto('');
             setDesconto(0);
             return;
@@ -157,6 +150,14 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
                 </h5>
             </div>
             <div className="card-body d-flex flex-column">
+                {aguardandoGateway && (
+                    <div className="alert alert-warning d-flex align-items-center gap-2 mb-3">
+                        <i className="bi bi-hourglass-split"></i>
+                        <div>
+                            Pagamento enviado ao provedor. Aguarde a confirmação para iniciar uma nova venda.
+                        </div>
+                    </div>
+                )}
                 {/* Itens do Carrinho */}
                 <div className="carrinho-lista mb-3 flex-grow-1">
                     {carrinho.length === 0 ? (
@@ -216,7 +217,6 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
                         ))
                     )}
                 </div>
-
                 {/* Configurações da Venda */}
                 {carrinho.length > 0 && (
                     <>
@@ -465,7 +465,7 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
                                 type="button"
                                 className={`btn btn-finalizar-venda w-100 ${loadingVenda ? 'processing' : ''}`}
                                 onClick={finalizarVenda}
-                                disabled={loadingVenda || cancelandoVenda || carrinho.length === 0}
+                                disabled={loadingVenda || cancelandoVenda || carrinho.length === 0 || aguardandoGateway}
                             >
                                 {loadingVenda ? (
                                     <span className="fw-semibold">Processando venda...</span>
@@ -481,7 +481,7 @@ export default function CarrinhoVenda(props: CarrinhoVendaProps) {
                                 type="button"
                                 className={`btn btn-finalizar-venda btn-cancelar-venda w-100 ${cancelandoVenda ? 'processing' : ''}`}
                                 onClick={cancelarVenda}
-                                disabled={cancelandoVenda || loadingVenda || carrinho.length === 0}
+                                disabled={cancelandoVenda || loadingVenda || carrinho.length === 0 || aguardandoGateway}
                             >
                                 {cancelandoVenda ? (
                                     <span className="fw-semibold">Cancelando venda...</span>

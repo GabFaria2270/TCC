@@ -110,7 +110,7 @@ class VendaService
         }
     }
 
-    public function criar(array $dados, $request)
+    public function criar(array $dados, $request, ?string $statusOverride = null)
     {
         DB::beginTransaction();
 
@@ -171,7 +171,8 @@ class VendaService
             $observacoesAuto = $this->montarObservacoesDaVenda($itensProcessados, $total, $desconto);
 
             // Determinar status da venda
-            $status = $dados['forma_pagamento'] === 'conta_fiada' ? 'conta_fiada' : 'concluida';
+            $status = $statusOverride
+                ?? ($dados['forma_pagamento'] === 'conta_fiada' ? 'conta_fiada' : 'concluida');
 
             // Criar a venda (sempre com comercio_id e usuario_id)
             $venda = Venda::create([

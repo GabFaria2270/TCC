@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\ClienteController;
 use App\Http\Controllers\Auth\ProdutoController;
 use App\Http\Controllers\Auth\VendasController; // ✅ ADICIONAR IMPORT
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\FiadoController;
 use Illuminate\Http\Request;
@@ -139,6 +140,13 @@ Route::middleware(['require.token'])->group(function () {
         // Logout dentro do escopo de gerenciamento (POST por segurança)
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('gerenciamento.logout');
+    });
+
+    Route::prefix('api')->group(function () {
+        Route::post('pdv/pagamentos', [PaymentController::class, 'store'])
+            ->name('api.pdv.pagamentos');
+        Route::get('pdv/pagamentos/{venda}/status', [PaymentController::class, 'status'])
+            ->name('api.pdv.pagamentos.status');
     });
 });
 

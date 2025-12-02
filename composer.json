@@ -15,6 +15,7 @@
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^3.1",
+        "mercadopago/dx-php": "3.0",
         "tightenco/ziggy": "^2.4"
     },
     "require-dev": {

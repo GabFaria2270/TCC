@@ -54,6 +54,13 @@ class Venda extends Model
         'troco',
         'status',
         'observacoes',
+        'payment_provider',
+        'payment_reference',
+        'payment_status',
+        'payment_method_detail',
+        'payment_payload',
+        'pix_qr_code',
+        'pix_qr_code_base64',
     ];
 
     protected $casts = [
@@ -67,6 +74,7 @@ class Venda extends Model
         'troco' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'payment_payload' => 'array',
     ];
 
     /**

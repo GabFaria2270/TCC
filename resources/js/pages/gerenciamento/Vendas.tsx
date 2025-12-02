@@ -1,6 +1,7 @@
+import PagamentoGatewayModal from '@/components/PDVcomponents/PagamentoGatewayModal';
 import VendaDetalhesModal from '@/components/PDVcomponents/VendaDetalhesModal';
-import { Head } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import CarrinhoVenda from '../../components/PDVcomponents/CarrinhoVenda';
 import ClienteCreateModal from '../../components/PDVcomponents/ClienteCreateModal';
 import NotificationContainer from '../../components/PDVcomponents/NotificationContainer';
@@ -68,6 +69,13 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     const [vendaDetalhes, setVendaDetalhes] = useState<any | null>(null);
     const [loadingDetalhes, setLoadingDetalhes] = useState(false);
     const [cancelandoVenda, setCancelandoVenda] = useState(false);
+    const [paymentFeedback, setPaymentFeedback] = useState<any | null>(null);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [pixCodeCopied, setPixCodeCopied] = useState(false);
+    const [refreshingPayment, setRefreshingPayment] = useState(false);
+    const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const paymentStatusKey = (paymentFeedback?.payment?.status || '').toLowerCase();
+    const allowManualClose = ['rejected', 'cancelled', 'refunded'].includes(paymentStatusKey);
     // Hooks para funcionalidades
     const { notifications, addNotification, removeNotification } = useNotifications();
     const { finalizarVenda: executarFinalizacao } = useFinalizarVenda();
@@ -101,6 +109,14 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     useEffect(() => {
         setClientesAtualizados(clientes);
     }, [clientes]);
+
+    useEffect(() => {
+        return () => {
+            if (copyTimeoutRef.current) {
+                clearTimeout(copyTimeoutRef.current);
+            }
+        };
+    }, []);
     // Funções para modal de cliente
     const abrirModalCliente = () => {
         setShowClienteModal(true);
@@ -132,6 +148,136 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
             });
         }
     };
+
+    const closePaymentModal = useCallback(() => {
+        setShowPaymentModal(false);
+        setPaymentFeedback(null);
+        setPixCodeCopied(false);
+        if (copyTimeoutRef.current) {
+            clearTimeout(copyTimeoutRef.current);
+            copyTimeoutRef.current = null;
+        }
+    }, [setPaymentFeedback, setShowPaymentModal]);
+
+    const handleCopyPixCode = useCallback(() => {
+        const pixCode = paymentFeedback?.payment?.pix_qr_code;
+        if (!pixCode) {
+            return;
+        }
+
+        if (typeof navigator === 'undefined' || !navigator.clipboard) {
+            addNotification({
+                type: 'warning',
+                title: 'Copiar manualmente',
+                message: 'Seu navegador não permite copiar automaticamente. Copie o código manualmente.',
+            });
+            return;
+        }
+
+        navigator.clipboard
+            .writeText(pixCode)
+            .then(() => {
+                setPixCodeCopied(true);
+                if (copyTimeoutRef.current) {
+                    clearTimeout(copyTimeoutRef.current);
+                }
+                copyTimeoutRef.current = setTimeout(() => setPixCodeCopied(false), 2000);
+            })
+            .catch((error) => {
+                console.error('Erro ao copiar PIX', error);
+                addNotification({
+                    type: 'error',
+                    title: 'Falha ao copiar',
+                    message: 'Não foi possível copiar o código. Tente novamente.',
+                });
+            });
+    }, [paymentFeedback?.payment?.pix_qr_code, addNotification, setPixCodeCopied]);
+
+    const refreshPaymentStatus = useCallback(
+        async (showSpinner = true) => {
+            if (!paymentFeedback?.venda?.id) {
+                return;
+            }
+
+            if (refreshingPayment && showSpinner) {
+                return;
+            }
+
+            if (showSpinner) {
+                setRefreshingPayment(true);
+            }
+
+            try {
+                const response = await fetch(`/api/pdv/pagamentos/${paymentFeedback.venda.id}/status`, {
+                    headers: { Accept: 'application/json' },
+                    credentials: 'same-origin',
+                });
+
+                const data = await response.json().catch(() => null);
+
+                if (!response.ok) {
+                    addNotification({
+                        type: 'error',
+                        title: 'Pagamento',
+                        message: data?.message || 'Não foi possível atualizar o status do pagamento.',
+                    });
+                    return;
+                }
+
+                if (data?.payment) {
+                    setPaymentFeedback({ payment: data.payment, venda: data.venda });
+                }
+
+                router.reload({ only: ['vendas'] });
+
+                const status = (data?.payment?.status || '').toLowerCase();
+                if (status === 'approved') {
+                    addNotification({
+                        type: 'success',
+                        title: 'Pagamento aprovado',
+                        message: 'O Mercado Pago confirmou o pagamento. Venda finalizada.',
+                    });
+                    closePaymentModal();
+                    setAbaAtiva('lista');
+                } else if (['rejected', 'cancelled', 'refunded'].includes(status)) {
+                    addNotification({
+                        type: 'error',
+                        title: 'Pagamento não aprovado',
+                        message: 'O provedor retornou o pagamento como não aprovado. Revise antes de tentar novamente.',
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar pagamento', error);
+                addNotification({
+                    type: 'error',
+                    title: 'Pagamento',
+                    message: 'Não foi possível atualizar o status do pagamento. Tente novamente em instantes.',
+                });
+            } finally {
+                if (showSpinner) {
+                    setRefreshingPayment(false);
+                }
+            }
+        },
+        [paymentFeedback?.venda?.id, addNotification, closePaymentModal, refreshingPayment, setPaymentFeedback, setAbaAtiva]
+    );
+
+    useEffect(() => {
+        if (!showPaymentModal || !paymentFeedback?.payment) {
+            return;
+        }
+
+        const status = (paymentFeedback.payment.status || '').toLowerCase();
+        if (['approved', 'rejected', 'cancelled', 'refunded'].includes(status)) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            refreshPaymentStatus(false);
+        }, 7000);
+
+        return () => clearInterval(interval);
+    }, [showPaymentModal, paymentFeedback?.payment, refreshPaymentStatus]);
     // Função de finalizar venda usando hook
     const finalizarVenda = () =>
         executarFinalizacao({
@@ -145,6 +291,16 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
             setLoadingVenda,
             setAbaAtiva,
             addNotification,
+            setPaymentFeedback,
+            onVendaFinalizada: ({ payment }) => {
+                router.reload({ only: ['vendas', 'produtos'] });
+                if (payment) {
+                    setShowPaymentModal(true);
+                    setPixCodeCopied(false);
+                } else {
+                    closePaymentModal();
+                }
+            },
             messages,
         });
     // Funções para modal de detalhes da venda
@@ -262,6 +418,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                                 valorRecebido={String(valorRecebido)}
                                 observacoes={observacoes}
                                 loadingVenda={loadingVenda}
+                                paymentFeedback={paymentFeedback}
                                 setClienteSelecionado={setClienteSelecionado}
                                 setDesconto={setDesconto}
                                 setFormaPagamento={setFormaPagamento}
@@ -283,7 +440,17 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                 ) : null}
             </div>
             <ClienteCreateModal show={showClienteModal} onClose={fecharModalCliente} onSuccess={onClienteCriado} carrinhoItens={carrinho} />
-            <VendaDetalhesModal show={showVendaModal} venda={vendaDetalhes} loading={loadingDetalhes} fechar={fecharDetalhesVenda} />
+                <PagamentoGatewayModal
+                    show={showPaymentModal && Boolean(paymentFeedback?.payment)}
+                    feedback={paymentFeedback}
+                    onCopyPix={handleCopyPixCode}
+                    pixCopied={pixCodeCopied}
+                    onRefreshStatus={() => refreshPaymentStatus(true)}
+                    refreshing={refreshingPayment}
+                    allowManualClose={allowManualClose}
+                    onClose={allowManualClose ? closePaymentModal : undefined}
+                />
+                <VendaDetalhesModal show={showVendaModal} venda={vendaDetalhes} loading={loadingDetalhes} fechar={fecharDetalhesVenda} />
         </GerenciamentoLayout>
     );
 }

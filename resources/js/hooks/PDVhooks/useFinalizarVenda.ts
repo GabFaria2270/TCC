@@ -1,5 +1,3 @@
-import { router } from '@inertiajs/react';
-
 interface FinalizarVendaParams {
     carrinho: any[];
     calcularTotal: () => number;
@@ -11,12 +9,27 @@ interface FinalizarVendaParams {
     setLoadingVenda: (loading: boolean) => void;
     setAbaAtiva: (aba: 'lista' | 'nova') => void;
     addNotification: (notification: any) => void;
+    setPaymentFeedback: (payload: PaymentFeedback | null) => void;
+    onVendaFinalizada?: (payload: { venda: any; payment: PaymentFeedback['payment'] | null; forma_pagamento: string }) => void;
     messages: {
         carrinho_vazio: string;
         valor_insuficiente: string;
         cliente_obrigatorio: string;
         venda_processada: string;
+        erro_finalizar?: string;
     };
+}
+
+interface PaymentFeedback {
+    venda: any;
+    payment: {
+        provider: string;
+        reference: string;
+        status: string;
+        method: string;
+        pix_qr_code?: string | null;
+        pix_qr_code_base64?: string | null;
+    } | null;
 }
 
 export const useFinalizarVenda = () => {
@@ -31,6 +44,8 @@ export const useFinalizarVenda = () => {
         setLoadingVenda,
         setAbaAtiva,
         addNotification,
+        setPaymentFeedback,
+        onVendaFinalizada,
         messages,
     }: FinalizarVendaParams) => {
         // Validações
@@ -70,6 +85,8 @@ export const useFinalizarVenda = () => {
         // Converter valorRecebido para número quando necessário
         const valorRecebidoNumero = parseFloat(valorRecebido.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
 
+        const usaGateway = ['pix', 'cartao_credito', 'cartao_debito'].includes(formaPagamento);
+
         const dados: any = {
             itens: carrinho.map(item => ({
                 produto_id: item.produto.id,
@@ -91,37 +108,65 @@ export const useFinalizarVenda = () => {
             dados.valor_recebido = valorRecebidoNumero;
         }
 
-        try {
-            await router.post('/gerenciamento/vendas', dados, {
-                preserveScroll: true,
-                headers: {
-                    'X-PDV-Inline': 'true',
-                },
-                onSuccess: () => {
-                    addNotification({
-                        type: 'success',
-                        title: 'Venda Realizada',
-                        message: messages.venda_processada,
-                    });
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-                    limparCarrinho();
-                    setAbaAtiva('lista');
+        try {
+            const response = await fetch('/api/pdv/pagamentos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
-                onError: (errors) => {
-                    Object.values(errors).forEach((error) => {
-                        addNotification({
-                            type: 'error',
-                            title: 'Erro na Venda',
-                            message: Array.isArray(error) ? error[0] : (error as string),
-                        });
+                credentials: 'same-origin',
+                body: JSON.stringify(dados),
+            });
+
+            const data = await response
+                .json()
+                .catch(() => ({ message: 'Erro inesperado ao processar a venda.' }));
+
+            if (!response.ok) {
+                const errors = data?.errors
+                    ? Object.values(data.errors).flat()
+                    : [data?.message || messages.erro_finalizar || 'Erro ao finalizar venda'];
+
+                errors.forEach((errorMsg: unknown) => {
+                    addNotification({
+                        type: 'error',
+                        title: 'Erro na Venda',
+                        message: typeof errorMsg === 'string' ? errorMsg : messages.venda_processada,
                     });
-                },
-                onFinish: () => {
-                    setLoadingVenda(false);
-                },
+                });
+                setLoadingVenda(false);
+                return;
+            }
+
+            addNotification({
+                type: 'success',
+                title: 'Venda Realizada',
+                message: messages.venda_processada,
+            });
+
+            setPaymentFeedback(data?.payment ? { payment: data.payment, venda: data.venda } : null);
+
+            limparCarrinho();
+            setAbaAtiva(usaGateway ? 'nova' : 'lista');
+
+            onVendaFinalizada?.({
+                venda: data.venda,
+                payment: data.payment ?? null,
+                forma_pagamento: formaPagamento,
             });
         } catch (error) {
             console.error('💥 Erro crítico:', error);
+            addNotification({
+                type: 'error',
+                title: 'Erro na Venda',
+                message: 'Não foi possível finalizar a venda. Tente novamente em instantes.',
+            });
+        } finally {
             setLoadingVenda(false);
         }
     };

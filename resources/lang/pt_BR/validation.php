@@ -27,6 +27,7 @@ return [
     
     // ✅ MENSAGENS DE ERRO - PAGAMENTO
     'pdv_valor_insuficiente' => 'Valor recebido insuficiente para finalizar a venda!',
+    'pdv_pagamento_nao_encontrado' => 'Pagamento não encontrado para esta venda.',
     
     // ✅ MENSAGENS DE ERRO - PRODUTO
     'pdv_produto_inativo' => 'Produto inativo: :produto',
