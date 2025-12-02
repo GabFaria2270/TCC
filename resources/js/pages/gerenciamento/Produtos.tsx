@@ -1,7 +1,9 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ModalPortal from '../../components/common/ModalPortal';
-import CategoriaSelectCustom from '../../components/PDVcomponents/CategoriaSelectCustom';
+import ProdutosFilters from '../../components/Produtos/ProdutosFilters';
+import ProdutoFormModal from '../../components/Produtos/ProdutoFormModal';
+import ProdutosListSection, { ProdutosSortField as SortField, type ProdutoListBase } from '../../components/Produtos/ProdutosListSection';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
 import { formatarMoeda } from '../../utils/formatters';
 // =============================================================
@@ -13,15 +15,9 @@ interface Categoria {
     nome: string;
 }
 
-interface Produto {
-    id: number;
-    nome: string;
-    preco: string | number;
-    estoque?: { quantidade: number };
-    estoque_minimo?: number;
+interface Produto extends ProdutoListBase {
     categoria?: Categoria | null;
     created_at: string;
-    updated_at: string;
 }
 
 interface Paginacao<T> {
@@ -56,22 +52,6 @@ type ProdutoFormData = {
     nova_categoria_nome: string;
     estoque_minimo?: string;
 };
-
-// =============================================================
-// Formatadores e utilidades
-// =============================================================
-const currencyFormatter = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-});
-
-// Garante string numérica não-negativa (ou vazia)
-function clampNonNegativeString(value: string): string {
-    if (value === '') return '';
-    const n = Number(value);
-    if (Number.isNaN(n)) return '';
-    return String(Math.max(0, Math.trunc(n)));
-}
 
 // Converte string BR (ex: 1.234,56) para número em string com ponto decimal (ex: 1234.56)
 function normalizarMoedaBR(valor: string): string {
@@ -130,9 +110,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     // =========================================================
     // Definições locais (tipos e mapeamentos de ordenação)
     // =========================================================
-    // Campos de ordenação exibidos na UI
-    type SortField = 'nome' | 'categoria' | 'preco' | 'quantidade' | 'updated_at';
-
     // Mapeia o sort da UI para o esperado pelo servidor
     function toServerSort(field: SortField): ServerFilters['sort'] {
         switch (field) {
@@ -206,6 +183,8 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         nova_categoria_nome: '',
         estoque_minimo: '',
     });
+
+    const setFormField = (field: keyof ProdutoFormData, value: string) => setData(field, value);
 
     // =========================================================
     // Efeitos de montagem/UX
@@ -362,6 +341,22 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         );
     };
 
+    const handleCategoriaChange = (value: string) => {
+        setCategoriaFiltro(value);
+        navegarComFiltros({ page: 1, categoriaId: value || undefined });
+    };
+
+    const handlePerPageChange = (value: string) => {
+        setPerPage(value);
+        navegarComFiltros({ page: 1, perPage: Number(value) });
+    };
+
+    const handleToggleOnlyLow = () => {
+        const next = !onlyLow;
+        setOnlyLow(next);
+        navegarComFiltros({ page: 1, onlyLow: next || undefined });
+    };
+
     // =========================================================
     // Abertura/fechamento de modal de produto (create/edit)
     // =========================================================
@@ -426,6 +421,11 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             const id = m === 'ajuste' ? 'ajuste-novo-saldo' : 'mov-quantidade';
             document.getElementById(id)?.focus();
         }, 100);
+    };
+
+    const solicitarExclusaoProduto = (produto: Produto) => {
+        setProdutoSelecionado(produto);
+        setShowDeleteConfirm(true);
     };
 
     const fecharModalEstoque = () => {
@@ -612,299 +612,35 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 {/* ===================================================== */}
                 {/* Filtros e controles                                   */}
                 {/* ===================================================== */}
-                <div className="card filtros-card fade-in mb-4 border-0 shadow-sm">
-                    <div className="card-body produtos-filtros-grid">
-                        <div className="filtro-item">
-                            <label htmlFor="filtro-busca" className="form-label">
-                                Buscar
-                            </label>
-                            <div className="input-group">
-                                <span className="input-group-text" id="icone-busca">
-                                    <i className="bi bi-search" />
-                                </span>
-                                <input
-                                    id="filtro-busca"
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Nome"
-                                    aria-describedby="icone-busca"
-                                    value={searchTerm}
-                                    onChange={(event) => setSearchTerm(event.target.value)}
-                                    onKeyDown={onSearchKeyDown}
-                                    onBlur={onSearchBlur}
-                                />
-                            </div>
-                        </div>
-                        <div className="filtro-item">
-                            <label htmlFor="filtro-categoria" className="form-label">
-                                Categoria
-                            </label>
-                            <select
-                                id="filtro-categoria"
-                                className="form-select"
-                                value={categoriaFiltro}
-                                onChange={(event) => {
-                                    const value = event.target.value;
-                                    setCategoriaFiltro(value);
-                                    navegarComFiltros({ page: 1, categoriaId: value || undefined });
-                                }}
-                            >
-                                <option value="">Todas</option>
-                                {categorias.map((categoria) => (
-                                    <option key={categoria.id} value={categoria.id}>
-                                        {categoria.nome}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="filtro-item filtro-per-page">
-                            <label htmlFor="per-page" className="form-label">
-                                Por página
-                            </label>
-                            <select
-                                id="per-page"
-                                className="form-select"
-                                value={perPage}
-                                onChange={(event) => {
-                                    setPerPage(event.target.value);
-                                    navegarComFiltros({ page: 1, perPage: Number(event.target.value) });
-                                }}
-                            >
-                                {[10, 15, 25, 50, 100].map((n) => (
-                                    <option key={n} value={n}>
-                                        {n}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="filtro-item filtro-baixos">
-                            <button
-                                type="button"
-                                className={`btn btn-outline-warning btn-baixos ${onlyLow ? 'active' : ''}`}
-                                aria-pressed={onlyLow}
-                                onClick={() => {
-                                    const next = !onlyLow;
-                                    setOnlyLow(next);
-                                    navegarComFiltros({ page: 1, onlyLow: next || undefined });
-                                }}
-                            >
-                                <i className="bi bi-exclamation-triangle" aria-hidden="true"></i>
-                                <span>Baixo estoque</span>
-                            </button>
-                        </div>
-                        <div className="filtro-item filtro-limpar">
-                            <button className="btn btn-outline-secondary btn-limpar-filtros" type="button" onClick={handleClearFilters}>
-                                Limpar filtros
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <ProdutosFilters
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    onSearchKeyDown={onSearchKeyDown}
+                    onSearchBlur={onSearchBlur}
+                    categorias={categorias}
+                    categoriaFiltro={categoriaFiltro}
+                    onCategoriaChange={handleCategoriaChange}
+                    perPage={perPage}
+                    onPerPageChange={handlePerPageChange}
+                    onlyLow={onlyLow}
+                    onToggleOnlyLow={handleToggleOnlyLow}
+                    onClearFilters={handleClearFilters}
+                />
 
                 {/* ===================================================== */}
-                {/* Tabela de produtos                                    */}
+                {/* Lista de produtos                                    */}
                 {/* ===================================================== */}
-                <div className="card fade-in elemento-produtos-2 border-0 shadow-sm">
-                    <div className="card-header d-flex justify-content-between align-items-center bg-body-tertiary border-0">
-                        <strong>Produtos cadastrados</strong>
-                        <div className="small text-secondary">Atualizados em tempo real conforme cadastros</div>
-                    </div>
-                    {isDesktop ? (
-                        <div className="table-responsive scroll-shadow">
-                            <table className="table-hover data-table mb-0 table align-middle">
-                                <thead>
-                                    <tr>
-                                        <th role="button" onClick={() => toggleSort('nome')} className="user-select-none">
-                                            Produto {renderSortIcon('nome')}
-                                        </th>
-                                        <th className="user-select-none">Categoria</th>
-                                        <th role="button" onClick={() => toggleSort('preco')} className="user-select-none text-end">
-                                            Preço {renderSortIcon('preco')}
-                                        </th>
-                                        <th role="button" onClick={() => toggleSort('quantidade')} className="user-select-none text-end">
-                                            Estoque {renderSortIcon('quantidade')}
-                                        </th>
-                                        <th role="button" onClick={() => toggleSort('updated_at')} className="user-select-none">
-                                            Atualizado em {renderSortIcon('updated_at')}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {produtosArray.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={5} className="estado-vazio">
-                                                <i className="bi bi-box-seam display-6 d-block mb-2"></i>
-                                                Nenhum produto encontrado.{' '}
-                                                {produtosArray.length === 0 ? (
-                                                    <button className="btn btn-link p-0" type="button" onClick={abrirModalCriar}>
-                                                        Cadastre o primeiro produto
-                                                    </button>
-                                                ) : null}
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        produtosOrdenados.map((produto) => {
-                                            const min = produto.estoque_minimo ?? 0;
-                                            const qtd = produto.estoque?.quantidade ?? 0;
-                                            const isLow = qtd <= min;
-                                            return (
-                                                <tr key={produto.id} className={isLow ? 'table-warning' : ''}>
-                                                    <td data-label="Produto">
-                                                        <div className="fw-semibold">{produto.nome}</div>
-                                                    </td>
-                                                    <td data-label="Categoria">
-                                                        {produto.categoria?.nome ? (
-                                                            <span className="badge text-bg-secondary">{produto.categoria.nome}</span>
-                                                        ) : (
-                                                            '—'
-                                                        )}
-                                                    </td>
-                                                    <td className="text-end" data-label="Preço">
-                                                        {currencyFormatter.format(Number(produto.preco ?? 0))}
-                                                    </td>
-                                                    <td className="text-end" data-label="Estoque">
-                                                        {produto.estoque?.quantidade ?? 0}
-                                                        {isLow && <span className="badge text-bg-warning ms-2">Baixo</span>}
-                                                    </td>
-                                                    <td data-label="Atualizado em">
-                                                        <div className="d-flex align-items-center justify-content-between">
-                                                            <span>{new Date(produto.updated_at).toLocaleString('pt-BR')}</span>
-                                                            <div className="d-flex ms-3 flex-wrap gap-2">
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-secondary btn-sm px-3"
-                                                                    title="Editar"
-                                                                    aria-label="Editar produto"
-                                                                    onClick={() => abrirModalEditar(produto)}
-                                                                >
-                                                                    <i className="bi bi-pencil"></i>
-                                                                    <span className="d-none d-sm-inline ms-2">Editar</span>
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-outline-primary btn-sm px-3"
-                                                                    title="Movimentar estoque"
-                                                                    aria-label="Movimentar estoque do produto"
-                                                                    onClick={() => abrirModalEstoque(produto)}
-                                                                >
-                                                                    <i className="bi bi-arrow-left-right"></i>
-                                                                    <span className="d-none d-sm-inline ms-2">Movimentar</span>
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    className="btn btn-outline-danger btn-sm px-3"
-                                                                    title="Excluir"
-                                                                    aria-label="Excluir produto"
-                                                                    onClick={() => {
-                                                                        setProdutoSelecionado(produto);
-                                                                        setShowDeleteConfirm(true);
-                                                                    }}
-                                                                >
-                                                                    <i className="bi bi-trash"></i>
-                                                                    <span className="d-none d-sm-inline ms-2">Excluir</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="produtos-card-list d-flex flex-column gap-3 p-3">
-                            {produtosArray.length === 0 ? (
-                                <div className="text-muted py-5 text-center">
-                                    <i className="bi bi-box-seam display-6 d-block mb-2"></i>
-                                    Nenhum produto encontrado.
-                                    {produtosArray.length === 0 ? (
-                                        <div className="mt-2">
-                                            <button className="btn btn-link p-0" type="button" onClick={abrirModalCriar}>
-                                                Cadastre o primeiro produto
-                                            </button>
-                                        </div>
-                                    ) : null}
-                                </div>
-                            ) : (
-                                produtosOrdenados.map((produto) => {
-                                    const min = produto.estoque_minimo ?? 0;
-                                    const qtd = produto.estoque?.quantidade ?? 0;
-                                    const isLow = qtd <= min;
-                                    const precoFormatado = currencyFormatter.format(Number(produto.preco ?? 0));
-                                    const atualizadoEm = new Date(produto.updated_at).toLocaleString('pt-BR');
-                                    return (
-                                        <div key={produto.id} className={`card border-0 shadow-sm ${isLow ? 'border-warning-subtle border' : ''}`}>
-                                            <div className="card-body d-flex flex-column gap-2 p-3">
-                                                <div className="d-flex justify-content-between align-items-start gap-3">
-                                                    <div className="min-w-0">
-                                                        <h5 className="text-break mb-1">{produto.nome}</h5>
-                                                    </div>
-                                                    <div className="text-end">
-                                                        <span className="badge text-bg-primary fs-6">{precoFormatado}</span>
-                                                        {isLow && <div className="badge text-bg-warning text-dark d-block mt-2">Estoque baixo</div>}
-                                                    </div>
-                                                </div>
-                                                <div className="small text-secondary d-flex align-items-center text-break">
-                                                    <i className="bi bi-tag me-2" aria-hidden="true"></i>
-                                                    Categoria:
-                                                    {produto.categoria?.nome ? (
-                                                        <span className="badge text-bg-secondary ms-2">{produto.categoria.nome}</span>
-                                                    ) : (
-                                                        <span className="ms-2">Sem categoria</span>
-                                                    )}
-                                                </div>
-                                                <div className="small text-secondary d-flex align-items-center">
-                                                    <i className="bi bi-box-seam me-2" aria-hidden="true"></i>
-                                                    Estoque:
-                                                    <span className="fw-semibold text-body ms-2">{qtd}</span>
-                                                    {min > 0 && <span className="text-muted ms-2">mín: {min}</span>}
-                                                </div>
-                                                <div className="small text-secondary d-flex align-items-center text-break">
-                                                    <i className="bi bi-clock-history me-2" aria-hidden="true"></i>
-                                                    Atualizado em {atualizadoEm}
-                                                </div>
-                                                <div className="d-flex mt-3 flex-wrap gap-2">
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-outline-primary flex-fill"
-                                                        title="Editar"
-                                                        aria-label="Editar produto"
-                                                        onClick={() => abrirModalEditar(produto)}
-                                                    >
-                                                        <i className="bi bi-pencil"></i>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-outline-success flex-fill"
-                                                        title="Movimentar estoque"
-                                                        aria-label="Movimentar estoque do produto"
-                                                        onClick={() => abrirModalEstoque(produto)}
-                                                    >
-                                                        <i className="bi bi-arrow-left-right"></i>
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-outline-danger flex-fill"
-                                                        title="Excluir"
-                                                        aria-label="Excluir produto"
-                                                        onClick={() => {
-                                                            setProdutoSelecionado(produto);
-                                                            setShowDeleteConfirm(true);
-                                                        }}
-                                                    >
-                                                        <i className="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            )}
-                        </div>
-                    )}
-                </div>
+                <ProdutosListSection
+                    isDesktop={isDesktop}
+                    produtosArray={produtosArray}
+                    produtosOrdenados={produtosOrdenados}
+                    onSort={toggleSort}
+                    renderSortIcon={renderSortIcon}
+                    onCreate={abrirModalCriar}
+                    onEdit={abrirModalEditar}
+                    onMoveStock={abrirModalEstoque}
+                    onDelete={solicitarExclusaoProduto}
+                />
                 {/* ===================================================== */}
                 {/* Paginação                                              */}
                 {/* ===================================================== */}
@@ -939,176 +675,19 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             {/* ========================================================= */}
             {/* Modal: Criar/Editar produto                               */}
             {/* ========================================================= */}
-            {showModal && (
-                <ModalPortal>
-                    <div className="modal-backdrop fade show" onClick={fecharModal}></div>
-                    <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
-                        <div className="modal-dialog modal-lg modal-dialog-centered">
-                            <div className="modal-content">
-                                <div className="modal-header border-0">
-                                    <h5 className="modal-title">{modalMode === 'create' ? 'Novo produto' : 'Editar produto'}</h5>
-                                    <button type="button" className="btn-close" aria-label="Fechar" onClick={fecharModal} />
-                                </div>
-                                <form onSubmit={submit}>
-                                    <div className="modal-body">
-                                        <div className="row">
-                                            <div className="col-12 mb-3">
-                                                <label htmlFor="produto-nome" className="form-label">
-                                                    Nome*
-                                                </label>
-                                                <input
-                                                    id="produto-nome"
-                                                    type="text"
-                                                    className={`form-control ${errors.nome ? 'is-invalid' : ''}`}
-                                                    value={data.nome}
-                                                    onChange={(e) => setData('nome', e.target.value)}
-                                                    required
-                                                    disabled={processing}
-                                                />
-                                                {errors.nome && <div className="invalid-feedback">{errors.nome}</div>}
-                                            </div>
-                                            <div className="col-md-6 mb-3">
-                                                <label htmlFor="produto-preco" className="form-label">
-                                                    Preço (R$)*
-                                                </label>
-                                                <div className="input-group">
-                                                    <span className="input-group-text">R$</span>
-                                                    <input
-                                                        id="produto-preco"
-                                                        type="text"
-                                                        className={`form-control ${errors.preco ? 'is-invalid' : ''}`}
-                                                        value={data.preco}
-                                                        onChange={(e) => setData('preco', formatarMoeda(e.target.value))}
-                                                        placeholder="0,00"
-                                                        inputMode="numeric"
-                                                        disabled={processing}
-                                                        required
-                                                    />
-                                                </div>
-                                                {errors.preco && <div className="invalid-feedback">{errors.preco}</div>}
-                                            </div>
-                                            {modalMode === 'create' ? (
-                                                <div className="col-md-6 mb-3">
-                                                    <label htmlFor="produto-quantidade" className="form-label">
-                                                        Quantidade em estoque*
-                                                    </label>
-                                                    <input
-                                                        id="produto-quantidade"
-                                                        type="number"
-                                                        min={0}
-                                                        step="1"
-                                                        className={`form-control ${errors.quantidade ? 'is-invalid' : ''}`}
-                                                        value={data.quantidade}
-                                                        onChange={(event) => setData('quantidade', clampNonNegativeString(event.target.value))}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
-                                                                e.preventDefault();
-                                                            }
-                                                        }}
-                                                        inputMode="numeric"
-                                                        pattern="[0-9]*"
-                                                        placeholder=""
-                                                        required
-                                                        disabled={processing}
-                                                    />
-                                                    {errors.quantidade && <div className="invalid-feedback">{errors.quantidade}</div>}
-                                                </div>
-                                            ) : (
-                                                <div className="col-md-6 mb-3">
-                                                    <label className="form-label">Estoque atual</label>
-                                                    <div className="form-control-plaintext fw-semibold">
-                                                        {produtoSelecionado?.estoque?.quantidade ?? 0}
-                                                    </div>
-                                                    <small className="text-secondary">
-                                                        Para alterar estoque, use os movimentos.{' '}
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-link btn-sm p-0 align-baseline"
-                                                            onClick={abrirAjusteAPartirDoEditar}
-                                                        >
-                                                            Abrir ajuste de estoque
-                                                        </button>
-                                                    </small>
-                                                </div>
-                                            )}
-                                            <div className="col-md-6 d-flex flex-column mb-3 gap-2">
-                                                <CategoriaSelectCustom
-                                                    categorias={[
-                                                        { value: '', label: 'Categoria' },
-                                                        ...categorias.map((c) => ({ value: String(c.id), label: c.nome })),
-                                                    ]}
-                                                    value={(() => {
-                                                        const found = categorias.find((c) => String(c.id) === String(data.categoria_id));
-                                                        return found
-                                                            ? { value: String(found.id), label: found.nome }
-                                                            : { value: '', label: 'Categoria' };
-                                                    })()}
-                                                    onChange={(option: any) => setData('categoria_id', option ? option.value : '')}
-                                                    isDisabled={processing}
-                                                    placeholder="Selecione ou busque uma categoria"
-                                                />
-                                                <div>
-                                                    <label htmlFor="produto-nova-categoria" className="form-label mb-1">
-                                                        Nova categoria (opcional)
-                                                    </label>
-                                                    <input
-                                                        id="produto-nova-categoria"
-                                                        type="text"
-                                                        className={`form-control ${errors.nova_categoria_nome ? 'is-invalid' : ''}`}
-                                                        value={data.nova_categoria_nome}
-                                                        onChange={(event) => setData('nova_categoria_nome', event.target.value)}
-                                                        placeholder="Informe para criar automaticamente"
-                                                        disabled={processing}
-                                                    />
-                                                    {errors.nova_categoria_nome && (
-                                                        <div className="invalid-feedback">{errors.nova_categoria_nome}</div>
-                                                    )}
-                                                    <small className="text-secondary">
-                                                        Você pode escolher uma categoria existente ou informar uma nova.
-                                                    </small>
-                                                </div>
-                                            </div>
-                                            <div className="col-md-6 mb-3">
-                                                <label htmlFor="produto-estoque-minimo" className="form-label">
-                                                    Estoque mínimo (alerta)
-                                                </label>
-                                                <input
-                                                    id="produto-estoque-minimo"
-                                                    type="number"
-                                                    min={0}
-                                                    step={1}
-                                                    className={`form-control ${errors.estoque_minimo ? 'is-invalid' : ''}`}
-                                                    value={data.estoque_minimo ?? ''}
-                                                    onChange={(e) => setData('estoque_minimo', clampNonNegativeString(e.target.value))}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+') {
-                                                            e.preventDefault();
-                                                        }
-                                                    }}
-                                                    inputMode="numeric"
-                                                    pattern="[0-9]*"
-                                                    placeholder=""
-                                                    disabled={processing}
-                                                />
-                                                {errors.estoque_minimo && <div className="invalid-feedback">{errors.estoque_minimo}</div>}
-                                                <small className="text-secondary">Usado para destacar produtos com estoque baixo.</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="modal-footer d-flex justify-content-between border-0">
-                                        <button type="button" className="btn btn-outline-secondary" onClick={fecharModal}>
-                                            Cancelar
-                                        </button>
-                                        <button type="submit" className="btn btn-primary" disabled={processing}>
-                                            {processing ? 'Salvando…' : modalMode === 'create' ? 'Salvar produto' : 'Atualizar produto'}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </ModalPortal>
-            )}
+            <ProdutoFormModal
+                show={showModal}
+                mode={modalMode}
+                categorias={categorias}
+                data={data}
+                errors={errors}
+                processing={processing}
+                produtoSelecionado={produtoSelecionado}
+                onClose={fecharModal}
+                onSubmit={submit}
+                setData={setFormField}
+                onOpenAjuste={abrirAjusteAPartirDoEditar}
+            />
 
             {/* ========================================================= */}
             {/* Modal: Confirmar exclusão                                 */}

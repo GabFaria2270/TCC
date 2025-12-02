@@ -24,7 +24,8 @@ export function exportarParaExcel(dados: any[], nomeArquivo: string = 'relatorio
             right: { style: 'thin', color: { rgb: '000000' } },
         },
     };
-    const range = XLSX.utils.decode_range(ws['!ref']);
+    const sheetRef = ws['!ref'] ?? 'A1:A1';
+    const range = XLSX.utils.decode_range(sheetRef);
     for (let C = range.s.c; C <= range.e.c; ++C) {
         const cell_address = XLSX.utils.encode_cell({ r: 0, c: C });
         if (ws[cell_address]) ws[cell_address].s = headerStyle;
