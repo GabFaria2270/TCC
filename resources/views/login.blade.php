@@ -110,7 +110,7 @@
                                 <!-- CHECKBOX LEMBRAR-ME -->
                                 <div class="form-login-group">
                                     <label class="switch-remember">
-                                        <input type="checkbox" name="remember" value="1"
+                                        <input type="checkbox" id="rememberCheckbox" name="remember" value="1"
                                             {{ old('remember') ? 'checked' : '' }}
                                             {{ $errors->has('EMAIL') && str_contains($errors->first('EMAIL'), 'Muitas tentativas') ? 'disabled' : '' }}>
                                         <span class="slider">
@@ -132,10 +132,13 @@
                                 <div class="social-login-separator">
                                     <span>ou utilize</span>
                                 </div>
-                                <a href="{{ route('login.google.redirect') }}" class="google-login-button">
-                                    <img src="{{ asset('img/google-icon.svg') }}" alt="Google" class="google-login-icon">
-                                    <span>Entrar com Google</span>
-                                </a>
+                                <form id="googleLoginForm" action="{{ route('login.google.redirect') }}" method="GET">
+                                    <input type="hidden" name="remember" id="googleRememberInput" value="0">
+                                    <button type="submit" class="google-login-button">
+                                        <img src="{{ asset('img/google-icon.svg') }}" alt="Google" class="google-login-icon">
+                                        <span>Entrar com Google</span>
+                                    </button>
+                                </form>
                             </div>
 
                             <div class="login-link">
@@ -163,7 +166,30 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rememberCheckbox = document.getElementById('rememberCheckbox');
+            const rememberInput = document.getElementById('googleRememberInput');
+            const googleForm = document.getElementById('googleLoginForm');
 
+            if (!rememberInput || !googleForm) {
+                return;
+            }
+
+            const syncRemember = () => {
+                if (!rememberCheckbox) {
+                    rememberInput.value = '0';
+                    return;
+                }
+                rememberInput.value = rememberCheckbox.checked ? '1' : '0';
+            };
+
+            syncRemember();
+
+            rememberCheckbox?.addEventListener('change', syncRemember);
+            googleForm.addEventListener('submit', syncRemember);
+        });
+    </script>
 </body>
 
 </html>

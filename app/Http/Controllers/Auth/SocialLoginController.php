@@ -2,102 +2,90 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\SocialLoginException;
 use App\Http\Controllers\Controller;
-use App\Models\SocialAccount;
-use App\Models\Usuario;
-use App\Services\Auth\CacheTokenService;
-use App\Services\Auth\SessionService;
+use App\Http\Requests\Auth\SocialLoginCallbackRequest;
+use App\Services\Auth\SocialLoginService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Laravel\Socialite\Facades\Socialite;
 
 class SocialLoginController extends Controller
 {
     public function __construct(
-        private readonly SessionService $sessionService,
-        private readonly CacheTokenService $tokenService
+        private readonly SocialLoginService $socialLoginService
     ) {
     }
 
-    public function redirectToGoogle(): RedirectResponse
+    public function redirectToGoogle(Request $request): RedirectResponse
     {
-        return Socialite::driver('google')
-            ->scopes(['openid', 'profile', 'email'])
-            ->with(['prompt' => 'select_account'])
-            ->redirect();
+        if ($request->hasSession()) {
+            $request->session()->put('social_login_remember', $request->boolean('remember'));
+        }
+
+        return $this->socialLoginService->getGoogleRedirect();
     }
 
-    public function handleGoogleCallback(Request $request): RedirectResponse
+    public function handleGoogleCallback(SocialLoginCallbackRequest $request): RedirectResponse
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-        } catch (\Throwable $exception) {
-            Log::channel('security')->warning('Falha ao completar login com Google', [
-                'error' => $exception->getMessage(),
-            ]);
-
-            return redirect()->route('login')->with('error', 'Não foi possível validar sua conta Google. Tente novamente.');
+            $result = $this->socialLoginService->authenticateViaGoogle($request);
+        } catch (SocialLoginException $exception) {
+            return redirect()->route('login')->with('error', $exception->getMessage());
         }
 
-        $email = strtolower($googleUser->getEmail() ?? '');
-        $emailVerified = (bool) (($googleUser->user['verified_email'] ?? false) || ($googleUser->user['email_verified'] ?? false));
+        $this->queueAuthTokenCookie($result['token_data']['token']);
 
-        if (!$email || !$emailVerified) {
-            return redirect()->route('login')->with('error', 'Precisamos de um e-mail Google verificado para continuar.');
+        if (!empty($result['remember_token'])) {
+            $this->queueRememberTokenCookie($result['remember_token']);
         }
 
-        $usuario = Usuario::byEmail($email)->first();
-        if (!$usuario) {
-            return redirect()->route('login')->with('error', 'Não encontramos uma conta com este e-mail. Cadastre-se primeiro.');
-        }
+        return redirect()
+            ->intended(route('gerenciamento'))
+            ->with('success', 'Login realizado com Google com sucesso!');
+    }
 
-        DB::transaction(function () use ($usuario, $googleUser) {
-            SocialAccount::updateOrCreate(
-                [
-                    'provider' => 'google',
-                    'provider_user_id' => $googleUser->getId(),
-                ],
-                [
-                    'user_id' => $usuario->id,
-                    'provider_email' => strtolower($googleUser->getEmail()),
-                    'avatar_url' => $googleUser->getAvatar(),
-                    'encrypted_refresh_token' => $googleUser->refreshToken ? encrypt($googleUser->refreshToken) : null,
-                    'metadata' => [
-                        'name' => $googleUser->getName(),
-                        'nickname' => $googleUser->getNickname(),
-                    ],
-                    'last_login_at' => now(),
-                ]
-            );
-        });
-
-        if (!$this->sessionService->linkSessionToUser($usuario, $request)) {
-            Log::channel('security')->warning('Falha ao vincular sessão após login Google', [
-                'user_id' => $usuario->id,
-                'email' => $usuario->EMAIL,
-            ]);
-        }
-
-        $this->sessionService->enforceSingleSession($usuario, $request);
-        Auth::setUser($usuario);
-        $request->session()->regenerateToken();
-
-        $tokenData = $this->tokenService->getTokenData($usuario);
+    private function queueAuthTokenCookie(string $token): void
+    {
         $secure = (bool) config('session.secure', false);
         $sameSiteCfg = config('session.same_site');
         $sameSite = $sameSiteCfg ? strtolower($sameSiteCfg) : 'lax';
         $path = config('session.path', '/');
 
-        cookie()->queue(cookie('auth_token', $tokenData['token'], 1440, $path, config('session.domain'), $secure, true, false, $sameSite));
+        cookie()->queue(
+            cookie(
+                'auth_token',
+                $token,
+                1440,
+                $path,
+                config('session.domain'),
+                $secure,
+                true,
+                false,
+                $sameSite
+            )
+        );
+    }
 
-        Log::channel('security')->info('Login realizado via Google', [
-            'user_id' => $usuario->id,
-            'email' => $usuario->EMAIL,
-        ]);
+    private function queueRememberTokenCookie(string $token): void
+    {
+        $minutes = 43200; // 30 dias para remember-me
+        $secure = (bool) config('session.secure', false);
+        $sameSiteCfg = config('session.same_site');
+        $sameSite = $sameSiteCfg ? strtolower($sameSiteCfg) : 'lax';
+        $path = config('session.path', '/');
 
-        return redirect()->intended(route('gerenciamento'))->with('success', 'Login realizado com Google com sucesso!');
+        cookie()->queue(
+            cookie(
+                'remember_token',
+                $token,
+                $minutes,
+                $path,
+                config('session.domain'),
+                $secure,
+                true,
+                false,
+                $sameSite
+            )
+        );
     }
 }
