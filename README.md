@@ -203,9 +203,9 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 
 - Passeio interativo baseado em Shepherd evidencia os pontos críticos do painel (dashboard, vendas, clientes, produtos e relatórios).
 - Para novos dispositivos ele roda automaticamente uma vez graças ao controle em `localStorage`.
-    <div align="center">
-    <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/tour.gif" alt="Tour guiado pelo painel" width="800" />
-    </div>
+      <div align="center">
+      <img src="https://github.com/GabFaria2270/TCC/releases/download/gif/tour.gif" alt="Tour guiado pelo painel" width="800" />
+      </div>
 
 ### E-mail de recuperação
 
@@ -296,6 +296,11 @@ Mais Conectado é uma plataforma web construída com Laravel (PHP) e frontend pr
 - `tests/` – Testes Pest / PHPUnit
 
 ## 🧪 Instalação
+
+**Pré-requisitos**
+
+- PHP 8.2 com a extensão `ext-zip` habilitada (obrigatória para o pacote `maatwebsite/excel` gerar exportações XLSX).
+    > Windows: marque `extension=zip` no `php.ini`. Linux: instale via `sudo apt install php-zip` e reinicie o servidor PHP.
 
 **Configuração rápida**
 

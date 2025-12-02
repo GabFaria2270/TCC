@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\LoginController; // ✅ SEU CONTROLLER CUSTOMIZADO
 use App\Http\Controllers\Auth\RegisterController; // ✅ SEU CONTROLLER CUSTOMIZADO
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -20,12 +19,6 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisterController::class, 'register'])
         ->middleware('cadastro.rate.limiting'); // ✅ USA SEU MIDDLEWARE
-
-    Route::get('login', [LoginController::class, 'show']) // ✅ SEU CONTROLLER
-        ->name('login');
-
-    Route::post('login', [LoginController::class, 'login']) // ✅ SEU CONTROLLER
-        ->middleware('login.rate.limit'); // ✅ USA SEU MIDDLEWARE
 
     // Reset de senha (padrão Laravel - pode manter)
     Route::get('recuperar-acesso', [PasswordResetLinkController::class, 'create'])

@@ -1,9 +1,9 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-import type { SharedProps } from '../../types/inertia';
+import type { PageWithLayout, SharedProps } from '../../types/inertia';
 
-export default function Inicio() {
+const Inicio: PageWithLayout = () => {
     const h1Ref = useRef<HTMLHeadingElement>(null);
     const { props } = usePage<SharedProps>();
     const user = props.auth?.user;
@@ -36,16 +36,18 @@ export default function Inicio() {
     }, []);
 
     return (
-        <GerenciamentoLayout title="Início">
+        <>
             <h2 className="visually-hidden" ref={h1Ref} tabIndex={-1}>
                 Início
             </h2>
 
-            <div className="card welcome-hero shadow-sm ">
+            <div className="card welcome-hero shadow-sm">
                 <div className="card-body d-flex flex-column flex-lg-row align-items-lg-center gap-3">
                     <div className="flex-grow-1">
-                        <h3 className="h3 m-0 elemento-home-usuario">Bem-vindo(a), {user?.NOME ?? 'Usuário'} 👋</h3>
-                        <p className="text-secondary mb-0 elemento-home-dica">Navegue entre Clientes, Produtos, Vendas e Estoque usando a barra lateral.</p>
+                        <h3 className="h3 elemento-home-usuario m-0">Bem-vindo(a), {user?.NOME ?? 'Usuário'} 👋</h3>
+                        <p className="text-secondary elemento-home-dica mb-0">
+                            Navegue entre Clientes, Produtos, Vendas e Estoque usando a barra lateral.
+                        </p>
                     </div>
                     {/* Removido botão redundante; a navegação já está na barra lateral */}
                 </div>
@@ -59,7 +61,7 @@ export default function Inicio() {
             )}
 
             {/* Como usar (orientação simples e direta) */}
-            <div className="card mt-3 shadow-sm elemento-home-2">
+            <div className="card elemento-home-2 mt-3 shadow-sm">
                 <div className="card-header bg-body elemento-home-comousar">
                     <strong>Como usar</strong>
                 </div>
@@ -79,13 +81,13 @@ export default function Inicio() {
             </div>
 
             {/* Resumo de hoje (funcional) */}
-            <div className="card mt-3 shadow-sm elemento-home-resumo">
+            <div className="card elemento-home-resumo mt-3 shadow-sm">
                 <div className="card-header bg-body d-flex justify-content-between align-items-center" id="resumo-hoje">
                     <strong>Resumo de hoje</strong>
                 </div>
                 <div className="card-body elemento-home-resumo-body">
                     <div className="row g-3">
-                        <div className="col-lg-6 col-12 elemento-home-vendas">
+                        <div className="col-lg-6 elemento-home-vendas col-12">
                             <div className="rounded-3 bg-body-tertiary h-100 border p-3">
                                 <div className="d-flex justify-content-between align-items-start">
                                     <div>
@@ -102,7 +104,7 @@ export default function Inicio() {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-6 col-12 elemento-home-estoque">
+                        <div className="col-lg-6 elemento-home-estoque col-12">
                             <div className="rounded-3 bg-body-tertiary h-100 border p-3">
                                 <div className="d-flex justify-content-between align-items-start">
                                     <div>
@@ -143,8 +145,8 @@ export default function Inicio() {
             </div>
 
             {/* Últimas vendas e Fiado em aberto */}
-            <div className="row g-3 mt-3 elemento-home-listas">
-                <div className="col-lg-6 col-12 elemento-home-ultimasvendas">
+            <div className="row g-3 elemento-home-listas mt-3">
+                <div className="col-lg-6 elemento-home-ultimasvendas col-12">
                     <div className="card h-100 shadow-sm" aria-labelledby="ultimas-vendas">
                         <div className="card-header bg-body d-flex justify-content-between align-items-center" id="ultimas-vendas">
                             <strong>Últimas vendas</strong>
@@ -176,7 +178,7 @@ export default function Inicio() {
                     </div>
                 </div>
 
-                <div className="col-lg-6 col-12 elemento-home-fiado">
+                <div className="col-lg-6 elemento-home-fiado col-12">
                     <div className="card h-100 shadow-sm" aria-labelledby="fiado-aberto">
                         <div className="card-header bg-body d-flex justify-content-between align-items-center" id="fiado-aberto">
                             <strong>Fiado em aberto</strong>
@@ -190,14 +192,14 @@ export default function Inicio() {
                                 </div>
                                 <i className="bi bi-wallet2 fs-2 text-secondary" aria-hidden="true" />
                             </div>
-                            <div className="flex-grow-1 d-flex align-items-center justify-content-center">
+                            <div className="d-flex align-items-center justify-content-center flex-grow-1">
                                 <div className="w-100 text-start">
-                                    <div className="mb-2 text-secondary small">
-                                        Mantenha o cadastro dos clientes atualizado para evitar .
-                                    </div>
+                                    <div className="text-secondary small mb-2">Mantenha o cadastro dos clientes atualizado para evitar .</div>
                                     <div className="fw-semibold text-secondary">
-                                        Cliente com maior débito:<br />
-                                        <span className="text-light">{dashboard?.fiado?.maiorNome ?? '—'}</span> - R$ <span className="text-light">{dashboard?.fiado?.maiorValor ?? '—'}</span>
+                                        Cliente com maior débito:
+                                        <br />
+                                        <span className="text-light">{dashboard?.fiado?.maiorNome ?? '—'}</span> - R${' '}
+                                        <span className="text-light">{dashboard?.fiado?.maiorValor ?? '—'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -211,17 +213,17 @@ export default function Inicio() {
                 </div>
             </div>
 
-            <div className="card mt-3 shadow-sm elemento-home-mercearia">
-                <div className="card-header bg-primary text-white d-flex align-items-center gap-2">
+            <div className="card elemento-home-mercearia mt-3 shadow-sm">
+                <div className="card-header bg-primary d-flex align-items-center gap-2 text-white">
                     <i className="bi bi-shop fs-3 me-2" aria-hidden="true" />
                     <strong className="fs-5">Mercearia</strong>
                 </div>
-                <div className="card-body p-4 bg-body-tertiary">
+                <div className="card-body bg-body-tertiary p-4">
                     <div className="row g-3 align-items-center">
                         <div className="col-md-6 col-12">
                             <div className="mb-2">
                                 <span className="fw-semibold text-secondary">Nome:</span>
-                                <span className="ms-2 fs-5 text-light">{comercio?.nome ?? '—'}</span>
+                                <span className="fs-5 text-light ms-2">{comercio?.nome ?? '—'}</span>
                             </div>
                             <div className="mb-2">
                                 <span className="fw-semibold text-secondary">CNPJ:</span>
@@ -240,7 +242,7 @@ export default function Inicio() {
                         </div>
                     </div>
                     <hr className="my-3" />
-                    <div className="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                    <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
                         <div className="d-flex align-items-center gap-2">
                             <i className="bi bi-clock-history text-primary fs-5" aria-hidden="true" />
                             <span className="text-secondary">Data/hora atual:</span>
@@ -254,6 +256,10 @@ export default function Inicio() {
                     </div>
                 </div>
             </div>
-        </GerenciamentoLayout>
+        </>
     );
-}
+};
+
+Inicio.layout = (page) => <GerenciamentoLayout title="Início">{page}</GerenciamentoLayout>;
+
+export default Inicio;

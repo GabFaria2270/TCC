@@ -1,15 +1,12 @@
-import axios from 'axios';
-import { Head } from '@inertiajs/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import VendaDetalhesModal from '@/components/PDVcomponents/VendaDetalhesModal';
+import MovimentosEstoqueTable from '@/components/Relatorios/MovimentosEstoqueTable';
+import PaginationControls from '@/components/Relatorios/PaginationControls';
 import RelatorioFilters from '@/components/Relatorios/RelatorioFilters';
 import RelatorioResumoCards from '@/components/Relatorios/RelatorioResumoCards';
 import RelatorioToggle from '@/components/Relatorios/RelatorioToggle';
 import RelatorioVendasList from '@/components/Relatorios/RelatorioVendasList';
-import MovimentosEstoqueTable from '@/components/Relatorios/MovimentosEstoqueTable';
-import PaginationControls from '@/components/Relatorios/PaginationControls';
-import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
 import http from '@/lib/http';
 import { useRoute } from '@/lib/route';
 import type {
@@ -24,6 +21,7 @@ import type {
     ResumoMovimentosResponse,
     ResumoVendasResponse,
 } from '@/types/gerenciamento/Relatorio';
+import type { PageWithLayout } from '@/types/inertia';
 import {
     aplicarResetPorTabela,
     calcularResumoMovimentos,
@@ -38,13 +36,15 @@ import {
     ordenarVendas,
     prepararVenda,
 } from '@/utils/relatorios';
+import axios from 'axios';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface RelatorioProps {
     initialVendas?: RelatorioPayload<RelatorioItem, ResumoVendasResponse> | null;
     initialMovimentos?: RelatorioPayload<MovimentoEstoque, ResumoMovimentosResponse> | null;
 }
 
-export default function Relatorio({ initialVendas, initialMovimentos }: RelatorioProps) {
+const Relatorio: PageWithLayout<RelatorioProps> = ({ initialVendas, initialMovimentos }: RelatorioProps) => {
     const [tabela, setTabela] = useState<RelatorioTabela>('vendas');
     const h1Ref = useRef<HTMLHeadingElement>(null);
     const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -65,7 +65,9 @@ export default function Relatorio({ initialVendas, initialMovimentos }: Relatori
     const [movimentosFiltrados, setMovimentosFiltrados] = useState<MovimentoEstoque[]>(initialMovimentos?.data ?? []);
     const [paginacaoVendas, setPaginacaoVendas] = useState<PaginacaoMeta | null>(initialVendas?.meta ?? null);
     const [paginacaoMovimentos, setPaginacaoMovimentos] = useState<PaginacaoMeta | null>(initialMovimentos?.meta ?? null);
-    const [resumoVendas, setResumoVendas] = useState<RelatorioResumo>(() => mapResumoVendas(initialVendas?.resumo ?? null, initialVendas?.data ?? []));
+    const [resumoVendas, setResumoVendas] = useState<RelatorioResumo>(() =>
+        mapResumoVendas(initialVendas?.resumo ?? null, initialVendas?.data ?? []),
+    );
     const [resumoMovimentos, setResumoMovimentos] = useState<MovimentoResumo>(() =>
         mapResumoMovimentos(initialMovimentos?.resumo ?? null, initialMovimentos?.data ?? []),
     );
@@ -135,13 +137,9 @@ export default function Relatorio({ initialVendas, initialMovimentos }: Relatori
         const body = montarPayload(tabela, filtrosAtuais, page);
 
         try {
-            const { data: json } = await http.post(
-                route('relatorio.filter'),
-                body,
-                {
-                    signal: controller.signal,
-                },
-            );
+            const { data: json } = await http.post(route('relatorio.filter'), body, {
+                signal: controller.signal,
+            });
 
             if (!json?.success) {
                 throw new Error(json?.message ?? 'Não foi possível carregar os relatórios.');
@@ -221,9 +219,7 @@ export default function Relatorio({ initialVendas, initialMovimentos }: Relatori
             tipo_movimento: tabela === 'estoque' ? filtroTipo || undefined : undefined,
         } as const;
 
-        const queryParams = Object.fromEntries(
-            Object.entries(params).filter(([, value]) => value !== undefined && value !== ''),
-        );
+        const queryParams = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined && value !== ''));
 
         try {
             const response = await http.get(route('relatorio.exportarExcel'), {
@@ -260,9 +256,7 @@ export default function Relatorio({ initialVendas, initialMovimentos }: Relatori
                     return;
                 }
             }
-            const axiosMessage = axios.isAxiosError(error)
-                ? (error.response?.data as { message?: string } | undefined)?.message
-                : undefined;
+            const axiosMessage = axios.isAxiosError(error) ? (error.response?.data as { message?: string } | undefined)?.message : undefined;
             setErro(axiosMessage ?? (error instanceof Error ? error.message : defaultMessage));
         } finally {
             setExportando(false);
@@ -272,8 +266,7 @@ export default function Relatorio({ initialVendas, initialMovimentos }: Relatori
     const totalVendas = paginacaoVendas?.total ?? resultados.length;
 
     return (
-        <GerenciamentoLayout title="Relatório">
-            <Head title="Relatório" />
+        <>
             <h2 className="visually-hidden" ref={h1Ref} tabIndex={-1}>
                 Relatório
             </h2>
@@ -346,6 +339,14 @@ export default function Relatorio({ initialVendas, initialMovimentos }: Relatori
                     </>
                 )}
             </div>
-        </GerenciamentoLayout>
+        </>
     );
-}
+};
+
+Relatorio.layout = (page) => (
+    <GerenciamentoLayout lighterTabs title="Relatório">
+        {page}
+    </GerenciamentoLayout>
+);
+
+export default Relatorio;

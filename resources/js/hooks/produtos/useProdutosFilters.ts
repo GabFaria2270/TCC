@@ -1,8 +1,9 @@
+import type { ProdutosSortField as SortField } from '@/components/Produtos/ProdutosListSection';
+import type { Paginacao, Produto, ServerFilters } from '@/types/gerenciamento/Produtos';
+import { hideFiltersInUrl, isPaginated } from '@/utils/produtos';
+import type { VisitOptions } from '@inertiajs/core';
 import { router } from '@inertiajs/react';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import type { ProdutosSortField as SortField } from '@/components/Produtos/ProdutosListSection';
-import type { Produto, Paginacao, ServerFilters } from '@/types/gerenciamento/Produtos';
-import { hideFiltersInUrl, isPaginated } from '@/utils/produtos';
 
 interface UseProdutosFiltersArgs {
     produtos: Paginacao<Produto> | Produto[];
@@ -25,7 +26,7 @@ interface UseProdutosFiltersResult {
     toggleSort: (field: SortField) => void;
     onSearchKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
     onSearchBlur: () => void;
-    navegarComFiltros: (overrides?: Partial<ServerFilters & { page: number }>) => void;
+    navegarComFiltros: (overrides?: Partial<ServerFilters & { page: number }>, options?: VisitOptions) => void;
     handleRefresh: () => void;
     handleClearFilters: () => void;
     loading: boolean;
@@ -116,7 +117,7 @@ export function useProdutosFilters({ produtos, filters }: UseProdutosFiltersArgs
     }, [produtos, produtosArray, sortBy, sortDir]);
 
     const navegarComFiltros = useCallback(
-        (overrides?: Partial<ServerFilters & { page: number }>) => {
+        (overrides?: Partial<ServerFilters & { page: number }>, options?: VisitOptions) => {
             const payload = {
                 q: searchTerm || undefined,
                 categoriaId: categoriaFiltro || undefined,
@@ -131,7 +132,11 @@ export function useProdutosFilters({ produtos, filters }: UseProdutosFiltersArgs
                 preserveScroll: true,
                 replace: true,
                 preserveState: true,
-                onSuccess: () => hideFiltersInUrl(),
+                ...options,
+                onSuccess: (...args) => {
+                    hideFiltersInUrl();
+                    options?.onSuccess?.(...args);
+                },
             });
         },
         [searchTerm, categoriaFiltro, sortBy, sortDir, perPage, onlyLow],
@@ -166,9 +171,10 @@ export function useProdutosFilters({ produtos, filters }: UseProdutosFiltersArgs
     };
 
     const handleRefresh = () => {
-        setLoading(true);
-        navegarComFiltros();
-        setLoading(false);
+        navegarComFiltros(undefined, {
+            onStart: () => setLoading(true),
+            onFinish: () => setLoading(false),
+        });
     };
 
     const handleClearFilters = () => {
@@ -241,4 +247,3 @@ export function useProdutosFilters({ produtos, filters }: UseProdutosFiltersArgs
         loading,
     };
 }
-

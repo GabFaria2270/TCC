@@ -1,5 +1,3 @@
-import { Head, router } from '@inertiajs/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ClientesEmptyState from '@/components/Clientes/ClientesEmptyState';
 import ClientesHeader from '@/components/Clientes/ClientesHeader';
 import ClientesTabela from '@/components/Clientes/ClientesTabela';
@@ -14,8 +12,11 @@ import { useNotifications } from '@/hooks/PDVhooks/useNotifications';
 import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
 import { useRoute } from '@/lib/route';
 import type { Cliente, ClientesPageProps } from '@/types/gerenciamento/Clientes';
+import type { PageWithLayout } from '@/types/inertia';
+import { router } from '@inertiajs/react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: ClientesPageProps) {
+const Clientes: PageWithLayout<ClientesPageProps> = ({ clientes = [], error, fiadoHistorico = [] }) => {
     const clientesLista = useMemo(() => (Array.isArray(clientes) ? clientes : []), [clientes]);
     const h1Ref = useRef<HTMLHeadingElement>(null);
     const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
     };
 
     const clientePorId = useCallback(
-        (id: number | null) => (id ? clientesLista.find((cliente) => cliente.id === id) ?? null : null),
+        (id: number | null) => (id ? (clientesLista.find((cliente) => cliente.id === id) ?? null) : null),
         [clientesLista],
     );
 
@@ -111,8 +112,7 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
     };
 
     return (
-        <GerenciamentoLayout title="Clientes">
-            <Head title="Clientes" />
+        <>
             <NotificationContainer notifications={notifications} onRemove={removeNotification} />
             <h2 className="visually-hidden" ref={h1Ref} tabIndex={-1}>
                 Clientes
@@ -187,6 +187,10 @@ export default function Clientes({ clientes = [], error, fiadoHistorico = [] }: 
             {confirmacaoOpen && clienteParaPagar && (
                 <ConfirmarPagamentoModal cliente={clienteParaPagar} fechar={closeConfirmacao} confirmar={pagarContaFiada} />
             )}
-        </GerenciamentoLayout>
+        </>
     );
-}
+};
+
+Clientes.layout = (page) => <GerenciamentoLayout title="Clientes">{page}</GerenciamentoLayout>;
+
+export default Clientes;

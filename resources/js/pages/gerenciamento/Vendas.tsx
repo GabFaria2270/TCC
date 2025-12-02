@@ -1,5 +1,3 @@
-import { Head } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
 import ClienteCreateModal from '@/components/PDVcomponents/ClienteCreateModal';
 import NotificationContainer from '@/components/PDVcomponents/NotificationContainer';
 import VendaDetalhesModal from '@/components/PDVcomponents/VendaDetalhesModal';
@@ -16,6 +14,8 @@ import { useVendaDetalhesModal } from '@/hooks/vendas/useVendaDetalhesModal';
 import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
 import type { Cliente, Produto, Venda } from '@/types';
 import type { AbaVendas } from '@/types/gerenciamento/Vendas';
+import type { PageWithLayout } from '@/types/inertia';
+import { useEffect, useState } from 'react';
 
 interface Props {
     vendas?: Venda[];
@@ -42,7 +42,7 @@ interface Props {
     };
 }
 
-export default function Vendas({ vendas = [], produtos = [], clientes = [], error, messages }: Props) {
+const Vendas: PageWithLayout<Props> = ({ vendas = [], produtos = [], clientes = [], error, messages }: Props) => {
     // Estados para controlar as abas
     const [abaAtiva, setAbaAtiva] = useState<AbaVendas>('lista');
     // Hook para busca de produtos
@@ -195,8 +195,7 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
         addNotification,
     } as const;
     return (
-        <GerenciamentoLayout title="Vendas">
-            <Head title="Vendas" />
+        <>
             <NotificationContainer notifications={notifications} onRemove={removeNotification} />
             <div className="container-fluid py-4">
                 {error && (
@@ -232,6 +231,14 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
             </div>
             <ClienteCreateModal show={showClienteModal} onClose={fecharModalCliente} onSuccess={onClienteCriado} carrinhoItens={carrinho} />
             <VendaDetalhesModal show={showVendaModal} venda={vendaDetalhes} loading={loadingDetalhes} fechar={fecharDetalhesVenda} />
-        </GerenciamentoLayout>
+        </>
     );
-}
+};
+
+Vendas.layout = (page) => (
+    <GerenciamentoLayout lighterTabs title="Vendas">
+        {page}
+    </GerenciamentoLayout>
+);
+
+export default Vendas;

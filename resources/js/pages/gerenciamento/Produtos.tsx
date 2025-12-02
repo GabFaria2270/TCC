@@ -1,17 +1,17 @@
-import { Head } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
 import ModalPortal from '@/components/common/ModalPortal';
 import ProdutoFormModal from '@/components/Produtos/ProdutoFormModal';
 import ProdutosFilters from '@/components/Produtos/ProdutosFilters';
 import ProdutosListSection, { ProdutosSortField as SortField } from '@/components/Produtos/ProdutosListSection';
-import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
-import useMediaQuery from '@/hooks/useMediaQuery';
 import { useProdutoDeleteModal } from '@/hooks/produtos/useProdutoDeleteModal';
 import { useProdutoFormModal } from '@/hooks/produtos/useProdutoFormModal';
-import { useProdutoStockModal } from '@/hooks/produtos/useProdutoStockModal';
 import { useProdutosFilters } from '@/hooks/produtos/useProdutosFilters';
-import type { Categoria, Produto, Paginacao, ServerFilters } from '@/types/gerenciamento/Produtos';
+import { useProdutoStockModal } from '@/hooks/produtos/useProdutoStockModal';
+import useMediaQuery from '@/hooks/useMediaQuery';
+import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
+import type { Categoria, Paginacao, Produto, ServerFilters } from '@/types/gerenciamento/Produtos';
+import type { PageWithLayout } from '@/types/inertia';
 import { hideFiltersInUrl, isPaginated } from '@/utils/produtos';
+import { useEffect, useRef } from 'react';
 
 interface Props {
     produtos?: Paginacao<Produto> | Produto[];
@@ -20,7 +20,7 @@ interface Props {
     filters?: ServerFilters;
 }
 
-export default function Produtos({ produtos = [], categorias = [], error, filters }: Props) {
+const Produtos: PageWithLayout<Props> = ({ produtos = [], categorias = [], error, filters }) => {
     const h1Ref = useRef<HTMLHeadingElement>(null);
 
     useEffect(() => {
@@ -100,8 +100,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
     };
 
     return (
-        <GerenciamentoLayout title="Produtos">
-            <Head title="Produtos" />
+        <>
             <h2 className="visually-hidden" ref={h1Ref} tabIndex={-1}>
                 Produtos
             </h2>
@@ -323,6 +322,10 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     </div>
                 </ModalPortal>
             )}
-        </GerenciamentoLayout>
+        </>
     );
-}
+};
+
+Produtos.layout = (page) => <GerenciamentoLayout title="Produtos">{page}</GerenciamentoLayout>;
+
+export default Produtos;

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -28,18 +29,18 @@ class CacheTokenService
             // Apenas remover token existente do MESMO dispositivo (user_agent)
             if ($persistInDb) {
                 $currentUserAgent = substr(request()->userAgent() ?? '', 0, 500);
-                
+
                 // Remove apenas tokens do mesmo dispositivo
                 try {
                     $tokenHash = null;
                     $existingToken = RememberToken::where('user_id', $usuario->id)
                         ->where('user_agent', $currentUserAgent)
                         ->first();
-                    
+
                     if ($existingToken) {
                         // Remove do banco
                         $existingToken->delete();
-                        
+
                         // Tentar remover do cache (não temos o token plain, apenas o hash)
                         // Vamos limpar tokens expirados do cache para este usuário
                         Log::channel('security')->info('🗑️ Removendo token anterior do mesmo dispositivo', [
@@ -478,6 +479,11 @@ class CacheTokenService
     public function findExistingTokenIdForUser(int $userId): ?string
     {
         try {
+            // Só é possível inspecionar o cache quando o driver for database
+            if (!$this->canInspectCacheTable()) {
+                return null;
+            }
+
             // Primeiro tenta localizar token no cache
             $rows = DB::table('cache')
                 ->select('key', 'value')
@@ -671,6 +677,10 @@ class CacheTokenService
             // 1. Remove tokens da tabela remember_tokens para este usuário
             RememberToken::where('user_id', $userId)->delete();
 
+            if (!$this->canInspectCacheTable()) {
+                return;
+            }
+
             // 2. Remove do cache apenas os tokens DESTE usuário
             // Como não temos índice direto user_id->token no cache, precisamos:
             // a) Pegar todos os tokens em cache
@@ -753,4 +763,28 @@ class CacheTokenService
         return substr($fullKey, $pos);
     }
 
+    private function canInspectCacheTable(): bool
+    {
+        static $result = null;
+
+        if ($result !== null) {
+            return $result;
+        }
+
+        if (config('cache.default') !== 'database') {
+            $result = false;
+            return false;
+        }
+
+        try {
+            $result = Schema::hasTable('cache');
+        } catch (\Throwable $e) {
+            Log::channel('security')->debug('Não foi possível verificar a existência da tabela cache', [
+                'error' => $e->getMessage(),
+            ]);
+            $result = false;
+        }
+
+        return $result;
+    }
 }

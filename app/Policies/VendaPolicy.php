@@ -21,7 +21,7 @@ class VendaPolicy
      */
     public function view(Usuario $user, Venda $venda): bool
     {
-        return $user->ID === $venda->usuario_id;
+        return $user->id === $venda->usuario_id;
     }
 
     /**
@@ -37,7 +37,7 @@ class VendaPolicy
      */
     public function update(Usuario $user, Venda $venda): bool
     {
-        return $user->ID === $venda->usuario_id && $venda->status !== 'cancelada';
+        return $user->id === $venda->usuario_id && $venda->status !== 'cancelada';
     }
 
     /**
@@ -45,6 +45,6 @@ class VendaPolicy
      */
     public function delete(Usuario $user, Venda $venda): bool
     {
-        return $user->ID === $venda->usuario_id && $venda->status !== 'cancelada';
+        return $user->id === $venda->usuario_id && $venda->status !== 'cancelada';
     }
 }

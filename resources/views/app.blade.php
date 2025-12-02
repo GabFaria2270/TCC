@@ -99,22 +99,6 @@
             }
         })();
     </script>
-    <script>
-        // Aplicação antecipada do tema para evitar flicker
-        (function() {
-            try {
-                var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                var saved = localStorage.getItem('appearance');
-                var mode = saved || 'system';
-                var isDark = mode === 'dark' || (mode === 'system' && prefersDark);
-                var html = document.documentElement;
-                html.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
-                html.style.colorScheme = isDark ? 'dark' : 'light';
-            } catch (e) {
-                /* noop */
-            }
-        })();
-    </script>
 
 <body class="bg-body-tertiary layout-gerenciamento hide-scrollbar"
     data-seo-topics="gerenciamento-de-vendas controle-de-estoque comercio-local gestao-de-clientes pdv-online">

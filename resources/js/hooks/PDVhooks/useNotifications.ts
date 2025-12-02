@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface Notification {
     id: string;
@@ -12,29 +12,46 @@ const MAX_ACTIVE = 3; // ✅ limite máximo na tela
 
 export const useNotifications = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
+    const timeoutsRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+    const clearNotificationTimeout = (id: string) => {
+        if (timeoutsRef.current[id]) {
+            clearTimeout(timeoutsRef.current[id]);
+            delete timeoutsRef.current[id];
+        }
+    };
 
     const addNotification = (notification: Omit<Notification, 'id'>) => {
         const id = `${Date.now()}-${Math.random()}`;
         const newNotification = { ...notification, id };
 
-        setNotifications(prev => {
+        setNotifications((prev) => {
             // mantém somente as últimas MAX_ACTIVE
             const next = [...prev, newNotification];
             return next.length > MAX_ACTIVE ? next.slice(next.length - MAX_ACTIVE) : next;
         });
 
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
             removeNotification(id);
         }, notification.duration || 5000);
+
+        timeoutsRef.current[id] = timeoutId;
     };
 
     const removeNotification = (id: string) => {
-        setNotifications(prev => prev.filter(n => n.id !== id));
+        clearNotificationTimeout(id);
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
     };
+
+    useEffect(() => {
+        return () => {
+            Object.keys(timeoutsRef.current).forEach(clearNotificationTimeout);
+        };
+    }, []);
 
     return {
         notifications,
         addNotification,
-        removeNotification
+        removeNotification,
     };
 };

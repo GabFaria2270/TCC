@@ -158,7 +158,16 @@ class VendaService
                 ];
             }
 
-            $desconto = $dados['desconto'] ?? 0;
+            $descontoInformado = isset($dados['desconto']) ? (float) $dados['desconto'] : 0.0;
+            $desconto = max(0, $descontoInformado);
+            if ($desconto > $subtotal) {
+                return [
+                    'success' => false,
+                    'errors' => [
+                        'desconto' => 'O desconto não pode ser maior que o subtotal.',
+                    ],
+                ];
+            }
             $total = $subtotal - $desconto;
 
             // Calcular troco para pagamento em dinheiro
@@ -285,7 +294,16 @@ class VendaService
                 ];
             }
 
-            $desconto = $dados['desconto'] ?? 0;
+            $descontoInformado = isset($dados['desconto']) ? (float) $dados['desconto'] : 0.0;
+            $desconto = max(0, $descontoInformado);
+            if ($desconto > $subtotal) {
+                return [
+                    'success' => false,
+                    'errors' => [
+                        'desconto' => 'O desconto não pode ser maior que o subtotal.',
+                    ],
+                ];
+            }
             $total = $subtotal - $desconto;
 
             $troco = null;

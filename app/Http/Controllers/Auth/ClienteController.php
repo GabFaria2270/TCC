@@ -83,9 +83,9 @@ class ClienteController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             Log::channel('security')->info('Acessando formulário de cadastro de cliente', [
-                'user_id' => $user->ID,
+                'user_id' => $user->id,
                 'email' => $user->EMAIL,
             ]);
 
@@ -112,11 +112,11 @@ class ClienteController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             Log::channel('security')->info('Tentativa de cadastro de cliente', [
                 'nome' => $request->validated()['nome'],
                 'email' => $request->validated()['email'],
-                'user_id' => $user->ID,
+                'user_id' => $user->id,
                 'ip' => $request->ip(),
             ]);
 
@@ -126,7 +126,7 @@ class ClienteController extends Controller
                 Log::channel('security')->info('Cliente cadastrado com sucesso', [
                     'cliente_id' => $result['cliente']->id,
                     'nome' => $result['cliente']->nome,
-                    'user_id' => $user->ID,
+                    'user_id' => $user->id,
                 ]);
 
                 // ✅ SEMPRE RETORNAR JSON PARA REQUISIÇÕES AJAX/MODAL
@@ -193,10 +193,10 @@ class ClienteController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             Log::channel('security')->info('Acessando detalhes do cliente', [
                 'cliente_id' => $id,
-                'user_id' => $user->ID,
+                'user_id' => $user->id,
             ]);
 
             return Inertia::render('gerenciamento/ClienteDetalhes', [
@@ -241,7 +241,7 @@ class ClienteController extends Controller
             $user = Auth::user();
             Log::channel('security')->info('Tentativa de atualização de cliente', [
                 'cliente_id' => $id,
-                'user_id' => $user->ID,
+                'user_id' => $user->id,
                 'ip' => $request->ip(),
             ]);
 
@@ -251,7 +251,7 @@ class ClienteController extends Controller
                 Log::channel('security')->info('Cliente atualizado com sucesso', [
                     'cliente_id' => $result['cliente']->id,
                     'nome' => $result['cliente']->nome,
-                    'user_id' => $user->ID,
+                    'user_id' => $user->id,
                 ]);
                 if ($request->expectsJson()) {
                     return response()->json([
