@@ -1,0 +1,1 @@
+import{r as a}from"./set-CIff-DBz.js";function d(n){const r=e=>typeof window>"u"?!1:window.matchMedia(e).matches,[c,s]=a.useState(()=>r(n));return a.useEffect(()=>{const e=window.matchMedia(n),t=i=>s(i.matches);s(e.matches);try{e.addEventListener("change",t)}catch{e.addListener(t)}return()=>{try{e.removeEventListener("change",t)}catch{e.removeListener(t)}}},[n]),c}export{d as u};

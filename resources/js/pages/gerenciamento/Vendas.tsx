@@ -1,20 +1,21 @@
-import VendaDetalhesModal from '@/components/PDVcomponents/VendaDetalhesModal';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import CarrinhoVenda from '../../components/PDVcomponents/CarrinhoVenda';
-import ClienteCreateModal from '../../components/PDVcomponents/ClienteCreateModal';
-import NotificationContainer from '../../components/PDVcomponents/NotificationContainer';
-import VendasList from '../../components/PDVcomponents/VendasList';
-import ProdutosList from '../../components/ProdutosList';
-import { useBuscaProdutos } from '../../hooks/PDVhooks/useBuscaProdutos';
-import { useCancelarVenda } from '../../hooks/PDVhooks/useCancelarVenda';
-import useCarrinho from '../../hooks/PDVhooks/useCarrinho'; // ✅ CORRIGIDO: default import
-import { useFiltros } from '../../hooks/PDVhooks/useFiltros';
-import { useFinalizarVenda } from '../../hooks/PDVhooks/useFinalizarVenda';
-import { useNotifications } from '../../hooks/PDVhooks/useNotifications';
-import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-
-import type { Cliente, Produto, Venda } from '../../types';
+import ClienteCreateModal from '@/components/PDVcomponents/ClienteCreateModal';
+import NotificationContainer from '@/components/PDVcomponents/NotificationContainer';
+import VendaDetalhesModal from '@/components/PDVcomponents/VendaDetalhesModal';
+import NovaVendaSection from '@/components/Vendas/NovaVendaSection';
+import VendasHistoricoSection from '@/components/Vendas/VendasHistoricoSection';
+import VendasTabsHeader from '@/components/Vendas/VendasTabsHeader';
+import { useBuscaProdutos } from '@/hooks/PDVhooks/useBuscaProdutos';
+import { useCancelarVenda } from '@/hooks/PDVhooks/useCancelarVenda';
+import useCarrinho from '@/hooks/PDVhooks/useCarrinho';
+import { useFiltros } from '@/hooks/PDVhooks/useFiltros';
+import { useFinalizarVenda } from '@/hooks/PDVhooks/useFinalizarVenda';
+import { useNotifications } from '@/hooks/PDVhooks/useNotifications';
+import { useVendaDetalhesModal } from '@/hooks/vendas/useVendaDetalhesModal';
+import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
+import type { Cliente, Produto, Venda } from '@/types';
+import type { AbaVendas } from '@/types/gerenciamento/Vendas';
 
 interface Props {
     vendas?: Venda[];
@@ -43,7 +44,7 @@ interface Props {
 
 export default function Vendas({ vendas = [], produtos = [], clientes = [], error, messages }: Props) {
     // Estados para controlar as abas
-    const [abaAtiva, setAbaAtiva] = useState<'lista' | 'nova'>('lista');
+    const [abaAtiva, setAbaAtiva] = useState<AbaVendas>('lista');
     // Hook para busca de produtos
     const { busca, setBusca, produtosFiltrados, limparBusca } = useBuscaProdutos(produtos);
     // Hook para filtros e listagem de vendas
@@ -63,14 +64,11 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
     } = useFiltros(vendas, clientes); // <- passa clientes aqui
     // Estados para modal de cliente
     const [showClienteModal, setShowClienteModal] = useState(false);
-    // Estados para modal de detalhes da venda
-    const [showVendaModal, setShowVendaModal] = useState(false);
-    const [vendaDetalhes, setVendaDetalhes] = useState<any | null>(null);
-    const [loadingDetalhes, setLoadingDetalhes] = useState(false);
     const [cancelandoVenda, setCancelandoVenda] = useState(false);
     // Hooks para funcionalidades
     const { notifications, addNotification, removeNotification } = useNotifications();
     const { finalizarVenda: executarFinalizacao } = useFinalizarVenda();
+    const { showVendaModal, vendaDetalhes, loadingDetalhes, abrirDetalhesVenda, fecharDetalhesVenda } = useVendaDetalhesModal();
     const {
         carrinho,
         clienteSelecionado,
@@ -147,31 +145,6 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
             addNotification,
             messages,
         });
-    // Funções para modal de detalhes da venda
-    const abrirDetalhesVenda = async (vendaBasica: any) => {
-        setShowVendaModal(true);
-        setLoadingDetalhes(true);
-        setVendaDetalhes({ id: vendaBasica.id }); // placeholder
-        try {
-            const resp = await fetch(`/gerenciamento/vendas/${vendaBasica.id}`, {
-                headers: { Accept: 'application/json' },
-                credentials: 'same-origin',
-            });
-            if (!resp.ok) throw new Error('Erro ao carregar detalhes');
-            const json = await resp.json();
-            setVendaDetalhes(json.venda);
-        } catch (e) {
-            // fallback: mostra dados básicos enquanto isso
-            setVendaDetalhes(vendaBasica);
-        } finally {
-            setLoadingDetalhes(false);
-        }
-    };
-    const fecharDetalhesVenda = () => {
-        setShowVendaModal(false);
-        setVendaDetalhes(null);
-    };
-
     const cancelarVendaAtual = () =>
         cancelarVenda({
             carrinho,
@@ -186,6 +159,41 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
             addNotification,
             messages,
         });
+
+    const produtosListProps = {
+        busca,
+        setBusca,
+        produtosFiltrados,
+        limparBusca,
+        adicionarAoCarrinho,
+        addNotification,
+    } as const;
+
+    const carrinhoProps = {
+        carrinho,
+        clienteSelecionado,
+        clientesAtualizados,
+        desconto,
+        formaPagamento,
+        valorRecebido: String(valorRecebido),
+        observacoes,
+        loadingVenda,
+        setClienteSelecionado,
+        setDesconto,
+        setFormaPagamento,
+        setValorRecebido,
+        setObservacoes,
+        editarQuantidade,
+        removerDoCarrinho,
+        limparCarrinho,
+        calcularSubtotal,
+        calcularTotal,
+        finalizarVenda,
+        cancelarVenda: cancelarVendaAtual,
+        cancelandoVenda,
+        abrirModalCliente,
+        addNotification,
+    } as const;
     return (
         <GerenciamentoLayout title="Vendas">
             <Head title="Vendas" />
@@ -198,89 +206,29 @@ export default function Vendas({ vendas = [], produtos = [], clientes = [], erro
                         <button type="button" className="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 )}
-                <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center elemento-vendas-header gap-lg-0 mb-4 gap-2">
-                    <h2 className="elemento-vendas-titulo d-flex align-items-center mb-0 flex-nowrap gap-2">
-                        <i className="bi bi-receipt text-primary fs-4"></i>
-                        <span className="text-nowrap">Vendas</span>
-                    </h2>
-                    <ul className="nav nav-pills elemento-vendas-abas d-flex w-lg-auto mt-lg-0 justify-content-center justify-content-lg-end mt-2 w-100 flex-nowrap gap-2 overflow-auto">
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${abaAtiva === 'lista' ? 'active' : ''} elemento-vendas-aba-lista`}
-                                onClick={() => setAbaAtiva('lista')}
-                            >
-                                <i className="bi bi-list me-2"></i>
-                                Histórico
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${abaAtiva === 'nova' ? 'active' : ''} elemento-vendas-aba-nova`}
-                                onClick={() => setAbaAtiva('nova')}
-                            >
-                                <i className="bi bi-plus-circle me-2"></i>
-                                Nova Venda
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-                {abaAtiva === 'lista' ? (
-                    <div className="elemento-vendas-lista">
-                        <VendasList
-                            clientes={clientes}
-                            filtroStatus={filtroStatus}
-                            filtroCliente={filtroCliente}
-                            filtroClienteTexto={filtroClienteTexto}
-                            setFiltroStatus={setFiltroStatus}
-                            setFiltroCliente={setFiltroCliente}
-                            setFiltroClienteTexto={setFiltroClienteTexto}
-                            vendasFiltradas={vendasFiltradas}
-                            abrirDetalhes={abrirDetalhesVenda}
-                            limparFiltros={limparFiltros}
-                        />
-                    </div>
-                ) : null}
-                {abaAtiva === 'nova' ? (
-                    <div className={`row fade-in vendas-container ${loadingVenda || cancelandoVenda ? 'processing' : ''}`}>
-                        <div className="col-lg-8 mb-lg-0 col-12 mb-3">
-                            <ProdutosList
-                                busca={busca}
-                                setBusca={setBusca}
-                                produtosFiltrados={produtosFiltrados}
-                                limparBusca={limparBusca}
-                                adicionarAoCarrinho={adicionarAoCarrinho}
-                                addNotification={addNotification}
-                            />
-                        </div>
-                        <div className="col-lg-4 col-12">
-                            <CarrinhoVenda
-                                carrinho={carrinho}
-                                clienteSelecionado={clienteSelecionado}
-                                clientesAtualizados={clientesAtualizados}
-                                desconto={desconto}
-                                formaPagamento={formaPagamento}
-                                valorRecebido={String(valorRecebido)}
-                                observacoes={observacoes}
-                                loadingVenda={loadingVenda}
-                                setClienteSelecionado={setClienteSelecionado}
-                                setDesconto={setDesconto}
-                                setFormaPagamento={setFormaPagamento}
-                                setValorRecebido={setValorRecebido}
-                                setObservacoes={setObservacoes}
-                                editarQuantidade={editarQuantidade}
-                                removerDoCarrinho={removerDoCarrinho}
-                                limparCarrinho={limparCarrinho}
-                                calcularSubtotal={calcularSubtotal}
-                                calcularTotal={calcularTotal}
-                                finalizarVenda={finalizarVenda}
-                                cancelarVenda={cancelarVendaAtual}
-                                cancelandoVenda={cancelandoVenda}
-                                abrirModalCliente={abrirModalCliente}
-                                addNotification={addNotification}
-                            />
-                        </div>
-                    </div>
-                ) : null}
+                <VendasTabsHeader abaAtiva={abaAtiva} onChange={setAbaAtiva} />
+                {abaAtiva === 'lista' && (
+                    <VendasHistoricoSection
+                        clientes={clientes}
+                        filtroStatus={filtroStatus}
+                        filtroCliente={filtroCliente}
+                        filtroClienteTexto={filtroClienteTexto}
+                        setFiltroStatus={setFiltroStatus}
+                        setFiltroCliente={setFiltroCliente}
+                        setFiltroClienteTexto={setFiltroClienteTexto}
+                        vendasFiltradas={vendasFiltradas}
+                        abrirDetalhes={abrirDetalhesVenda}
+                        limparFiltros={limparFiltros}
+                    />
+                )}
+                {abaAtiva === 'nova' && (
+                    <NovaVendaSection
+                        produtosListProps={produtosListProps}
+                        carrinhoProps={carrinhoProps}
+                        loadingVenda={loadingVenda}
+                        cancelandoVenda={cancelandoVenda}
+                    />
+                )}
             </div>
             <ClienteCreateModal show={showClienteModal} onClose={fecharModalCliente} onSuccess={onClienteCriado} carrinhoItens={carrinho} />
             <VendaDetalhesModal show={showVendaModal} venda={vendaDetalhes} loading={loadingDetalhes} fechar={fecharDetalhesVenda} />

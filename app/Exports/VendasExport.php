@@ -19,9 +19,12 @@ class VendasExport implements FromCollection, WithHeadings, WithMapping, WithSty
 
     private ?Collection $cachedCollection = null;
 
-    public function __construct(?int $comercioId = null)
+    public function __construct(?int $comercioId = null, ?Collection $collection = null)
     {
         $this->comercioId = $comercioId;
+        if ($collection instanceof Collection) {
+            $this->cachedCollection = $collection;
+        }
     }
 
     public function collection()

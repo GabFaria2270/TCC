@@ -1,7 +1,10 @@
+import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import type { Cliente } from '../../pages/gerenciamento/Clientes';
-import { formatarTelefone } from '../../utils/formatters';
+import http from '@/lib/http';
+import { useRoute } from '@/lib/route';
+import type { Cliente } from '@/types/gerenciamento/Clientes';
+import { formatarTelefone } from '@/utils/formatters';
 
 const gerarDescricaoCarrinho = (itens: any[] = []) => {
     if (!itens || itens.length === 0) {
@@ -26,8 +29,9 @@ interface ClienteFormProps {
 }
 
 export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinhoItens = [], embed = false }: ClienteFormProps) {
+    const { route } = useRoute();
     const descricaoBase = useMemo(() => gerarDescricaoCarrinho(carrinhoItens), [carrinhoItens]);
-    const { data, setData, processing, errors, reset } = useForm({
+    const { data, setData, processing, errors, reset, setError, clearErrors } = useForm({
         nome: cliente?.nome || '',
         email: cliente?.email || '',
         telefone: cliente?.telefone_formatado || cliente?.telefone || '',
@@ -62,86 +66,71 @@ export default function ClienteForm({ cliente, modo, onClose, onSuccess, carrinh
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [descricaoBase, modo]);
 
-    const submit = (e: React.FormEvent) => {
+    const submit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        clearErrors();
 
-        if (modo === 'create') {
-            const descricao = data.descricao && data.descricao.trim() !== '' ? data.descricao : descricaoBase;
-            const dadosParaEnvio = {
-                nome: data.nome,
-                email: data.email,
-                telefone: data.telefone,
-                descricao,
-            };
+        const headers = { Accept: 'application/json' } as const;
 
-            fetch('/gerenciamento/clientes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-                body: JSON.stringify(dadosParaEnvio),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        // Se for erro de validação, pega o JSON
-                        return response.json().then((resp) => {
-                            if (resp.errors) {
-                                Object.keys(resp.errors).forEach((campo) => {
-                                    errors[campo as keyof typeof errors] = resp.errors[campo][0];
-                                });
-                            }
-                            setIsLoading(false);
-                        });
-                    }
-                    return response.json();
-                })
-                .then((resp) => {
-                    if (resp && resp.success && resp.cliente) {
-                        reset();
-                        onSuccess(resp.cliente as Cliente);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Erro na requisição:', error);
-                    alert('Erro ao criar cliente. Tente novamente.');
-                })
-                .finally(() => setIsLoading(false));
-        } else {
-            const dadosParaEnvio: Record<string, any> = {
+        try {
+            if (modo === 'create') {
+                const descricao = data.descricao && data.descricao.trim() !== '' ? data.descricao : descricaoBase;
+                const payload = {
+                    nome: data.nome,
+                    email: data.email,
+                    telefone: data.telefone,
+                    descricao,
+                };
+
+                const { data: resposta } = await http.post(route('clientes.store'), payload, { headers });
+
+                if (resposta?.success && resposta.cliente) {
+                    reset();
+                    onSuccess(resposta.cliente as Cliente);
+                }
+                return;
+            }
+
+            if (!cliente?.id) {
+                throw new Error('Cliente inválido para edição.');
+            }
+
+            const payload = {
                 nome: data.nome,
                 email: data.email,
                 telefone: data.telefone,
             };
 
-            fetch(`/gerenciamento/clientes/${cliente?.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-                body: JSON.stringify(dadosParaEnvio),
-            })
-                .then((response) => response.json())
-                .then((resp) => {
-                    if (resp.success) {
-                        reset();
-                        onSuccess(resp.cliente as Cliente);
-                    } else {
-                        console.error('Erro na edição:', resp);
-                        alert(resp.message || 'Erro ao editar cliente');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Erro na requisição de edição:', error);
-                    alert('Erro ao editar cliente. Tente novamente.');
-                })
-                .finally(() => setIsLoading(false));
+            const { data: resposta } = await http.put(route('clientes.update', cliente.id), payload, { headers });
+
+            if (resposta?.success) {
+                reset();
+                onSuccess(resposta.cliente as Cliente);
+            } else {
+                throw new Error(resposta?.message ?? 'Erro ao editar cliente.');
+            }
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const validationErrors = (err.response?.data as { errors?: Record<string, string[]> })?.errors;
+                if (validationErrors) {
+                    Object.entries(validationErrors).forEach(([field, messages]) => {
+                        if (messages?.length) {
+                            setError(field as keyof typeof data, messages[0]);
+                        }
+                    });
+                    return;
+                }
+                const message = (err.response?.data as { message?: string })?.message;
+                if (message) {
+                    alert(message);
+                    return;
+                }
+            }
+            console.error('Erro ao salvar cliente:', err);
+            alert('Erro ao processar o cliente. Tente novamente.');
+        } finally {
+            setIsLoading(false);
         }
     };
 

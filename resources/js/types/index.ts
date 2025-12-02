@@ -9,6 +9,7 @@ export interface Produto {
 }
 
 export interface ItemVenda {
+    id: number;
     produto_id: number;
     produto: Produto;
     quantidade: number;
@@ -31,6 +32,7 @@ export interface Cliente {
 
 export interface Venda {
     id: number;
+    subtotal: number;
     total: number;
     total_formatado: string;
     desconto: number;
@@ -41,6 +43,8 @@ export interface Venda {
     created_at: string;
     created_at_formatado?: string;
     observacoes?: string;
+    valor_recebido?: number | null;
+    troco?: number | null;
 }
 
 export interface NotificationConfig {

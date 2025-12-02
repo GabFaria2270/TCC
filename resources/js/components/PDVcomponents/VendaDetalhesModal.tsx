@@ -13,10 +13,10 @@ type ItemVenda = {
     produto?: ProdutoItem;
 };
 
-type Cliente = { id: number; nome: string } | null;
-type Usuario = { id: number; NOME?: string; nome?: string } | null;
+type Cliente = { id: number | null; nome: string } | null;
+type Usuario = { id: number | null; NOME?: string; nome?: string } | null;
 
-type Venda = {
+export type Venda = {
     id: number;
     cliente?: Cliente;
     usuario?: Usuario;
@@ -201,3 +201,5 @@ export default function VendaDetalhesModal({
         </ModalPortal>
     );
 }
+
+export type { Venda };

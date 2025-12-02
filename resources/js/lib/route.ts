@@ -1,4 +1,4 @@
-import routeJs from 'ziggy-js';
+import { route as ziggyRoute } from 'ziggy-js';
 import { usePage } from '@inertiajs/react';
 
 export function useRoute() {
@@ -16,7 +16,7 @@ export function useRoute() {
       return '#';
     }
     try {
-      return (routeJs as any)(name, params, absolute, ziggy);
+      return ziggyRoute(name, params, absolute, ziggy);
     } catch {
       if (typeof name === 'string' && name.startsWith('/')) return name;
       return '#';

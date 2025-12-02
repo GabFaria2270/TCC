@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exports\MovimentosEstoqueExport;
 use App\Exports\VendasExport;
 use App\Models\MovimentoEstoque;
 use App\Models\Venda;
@@ -114,8 +115,63 @@ class RelatorioController
             abort(403, 'Comércio não encontrado para o usuário autenticado.');
         }
 
+        $validator = Validator::make($request->all(), [
+            'tabela' => 'required|in:vendas,estoque',
+            'data_inicio' => 'nullable|date',
+            'data_fim' => 'nullable|date',
+            'status' => 'nullable|in:concluida,pendente,cancelada,conta_fiada',
+            'forma_pagamento' => 'nullable|in:dinheiro,pix,debito,credito,conta_fiada,cartao_debito,cartao_credito,fiado',
+            'tipo_movimento' => 'nullable|in:entrada,saida,ajuste',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $inicio = $request->input('data_inicio');
+            $fim = $request->input('data_fim');
+
+            if (!$inicio || !$fim) {
+                return;
+            }
+
+            try {
+                $dataInicio = Carbon::parse($inicio)->startOfDay();
+                $dataFim = Carbon::parse($fim)->endOfDay();
+
+                if ($dataInicio->gt($dataFim)) {
+                    $validator->errors()->add('data_fim', 'A data final deve ser posterior ou igual à data inicial.');
+                }
+            } catch (\Exception $e) {
+                // Validações padrão já tratam formatos inválidos.
+            }
+        });
+
+        if ($validator->fails()) {
+            abort(422, $validator->errors()->first() ?: 'Parâmetros de filtro inválidos.');
+        }
+
+        $filters = $validator->validated();
+        $tabela = $filters['tabela'] ?? 'vendas';
+
+        if ($tabela === 'estoque') {
+            $query = $this->prepareMovimentosQuery($comercioId, $filters)
+                ->orderByDesc('created_at')
+                ->orderByDesc('id');
+
+            $movimentos = $query->get();
+
+            return $excel->download(
+                new MovimentosEstoqueExport($movimentos),
+                'movimentos_estoque_' . now()->format('Ymd_His') . '.xlsx'
+            );
+        }
+
+        $query = $this->prepareVendasQuery($comercioId, $filters)
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
+
+        $vendas = $query->get();
+
         return $excel->download(
-            new VendasExport($comercioId),
+            new VendasExport($comercioId, $vendas),
             'relatorio_vendas_' . now()->format('Ymd_His') . '.xlsx'
         );
     }

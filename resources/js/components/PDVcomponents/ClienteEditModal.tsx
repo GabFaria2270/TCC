@@ -1,4 +1,4 @@
-import type { Cliente } from '../../pages/gerenciamento/Clientes';
+import type { Cliente } from '@/types/gerenciamento/Clientes';
 import ModalPortal from '../common/ModalPortal';
 import ClienteForm from './ClienteForm';
 

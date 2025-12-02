@@ -1,41 +1,17 @@
-import { Head, router, useForm } from '@inertiajs/react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import ModalPortal from '../../components/common/ModalPortal';
-import ProdutosFilters from '../../components/Produtos/ProdutosFilters';
-import ProdutoFormModal from '../../components/Produtos/ProdutoFormModal';
-import ProdutosListSection, { ProdutosSortField as SortField, type ProdutoListBase } from '../../components/Produtos/ProdutosListSection';
-import GerenciamentoLayout from '../../layouts/GerenciamentoLayout';
-import { formatarMoeda } from '../../utils/formatters';
-// =============================================================
-// Tipos e interfaces
-// =============================================================
-
-interface Categoria {
-    id: number;
-    nome: string;
-}
-
-interface Produto extends ProdutoListBase {
-    categoria?: Categoria | null;
-    created_at: string;
-}
-
-interface Paginacao<T> {
-    data: T[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-}
-
-interface ServerFilters {
-    q?: string;
-    categoriaId?: string | number | null;
-    sort?: 'nome' | 'preco' | 'quantidade_estoque' | 'updated_at';
-    dir?: 'asc' | 'desc';
-    perPage?: number;
-    onlyLow?: boolean;
-}
+import { Head } from '@inertiajs/react';
+import { useEffect, useRef } from 'react';
+import ModalPortal from '@/components/common/ModalPortal';
+import ProdutoFormModal from '@/components/Produtos/ProdutoFormModal';
+import ProdutosFilters from '@/components/Produtos/ProdutosFilters';
+import ProdutosListSection, { ProdutosSortField as SortField } from '@/components/Produtos/ProdutosListSection';
+import GerenciamentoLayout from '@/layouts/GerenciamentoLayout';
+import useMediaQuery from '@/hooks/useMediaQuery';
+import { useProdutoDeleteModal } from '@/hooks/produtos/useProdutoDeleteModal';
+import { useProdutoFormModal } from '@/hooks/produtos/useProdutoFormModal';
+import { useProdutoStockModal } from '@/hooks/produtos/useProdutoStockModal';
+import { useProdutosFilters } from '@/hooks/produtos/useProdutosFilters';
+import type { Categoria, Produto, Paginacao, ServerFilters } from '@/types/gerenciamento/Produtos';
+import { hideFiltersInUrl, isPaginated } from '@/utils/produtos';
 
 interface Props {
     produtos?: Paginacao<Produto> | Produto[];
@@ -44,528 +20,83 @@ interface Props {
     filters?: ServerFilters;
 }
 
-type ProdutoFormData = {
-    nome: string;
-    preco: string;
-    quantidade: string;
-    categoria_id: string;
-    nova_categoria_nome: string;
-    estoque_minimo?: string;
-};
-
-// Converte string BR (ex: 1.234,56) para número em string com ponto decimal (ex: 1234.56)
-function normalizarMoedaBR(valor: string): string {
-    if (!valor) return '';
-    let v = valor.replace(/\./g, ''); // remove separador de milhar
-    v = v.replace(',', '.'); // vírgula decimal -> ponto
-    return v;
-}
-
-// Remove parâmetros de query da URL atual, mantendo o estado do Inertia
-function hideFiltersInUrl() {
-    try {
-        const { state } = window.history;
-        const clean = window.location.pathname + (window.location.hash || '');
-        window.history.replaceState(state, '', clean);
-    } catch {
-        // silencioso, sem quebrar UX
-    }
-}
-
-function useMediaQuery(query: string): boolean {
-    const getMatches = (q: string): boolean => {
-        if (typeof window === 'undefined') {
-            return false;
-        }
-        return window.matchMedia(q).matches;
-    };
-
-    const [matches, setMatches] = useState<boolean>(() => getMatches(query));
-
-    useEffect(() => {
-        const mediaQueryList = window.matchMedia(query);
-        const listener = (event: MediaQueryListEvent) => setMatches(event.matches);
-        setMatches(mediaQueryList.matches);
-
-        try {
-            mediaQueryList.addEventListener('change', listener);
-        } catch {
-            mediaQueryList.addListener(listener);
-        }
-
-        return () => {
-            try {
-                mediaQueryList.removeEventListener('change', listener);
-            } catch {
-                mediaQueryList.removeListener(listener);
-            }
-        };
-    }, [query]);
-
-    return matches;
-}
-
 export default function Produtos({ produtos = [], categorias = [], error, filters }: Props) {
     const h1Ref = useRef<HTMLHeadingElement>(null);
-    // =========================================================
-    // Definições locais (tipos e mapeamentos de ordenação)
-    // =========================================================
-    // Mapeia o sort da UI para o esperado pelo servidor
-    function toServerSort(field: SortField): ServerFilters['sort'] {
-        switch (field) {
-            case 'quantidade':
-                return 'quantidade_estoque'; // Mantém para compatibilidade backend, mas frontend usa estoque.quantidade
-            case 'categoria':
-                return 'nome';
-            default:
-                return field as ServerFilters['sort'];
-        }
-    }
 
-    // Converte o sort vindo do servidor para o campo usado na UI
-    function fromServerSort(field: ServerFilters['sort'] | undefined): SortField {
-        switch (field) {
-            case 'quantidade_estoque':
-                return 'quantidade';
-            case 'nome':
-            case 'preco':
-            case 'updated_at':
-                return field;
-            default:
-                return 'nome';
-        }
-    }
-    // Util: detecta paginação vinda do servidor ou array simples
-    const isPaginated = (p: any): p is Paginacao<Produto> =>
-        p && typeof p === 'object' && Array.isArray(p.data) && typeof p.current_page === 'number';
-
-    // =========================================================
-    // Estado inicial derivado de filtros do servidor
-    // =========================================================
-    const initialQ = filters?.q ?? '';
-    const initialCategoria = filters?.categoriaId ? String(filters.categoriaId) : '';
-    const initialSort: SortField = fromServerSort(filters?.sort ?? 'nome');
-    const initialDir = (filters?.dir as any) ?? 'asc';
-    const initialPerPage = typeof filters?.perPage === 'number' ? String(filters!.perPage) : '10';
-    const initialOnlyLow = Boolean(filters?.onlyLow ?? false);
-
-    // =========================================================
-    // Estados (filtros, UI/modais e ordenação)
-    // =========================================================
-    const [searchTerm, setSearchTerm] = useState(initialQ);
-    const [categoriaFiltro, setCategoriaFiltro] = useState(initialCategoria);
-    const [loading, setLoading] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-    const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(null);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [perPage, setPerPage] = useState<string>(initialPerPage);
-    const [onlyLow, setOnlyLow] = useState<boolean>(initialOnlyLow);
-
-    // Estado para movimentos de estoque
-    const [showStockModal, setShowStockModal] = useState(false);
-    const [stockMode, setStockMode] = useState<'entrada' | 'saida' | 'ajuste'>('ajuste');
-    const [estoqueQuantidade, setEstoqueQuantidade] = useState<string>('');
-    const [estoqueNovoSaldo, setEstoqueNovoSaldo] = useState<string>('0');
-    const [estoqueMotivo, setEstoqueMotivo] = useState<string>('');
-
-    const [sortBy, setSortBy] = useState<SortField>(initialSort);
-    const [sortDir, setSortDir] = useState<'asc' | 'desc'>(initialDir);
-
-    // =========================================================
-    // Formulário (create/update)
-    // =========================================================
-    const { data, setData, post, processing, errors, reset, transform } = useForm<ProdutoFormData>({
-        nome: '',
-        preco: '',
-        quantidade: '',
-        categoria_id: '',
-        nova_categoria_nome: '',
-        estoque_minimo: '',
-    });
-
-    const setFormField = (field: keyof ProdutoFormData, value: string) => setData(field, value);
-
-    // =========================================================
-    // Efeitos de montagem/UX
-    // =========================================================
     useEffect(() => {
         h1Ref.current?.focus();
-        // Limpa qualquer query string inicial
         hideFiltersInUrl();
     }, []);
 
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    // =========================================================
-    // Derivados (useMemo): normalização e ordenação local
-    // =========================================================
-    const produtosArray: Produto[] = useMemo(() => (isPaginated(produtos) ? produtos.data : produtos), [produtos]);
+    const {
+        searchTerm,
+        setSearchTerm,
+        categoriaFiltro,
+        handleCategoriaChange,
+        perPage,
+        handlePerPageChange,
+        onlyLow,
+        handleToggleOnlyLow,
+        produtosArray,
+        produtosOrdenados,
+        sortBy,
+        sortDir,
+        toggleSort,
+        onSearchKeyDown,
+        onSearchBlur,
+        navegarComFiltros,
+        handleRefresh,
+        handleClearFilters,
+        loading,
+    } = useProdutosFilters({ produtos, filters });
 
-    const produtosOrdenados = useMemo(() => {
-        // Se os dados vierem paginados do servidor, respeita a ordenação do servidor
-        if (isPaginated(produtos)) {
-            return produtosArray;
-        }
+    const {
+        showModal,
+        modalMode,
+        produtoSelecionado,
+        setProdutoSelecionado,
+        data,
+        errors,
+        processing,
+        abrirModalCriar,
+        abrirModalEditar,
+        fecharModal,
+        submit,
+        setFormField,
+    } = useProdutoFormModal();
 
-        const arr = [...produtosArray];
-        const dir = sortDir === 'asc' ? 1 : -1;
+    const {
+        showStockModal,
+        stockMode,
+        estoqueQuantidade,
+        estoqueNovoSaldo,
+        estoqueMotivo,
+        setStockMode,
+        setEstoqueQuantidade,
+        setEstoqueNovoSaldo,
+        setEstoqueMotivo,
+        abrirModalEstoque,
+        fecharModalEstoque,
+        submitMovimentoEstoque,
+    } = useProdutoStockModal({ produtoSelecionado, setProdutoSelecionado });
 
-        const getKey = (p: Produto) => {
-            switch (sortBy) {
-                case 'nome':
-                    return (p.nome || '').toString().toLowerCase();
-                case 'categoria':
-                    return (p.categoria?.nome || '').toString().toLowerCase();
-                case 'preco':
-                    return Number(p.preco ?? 0);
-                case 'quantidade':
-                    return Number(p.estoque?.quantidade ?? 0);
-                case 'updated_at':
-                    return new Date(p.updated_at).getTime();
-                default:
-                    return '';
-            }
-        };
-
-        arr.sort((a, b) => {
-            const ka = getKey(a);
-            const kb = getKey(b);
-
-            if (typeof ka === 'number' && typeof kb === 'number') {
-                return (ka - kb) * dir;
-            }
-            if (ka < kb) return -1 * dir;
-            if (ka > kb) return 1 * dir;
-            return 0;
-        });
-
-        return arr;
-    }, [produtos, produtosArray, sortBy, sortDir]);
-
-    // =========================================================
-    // Ordenação (UI -> servidor)
-    // =========================================================
-    const toggleSort = (field: SortField) => {
-        if (sortBy === field) {
-            const newDir = sortDir === 'asc' ? 'desc' : 'asc';
-            setSortDir(newDir);
-            navegarComFiltros({ page: 1, sort: toServerSort(field), dir: newDir });
-        } else {
-            setSortBy(field);
-            setSortDir('asc');
-            navegarComFiltros({ page: 1, sort: toServerSort(field), dir: 'asc' });
-        }
-    };
+    const { showDeleteConfirm, solicitarExclusaoProduto, fecharDeleteModal, confirmarExclusao } = useProdutoDeleteModal({
+        produtoSelecionado,
+        setProdutoSelecionado,
+    });
 
     const renderSortIcon = (field: SortField) => {
         if (sortBy !== field) return <i className="bi bi-arrow-down-up text-muted ms-1" />;
         return sortDir === 'asc' ? <i className="bi bi-caret-up-fill ms-1" /> : <i className="bi bi-caret-down-fill ms-1" />;
     };
 
-    // =========================================================
-    // Busca com debounce: aplica filtro no servidor após digitação
-    // =========================================================
-    const immediateNavRef = React.useRef(false);
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            // Evita navegar se a busca atual já corresponde aos filtros do servidor
-            if (immediateNavRef.current) {
-                immediateNavRef.current = false; // já navegou via Enter/blur
-                return;
-            }
-            if (filters?.q === searchTerm) return;
-            navegarComFiltros({ page: 1, q: searchTerm || undefined });
-        }, 750);
-        return () => clearTimeout(handler);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm]);
-
-    // Opcional: aplicar ao sair do campo ou ao pressionar Enter (melhor UX)
-    const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            immediateNavRef.current = true;
-            navegarComFiltros({ page: 1, q: searchTerm || undefined });
-        }
-    };
-    const onSearchBlur = () => {
-        if (filters?.q !== searchTerm) {
-            immediateNavRef.current = true;
-            navegarComFiltros({ page: 1, q: searchTerm || undefined });
-        }
-    };
-
-    // =========================================================
-    // Navegação com filtros/paginação
-    // =========================================================
-    const navegarComFiltros = (overrides?: Partial<ServerFilters & { page: number }>) => {
-        const payload = {
-            q: searchTerm || undefined,
-            categoriaId: categoriaFiltro || undefined,
-            sort: toServerSort(sortBy),
-            dir: sortDir,
-            perPage: Number(perPage) || 10,
-            onlyLow: onlyLow || undefined,
-            ...(overrides ?? {}),
-        };
-        router.post('/gerenciamento/produtos/filtros', payload, {
-            preserveScroll: true,
-            replace: true,
-            preserveState: true,
-            onSuccess: () => hideFiltersInUrl(),
-        });
-    };
-
-    const handleRefresh = () => {
-        setLoading(true);
-        navegarComFiltros();
-        setLoading(false);
-    };
-
-    const handleClearFilters = () => {
-        setSearchTerm('');
-        setCategoriaFiltro('');
-        setPerPage('10');
-        setSortBy('nome');
-        setSortDir('asc');
-        setOnlyLow(false);
-        router.post(
-            '/gerenciamento/produtos/filtros',
-            {},
-            {
-                preserveScroll: true,
-                replace: true,
-                preserveState: true,
-                onSuccess: () => hideFiltersInUrl(),
-            },
-        );
-    };
-
-    const handleCategoriaChange = (value: string) => {
-        setCategoriaFiltro(value);
-        navegarComFiltros({ page: 1, categoriaId: value || undefined });
-    };
-
-    const handlePerPageChange = (value: string) => {
-        setPerPage(value);
-        navegarComFiltros({ page: 1, perPage: Number(value) });
-    };
-
-    const handleToggleOnlyLow = () => {
-        const next = !onlyLow;
-        setOnlyLow(next);
-        navegarComFiltros({ page: 1, onlyLow: next || undefined });
-    };
-
-    // =========================================================
-    // Abertura/fechamento de modal de produto (create/edit)
-    // =========================================================
-    const abrirModalCriar = () => {
-        setModalMode('create');
-        setProdutoSelecionado(null);
-        setShowModal(true);
-        reset();
-        setData('quantidade', '');
-        setData('estoque_minimo', '');
-        setTimeout(() => {
-            document.getElementById('produto-nome')?.focus();
-        }, 100);
-    };
-
-    const abrirModalEditar = (produto: Produto) => {
-        setModalMode('edit');
-        setProdutoSelecionado(produto);
-        setShowModal(true);
-        reset();
-        setData({
-            nome: produto.nome,
-            preco: formatarMoeda(String(produto.preco ?? '')),
-            quantidade: String(produto.estoque?.quantidade ?? '0'),
-            categoria_id: produto.categoria ? String(produto.categoria.id) : '',
-            nova_categoria_nome: '',
-            estoque_minimo: String(produto.estoque_minimo ?? '0'),
-        });
-        setTimeout(() => {
-            document.getElementById('produto-nome')?.focus();
-        }, 100);
-    };
-
-    const fecharModal = () => {
-        setShowModal(false);
-        reset();
-    };
-
-    // Abre ajuste a partir do modal de edição, fechando o modal atual antes
     const abrirAjusteAPartirDoEditar = () => {
         if (!produtoSelecionado) return;
-        const prod = produtoSelecionado;
+        const produtoAtual = produtoSelecionado;
         fecharModal();
-        setTimeout(() => abrirModalEstoque(prod, 'ajuste'), 120);
-    };
-
-    // =========================================================
-    // Modal de movimentos de estoque (entrada/saída/ajuste)
-    // =========================================================
-    const abrirModalEstoque = (produto: Produto, modo?: 'entrada' | 'saida' | 'ajuste') => {
-        setProdutoSelecionado(produto);
-        const m = modo ?? 'entrada';
-        setStockMode(m);
-        if (m === 'ajuste') {
-            setEstoqueNovoSaldo(String(produto.estoque?.quantidade ?? '0'));
-        } else {
-            setEstoqueQuantidade('');
-        }
-        setEstoqueMotivo('');
-        setShowStockModal(true);
-        setTimeout(() => {
-            const id = m === 'ajuste' ? 'ajuste-novo-saldo' : 'mov-quantidade';
-            document.getElementById(id)?.focus();
-        }, 100);
-    };
-
-    const solicitarExclusaoProduto = (produto: Produto) => {
-        setProdutoSelecionado(produto);
-        setShowDeleteConfirm(true);
-    };
-
-    const fecharModalEstoque = () => {
-        setShowStockModal(false);
-        setProdutoSelecionado(null);
-        setEstoqueQuantidade('');
-        setEstoqueNovoSaldo('0');
-        setEstoqueMotivo('');
-    };
-
-    // Submissão do movimento de estoque
-    const submitMovimentoEstoque = (event: React.FormEvent) => {
-        event.preventDefault();
-        if (!produtoSelecionado) return;
-        const base = `/gerenciamento/produtos/${produtoSelecionado.id}/estoque`;
-        if (stockMode === 'entrada') {
-            router.post(
-                `${base}/entrada`,
-                { quantidade: Number(estoqueQuantidade), motivo: estoqueMotivo || undefined },
-                {
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        fecharModalEstoque();
-                        router.get(
-                            '/gerenciamento/produtos',
-                            {},
-                            {
-                                preserveScroll: true,
-                                onSuccess: () => hideFiltersInUrl(),
-                            },
-                        );
-                    },
-                },
-            );
-        } else if (stockMode === 'saida') {
-            router.post(
-                `${base}/saida`,
-                { quantidade: Number(estoqueQuantidade), motivo: estoqueMotivo || undefined },
-                {
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        fecharModalEstoque();
-                        router.get(
-                            '/gerenciamento/produtos',
-                            {},
-                            {
-                                preserveScroll: true,
-                                onSuccess: () => hideFiltersInUrl(),
-                            },
-                        );
-                    },
-                },
-            );
-        } else {
-            router.post(
-                `${base}/ajuste`,
-                { novoSaldo: Number(estoqueNovoSaldo), motivo: estoqueMotivo || undefined },
-                {
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        fecharModalEstoque();
-                        router.get(
-                            '/gerenciamento/produtos',
-                            {},
-                            {
-                                preserveScroll: true,
-                                onSuccess: () => hideFiltersInUrl(),
-                            },
-                        );
-                    },
-                },
-            );
-        }
-    };
-
-    // =========================================================
-    // UX: fechar modal com ESC e bloquear scroll de fundo
-    // =========================================================
-    useEffect(() => {
-        const handleEsc = (event: KeyboardEvent) => {
-            if (event.key === 'Escape' && showModal) {
-                fecharModal();
-            }
-        };
-
-        if (showModal) {
-            document.body.style.overflow = 'hidden';
-            document.addEventListener('keydown', handleEsc);
-        } else {
-            document.body.style.overflow = '';
-        }
-
-        return () => {
-            document.body.style.overflow = '';
-            document.removeEventListener('keydown', handleEsc);
-        };
-    }, [showModal]);
-
-    // =========================================================
-    // Submissão de formulário (create/update)
-    // =========================================================
-    const submit = (event: React.FormEvent) => {
-        event.preventDefault();
-        if (modalMode === 'create') {
-            // normaliza preço para padrão numérico antes do envio
-            transform((formData) => ({ ...formData, preco: normalizarMoedaBR(formData.preco) }));
-            post('/gerenciamento/produtos', {
-                preserveScroll: true,
-                onSuccess: () => {
-                    fecharModal();
-                    router.get(
-                        '/gerenciamento/produtos',
-                        {},
-                        {
-                            preserveScroll: true,
-                            onSuccess: () => hideFiltersInUrl(),
-                        },
-                    );
-                },
-            });
-        } else if (modalMode === 'edit' && produtoSelecionado) {
-            router.put(
-                `/gerenciamento/produtos/${produtoSelecionado.id}`,
-                { ...data, preco: normalizarMoedaBR(data.preco) },
-                {
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        fecharModal();
-                        router.get(
-                            '/gerenciamento/produtos',
-                            {},
-                            {
-                                preserveScroll: true,
-                                onSuccess: () => hideFiltersInUrl(),
-                            },
-                        );
-                    },
-                },
-            );
-        }
+        setTimeout(() => abrirModalEstoque(produtoAtual, 'ajuste'), 120);
     };
 
     return (
@@ -576,9 +107,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
             </h2>
 
             <div className="container-fluid">
-                {/* ===================================================== */}
-                {/* Cabeçalho / Ações principais                         */}
-                {/* ===================================================== */}
                 <div className="d-flex justify-content-between align-items-center rounded-3 bg-body-tertiary elemento-produtos-1 mb-4 flex-wrap gap-3 border p-3">
                     <div>
                         <h1 className="h3 m-0">Gestão de Produtos</h1>
@@ -599,9 +127,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     </div>
                 </div>
 
-                {/* ===================================================== */}
-                {/* Alerta de erro                                        */}
-                {/* ===================================================== */}
                 {error && (
                     <div className="alert alert-danger d-flex align-items-center" role="alert">
                         <i className="bi bi-exclamation-triangle-fill me-2" />
@@ -609,9 +134,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     </div>
                 )}
 
-                {/* ===================================================== */}
-                {/* Filtros e controles                                   */}
-                {/* ===================================================== */}
                 <ProdutosFilters
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
@@ -627,9 +149,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     onClearFilters={handleClearFilters}
                 />
 
-                {/* ===================================================== */}
-                {/* Lista de produtos                                    */}
-                {/* ===================================================== */}
                 <ProdutosListSection
                     isDesktop={isDesktop}
                     produtosArray={produtosArray}
@@ -641,9 +160,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                     onMoveStock={abrirModalEstoque}
                     onDelete={solicitarExclusaoProduto}
                 />
-                {/* ===================================================== */}
-                {/* Paginação                                              */}
-                {/* ===================================================== */}
+
                 {isPaginated(produtos) && (
                     <div className="d-flex justify-content-between align-items-center mt-3">
                         <div className="small text-secondary">
@@ -672,9 +189,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 )}
             </div>
 
-            {/* ========================================================= */}
-            {/* Modal: Criar/Editar produto                               */}
-            {/* ========================================================= */}
             <ProdutoFormModal
                 show={showModal}
                 mode={modalMode}
@@ -689,47 +203,24 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 onOpenAjuste={abrirAjusteAPartirDoEditar}
             />
 
-            {/* ========================================================= */}
-            {/* Modal: Confirmar exclusão                                 */}
-            {/* ========================================================= */}
             {showDeleteConfirm && produtoSelecionado && (
                 <ModalPortal>
-                    <div className="modal-backdrop fade show" onClick={() => setShowDeleteConfirm(false)}></div>
+                    <div className="modal-backdrop fade show" onClick={fecharDeleteModal}></div>
                     <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-modal="true">
                         <div className="modal-dialog modal-dialog-centered">
                             <div className="modal-content">
                                 <div className="modal-header border-0">
                                     <h5 className="modal-title">Remover produto</h5>
-                                    <button type="button" className="btn-close" aria-label="Fechar" onClick={() => setShowDeleteConfirm(false)} />
+                                    <button type="button" className="btn-close" aria-label="Fechar" onClick={fecharDeleteModal} />
                                 </div>
                                 <div className="modal-body">
                                     Tem certeza que deseja remover o produto "{produtoSelecionado.nome}"? Esta ação não pode ser desfeita.
                                 </div>
                                 <div className="modal-footer d-flex justify-content-between border-0">
-                                    <button type="button" className="btn btn-outline-secondary" onClick={() => setShowDeleteConfirm(false)}>
+                                    <button type="button" className="btn btn-outline-secondary" onClick={fecharDeleteModal}>
                                         Cancelar
                                     </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-danger"
-                                        onClick={() => {
-                                            router.delete(`/gerenciamento/produtos/${produtoSelecionado.id}`, {
-                                                preserveScroll: true,
-                                                onSuccess: () => {
-                                                    setShowDeleteConfirm(false);
-                                                    setProdutoSelecionado(null);
-                                                    router.get(
-                                                        '/gerenciamento/produtos',
-                                                        {},
-                                                        {
-                                                            preserveScroll: true,
-                                                            onSuccess: () => hideFiltersInUrl(),
-                                                        },
-                                                    );
-                                                },
-                                            });
-                                        }}
-                                    >
+                                    <button type="button" className="btn btn-danger" onClick={confirmarExclusao}>
                                         Remover
                                     </button>
                                 </div>
@@ -739,9 +230,6 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                 </ModalPortal>
             )}
 
-            {/* ========================================================= */}
-            {/* Modal: Movimentos de estoque                              */}
-            {/* ========================================================= */}
             {showStockModal && produtoSelecionado && (
                 <ModalPortal>
                     <div className="modal-backdrop fade show" onClick={fecharModalEstoque}></div>
@@ -766,7 +254,7 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
                                                 id="mov-tipo"
                                                 className="form-select"
                                                 value={stockMode}
-                                                onChange={(e) => setStockMode(e.target.value as any)}
+                                                onChange={(e) => setStockMode(e.target.value as 'entrada' | 'saida' | 'ajuste')}
                                             >
                                                 <option value="entrada">Entrada</option>
                                                 <option value="saida">Saída</option>
@@ -838,7 +326,3 @@ export default function Produtos({ produtos = [], categorias = [], error, filter
         </GerenciamentoLayout>
     );
 }
-
-// Modal de movimentos de estoque
-// Inserido fora do retorno principal para manter o arquivo organizado (poderia ser componente separado)
-// Será renderizado condicionalmente acima do fechamento do layout

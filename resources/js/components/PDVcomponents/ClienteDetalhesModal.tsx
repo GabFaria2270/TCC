@@ -1,7 +1,7 @@
 import ModalPortal from '../common/ModalPortal';
 
 // Importe a interface Cliente do local correto
-import type { Cliente } from '../../pages/gerenciamento/Clientes';
+import type { Cliente } from '@/types/gerenciamento/Clientes';
 import { formatarTelefone } from '../../utils/formatters';
 
 interface Props {

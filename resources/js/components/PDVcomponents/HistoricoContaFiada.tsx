@@ -1,65 +1,15 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import ModalPortal from '../common/ModalPortal';
+import useMediaQuery from '@/hooks/useMediaQuery';
+import http from '@/lib/http';
+import { useRoute } from '@/lib/route';
+import type { HistoricoFiadoItem } from '@/types/gerenciamento/Clientes';
 
 // --- TIPO E INTERFACE ---
 interface HistoricoContaFiadaProps {
     className?: string;
-    initialData?: VendaFiada[]; // ✅ recebe pré-carregado
-}
-
-type VendaFiada = {
-    id: number;
-    cliente: string;
-    valor: number;
-    data: string; // ISO
-    status: 'pendente' | 'pago';
-};
-
-// --- HOOK CUSTOMIZADO ---
-/**
- * Hook de React para detectar media queries (tamanho da tela).
- * Retorna 'true' se a query corresponder (ex: se for desktop).
- */
-function useMediaQuery(query: string): boolean {
-    const getMatches = (q: string): boolean => {
-        // Previne erros durante o Server-Side Rendering (SSR)
-        if (typeof window === 'undefined') {
-            return false;
-        }
-        return window.matchMedia(q).matches;
-    };
-
-    const [matches, setMatches] = useState<boolean>(() => getMatches(query));
-
-    useEffect(() => {
-        const mediaQueryList = window.matchMedia(query);
-
-        // Atualiza o estado quando o tamanho da tela muda
-        const listener = (event: MediaQueryListEvent) => {
-            setMatches(event.matches);
-        };
-
-        // Garante que o estado está correto após a montagem inicial
-        setMatches(mediaQueryList.matches);
-
-        try {
-            // Nova API (Chrome, Firefox, Safari >= 14)
-            mediaQueryList.addEventListener('change', listener);
-        } catch (e) {
-            // API antiga (outros navegadores / Safari < 14)
-            mediaQueryList.addListener(listener);
-        }
-
-        return () => {
-            try {
-                mediaQueryList.removeEventListener('change', listener);
-            } catch (e) {
-                mediaQueryList.removeListener(listener);
-            }
-        };
-    }, [query]);
-
-    return matches;
+    initialData?: HistoricoFiadoItem[];
 }
 
 // --- FUNÇÕES DE FORMATAÇÃO E HELPERS ---
@@ -85,7 +35,7 @@ const getStatusBadge = (status: 'pendente' | 'pago') => {
 /**
  * Componente que renderiza a Tabela para Desktop
  */
-const TabelaVendas = ({ vendas }: { vendas: VendaFiada[] }) => (
+const TabelaVendas = ({ vendas }: { vendas: HistoricoFiadoItem[] }) => (
     <div className="table-responsive">
         <table className="table table-hover table-sm table-bordered mb-0 align-middle">
             <thead>
@@ -117,7 +67,7 @@ const TabelaVendas = ({ vendas }: { vendas: VendaFiada[] }) => (
 /**
  * Componente que renderiza os Cards para Mobile
  */
-const CardsVendas = ({ vendas }: { vendas: VendaFiada[] }) => (
+const CardsVendas = ({ vendas }: { vendas: HistoricoFiadoItem[] }) => (
     <>
         {vendas.map((venda) => (
             <div key={venda.id} className="card mb-2 shadow-sm">
@@ -138,9 +88,10 @@ const CardsVendas = ({ vendas }: { vendas: VendaFiada[] }) => (
 // --- COMPONENTE PRINCIPAL ---
 
 export default function HistoricoContaFiada({ className = '', initialData = [] }: HistoricoContaFiadaProps) {
+    const { route } = useRoute();
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [vendasFiadas, setVendasFiadas] = useState<VendaFiada[]>(initialData);
+    const [vendasFiadas, setVendasFiadas] = useState<HistoricoFiadoItem[]>(initialData);
     
     // ✅ AQUI ESTÁ A NOVA LÓGICA:
     // Usamos o hook para verificar o breakpoint 'md' (768px)
@@ -154,30 +105,34 @@ export default function HistoricoContaFiada({ className = '', initialData = [] }
     // Efeito para carregar dados do backend
     useEffect(() => {
         if (!showModal) return;
-        if (vendasFiadas.length > 0) return; 
+        if (vendasFiadas.length > 0) return;
 
-        let abort = false;
+        const controller = new AbortController();
+        let mounted = true;
+
         (async () => {
             try {
                 setLoading(true);
-                const resp = await fetch('/gerenciamento/fiado/historico', {
+                const { data } = await http.get(route('fiado.historico'), {
                     headers: { Accept: 'application/json' },
-                    credentials: 'same-origin',
+                    signal: controller.signal,
                 });
-                if (!resp.ok) throw new Error('Falha ao carregar histórico');
-                const json = await resp.json();
-                if (!abort) setVendasFiadas(json.vendas_fiadas || []);
-            } catch {
-                if (!abort) setVendasFiadas([]);
+                if (!mounted) return;
+                setVendasFiadas((data?.vendas_fiadas as HistoricoFiadoItem[]) ?? []);
+            } catch (error) {
+                if (!mounted) return;
+                if (axios.isCancel(error)) return;
+                setVendasFiadas([]);
             } finally {
-                if (!abort) setLoading(false);
+                if (mounted) setLoading(false);
             }
         })();
 
         return () => {
-            abort = true;
+            mounted = false;
+            controller.abort();
         };
-    }, [showModal, vendasFiadas.length]);
+    }, [route, showModal, vendasFiadas.length]);
 
     // Cálculos para o resumo
     const pendentes = vendasFiadas.filter((v) => v.status === 'pendente');
