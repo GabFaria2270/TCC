@@ -291,6 +291,58 @@ html:has(body.loginf) {
     box-shadow: 0 14px 36px rgba(59, 130, 246, 0.45);
 }
 
+.social-login-wrapper {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.social-login-separator {
+    display: flex;
+    align-items: center;
+    column-gap: 0.75rem;
+    color: var(--white-70);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.social-login-separator::before,
+.social-login-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.google-login-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(15, 23, 42, 0.35);
+    color: var(--color-white);
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.google-login-button:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    transform: translateY(-1px);
+}
+
+.google-login-icon {
+    width: 18px;
+    height: 18px;
+}
+
 /* Link inferior */
 .login-link {
     margin-top: 1rem;

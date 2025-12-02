@@ -128,6 +128,16 @@
                                 </button>
                             </form>
 
+                            <div class="social-login-wrapper">
+                                <div class="social-login-separator">
+                                    <span>ou utilize</span>
+                                </div>
+                                <a href="{{ route('login.google.redirect') }}" class="google-login-button">
+                                    <img src="{{ asset('img/google-icon.svg') }}" alt="Google" class="google-login-icon">
+                                    <span>Entrar com Google</span>
+                                </a>
+                            </div>
+
                             <div class="login-link">
                                 <span>Não tem uma conta?</span>
                                 <a href="{{ route('cadastro') }}" class="form-login-link"><i
