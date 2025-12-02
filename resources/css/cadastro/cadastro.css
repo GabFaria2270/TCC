@@ -178,15 +178,16 @@ html:has(body.cadastrof) {
    =================================================================== */
 .password-requirements {
     margin-top: 0;
-    padding: 1rem;
+    padding: 0;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(226, 232, 240, 0.15);
     border-radius: 12px;
+    border-width: 0;
     backdrop-filter: blur(10px);
     opacity: 0;
     max-height: 0;
     overflow: hidden;
-    transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease, padding 0.3s ease;
+    transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease, padding 0.3s ease, border-width 0.3s ease;
 }
 
 .password-requirements.show {
@@ -194,6 +195,7 @@ html:has(body.cadastrof) {
     max-height: 300px;
     margin-top: 0.5rem;
     padding: 1rem;
+    border-width: 1px;
 }
 
 .requirement-item {

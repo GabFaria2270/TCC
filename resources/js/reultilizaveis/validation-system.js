@@ -68,7 +68,7 @@ class ValidationSystem {
 
     validatePerfil(event) {
         const perfil = event.target.value;
-        const perfilRegex = /^[a-z0-9_-]+$/;
+        const perfilRegex = /^[a-zA-Z0-9_-]+$/;
         
         if (perfil && (perfil.length < 3 || !perfilRegex.test(perfil))) {
             event.target.style.borderColor = '#e74c3c';

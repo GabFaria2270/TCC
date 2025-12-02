@@ -130,7 +130,7 @@
 
                             <div class="social-login-wrapper">
                                 <div class="social-login-separator">
-                                    <span>ou utilize</span>
+                                    <span class="text-white">ou utilize</span>
                                 </div>
                                 <form id="googleLoginForm" action="{{ route('login.google.redirect') }}" method="GET">
                                     <input type="hidden" name="remember" id="googleRememberInput" value="0">
