@@ -5,6 +5,7 @@ namespace App\Services\Pagamentos;
 use App\Models\Venda;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use JsonException;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\Exceptions\MPApiException;
@@ -44,17 +45,22 @@ class MercadoPagoGateway implements PaymentGatewayInterface
         $methodId = $this->mapMethod($venda->forma_pagamento, $payload);
 
         $payer = $this->buildPayerPayload($venda, $payload);
+        $externalReference = (string) Arr::get($payload, 'external_reference', $venda->id ?: (string) Str::uuid());
+        $metadata = array_merge([
+            'venda_id' => $venda->id,
+            'comercio_id' => $venda->comercio_id,
+            'usuario_id' => $venda->usuario_id,
+        ], (array) Arr::get($payload, 'metadata', []));
+
+        $description = $venda->id ? 'Venda #' . $venda->id : 'Venda temporária';
+
         $body = [
             'transaction_amount' => round((float) $venda->total, 2),
-            'description' => 'Venda #' . $venda->id,
+            'description' => $description,
             'payment_method_id' => $methodId,
             'payer' => $payer,
-            'external_reference' => (string) $venda->id,
-            'metadata' => [
-                'venda_id' => $venda->id,
-                'comercio_id' => $venda->comercio_id,
-                'usuario_id' => $venda->usuario_id,
-            ],
+            'external_reference' => $externalReference,
+            'metadata' => $metadata,
         ];
 
         if (in_array($venda->forma_pagamento, ['cartao_credito', 'cartao_debito'], true)) {

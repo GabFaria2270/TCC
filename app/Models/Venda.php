@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -54,13 +55,7 @@ class Venda extends Model
         'troco',
         'status',
         'observacoes',
-        'payment_provider',
-        'payment_reference',
         'payment_status',
-        'payment_method_detail',
-        'payment_payload',
-        'pix_qr_code',
-        'pix_qr_code_base64',
     ];
 
     protected $casts = [
@@ -74,7 +69,6 @@ class Venda extends Model
         'troco' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'payment_payload' => 'array',
     ];
 
     /**
@@ -115,6 +109,11 @@ class Venda extends Model
     public function movimentosEstoque(): HasMany
     {
         return $this->hasMany(MovimentoEstoque::class);
+    }
+
+    public function pagamentoExterno(): HasOne
+    {
+        return $this->hasOne(PagamentoExterno::class);
     }
 
     /**

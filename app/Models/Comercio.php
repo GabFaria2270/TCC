@@ -15,6 +15,7 @@ class Comercio extends Model
         'nome',
         'cnpj',
         'usuario_id',
+        'payment_provider',
     ];
 
     // Ocultação de campos sensíveis (adicione se necessário)

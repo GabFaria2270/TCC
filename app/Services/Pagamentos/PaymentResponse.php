@@ -15,6 +15,19 @@ class PaymentResponse
     ) {
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            provider: (string) ($data['provider'] ?? 'mercadopago'),
+            reference: (string) ($data['reference'] ?? ''),
+            status: (string) ($data['status'] ?? 'pending'),
+            method: (string) ($data['method'] ?? ''),
+            raw: (array) ($data['raw'] ?? []),
+            pixQrCode: $data['pix_qr_code'] ?? null,
+            pixQrCodeBase64: $data['pix_qr_code_base64'] ?? null,
+        );
+    }
+
     public function toArray(): array
     {
         return [

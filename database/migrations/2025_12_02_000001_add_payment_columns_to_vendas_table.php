@@ -22,7 +22,7 @@ return new class extends Migration {
     {
         Schema::table('vendas', function (Blueprint $table) {
             $table->dropColumn([
-                'payment_provider',
+            
                 'payment_reference',
                 'payment_status',
                 'payment_method_detail',

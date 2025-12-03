@@ -2,6 +2,7 @@
 
 namespace App\Services\Pagamentos;
 
+use App\Models\PagamentoExterno;
 use App\Models\Venda;
 
 class PaymentProcessor
@@ -24,15 +25,26 @@ class PaymentProcessor
 
     public function atualizarStatus(Venda $venda): ?PaymentResponse
     {
-        if (!$venda->payment_reference) {
+        $pagamento = $venda->pagamentoExterno;
+
+        if (!$pagamento || !$pagamento->external_reference) {
             return null;
         }
 
-        $response = $this->gateway->consultarPagamento($venda->payment_reference);
+        $response = $this->gateway->consultarPagamento($pagamento->external_reference);
 
         if ($response) {
             $this->sincronizarVenda($venda, $response);
         }
+
+        return $response;
+    }
+
+    public function registrarPagamentoLocal(Venda $venda, array $paymentData): PaymentResponse
+    {
+        $response = PaymentResponse::fromArray($paymentData);
+
+        $this->sincronizarVenda($venda, $response);
 
         return $response;
     }
@@ -48,15 +60,35 @@ class PaymentProcessor
 
         $novoStatus = $statusMap[strtolower($response->status)] ?? 'pendente';
 
+        $this->sincronizarPagamentoExterno($venda, $response);
+
         $venda->update([
-            'payment_provider' => $response->provider,
-            'payment_reference' => $response->reference,
             'payment_status' => $response->status,
-            'payment_method_detail' => $response->method,
-            'payment_payload' => $response->raw,
-            'pix_qr_code' => $response->pixQrCode,
-            'pix_qr_code_base64' => $response->pixQrCodeBase64,
             'status' => $novoStatus,
         ]);
+    }
+
+    private function sincronizarPagamentoExterno(Venda $venda, PaymentResponse $response): void
+    {
+        $pagamento = $venda->pagamentoExterno;
+
+        if (!$pagamento) {
+            $pagamento = new PagamentoExterno(['venda_id' => $venda->id]);
+        }
+
+        $pagamento->fill([
+            'provider' => $response->provider,
+            'external_reference' => $response->reference,
+            'status' => $response->status,
+            'method' => $response->method,
+            'amount' => $venda->total,
+            'currency' => 'BRL',
+            'payload' => $response->raw,
+            'metadata' => $response->raw['metadata'] ?? null,
+            'pix_qr_code' => $response->pixQrCode,
+            'pix_qr_code_base64' => $response->pixQrCodeBase64,
+        ]);
+
+        $pagamento->save();
     }
 }
