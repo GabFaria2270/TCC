@@ -5,8 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Auth\CacheTokenService;
 use App\Services\Auth\RegistrationService; // ✅ ADICIONAR
-use App\Services\Pagamentos\MercadoPagoGateway;
-use App\Services\Pagamentos\PaymentGatewayInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,9 +23,6 @@ class AppServiceProvider extends ServiceProvider
             return new RegistrationService($app->make(CacheTokenService::class));
         });
 
-        $this->app->bind(PaymentGatewayInterface::class, function () {
-            return new MercadoPagoGateway();
-        });
     }
 
     /**

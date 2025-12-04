@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\PaymentRequest;
+use App\Http\Requests\Auth\PaymentRequest;
 use App\Models\Venda;
+use App\Services\Auth\PaymentService;
 use App\Services\Auth\VendaService;
-use App\Services\Pagamentos\MercadoPagoCheckoutService;
-use App\Services\Pagamentos\PaymentProcessor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,8 +17,7 @@ class PaymentController extends Controller
 {
     public function __construct(
         private VendaService $vendaService,
-        private PaymentProcessor $paymentProcessor,
-        private MercadoPagoCheckoutService $checkoutService,
+        private PaymentService $paymentService,
     ) {
     }
 
@@ -40,7 +38,7 @@ class PaymentController extends Controller
                     'usuario_id' => $vendaTemporaria->usuario_id,
                 ]);
 
-                $paymentData = $this->checkoutService->criarPagamento($vendaTemporaria, $gatewayPayload);
+                $paymentData = $this->paymentService->criarPagamentoRemoto($vendaTemporaria, $gatewayPayload);
             } catch (Throwable $throwable) {
                 Log::error('Erro ao processar pagamento no gateway antes de registrar venda', [
                     'exception' => $throwable,
@@ -72,7 +70,7 @@ class PaymentController extends Controller
         $venda = $resultadoVenda['data']['venda'];
         if ($usaGateway && $paymentData) {
             try {
-                $paymentData = $this->paymentProcessor->registrarPagamentoLocal($venda, $paymentData->toArray());
+                $paymentData = $this->paymentService->registrarPagamento($venda, $paymentData);
             } catch (Throwable $throwable) {
                 Log::error('Erro ao sincronizar dados do pagamento com a venda', ['exception' => $throwable]);
                 $this->vendaService->cancelar($venda->id, $request);
@@ -86,7 +84,7 @@ class PaymentController extends Controller
         return response()->json([
             'message' => __('validation.pdv_venda_processada'),
             'venda' => $venda->fresh(['itens.produto', 'cliente']),
-            'payment' => $paymentData?->toArray(),
+            'payment' => $paymentData,
         ], 201);
     }
 
@@ -108,7 +106,7 @@ class PaymentController extends Controller
         }
 
         try {
-            $paymentResponse = $this->paymentProcessor->atualizarStatus($venda);
+            $paymentResponse = $this->paymentService->atualizarStatus($venda);
         } catch (Throwable $throwable) {
             Log::error('Erro ao atualizar status do pagamento', [
                 'exception' => $throwable,
@@ -122,7 +120,7 @@ class PaymentController extends Controller
 
         return response()->json([
             'venda' => $venda->fresh(['itens.produto', 'cliente']),
-            'payment' => $paymentResponse?->toArray(),
+            'payment' => $paymentResponse,
         ]);
     }
 

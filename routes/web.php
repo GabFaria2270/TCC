@@ -6,7 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\ClienteController;
 use App\Http\Controllers\Auth\ProdutoController;
 use App\Http\Controllers\Auth\VendasController; // ✅ ADICIONAR IMPORT
-use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Auth\PaymentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\FiadoController;
 use Illuminate\Http\Request;
