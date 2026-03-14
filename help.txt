@@ -1,41 +1,235 @@
-# Guia Rápido do Projeto
-
-## 1) Instalar dependências
-- Backend (PHP):
-  - composer install
-- Frontend (Node):
-  - npm install
-  - npm run build (ou npm run dev para ambiente de desenvolvimento)
-
-## 2) Preparar a aplicação
-- Gerar chave da aplicação:
-  - php artisan key:generate
-- Rodar servidor embutido do Laravel:
-  - php artisan serve
-
-## 3) Banco de Dados
-- Migrar estrutura:
-  - php artisan migrate
-- Popular dados básicos com o seeder (AutoPopulateSeeder):
-  - php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
-- Resetar e popular tudo de uma vez (opcional):
-  - php artisan migrate:fresh --seed
-  --possivel local para hospedagem -- AlwaysData 
-
-Observação: O seeder cria 1 usuário admin na tabela `usuario`, 1 comércio, 10 categorias, 30 clientes, 100 produtos e seus estoques. Vendas e contas fiadas não são criadas automaticamente.
+# Guia Rápido do Projeto TCC
 
 ---
 
-## 4) Observações úteis
-- Caminho das classes do Bootstrap: `node_modules/bootstrap/dist/css/bootstrap.css`
-- Comandos frontend: `npm run dev`
+# ✅ PASSO A PASSO PARA WINDOWS
+
+## Passo 1: Instalar Composer
+- Baixe em: https://getcomposer.org/download/
+- Execute o instalador
+- Escolha seu PHP (procure a pasta do seu servidor)
+
+## Passo 2: Instalar Node.js
+- Baixe em: https://nodejs.org/
+- Instale e confirme a instalação com `node -v`
+
+## Passo 3: Abrir Terminal e Navegar até o Projeto
+```bash
+cd "C:\caminho\para\TCC"
+```
+
+## Passo 4: Instalar Dependências PHP (Composer)
+```bash
+composer install
+```
+
+## Passo 5: Instalar Dependências Front-end (Node.js/NPM)
+```bash
+npm install
+npm run build
+```
+ou para desenvolvimento com live reload:
+```bash
+npm run dev
+```
+
+## Passo 6: Gerar Chave da Aplicação
+```bash
+php artisan key:generate
+```
+
+## Passo 7: Rodar Migrations (Criar Tabelas no Banco)
+```bash
+php artisan migrate
+```
+
+## Passo 8: Popular Banco com Dados Iniciais (Opcional)
+```bash
+php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
+```
+
+## Passo 9: Iniciar o Servidor
+```bash
+php artisan serve
+```
+**Resultado**: Acesse em http://localhost:8000
+
+---
+
+## 💡 Dica: Ativar extension ZIP para Composer mais rápido
+Se usar Laragon ou outro servidor local:
+
+1. Localize o arquivo `php.ini` na pasta do seu PHP
+2. Procure pela linha (geralmente comentada):
+   ```
+   ;extension=zip
+   ```
+3. Remova o `;` do início:
+   ```
+   extension=zip
+   ```
+4. Salve e reinicie o servidor
+
+Isso acelera bastante o Composer!
+
+---
+
+# 🐧 PASSO A PASSO PARA LINUX (Debian/Ubuntu)
+
+## Passo 1: Atualizar Repositórios
+```bash
+sudo apt-get update
+```
+
+## Passo 2: Instalar PHP 8.3 e Extensões Necessárias
+```bash
+sudo apt-get install php8.3 php8.3-cli php8.3-fpm
+```
+
+## Passo 3: Instalar Extensões Obrigatórias
+```bash
+sudo apt-get install php8.3-gd php8.3-xml php8.3-zip php8.3-mysql
+```
+
+## Passo 4: Verificar Extensões Instaladas
+```bash
+php -m | grep -E 'gd|xml|zip|mysql'
+```
+**Resultado esperado**:
+```
+gd
+libxml
+xml
+xmlreader
+xmlwriter
+zip
+mysqli
+pdo_mysql
+```
+
+## Passo 5: Instalar Composer (Gerenciador de Pacotes PHP)
+```bash
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+composer --version
+```
+
+## Passo 6: Instalar Node.js e NPM
+```bash
+sudo apt-get install nodejs npm
+node --version
+npm --version
+```
+
+## Passo 7: Instalar Django (ou Mysq
+sudo apt-get install mysql-server
+```
+
+## Passo 8: Iniciar Serviço MySQL
+```bash
+sudo service mysql start
+```
+
+## Passo 9: Navegar até o Projeto
+```bash
+cd "/home/adry/Área de trabalho/TCC"
+```
+
+## Passo 10: Instalar Dependências PHP (Composer)
+```bash
+composer install
+```
+
+## Passo 11: Instalar Dependências Front-end (Node.js/NPM)
+```bash
+npm install
+npm run build
+```
+
+## Passo 12: Gerar Chave da Aplicação
+```bash
+php artisan key:generate
+```
+
+## Passo 13: Configurar Banco de Dados (Se Necessário)
+Edite o arquivo `.env`:
+```bash
+nano .env
+```
+Verifique as configurações:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+## Passo 14: Rodar Migrations (Criar Tabelas no Banco)
+```bash
+php artisan migrate
+```
+
+## Passo 15: Popular Banco com Dados Iniciais (Opcional)
+```bash
+php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
+```
+
+## Passo 16: Iniciar o Servidor
+```bash
+php artisan serve
+```
+**Resultado**: Acesse em http://localhost:8000
+
+---
+
+# ⚡ RESUMO RÁPIDO
+
+## Windows (Laragon)
+```bash
+composer install
+npm install && npm run build
+php artisan key:generate
+php artisan migrate
+php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
+php artisan serve
+```
+
+## Linux (Debian/Ubuntu)
+```bash
+sudo apt-get update && sudo apt-get install php8.3-gd php8.3-xml php8.3-zip php8.3-mysql nodejs npm mysql-server
+sudo service mysql start
+composer install
+npm install && npm run build
+php artisan key:generate
+php artisan migrate
+php artisan db:seed --class=Database\Seeders\AutoPopulateSeeder
+php artisan serve
+```
+
+---
+
+
+# ℹ️ INFORMAÇÕES IMPORTANTES
+
+**Observação sobre o Seeder**: O `AutoPopulateSeeder` cria:
+- 1 usuário admin (tabela `usuario`)
+- 1 comércio
+- 10 categorias
+- 30 clientes
+- 100 produtos com estoques
+
+Vendas e contas fiadas NÃO são criadas automaticamente.
+
+**Possível hospedagem**: AlwaysData
+
+---
+
+# 📚 OBSERVAÇÕES ÚTEIS
+
+- Caminho do Bootstrap CSS: `node_modules/bootstrap/dist/css/bootstrap.css`
+- Comando para desenvolvimento com live reload: `npm run dev`
 - Animações: manter escalas adequadas conforme a UI
 - Tema VS Code sugerido: Synthesis
-
----
-
-## 5) Dica: Composer mais rápido (Windows/Laragon)
-1. Abra o arquivo:
-   C:\laragon\bin\php\php-8.3.4-Win32-vs16-x64\php.ini
-2. Ative a extensão ZIP removendo o `;` do início da linha:
-   ;extension=zip => extension=zip
+- Para ouvir em outro IP/porta: `php artisan serve --host=0.0.0.0 --port=8080`
